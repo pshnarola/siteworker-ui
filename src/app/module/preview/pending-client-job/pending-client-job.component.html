@@ -62,10 +62,10 @@
                                 <label>{{"posted.between" | translate}} :</label>
                                 <div class="row">
                                     <div class="col-xl-6">
-                                        <p-calendar formControlName="postedStart" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        <p-calendar formControlName="postedStart" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                     <div class="col-xl-6">
-                                        <p-calendar formControlName="postedEnd" [minDate]="postedStartDate" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        <p-calendar formControlName="postedEnd" [minDate]="postedStartDate" [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                 </div>
                             </div>

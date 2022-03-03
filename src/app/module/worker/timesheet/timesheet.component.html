@@ -37,11 +37,11 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label>{{ 'from' | translate }}: </label>
-                                <p-calendar formControlName="startDate" [(ngModel)]="startDate" [maxDate]="endDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                <p-calendar formControlName="startDate" [(ngModel)]="startDate" [maxDate]="endDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="form-group col-md-4">
                                 <label>{{ 'to' | translate }}: </label>
-                                <p-calendar formControlName="endDate" [(ngModel)]="endDate" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekStartDate"></p-calendar>
+                                <p-calendar formControlName="endDate" [(ngModel)]="endDate" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekStartDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
 
                         </div>

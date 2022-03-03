@@ -95,7 +95,7 @@
                         <div class="col-xl-6">
                             <label for="start-date">{{'start.date' |translate}}*</label>&nbsp;
                             <div class="input-group">
-                                <p-calendar formControlName="certificationDate" appendTo="body" [showIcon]="true" [maxDate]="expiredDate" [(ngModel)]="certificateDate" [style]="{'width':'100%'}" placeholder="MM/DD/YYYY" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon">
+                                <p-calendar formControlName="certificationDate" appendTo="body" [showIcon]="true" [maxDate]="expiredDate" [(ngModel)]="certificateDate" [style]="{'width':'100%'}" placeholder="MM/DD/YYYY" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid" *ngIf="(submitted && !workerCertificateForm.get('certificationDate').valid) || (!workerCertificateForm.get('certificationDate').valid && workerCertificateForm.get('certificationDate').dirty) ">
                                     <div *ngIf=" ( workerCertificateForm.get('certificationDate').errors.required) ">
@@ -107,7 +107,7 @@
                         <div class="col-xl-6">
                             <label for="start-date">{{'end.date' |translate}}*</label>&nbsp;
                             <div class="input-group">
-                                <p-calendar formControlName="expiryDate" appendTo="body" [showIcon]="true" [(ngModel)]="expiredDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [minDate]="certificateDate" placeholder="MM/DD/YYYY">
+                                <p-calendar formControlName="expiryDate" appendTo="body" [showIcon]="true" [(ngModel)]="expiredDate" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [minDate]="certificateDate" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid" *ngIf="(submitted && !workerCertificateForm.get('expiryDate').valid) || (!workerCertificateForm.get('expiryDate').valid && workerCertificateForm.get('expiryDate').dirty) ">
                                     <div *ngIf=" ( workerCertificateForm.get('expiryDate').errors.required) ">

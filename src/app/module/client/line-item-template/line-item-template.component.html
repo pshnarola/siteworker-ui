@@ -119,7 +119,7 @@
                                 !lineItemTemplateForm.get('description').valid))">
                                 {{'required' | translate}}
                             </div>
-                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemTemplateForm.get('description').value) > 1000)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemTemplateForm.get('description').value) > 5000)">
                                 {{'lineItem.description.maxLength' | translate}}
                             </div>
                         </div>
@@ -131,7 +131,7 @@
                                     </ng-template>
                                 </p-header>
                             </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemTemplateForm.get('inclusions').value) > 200)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemTemplateForm.get('inclusions').value) > 5000)">
                                 {{'inclusion.maxLength' | translate}}
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                     </ng-template>
                                 </p-header>
                             </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemTemplateForm.get('exclusions').value) > 200)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemTemplateForm.get('exclusions').value) > 5000)">
                                 {{'exclusion.maxLength' | translate}}
                             </div>
                         </div>

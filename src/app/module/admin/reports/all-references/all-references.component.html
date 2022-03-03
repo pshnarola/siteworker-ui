@@ -23,13 +23,13 @@
                                     <div class="col-xl-4">
                                         <div class="p-field">
                                             <label>{{ 'start.date' | translate }} : </label>
-                                            <p-calendar formControlName="startDateSubcontractor" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                            <p-calendar formControlName="startDateSubcontractor" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-xl-4">
                                         <div class="p-field">
                                             <label>{{ 'end.date' | translate }} : </label>
-                                            <p-calendar formControlName="endDateSubcontractor" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                            <p-calendar formControlName="endDateSubcontractor" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 d-inline mt-2">
@@ -145,13 +145,13 @@
                                     <div class="col-xl-4">
                                         <div class="p-field">
                                             <label>{{ 'start.date' | translate }} : </label>
-                                            <p-calendar formControlName="startDateWorker" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                            <p-calendar formControlName="startDateWorker" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-xl-4">
                                         <div class="p-field">
                                             <label>{{ 'end.date' | translate }} : </label>
-                                            <p-calendar formControlName="endDateWorker" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                            <p-calendar formControlName="endDateWorker" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 d-inline">

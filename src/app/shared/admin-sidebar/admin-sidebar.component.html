@@ -249,7 +249,7 @@
                         <label for="range">Posted between</label>
                         <span class="p-fluid">
                             <p-calendar selectionMode="range" placeholder="MM/DD/YYYY" [readonlyInput]="true"
-                                formControlName="dateRange" inputId="range" [showIcon]="true"></p-calendar>
+                                formControlName="dateRange" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                         </span>
 
 
@@ -373,7 +373,7 @@
                         <label for="range">Range</label>
                         <span class="p-fluid">
                             <p-calendar selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY"
-                                formControlName="dateRange" inputId="range" [showIcon]="true"></p-calendar>
+                                formControlName="dateRange" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                         </span>
                     </div>
                 </div>

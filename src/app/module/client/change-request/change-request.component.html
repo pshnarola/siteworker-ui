@@ -66,13 +66,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="p-field Cha_DatePicker">
-                                            <p-calendar [style]="{'height':'35px'}" formControlName="dateRangeFrom" [maxDate]="createdToDate" [(ngModel)]="createdFromDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY">
+                                            <p-calendar [style]="{'height':'35px'}" formControlName="dateRangeFrom" [maxDate]="createdToDate" [(ngModel)]="createdFromDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                             </p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="p-field Cha_DatePicker">
-                                            <p-calendar [style]="{'height':'35px'}" [minDate]="createdFromDate" [(ngModel)]="createdToDate" formControlName="dateRangeTo" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY">
+                                            <p-calendar [style]="{'height':'35px'}" [minDate]="createdFromDate" [(ngModel)]="createdToDate" formControlName="dateRangeTo" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                             </p-calendar>
                                         </div>
                                     </div>

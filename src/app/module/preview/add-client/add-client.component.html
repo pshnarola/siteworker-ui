@@ -64,10 +64,10 @@
                                 <label>{{"created.between" | translate}} :</label>
                                 <div class="row">
                                     <div class="col-xl-6">
-                                        <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY" formControlName="postedStart" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY" formControlName="postedStart" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                     <div class="col-xl-6">
-                                        <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY" formControlName="postedEnd" [minDate]="postedStartDate" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY" formControlName="postedEnd" [minDate]="postedStartDate" [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                 </div>
                             </div>

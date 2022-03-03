@@ -169,7 +169,7 @@
                         {{'bid.due.date' |translate}}*
                     </label>
                     <div class="input-group">
-                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="bidDueDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon"></p-calendar>
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="bidDueDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                     </div>
                     <div class="p-invalid" *ngIf="addNewProjectForm.controls['bidDueDate'].touched && 
                         (addNewProjectForm.controls['bidDueDate'].hasError('required') &&
@@ -191,7 +191,7 @@
                         {{'start.date' |translate}}*
                     </label>
                     <div class="input-group">
-                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="startDate" [minDate]="dateTime" [readonlyInput]="true" (onSelect)="onFormChanged(addNewProjectForm)" [showIcon]="true" inputId="icon"></p-calendar>
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="startDate" [minDate]="dateTime" [readonlyInput]="true" (onSelect)="onFormChanged(addNewProjectForm)" [showIcon]="true" inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                     </div>
                     <div class="p-invalid" *ngIf="addNewProjectForm.controls['startDate'].touched && 
                         (addNewProjectForm.controls['startDate'].hasError('required') &&
@@ -213,8 +213,7 @@
                         {{'estimated.completion.date' |translate}}*
                     </label>
                     <div class="input-group">
-                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="completionDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon"></p-calendar>
-
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="completionDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                     </div>
                     <div class="p-invalid" *ngIf="addNewProjectForm.controls['completionDate'].touched && 
                         (addNewProjectForm.controls['completionDate'].hasError('required') &&
@@ -234,8 +233,9 @@
                 <div class="col-lg-6 form-group">
                     <div>
                         <label for="file">{{'work.scope'|translate}}</label>
-                        <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" [accept]="'application/pdf,application/msword,
-                        application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
+                        <!-- [accept]="'application/pdf,application/msword,
+                        application/vnd.openxmlformats-officedocument.wordprocessingml.document'" -->
+                        <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" >
                             <ngx-dropzone-label> {{ 'drag.and.drop.placeholder' | translate }} </ngx-dropzone-label>
                             <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemoveFile(f)">
                                 <ngx-dropzone-label style="margin:5px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>

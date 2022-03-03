@@ -89,11 +89,11 @@
                     </div>
                     <div class="p-field col-md-3">
                         <label>{{"bid.submitted.from.date" | translate }} : </label>
-                        <p-calendar [readonlyInput]="true" [maxDate]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}"></p-calendar>
+                        <p-calendar [readonlyInput]="true" [maxDate]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                     </div>
                     <div class="p-field col-md-3">
                         <label>{{"bid.submitted.to.date" | translate }} : </label>
-                        <p-calendar [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}"></p-calendar>
+                        <p-calendar [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                     </div>
                 </div>
                 <div class="row">

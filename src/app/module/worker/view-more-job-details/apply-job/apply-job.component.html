@@ -34,7 +34,7 @@
             </div>
             <div class="col-6 col-lg-4">
                 <label> {{'tentative.start.date' | translate}}*</label>
-                <p-calendar formControlName="workerTentativeStartDate" [readonlyInput]="true" [minDate]="dateTime" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" appendTo="body"></p-calendar>
+                <p-calendar formControlName="workerTentativeStartDate" [readonlyInput]="true" [minDate]="dateTime" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" appendTo="body" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                 <div class="p-invalid" *ngIf="(submitted && !myForm.get('workerTentativeStartDate').valid) || (!myForm.get('workerTentativeStartDate').valid && myForm.get('workerTentativeStartDate').touched)">
                     <div *ngIf="(myForm.get('workerTentativeStartDate').errors.required)">
                         {{'required' | translate}} </div>

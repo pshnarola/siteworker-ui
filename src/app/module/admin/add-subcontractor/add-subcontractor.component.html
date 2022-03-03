@@ -42,12 +42,12 @@
                                     <div class="col-xl-6 col-sm-6">
                                         <p-calendar placeholder="MM/DD/YYYY" formControlName="postedStart"
                                             [maxDate]="postedEndDate" appendTo="body" [(ngModel)]="postedStartDate"
-                                            [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                            [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                     <div class="col-xl-6 col-sm-6">
                                         <p-calendar placeholder="MM/DD/YYYY" formControlName="postedEnd" appendTo="body"
                                             [(ngModel)]="postedEndDate" [minDate]="postedStartDate"
-                                            [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                            [readonlyInput]="true" inputId="range" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                     </div>
                                 </div>
 

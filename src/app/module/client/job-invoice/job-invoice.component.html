@@ -25,7 +25,7 @@
                                     <label>{{ 'invoice.date.from' | translate }} : </label>
                                     <p-calendar formControlName="invoiceDateFrom" [(ngModel)]="invoiceDatefrom"
                                         [maxDate]="invoiceDateto" appendTo="body" [readonlyInput]="true"
-                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="col-xl-4">
@@ -33,7 +33,7 @@
                                     <label>{{ 'invoice.date.to' | translate }} : </label>
                                     <p-calendar formControlName="invoiceDateTo" [(ngModel)]="invoiceDateto"
                                         appendTo="body" [minDate]="invoiceDatefrom" [readonlyInput]="true"
-                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="col-xl-4">
@@ -50,13 +50,13 @@
                                 <label>{{ 'start.work.week' | translate }} : </label>
                                 <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]"
                                     appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true"
-                                    [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                    [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="col-xl-4">
                                 <label> {{ 'end.work.week' | translate }} : </label>
                                 <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true"
                                     [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"
-                                    [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true">
+                                    [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                             </div>
                         </div>
