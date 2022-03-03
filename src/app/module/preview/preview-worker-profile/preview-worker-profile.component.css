@@ -1,0 +1,39 @@
+agm-map {
+    height: 200px;
+    width: auto;
+}
+.services {
+    padding: 10px;
+}
+.p-button.p-button-primary.p-button-outlined{
+    background-color: #fff!important;
+    border: 1px solid #3A7CEC!important;
+    border-radius: 10px;
+    color: #3A7CEC!important;
+}
+
+.view_all_btn{
+    color: #007bff !important;
+    cursor: pointer;
+}
+
+.mat-chip.mat-standard-chip {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 9px 0 #dee2e6;
+}
+
+.card-header {
+    background-color: #F3F4F6;
+    border-bottom: none;
+}
+
+.overflow-auto {
+    overflow: auto!important;
+    max-height: 357px;
+    height: 357px;
+}

@@ -1,0 +1,12 @@
+
+p-table:not([ng-reflect-total-records='1']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='2']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='3']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='4']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='5']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='6']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='7']) .p-paginator-bottom p-dropdown .p-dropdown-panel,
+p-table:not([ng-reflect-total-records='8']) .p-paginator-bottom p-dropdown .p-dropdown-panel{
+   top: auto !important;
+   bottom: 38px;
+}

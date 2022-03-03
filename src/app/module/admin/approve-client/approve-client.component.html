@@ -1,0 +1,241 @@
+<div class="container-fluid" *ngIf="clientUser">
+    <div class="row mt-3">
+
+        <div class="col-lg-2 text-center d-flex align-items-center justify-content-center">
+            <ng-container *ngIf="clientUser.photo">
+                <img *ngIf="imageUrl" src="{{imageUrl}}" class="img img-responsive img-fluid" style="max-width: 75%;">
+            </ng-container>
+            <ng-container *ngIf="!clientUser.photo">
+                <p-avatar label={{clientUser.user.firstName.substring(0,1)+clientUser.user.lastName.substring(0,1)}}
+                    styleClass="p-mr-2" size="xlarge" [style]="{'background-color':'#2196F3', 'color': '#ffffff'}"
+                    shape="circle"></p-avatar>
+            </ng-container>
+        </div>
+
+        <div class="col-lg-10">
+            <div class="card mt-2 bg-grey2">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div class="row">
+
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2"><img src="assets/images/cust_name.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">{{'company.name' | translate}}:</p>
+                                    <p class="text-muted">
+                                        {{clientUser.companyName}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2">
+                                    <img src="assets/images/email.svg" width="36px">
+                                </div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Company Email: </p>
+                                    <p class="text-muted mb-0"> {{clientUser.user.email}}</p>
+                                </div>
+
+
+                            </div>
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2">
+                                    <img src="assets/images/contact-book.svg" width="36px">
+                                </div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Work Phone: </p>
+                                    <p class="text-muted mb-0">
+                                    <p class="text-muted mb-0"> {{clientUser.companyPhone}}</p>
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2"><img src="assets/images/cust_name.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Customer Contact Name:</p>
+                                    <p class="text-muted">
+                                        {{clientUser.contactName}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2">
+                                    <img src="assets/images/mail.svg" width="36px">
+                                </div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Contact Email:</p>
+                                    <p class="text-muted mb-0"> {{clientUser.contactEmail}} </p>
+                                </div>
+
+                            </div>
+                            <div class="d-flex col-md-4 col-lg-4">
+                                <div class="mr-2">
+                                    <img src="assets/images/smartphone.svg" width="36px">
+                                </div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Mobile Phone:</p>
+                                    <p class="text-muted mb-0">{{clientUser.contactPhone}}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="row  my-3">
+        <form [formGroup]="approveClientForm">
+            <div class="col-md-12  my-3" *ngIf="type === 'JOBS'">
+                <p class="d-inline-block mr-2 font-weight-bold">Job Payment Terms*: </p>
+                <input pInputText class="form-control" pKeyFilter="pint" maxlength="3" placeholder="Enter Payment Terms"
+                    class="d-inline-block" formControlName="paymentTermsForJob" pKeyFilter="pint">
+                <span class="font-weight-bold ml-3">days</span>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !approveClientForm.get('paymentTermsForJob').valid) || (!approveClientForm.get('paymentTermsForJob').valid && approveClientForm.get('paymentTermsForJob').touched) ">
+                    <div *ngIf=" ( approveClientForm.get('paymentTermsForJob').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-md-12  my-3" *ngIf="type === 'PROJECT'">
+                <p class="d-inline-block mr-2 font-weight-bold">Project Payment Terms*: </p>
+                <input pInputText class="form-control" pKeyFilter="pint" maxlength="3" placeholder="Enter Payment Terms"
+                    class="d-inline-block" formControlName="paymentTermsForProject" pKeyFilter="pint">
+                <span class="font-weight-bold ml-3">days</span>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !approveClientForm.get('paymentTermsForProject').valid) || (!approveClientForm.get('paymentTermsForProject').valid && approveClientForm.get('paymentTermsForProject').touched) ">
+                    <div *ngIf=" ( approveClientForm.get('paymentTermsForProject').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="col-md-6  my-3">
+            <p class="d-inline-block mr-2 font-weight-bold">Type : </p>
+            <p-dropdown class="d-inline-block" [(ngModel)]="type" [options]="typeList" placeholder="Select a Type"
+                (onChange)="onTypeChange($event)">
+            </p-dropdown>
+        </div>
+        <div class="col-md-12 my-3">
+            <label *ngIf="type === 'PROJECT'" class="font-weight-bold">Upload Documents of Projects</label>
+            <label *ngIf="type === 'JOBS'" class="font-weight-bold">Upload Documents of Jobs</label>
+            <div class="custom-file ">
+                <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                    <ngx-dropzone-label> {{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                    </ngx-dropzone-label>
+                </ngx-dropzone>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-3"
+            *ngIf="(type === 'PROJECT' && projectFileArray?.length) || (type === 'JOBS' && jobFileArray?.length)">
+
+            <p-table [value]="temp" dataKey="id" editMode="row">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                            pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-file let-editing="editing" let-ri="rowIndex">
+                    <tr [pEditableRow]="file" *ngIf="type === file.postType">
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText type="text" [(ngModel)]="file.fileName">
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{file.fileName}}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                        <td style="text-align:center">
+                            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                                (click)="onRowEditSave(file)" pTooltip="Save"
+                                class="p-button-rounded p-button-text p-button-success p-mr-2"></button> &nbsp;
+
+                            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                                (click)="onRowEditInit(file)" pTooltip="Edit Filename"
+                                class="p-button-rounded p-button-text"></button> &nbsp;
+
+                            <button *ngIf="file.file" pButton pRipple icon="pi pi-times"
+                                class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete"
+                                (click)="openDeleteDialogForTemp(ri,file.fileName)"></button>
+
+                            <button *ngIf="file.path" pButton pRipple icon="pi pi-times"
+                                class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete"
+                                (click)="openDeleteDialog(file.id,ri,file.fileName)"></button> &nbsp;
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="2" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+
+        <div class="col-md-6 col-md-offset-3 mt-3" *ngIf="type === 'JOBS'">
+            <h5 class="font-weight-bold">Set Margin for Jobs</h5>
+            <form [formGroup]="approveClientForm">
+                <table class="table table-bordered table-hover">
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                        <tr>
+                            <th>Hourly Rate Margin %</th>
+                            <td><input pInputText maxlength="3" pKeyFilter="pint" class="form-control"
+                                    formControlName="marginRateForHourlyJob" placeholder="Enter Hourly Rate Margin %"
+                                    pKeyFilter="num"></td>
+                        </tr>
+                        <tr>
+                            <th>Full Time Employee Rate Margin %</th>
+                            <td><input pInputText maxlength="3" pKeyFilter="pint" class="form-control"
+                                    formControlName="marginRateForFullTimeEmployee"
+                                    placeholder="Enter Full Time Employee Rate Margin %" pKeyFilter="num"></td>
+                        </tr>
+                        <tr>
+                            <th>Will Client Pay Overtime?</th>
+                            <td>
+                                <p-checkbox formControlName="hasOvertimePayRateApplied" [binary]="true"></p-checkbox>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
+        <div class="col-xl-12 text-right mt-2">
+            <button pButton pRipple label="Approve Client" class="p-button-primary" (click)="uploadFiles()"
+                *ngIf="!hasJobApproved && type ==='JOBS'"></button>
+            <button pButton pRipple label="Save" class="p-button-primary" (click)="uploadFiles()"
+                *ngIf="hasJobApproved && type ==='JOBS'"></button>
+            <button pButton pRipple label="Approve Client" class="p-button-primary" (click)="uploadFiles()"
+                *ngIf="!hasProjectApproved && type ==='PROJECT'"></button>
+            <button pButton pRipple label="Save" class="p-button-primary" (click)="uploadFiles()"
+                *ngIf="hasProjectApproved && type ==='PROJECT'"></button>
+        </div>
+
+
+
+    </div>
+    <!-- </div> -->
+</div>

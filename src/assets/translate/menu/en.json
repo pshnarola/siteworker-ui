@@ -1,0 +1,233 @@
+{
+    "adminDashboard": {
+        "menuName": "Dashboard",
+        "canView": true,
+        "canModify": true
+    },
+    "adminClients": {
+        "menuName": "Clients",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Approve Client",
+                "routerlink": "/admin/approve-client"
+            },
+            {
+                "routetext": "MSA Client",
+                "routerlink": "/admin/msa-client"
+            }
+        ]
+    },
+    "adminSubcontractors": {
+        "menuName": "Subcontractors",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Manage References",
+                "routerlink": "/admin/manage-references-subcontractor"
+            },
+            {
+                "routetext": "Manage Certificate",
+                "routerlink": "/admin/manage-certificate-subcontractor"
+            }
+        ]
+    },
+    "adminWorkers": {
+        "menuName": "Workers",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Manage References",
+                "routerlink": "/admin/manage-references-worker"
+            },
+            {
+                "routetext": "Manage Certificate",
+                "routerlink": "/admin/manage-certificate-worker"
+            }
+        ]
+    },
+    "adminProjects": {
+        "menuName": "Projects",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Set Margin",
+                "routerlink": "/admin/set-project-margin"
+            },
+            {
+                "routetext": "Change Request",
+                "routerlink": "/admin/project-change-request"
+            },
+            {
+                "routetext": "Invoices",
+                "routerlink": "/admin/project-invoices"
+            }
+        ]
+    },
+    "adminJobs": {
+        "menuName": "Jobs",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Timesheets",
+                "routerlink": "/admin/timesheets"
+            },
+            {
+                "routetext": "Invoices",
+                "routerlink": "/admin/invoices"
+            }
+        ]
+    },
+    "adminMasters": {
+        "menuName": "Masters",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Company",
+                "routerlink": "/admin/company"
+            },
+            {
+                "routetext": "JobTitle",
+                "routerlink": "/admin/job-title"
+            },
+            {
+                "routetext": "Job Rate Card",
+                "routerlink": "/admin/job-ratecard"
+            },
+            {
+                "routetext": "Region",
+                "routerlink": "/admin/region"
+            },
+            {
+                "routetext": "State",
+                "routerlink": "/admin/state"
+            },
+            {
+                "routetext": "City",
+                "routerlink": "/admin/city"
+            },
+            {
+                "routetext": "Industry Type",
+                "routerlink": "/admin/industry-type"
+            },
+            {
+                "routetext": "Services",
+                "routerlink": "/admin/service"
+            },
+            {
+                "routetext": "Diversity Category",
+                "routerlink": "/admin/diversity-category"
+            },
+            {
+                "routetext": "UOM",
+                "routerlink": "/admin/uom"
+            },
+            {
+                "routetext": "Certificate",
+                "routerlink": "/admin/certificate"
+            },
+            {
+                "routetext": "Experience",
+                "routerlink": "/admin/experience"
+            },
+            {
+                "routetext": "MSA Content",
+                "routerlink": "/admin/content-msa"
+            }
+        ]
+    },
+    "adminReports": {
+        "menuName": "Reports",
+        "canView": true,
+        "canModify": true,
+        "routes": [
+            {
+                "routetext": "Login History",
+                "routerlink": "/admin/login-history"
+            },
+            {
+                "routetext": "All References",
+                "routerlink": "/admin/all-references"
+            },
+            {
+                "routetext": "client Payout Report",
+                "routerlink": "/admin/client-payment-report"
+            },
+            {
+                "routetext": "Subcontractor Payout Report",
+                "routerlink": "/admin/subcontractor-payout-report"
+            },
+            {
+                "routetext": "Revenue Report",
+                "routerlink": "/admin/revenue-report"
+            }
+        ]
+    },
+    "temp": {
+        "menuName": "temp",
+        "routes": [
+            {
+                "routetext": "Supervisor",
+                "routerlink": "/client/supervisor"
+            },
+            {
+                "routetext": "Edit Client",
+                "routerlink": "/client/edit-client"
+            },
+            {
+                "routetext": "Post job",
+                "routerlink": "/client/post-job"
+            },
+            {
+                "routetext": "Edit Client msa",
+                "routerlink": "/client/edit-client-msa"
+            },
+            {
+                "routetext": "Change Request",
+                "routerlink": "/client/change-request"
+            },
+            {
+                "routetext": "Question Answer",
+                "routerlink": "/subcontractor/question-answer"
+            },
+            {
+                "routetext": "Edit subcotractor profile",
+                "routerlink": "/subcontractor/edit-subcontractor-profile"
+            },
+            {
+                "routetext": "Edit worker profile",
+                "routerlink": "/worker/edit-worker-profile"
+            },
+            {
+                "routetext": "worker profile",
+                "routerlink": "/client/worker-profile-detail"
+            },
+            {
+                "routetext": "subcontractor profile",
+                "routerlink": "/client/subcontractor-profile-detail"
+            },
+            {
+                "routetext": "client profile",
+                "routerlink": "/client/client-profile"
+            },
+            {
+                "routetext": "Reply",
+                "routerlink": "/subcontractor/question-answer-reply"
+            },
+            {
+                "routetext": "client answer",
+                "routerlink": "/client/question-answer"
+            },
+            {
+                "routetext": "Job List",
+                "routerlink": "/worker/job-list"
+            }
+        ]
+    }
+}

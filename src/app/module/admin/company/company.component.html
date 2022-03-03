@@ -1,0 +1,215 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" *ngIf="showButtons" type="button" (click)="addCompany()" label="{{ 'add.new' | translate }}"></button>
+            <button pButton class="bg-admin" *ngIf="showButtons" type="button" (click)="disableSelectedCompany()" label="{{ 'disable.selected' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field p-fluid">
+                                <label for="name">{{ "company.name" | translate }} </label>
+                                <input type="text" id="name_searchbox" [(ngModel)]="nameFilterValue" class="form-control" placeholder="Type to filter" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-3">
+                            <button pButton class="p-button-outlined" type="button" (click)="filter()" label="{{ 'search'| translate}}"></button>&nbsp;&nbsp;
+                            <button pButton type="button" (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table #dt [value]="data" [lazy]="true" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} companies" [(selection)]="selectedCompanyArray" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
+                            <!-- <span > -->
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+
+                            <!-- </span> -->
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-company>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="company"></p-tableCheckbox>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td><span class="text-wrap">{{company.company.name}}</span></td>
+                        <!-- <td>{{company.mergeWithName}}</td> -->
+                        <td>{{company.company.createdDate | date: shortDate}}</td>
+                        <td>{{company.user.firstName}} {{company.user.lastName}}</td>
+                        <td>
+                            <span *ngIf="!company.company.mergeWithName">
+                                <button [disabled]="btnDisabled" class="btn btn-sm btn-success mr-2"
+                                    (click)="editCompany(company.company)" pTooltip="{{ 'edit'| translate}}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info mr-2" (click)="mergeCompany(company.company.id)"
+                                    *ngIf="showButtons" pTooltip="{{ 'company.merge'| translate}}">
+                                    <i class="fa fa-random" aria-hidden="true"></i>
+                                </button>
+                            </span>
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-danger mr-2" pTooltip="Disable" (click)="openDialog(company.company.id,company.company.name,company.company.isEnable)" *ngIf="company.company.isEnable">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+                            <button [disabled]="btnDisabled" class="btn btn-warning btn-sm" (click)="openDialog(company.company.id,company.company.name, company.company.isEnable)" pTooltip="{{ 'enable'| translate}}" *ngIf="!company.company.isEnable">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table #dt [value]="mergedData" [lazy]="true" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" (onLazyLoad)="onLazyLoadMergedCompany($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecordsMerged" [loading]="loading"
+                [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} companies" [(selection)]="selectedCompanyArray" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columnsMerge" [pSortableColumn]="col.sortable?col.value:null">
+                            <!-- <span > -->
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+
+                            <!-- </span> -->
+                        </th>
+                        <!-- <th pResizableColumn>{{ "action" | translate }}</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-company>
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td><span class="text-wrap">{{company.company.name}}</span></td>
+                        <td><span class="text-wrap">{{company.company.mergeWithName}}</span>
+                        </td>
+                        <td>{{company.company.createdDate | date: shortDate}}</td>
+                        <td>{{company.user.firstName}} {{company.user.lastName}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+</div>
+
+<p-dialog [(visible)]="companyDialog" [style]="{width: '450px'}" header={{companyHeader}} [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">Name*</label>
+                <input type="text" pInputText id="name" placeholder="Enter Name" maxlength="50" formControlName="name" required autofocus />
+                <div class="p-invalid" *ngIf="myForm.controls['name'].touched && (myForm.controls['name'].hasError('required') && !myForm.controls['name'].valid)">
+                    {{'required' | translate}}</div>
+            </div>
+
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' |translate}}" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-outlined" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog [(visible)]="mergeDialog" [style]="{width: '450px'}" header="Merge Company" [modal]="true" styleClass="p-fluid remove_overflow_y" (onHide)="hideDialog()">
+
+
+    <ng-template pTemplate="content">
+        <p-table #dt [value]="companyForDialog" [rows]="size" [totalRecords]="totalRecordsForDialog" [paginator]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 3rem">
+                    </th>
+                    <th id="column_{{col.value}}" *ngFor="let col of mergeColumns" pSortableColumn="{{col.value}}">
+                        {{col.label}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-company>
+                <tr>
+                    <td>
+                        <p-tableCheckbox (click)="selectMergeCompany(e)" #e [value]="company.company"></p-tableCheckbox>
+                    </td>
+                    <td><span class="text-wrap">{{company.company.name}}</span></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="2" class="text-center">
+                        No records found
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{'merge' | translate}}" icon="pi pi-check" class="p-button-outlined" (click)="selectedMergeCompany()"></button>
+    </ng-template>
+
+</p-dialog>

@@ -1,0 +1,169 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <form class="mt-3" [formGroup]="_subContractorProfileServices.subcontractorEditForm">
+
+                <div class="row">
+
+                    <div class="col-xl-2">
+                        <div class="form-group">
+                            <label for="companEmail">{{'first.name' | translate}}*</label>
+                            <input formControlName="firstName" maxlength="50" type="text" pInputText class="form-control" id="firstName" placeholder="Enter First Name">
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('firstName').valid) || (!form.get('firstName').valid && form.get('firstName').dirty) ">
+                                <div *ngIf=" ( form.get('firstName').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('firstName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2">
+                        <div class="form-group">
+                            <label for="companEmail">{{'last.name' | translate}}*</label>
+                            <input formControlName="lastName" maxlength="50" type="text" pInputText class="form-control" id="lastName" placeholder="Enter Last Name">
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('lastName').valid) || (!form.get('lastName').valid && form.get('lastName').dirty) ">
+                                <div *ngIf=" ( form.get('lastName').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('lastName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group" *ngIf="logInAsCompany">
+                            <label for="companyName">{{'company.name' | translate}}*</label>
+                            <input formControlName="companyName" maxlength="70" disabled type="text" pInputText class="form-control" id="companyName" placeholder="Enter Company Name" [pKeyFilter]="blockSpecial">
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('companyName').valid) || (!form.get('companyName').valid && form.get('companyName').dirty) ">
+                                <div *ngIf=" ( form.get('companyName').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('companyName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4" *ngIf="logInAsCompany">
+                        <div class="form-group">
+                            <label for="companPhone">{{'dba' | translate}}*</label>
+                            <input formControlName="dba" maxlength="50" type="text" pInputText class="form-control" id="DBA" placeholder="Enter DBA">
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('dba').valid) || (!form.get('dba').valid && form.get('dba').dirty) ">
+                                <div *ngIf=" ( form.get('dba').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('dba').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4" *ngIf="!logInAsCompany">
+                        <div class="form-group">
+                            <label for="companPhone">{{'dba' | translate}}</label>
+                            <input formControlName="dbaPersonal" maxlength="50" type="text" pInputText class="form-control" id="DBA" placeholder="Enter DBA">
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('dbaPersonal').valid) || (!form.get('dbaPersonal').valid && form.get('dbaPersonal').dirty) ">
+                                <div *ngIf=" form.get('dbaPersonal').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label for="contactEmail" *ngIf="logInAsCompany">
+                                {{'company.email' | translate}}*</label>
+                            <label for="contactEmail" *ngIf="!logInAsCompany">
+                                {{'personal.email' | translate}}*</label>
+                            <input formControlName="email" type="text" maxlength="100" disabled pInputText class="form-control" id="email" placeholder="Enter company Email" required>
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('email').valid) || (!form.get('email').valid && form.get('email').dirty) ">
+                                <div *ngIf=" ( form.get('email').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('email').errors.maxlength">
+                                    {{'hundred.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 Common_all">
+                        <div class="form-group">
+                            <label for="contactName"> {{'mobile.phone' | translate}}*</label>
+                            <p-inputMask class="d-flex" id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('mobilePhone').valid) || (!form.get('mobilePhone').valid && form.get('mobilePhone').dirty) ">
+                                <div *ngIf=" ( form.get('mobilePhone').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('mobilePhone').errors.maxlength">
+                                    {{'ten.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 Common_all">
+                        <div class="form-group">
+                            <label for="contactPhone"> {{'work.phone' | translate}}*</label>
+                            <p-inputMask class="d-flex" id="workPhone" mask="(999) 999-9999" formControlName="workPhone" placeholder="Enter Work Phone"></p-inputMask>
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('workPhone').valid) || (!form.get('workPhone').valid && form.get('workPhone').dirty) ">
+                                <div *ngIf=" ( form.get('workPhone').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('workPhone').errors.maxlength">
+                                    {{'ten.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label for="copanyDescription" *ngIf="descriptionLabel">{{'company.description' | translate}}*</label>
+                            <label for="copanyDescription" *ngIf="!descriptionLabel">{{'description' | translate}}*</label>
+                            <textarea formControlName="description" maxlength="250" class="form-control" id="copanyDescription" rows="4" placeholder="Enter Company Description" required></textarea>
+                            <div class="p-invalid" *ngIf="(submitted && !form.get('description').valid) || (!form.get('description').valid && form.get('description').dirty) ">
+                                <div *ngIf=" ( form.get('description').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" form.get('description').errors.maxlength">
+                                    {{'twofifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 text-center align-items-center d-flex justify-content-center">
+                        <ng-container style="max-height: 150px; max-width: 150px;">
+                            <ng-container *ngIf="(singleImageView && showPreview) || showPreview; else single">
+                                <ngx-dropzone-image-preview [multiple]="false" *ngFor="let f of files" [file]="f">
+                                </ngx-dropzone-image-preview>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #single>
+                            <ng-container *ngIf="!displayAvatar">
+                                <img [src]="singleImageView" class="img-responsive" style="max-height: 150px; max-width: 150px;">
+                            </ng-container>
+                            <ng-container *ngIf="displayAvatar">
+                                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="xlarge" [style]="{'background-color':'#FCCC00', 'color': '#ffffff'}" shape="circle">
+                                </p-avatar>
+                            </ng-container>
+                        </ng-template>
+                    </div>
+                    <div class="col-xl-6">
+                        <p class="text-center text-muted">User should upload 150px x 150px image for optimum result.</p>
+                        <ngx-dropzone [accept]="'image/png,image/jpeg'" [multiple]="false" [maxFileSize]="5000000" (change)="onSelect($event)">
+                            <ngx-dropzone-label>{{ 'drag.drop.placeholder' | translate }}</ngx-dropzone-label>
+                        </ngx-dropzone>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="row mt-4">
+                    <div class="col-xl-12 text-right">
+                        <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" [disabled]="spinner" (click)="uploadLogo()" class="p-button-outlined p-button-warning mr-3"></button>
+                        <button pButton pRipple label="{{'save.next' | translate}}" [disabled]="spinner" (click)="uploadLogo('next')" class=" p-button-warning"></button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

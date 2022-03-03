@@ -1,0 +1,134 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h3 class="font-weight-bold float-left">
+                <span>{{'invoices' | translate}} </span>
+                <span *ngIf="projectTitle">/{{projectTitle}}</span>
+                <span *ngIf="jobsiteTitle">/{{jobsiteTitle}}</span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin float-right" icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-xl-5">
+                                <div class="form-group">
+                                    <label>{{ 'subcontractor' | translate }} : </label>
+                                    <p-autoComplete type="text" [dropdown]="true" placeholder="Select Subcontractor" (completeMethod)="getSubcontractorByName($event)" delay="2000" [suggestions]="filterSubcontractors" forceSelection="true" [field]="getFullName" formControlName="subcontractor"
+                                        [dropdown]="true">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-5">
+                                <div class="form-group">
+                                    <label>{{ 'status' | translate }} : </label>
+                                    <p-autoComplete placeholder="{{'all' | translate}}" formControlName="status" forceSelection="true" [suggestions]="filteredStatus" field="label" [dropdown]="true" (completeMethod)="filterStatus($event)">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 text-center d-flex align-items-center mt-2">
+                                <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                                <button pButton type="button" class="p-button-danger" (click)="clear()" label="{{ 'clear' | translate}}"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12 mb-3 text-right">
+            <button pButton pRipple type="button" (click)="downloadExcel()" label="{{'export.to.excel' |translate}}" class="p-button-outlined"></button>
+        </div>
+        <div class="col-xl-12">
+            <p-table #dt [columns]="selectedColumns" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [value]="invoiceList" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true"
+                styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords">
+                <ng-template pTemplate="caption">
+                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                </ng-template>
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 180px;" *ngFor="let col of columns">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <!-- <ng-template pTemplate="body" let-i="rowIndex" let-experience let-columns="columns"> -->
+                <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                            <div *ngSwitchCase="'user'">
+                                <span *ngIf="data.toType==='SUBCONTRACTOR_TO_PLATFORM'; else client" class="text-wrap">
+                                    {{data.subContractor.firstName}} {{data.subContractor.lastName}}
+                                </span>
+                                <ng-template #client>
+                                    <span class="text-wrap">
+                                        {{data.client.firstName}} {{data.client.lastName}}
+                                    </span>
+                                </ng-template>
+                            </div>
+                            <div *ngSwitchCase="'jobsiteTitle'">
+                                <span class="text-wrap">
+                                    {{data.closeOutPackageRequest.jobSiteDetail.title}}
+                                </span>
+                            </div>
+                            <div *ngSwitchCase="'milestoneDescription'">
+                                <span class="text-wrap">
+                                {{data.closeOutPackageRequest.paymentMileStone.name}}
+                                </span>
+                            </div>
+
+                            <div *ngSwitchCase="'invoiceDate'">
+                                {{data.invoiceDate | date: shortDate}}
+                            </div>
+                            <div *ngSwitchCase="'invoiceType'">
+                                {{data.toType==='SUBCONTRACTOR_TO_PLATFORM'? 'Subcontractor': 'Client'}}
+                            </div>
+                            <div *ngSwitchCase="'invoiceNumber'">
+                                {{data.invoiceNumber}}
+
+                            </div>
+                            <div *ngSwitchCase="'invoiceAmount'">
+                                {{data.invoiceAmount | currency}}
+                            </div>
+                            <div *ngSwitchCase="'invoice'">
+                                <p-button label="{{'download' | translate}}" styleClass="p-button-link p-1" (click)="downloadDocument(data.invoiceDocPath,data.invoiceDocName)"></p-button>
+                            </div>
+                            <div *ngSwitchCase="'status'">
+                                <p-dropdown [disabled]="btnDisabled || data.status==='PAID'" class="d-inline-block" [options]="status" [(ngModel)]="data.status" (onChange)="onStatusChange($event, data)" appendTo="body">
+                                </p-dropdown>
+                            </div>
+                        </td>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="10" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>

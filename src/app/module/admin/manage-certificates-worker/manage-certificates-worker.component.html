@@ -1,0 +1,122 @@
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-xl-12 p-3 bg-admin text-white">
+            <h4 class="float-left mt-1">
+                <span>{{"manage.certificate.for.worker" | translate}} : {{workerName}}</span>
+            </h4>
+            <div class="float-right">
+                <button pButton pRipple class="bg-black" type="button" label="{{ 'back' | translate }}" (click)="back()"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+
+        <div class="col-xl-12">
+            
+            <div class="card mb-2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label>
+                                    {{"change.status" | translate}} :
+                                </label>
+                                <p-dropdown [options]="actionTypes" [(ngModel)]="approveOrReject" placeholder="Select a status" optionLabel="value" [showClear]="true"></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-2">
+                            <button pButton pRipple type="button" label="{{ 'apply' | translate }}" class="p-button-outlined" (click)="apply()"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ng-container>
+                <p-table #dt [value]="certificateList" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}" scrollHeight="400px">
+
+                    <!-- [value]="ChangeRequestList" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" -->
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px;">
+                            <col style="width:200px;">
+                            <col style="width:170px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:230px;">
+                            <col style="width:150px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCount !== 0" #e (click)="selectAllCertificates(e)"></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action.status" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-certificate>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="certificate" #e (click)="selectCertificate(e)" *ngIf="certificate.status ==='PENDING'">
+                                </p-tableCheckbox>
+                            </td>
+                            <td>
+                                {{certificate.certificate.name}}
+                            </td>
+                            <td>
+                                {{certificate.certificationDate | date: shortDate}}
+                            </td>
+                            <td>
+                                {{certificate.expiryDate | date: shortDate}}
+                            </td>
+                            <td>
+                                {{certificate.createdDate | date: shortDate}}
+                            </td>
+                            <td>
+                                <span *ngIf="certificate.approvedDate && certificate.status!=='PENDING'">
+                                    {{certificate.approvedDate | date: shortDate}}
+                                </span>
+                                <span *ngIf="!certificate.approvedDate && certificate.rejectedDate && certificate.status!=='PENDING'">
+                                    {{certificate.rejectedDate | date: shortDate}}
+                                </span>
+                            </td>
+                            <td>
+                                <span *ngIf="certificate.status==='APPROVED' || certificate.status==='REJECTED'; else none">
+                                    {{certificate.status ==='APPROVED' ? 'Approved' : 'Rejected'}}
+                                </span>
+                                <ng-template #none>
+                                   
+
+                                    <button class="btn btn-warning mr-2 btn-sm" pTooltip="{{'approve' | translate}}" (click)="approveCertificates(certificate)">
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    </button>
+
+                                    <button class="btn btn-danger btn-sm" pTooltip="{{'reject' | translate}}" (click)="rejectCertificates(certificate)">
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </button>
+
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+        </div>
+
+    </div>
+</div>

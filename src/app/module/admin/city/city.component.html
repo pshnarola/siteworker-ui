@@ -1,0 +1,167 @@
+<div class="container-fluid">
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton *ngIf="showButtons" class="bg-admin mr-3" type="button" (click)="addCity()" label="{{ 'add.new' | translate }}"></button>
+            <button pButton *ngIf="showButtons" class="bg-admin mr-3" type="button" (click)="disableSelectedCity()" label="{{ 'disable.selected' | translate }}"></button>
+            <button pButton class="bg-admin" (click)="download(fileName)" label="{{ 'template' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="row" *ngIf="showButtons">
+                                <div class="col-xl-6">
+                                    <div class="p-field mt-4 p-fluid">
+                                        <ngx-dropzone [accept]="'.xlsx, .xls'" [multiple]="false" (change)="selectFile($event)">
+                                            <ngx-dropzone-label><span style="font-size: small;">Drag & Drop Excel Document Here or Click to Upload</span></ngx-dropzone-label>
+                                        </ngx-dropzone>
+                                        <div *ngIf="selectedFiles">
+                                            <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of selectedFiles; let i = index">
+                                                <p>
+                                                    {{file.name}}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 d-flex align-items-center mt-3">
+                                    <button pButton class="p-button-outlined" [disabled]="!selectedFiles" (click)="uploadBulk()" label="{{ 'bulk.upload' | translate }}"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field">
+                                <label for="name" class="search-field">
+                                    {{ "city" | translate }} :
+                                </label>
+                                <input type="text" id="email_searchbox" [(ngModel)]="cityNameFilterValue" class="form-control search-field" placeholder="Type to filter " [pKeyFilter]="blockSpecial" />
+                            </div>
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="form-group">
+                                <label for="sel1">State:</label>
+                                <p-autoComplete forceSelection="true" [(ngModel)]="stateNameFilter" [multiple]="false" [dropdown]="true" (completeMethod)="filterState($event)" [suggestions]="filteredState" field="name" placeholder="Select State" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                    minLength="3" appendTo="body">
+                                </p-autoComplete>
+                            </div>
+
+                        </div>
+                        <div class="col-xl-2 d-flex align-items-center mt-3">
+                            <button pButton type="button" class="search-field p-button-outlined" (click)="filter()" label="{{ 'search' | translate }}"></button>&nbsp;&nbsp;
+                            <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" class="" #dt [value]="cityData" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} cities" [(selection)]="selectedCityArray" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col style="width: 20%;">
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-city>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="city"></p-tableCheckbox>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td>{{city.name}}</td>
+                        <td>{{city.state.name}}</td>
+                        <td>
+                            <button [disabled]="btnDisabled" class="btn btn-success mr-2 btn-sm" pTooltip="Edit" (click)="editCity(city)">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-warning mr-2 btn-sm" pTooltip="Enable" (click)="openDialog(city.id,city.name,city.isEnable)" *ngIf="!city.isEnable">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-danger mr-2 btn-sm" pTooltip="Disable" (click)="openDialog(city.id,city.name,city.isEnable)" *ngIf="city.isEnable">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="4" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+
+    </div>
+
+</div>
+
+<p-dialog [(visible)]="cityDialog" [style]="{width: '450px'}" header={{cityHeader}} [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="cityForm">
+            <div class="p-field">
+                <label for="name">{{ "city.name" | translate }}* </label>
+                <input type="text" pInputText id="cityName" formControlName="name" required autofocus placeholder="Enter City Name" [pKeyFilter]="blockSpecial" maxLength="50" />
+                <div class="p-invalid" *ngIf="(submitted && !cityForm.get('name').valid) || (!cityForm.get('name').valid && cityForm.get('name').touched)">
+                    {{'required' | translate}}
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "state.name" | translate }}* </label>
+                <p-autoComplete forceSelection="true" formControlName="state" [multiple]="false" [dropdown]="true" (completeMethod)="formFilterState($event)" [suggestions]="filteredState" field="name" placeholder="Select State" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                    minLength="3" appendTo="body">
+                </p-autoComplete>
+                <div class="p-invalid" *ngIf="(submitted && !cityForm.get('state').valid) || (!cityForm.get('state').valid && cityForm.get('state').touched)">
+                    {{'required' | translate}}
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="bg-admin" class="p-button-outlined" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="p-button-danger" class="bg-admin" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>

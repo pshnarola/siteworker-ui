@@ -1,0 +1,32 @@
+agm-map {
+  width: auto;
+  height: 200px;
+}
+
+.location {
+  width: auto;
+  padding: 10px;
+}
+
+.card-header {
+  background-color: #fff;
+}
+.Worker_Dash_ToDo .card {
+  background-color: #8ad999;
+}
+
+.Worker_Dash_ToDo .card-header {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.card_scroll{
+  height: 207px;
+  max-height: 207px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.font-sm{
+  font-size: 14px;
+}

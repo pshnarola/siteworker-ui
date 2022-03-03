@@ -1,0 +1,128 @@
+<div class="container-fluid" *ngIf="workerSelectedJob">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-success text-white">
+            <h4>{{'apply.for.job' | translate}}<span *ngIf="workerSelectedJob">/ {{jobTitle}}</span></h4>
+        </div>
+    </div>
+    <br>
+    <form [formGroup]="myForm">
+        <div class="row">
+            <div class="col-6 col-lg-4" *ngIf="employementType ==='WORKER_1099' || employementType ==='WORKER_W2'">
+                <label> {{'add.your.hourly.rate' | translate}}*</label>
+
+                <p-inputNumber mode="currency" class="full-input" currency="USD" maxlength="17" formControlName="workerHourlyRate" locale="en-US" placeholder="{{'enter.hourly.rate' | translate}}">
+                </p-inputNumber>
+                <div class="p-invalid" *ngIf="(submitted && !myForm.get('workerHourlyRate').valid) || (!myForm.get('workerHourlyRate').valid && myForm.get('workerHourlyRate').touched)">
+                    <div *ngIf="(myForm.get('workerHourlyRate').errors.required)">
+                        {{'required' | translate}} </div>
+                    <div *ngIf="myForm.get('workerHourlyRate').errors.min">
+                        {{'hourly.rate.cannnot.be.zero' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4" *ngIf="employementType === 'FULL_TIME'">
+                <label> {{'add.your.yearly.salary.requirement' | translate}}*</label>
+                <p-inputNumber mode="currency" class="full-input" currency="USD" maxlength="17" formControlName="workerAnnualSalary" locale="en-US" placeholder="Enter yearly salary">
+                </p-inputNumber>
+                <div class="p-invalid" *ngIf="(submitted && !myForm.get('workerAnnualSalary').valid) || (!myForm.get('workerAnnualSalary').valid && myForm.get('workerAnnualSalary').touched)">
+                    <div *ngIf="(myForm.get('workerAnnualSalary').errors.required)">
+                        {{'required' | translate}} </div>
+                    <div *ngIf="myForm.get('workerAnnualSalary').errors.min">
+                        {{'annual.salary.cannnot.be.zero' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4">
+                <label> {{'tentative.start.date' | translate}}*</label>
+                <p-calendar formControlName="workerTentativeStartDate" [readonlyInput]="true" [minDate]="dateTime" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" appendTo="body"></p-calendar>
+                <div class="p-invalid" *ngIf="(submitted && !myForm.get('workerTentativeStartDate').valid) || (!myForm.get('workerTentativeStartDate').valid && myForm.get('workerTentativeStartDate').touched)">
+                    <div *ngIf="(myForm.get('workerTentativeStartDate').errors.required)">
+                        {{'required' | translate}} </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12">
+                <label> {{'cover.letter' | translate}}</label>
+            </div>
+            <div class="col-12">
+                <textarea class="form-control" formControlName="workerSpecialNote" maxlength="500" [rows]="5" [cols]="30" pInputTextarea autoResize="autoResize" placeholder="{{'enter.cover.letter' | translate}}"></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <label> {{'select.my.certificates' | translate}}</label>
+            </div>
+
+        </div>
+
+        <span class="p-fluid adjust-height">
+        
+            <p-autoComplete forceSelection="true" minLength="3" delay="2000" formControlName="certificate" [dropdown]="true" field="name" [suggestions]="filteredCertificates" (completeMethod)="filterCertificate($event)" [multiple]="true"></p-autoComplete>
+        
+        </span>
+        <br>
+
+        <div class="row">
+            <div class="col-12">
+                <h5 class="font-weight-bold"> {{'screening.questions' | translate}}*</h5>
+            </div>
+            <div class="col-12 mt-3">
+                <div class="datatable-card question-table">
+
+                    <p-table #dt [value]="myForm.get('screeningQuestionAnswer')['controls']" [lazy]="true" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines"
+                        [scrollable]="true" [style]="{width:'100%'}" scrollHeight="400px">
+                        <ng-template pTemplate="colgroup" let-columns>
+                            <colgroup>
+                                <col style="width:150px;">
+                                <col>
+                                <col>
+
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                    {{col.label}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-questionAnswer let-rowIndex="rowIndex">
+                            <ng-container formArrayName="screeningQuestionAnswer">
+                                <tr [formGroupName]="rowIndex">
+                                    <td class="text-center">{{questionAnswer.get('questionNo').value}}</td>
+                                    <td>{{questionAnswer.get('question').value}}</td>
+                                    <td>
+                                        <textarea formControlName="answer" class="form-control" maxlength="400" type="text " placeholder="Enter answer" pInputText id="answer "></textarea>
+                                        <div class="p-invalid" *ngIf="(submitted && !questionAnswer.get('answer').valid) || (!questionAnswer.get('answer').valid && questionAnswer.get('answer').touched)">
+                                            <div *ngIf="(questionAnswer.get('answer').errors.required)">
+                                                {{'required' | translate}} </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td [attr.colspan]="3" class="text-center">
+                                    {{'no.record.found' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                </div>
+            </div>
+
+        </div>
+        <br>
+        <div class="float-right">
+            <button class="p-button-success" label="{{'apply' | translate}}" pButton (click)="applyJob()"></button>
+        </div>
+    </form>
+</div>
+<h5 class="text-muted text-center mt-3" *ngIf="!workerSelectedJob">{{'no.record.found' | translate}}</h5>

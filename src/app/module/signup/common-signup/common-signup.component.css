@@ -1,0 +1,25 @@
+.p-button {
+    top: -20px;
+    position: relative;
+}
+.common-sign-up p-header {
+    border: 2px solid #707070;
+    border-radius: 150px;
+    padding: 0;
+    width: 120px;
+    display: block;
+    height: 120px;
+    line-height: 104px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.cust-min-h-70{
+    min-height: 63vh !important;
+}
+.common-sign-up .p-fieldset-legend{
+    margin: auto;
+}
+h5 {
+    font-size: 22px;
+}

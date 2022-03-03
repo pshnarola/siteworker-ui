@@ -1,0 +1,254 @@
+<div class="p-3">
+
+    <div *ngIf="projectFullDetailData?.length > 0" class="mt-3">
+        <p-listbox [options]="projectFullDetailData" optionLabel="projectDetail.title" [(ngModel)]="selectedFullProjectDetail" (onChange)="projectChanged($event)" [listStyle]="{'max-height':'250px'}">
+            <ng-template pTemplate="header">
+                {{ 'projects' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="projectFilter.toggle($event)" *ngIf="!hideFilter"></button>
+            </ng-template>
+            <ng-template let-project pTemplate="item">
+
+                <div style="float: left; width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" pTooltip="Client Name: {{project.projectDetail.company?.name ? project.projectDetail.company?.name : 'N/A'}}">{{project.projectDetail.title}}</div>
+                <div *ngIf="project.projectDetail.id!=='pid'" style="float: right; padding-left: 50px;">
+                    <div *ngIf="showIconsOnSidebar" [ngSwitch]="project.bidStatus">
+                        <span *ngSwitchCase="'STARTED'" pTooltip="Started"><i class="pi pi-calendar"></i></span>
+                        <span *ngSwitchCase="'APPLIED'" pTooltip="Applied"><i class="pi pi-dollar"></i></span>
+                        <span *ngSwitchCase="'ACCEPTED'" pTooltip="Accepted"><i class="pi pi-check-circle"></i></span>
+                        <span *ngSwitchCase="'REJECTED'" pTooltip="Rejected"><i class="pi pi-times-circle"></i></span>
+                        <span *ngSwitchCase="'OFFERED'" pTooltip="Offered"><i class="pi pi-inbox"></i></span>
+                        <span *ngSwitchDefault pTooltip="Favourite"><i *ngIf="project.hasMarkedAsFavourite" class="pi pi-star"></i></span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-listbox>
+    </div>
+
+    <div *ngIf="projectFullDetailData?.length===0" class="mt-3">
+        <p-listbox [options]="noProjectData" optionLabel="title" [(ngModel)]="noselectedProjectModel" [listStyle]="{ 'max-height': '250px'}">
+            <ng-template pTemplate="header">
+                {{ 'projects' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="projectFilter.toggle($event)"></button>
+            </ng-template>
+        </p-listbox>
+    </div>
+
+    <!-- Overlay pannel for JobListing -->
+    <p-overlayPanel [showTransitionOptions]=" '0ms'" [hideTransitionOptions]=" '0ms'" [dismissable]="true" #projectFilter [showCloseIcon]="true" appendTo="body" [style]="{width: '450px'}">
+        <ng-template pTemplate>
+            <form *ngIf="projectFilterFormGroup" [formGroup]="projectFilterFormGroup">
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="projectTitle">Project Title</label>
+                        <span class="p-fluid">
+                            <p-autoComplete id="projectTitle" placeholder="Enter Project Title" [multiple]="true" formControlName="projectTitle" forceSelection="true" minLength="3" delay="2000" [suggestions]="filteredProjectTitles" (completeMethod)="getProjectTitle($event)">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="clientname">Client Name</label>
+                        <span class="p-fluid">
+                            <p-autoComplete id="clientname" placeholder="Select Client" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" formControlName="clientName" (completeMethod)="getFilteredClientForProject($event)" [suggestions]="filteredClientForProject">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="region">Region</label>
+                        <span class="p-fluid">
+                            <p-autoComplete id="region" placeholder="Select Region" [multiple]="true" formControlName="region" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" (completeMethod)="getFilteredRegionForProject($event)" [suggestions]="filteredRegionForProject">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="status">Industry Type</label>
+                        <span class="p-fluid">
+                            <p-autoComplete id="industryType" placeholder="Select Industry Type" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" formControlName="industryType" (completeMethod)="getFilteredIndustryForProject($event)" [suggestions]="filteredIndustryForProject">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="state">{{'state' | translate}}</label>
+                        <span class="p-fluid">
+                            <p-autoComplete formControlName="state" placeholder="Select State" id="state" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" (completeMethod)="getFilteredStateForProject($event)" [suggestions]="filteredStateForProject">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="postedBy">Posted By</label>
+                        <span class="p-fluid">
+                            <p-autoComplete id="postedBy" placeholder="Select Posted By" [multiple]="true" [dropdown]="true" formControlName="postedBy" forceSelection="true" minLength="3" delay="2000" [field]="getFullName" (completeMethod)="getFilteredPostedByForProject($event)" [suggestions]="filteredPostedForProject">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="range">Posted Between</label>
+                        <p-calendar selectionMode="range" placeholder="MM/DD/YYYY" [readonlyInput]="true" formControlName="postedBetween" inputId="range" [showIcon]="true"></p-calendar>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="fields">Fields</label>
+                        <p-autoComplete id="fields" field="label" placeholder="Select Field" [multiple]="false" [dropdown]="true" formControlName="fields" forceSelection="true" [suggestions]="filteredOrderByForProject" (completeMethod)="filterOrderByFieldsForProject($event)">
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="orderBy">Order By</label>
+                        <p-autoComplete id="orderBy" placeholder="Select Order By" [multiple]="false" [dropdown]="true" field="label" formControlName="orderBy" forceSelection="true" [suggestions]="filteredOrderBy" (completeMethod)="filterOrderBy($event)">
+                        </p-autoComplete>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button style="margin-right: 20px;" (click)="onProjectFilter()" pButton pRipple type="button" label="Apply" class="p-button-md"></button>
+                    <button pButton pRipple type="button" label="Clear" class="p-button-md" class="p-button-danger" (click)="clearProject()"></button>
+                </div>
+
+            </form>
+        </ng-template>
+    </p-overlayPanel>
+
+
+    <!-- overlay Pannel for JobsiteFilter -->
+    <p-overlayPanel [showTransitionOptions]=" '0ms'" [hideTransitionOptions]=" '0ms'" #op [dismissable]="true" [showCloseIcon]="true" appendTo="body" [style]="{width: '450px'}">
+        <ng-template pTemplate>
+
+            <form *ngIf="jobsiteFilterFormGroup" [formGroup]="jobsiteFilterFormGroup" (ngSubmit)="filterJobsite()">
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="keyword">Keyword</label>
+                        <span class="p-fluid">
+                            <input style="padding: 0.5rem 0.5rem;" placeholder="Keyword" type="text" id="keyword" pInputText formControlName="keyword" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="jobsiteTitle">Jobsite Title</label>
+                        <span class="p-fluid">
+                            <p-autoComplete formControlName="jobsiteTitle" placeholder="Enter Jobsite Title" id="jobsiteTitle" [multiple]="true" forceSelection="true" (completeMethod)="getFilteredJobsiteTitle($event)" delay="2000" [suggestions]="filteredjobsiteTitles">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="state">State</label>
+                        <span class="p-fluid">
+                            <p-autoComplete formControlName="state" placeholder="Select State" id="state" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredStateForJobsite($event)" delay="2000" [suggestions]="filteredStateForJobsite">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="city">City</label>
+                        <span class="p-fluid">
+                            <p-autoComplete virtualScroll="true" placeholder="Select City" itemSize="10" formControlName="city" id="city" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredCityForJobsite($event)" delay="2000" [suggestions]="filteredCityForJobsite">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="zip">Zip Code</label>
+                        <span class="p-fluid">
+                            <input style="padding: 0.5rem 0.5rem;"  placeholder="Enter Zipcode"  type="text" formControlName="zipcode" pInputText id="zip" [pKeyFilter]="blockSpecial"/>
+                        </span>
+                        <div *ngFor="let message of jobsiteFilterFormGroup.controls.zipcode[ 'errorMessages']" class="p-invalid">
+                            {{message}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="status">Status</label>
+                        <span class="p-fluid">
+                            <p-autoComplete formControlName="status"  placeholder="Select Status"  id="status" forceSelection="true" [multiple]="true" [suggestions]="filteredStatusForJobsite" field="label" [dropdown]="true" (completeMethod)="filterStatusForJobsite($event)">
+                            </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+
+                <label>Estimated Cost Between</label><br />
+                <div class="p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="costFrom"></label>
+                        <span class="p-fluid">
+                            <p-inputNumber formControlName="estimatedCostFrom"  placeholder="0"  id="costFrom" mode="currency" currency="USD" maxlength="17" locale="en-US">
+                            </p-inputNumber>
+                        </span>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="costTo"></label>
+                        <span class="p-fluid">
+                            <p-inputNumber formControlName="estimatedCostTo"  placeholder="0"  id="costTo" mode="currency" currency="USD" maxlength="17" locale="en-US">
+                            </p-inputNumber>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="autocompletePlaces">Location</label>
+                        <span class="p-fluid">
+                            <app-auto-complete-map-places id="autocompletePlaces" [filterFlage]="locationFlage" [jobsiteFilterLocation]="jobsiteFilterFormGroup.get( 'autoComplete').value" (pickAddress)="getAddressFromAutocompleteMapsApi($event)">
+                            </app-auto-complete-map-places>
+                        </span>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button style="margin-right: 20px;" pButton pRipple type="button" label="Apply" class="p-button-md" (click)="onJobsiteFilter()"></button>
+                    <button pButton pRipple type="button" label="Clear" class="p-button-md" class="p-button-danger" (click)="clearJobsite()"></button>
+                </div>
+
+            </form>
+
+        </ng-template>
+    </p-overlayPanel>
+
+
+    <div *ngIf="jobsiteData?.length> 0" class="mt-3" class="column">
+        <p-listbox *ngIf="!hidejobsiteList" [options]="jobsiteData" optionLabel="title" [(ngModel)]="selectedJobsite" (onChange)="jobsiteChanged($event)" [listStyle]="{'max-height':'250px'}">
+            <ng-template pTemplate="header">
+                {{ 'jobsites' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="op.toggle($event)" *ngIf="!hideFilter"></button>
+            </ng-template>
+            <ng-template let-jobsite pTemplate="item">
+                <div style="float: left; width: 100px">{{jobsite.title}}</div>
+                <div *ngIf="jobsite.id!=='jid'" style="float: right; padding-left: 50px;">
+                    <div *ngIf="showIconsOnSidebar && jobsite.isBidCompleted">
+                        <span><i class="pi pi-check" style="color: green; font-weight: 900;"></i></span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-listbox>
+    </div>
+
+    <div *ngIf="jobsiteData?.length === 0" class="mt-3" class="column">
+        <p-listbox *ngIf="!hidejobsiteList" [options]="noJobsiteData" optionLabel="title" [(ngModel)]="noselectedJobsiteModel" [listStyle]="{'max-height':'250px'}">
+            <ng-template pTemplate="header">
+                {{ 'jobsites' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="op.toggle($event)"></button>
+            </ng-template>
+        </p-listbox>
+    </div>
+
+
+</div>

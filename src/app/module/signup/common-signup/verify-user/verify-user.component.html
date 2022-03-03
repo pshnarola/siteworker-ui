@@ -1,0 +1,74 @@
+<app-signup-login-header></app-signup-login-header>
+<ngx-spinner></ngx-spinner>
+<div class="container-fluid">
+    <div class="container login_min_h d-flex align-items-center">
+        <div class="row">
+            <div class="col-md-6 col-lg-7 order-2 order-md-1 text-center">
+
+                <div class="d-flex justify-content-center">
+                    <div class="p-4 bg-warning rounded-circle mr-2">
+                        <img width="70" src="assets/images/icn_login_01.svg" alt="">
+                    </div>
+                </div>
+
+                <h3 class="my-3 py-1 font-weight-bold">Any Questions? We're happy to help.</h3>
+                <p class="login_des_p">
+                    Reach out to Site Worker’s friendly and knowledge team at any time with questions, concerns, or technical issues.
+                </p>
+                <div class="alert alert-warning mt-4 py-3 border-0 login_alert_box">
+                    <h4 class="text-dark">Contact Us</h4>
+
+                    <div class="d-flex justify-content-around">
+                        <a class="text-dark" href="mailto:support@siteworker.com"><img src="assets/images/icn_email.svg" width="20" alt="" class="mr-3">support@siteworker.com</a>
+                        <a class="text-dark" href="#"><img src="assets/images/icn_phone.svg" width="20" alt="" class="mr-3">(888) 418 2530
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-5 order-1 order-md-2">
+                <div class="login-register">
+                    <div class="login-box card">
+                        <h5 class="card-header text-center bg-warning font-weight-bold p-4">
+                            {{ 'verify.user' | translate}}
+                        </h5>
+
+                        <div class="card-body">
+                            <div class="p-fluid">
+
+                                <div class="text-center my-3">
+                                    <h3 class="font-weight-bold">{{message}} </h3>
+                                </div>
+                                <div class="form-group text-center">
+                                    <a href="#" class="text-dark">{{ 'signin' | translate}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid bg-grey">
+    <div class="container py-2 text-center">
+        <h3 class="my-2 py-1 font-weight-bold">Trusted By</h3>
+        <div class="trusted_client d-flex justify-content-center">
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client1.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client2.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client3.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client4.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client5.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

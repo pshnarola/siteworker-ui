@@ -1,0 +1,8 @@
+.left-border{
+    border-right: 1px solid #0000000d;
+}
+
+ngx-dropzone{
+    height: 50px;
+    width: 300px;
+}

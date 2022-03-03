@@ -1,0 +1,236 @@
+<div class="container-fluid">
+
+    <div class="row my-3">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin" icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-xl-5">
+                                <div class="p-field p-fluid">
+                                    <label>{{ 'job.title' | translate }} : </label>
+                                    <p-autoComplete formControlName="title" minLength="3" [suggestions]="filteredJobTitle" [multiple]="true" (completeMethod)="filterJobTitle($event)" field="title" [dropdown]="true" [forceSelection]="true" placeholder="{{'select.job.title' |translate}}"></p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-5">
+                                <div class="p-field p-fluid">
+                                    <label>{{ 'experience' | translate }} : </label>
+                                    <p-autoComplete formControlName="experience" minLength="3" [suggestions]="filteredExperience" [multiple]="true" (completeMethod)="filterExperience($event)" field="level" [dropdown]="true" [forceSelection]="true" placeholder="{{'select.experience' |translate}}"></p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-2 align-items-center d-flex mt-3">
+                                <button pButton type="button" class="p-button-outlined" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                                <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger" style="margin-left: 5px;"></button>
+
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2">
+                <div class="card-body">
+                    <form [formGroup]="myClientAndStateForm">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="p-field p-fluid">
+                                    <label for="state">{{'state' | translate}} :</label>
+                                    <p-autoComplete placeholder="{{'select.state' | translate}}" field="name" formControlName="state" forceSelection="true" [dropdown]="true" minLength="3" [suggestions]="filteredState" (completeMethod)="filterState($event)" [disabled]="isEditMode">
+                                    </p-autoComplete>
+                                    <div class="p-invalid" *ngIf="(submitted && !myClientAndStateForm.get('state').valid) || (!myClientAndStateForm.get('state').valid && myClientAndStateForm.get('state').touched) ">
+                                        <div *ngIf=" ( myClientAndStateForm.get('state').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="p-field p-fluid">
+                                    <label>{{ 'client' | translate }} : </label>
+                                    <p-autoComplete formControlName="client" [field]="getFullName" forceSelection="true" [dropdown]="true" placeholder="{{'select.client' | translate}}" minLength="3" [suggestions]="filteredUser" (completeMethod)="filterUser($event)" [disabled]="isEditMode">
+                                    </p-autoComplete>
+                                    <div class="p-invalid" *ngIf="(submitted && !myClientAndStateForm.get('client').valid) || (!myClientAndStateForm.get('client').valid && myClientAndStateForm.get('client').touched) ">
+                                        <div *ngIf=" ( myClientAndStateForm.get('client').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2">
+                <div class="card-body">
+                    <form [formGroup]="myMarkupForm">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <h5>{{ 'markup' | translate }} : </h5>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="p-formgroup-inline">
+                                    <div class="p-field-checkbox">
+                                        <p-radioButton [value]="true" formControlName="markup"> </p-radioButton>
+                                        <label>{{ 'percentage' | translate }}</label>
+                                    </div>
+                                    <div class="p-field-checkbox">
+                                        <p-radioButton [value]="false" formControlName="markup"> </p-radioButton>
+                                        <label>{{ 'amount' | translate }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12">
+                                <div class="p-field p-fluid" *ngIf="myMarkupForm.get('markup').value">
+                                    <label>%</label>
+                                    <p-inputNumber formControlName="percentage" maxlength="9" locale="en-US" (onInput)="OnEnterAmount($event)">
+                                    </p-inputNumber>
+                                    <div class="p-invalid" *ngIf="(submitted && !myMarkupForm.get('percentage').valid) || (!myMarkupForm.get('percentage').valid && myMarkupForm.get('percentage').touched) ">
+                                        <div *ngIf=" ( myMarkupForm.get('percentage').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <div class="p-field p-fluid" *ngIf="!myMarkupForm.get('markup').value">
+                                    <p-inputNumber mode="currency" formControlName="amount" currency="USD" maxlength="9" locale="en-US" (onInput)="OnEnterAmount($event)">
+                                    </p-inputNumber>
+                                    <div class="p-invalid" *ngIf="(submitted && !myMarkupForm.get('amount').valid) || (!myMarkupForm.get('amount').valid && myMarkupForm.get('amount').touched) ">
+                                        <div *ngIf=" ( myMarkupForm.get('amount').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12">
+                                <button label="{{'template' | translate}}" pButton class="bg-admin mr-3" (click)="download(fileName)"></button>
+                                <div class="btn btn-sm d-inline-block">
+                                    <ngx-dropzone [disabled]="chooseFileFlagDisabled" [accept]="'.xlsx, .xls'" [multiple]="false" (change)="selectFile($event)">
+                                        <ngx-dropzone-label><span style="font-size: small;">Drag & Drop Excel Document Here or Click to Upload</span></ngx-dropzone-label>
+                                    </ngx-dropzone>
+                                    <div *ngIf="selectedFiles">
+                                        <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of selectedFiles; let i = index">
+                                            <p>
+                                                {{file.name}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button pButton type="button" class="p-button-outlined" [disabled]="!selectedFiles" (click)="uploadBulk()" label="{{ 'bulk.upload' | translate }}"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="datatable-card" [ngClass]="{'disableDiv': isDisabled}">
+                <form [formGroup]="myjobRateCardForm">
+                    <p-table #dt [columns]="columns" [value]="myjobRateCardForm.get('jobRateCardList')['controls']" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true"
+                        [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords">
+
+                        <ng-template pTemplate="colgroup" let-columns>
+                            <colgroup>
+                                <col style="width: 150px;">
+                                <col style="width: 150px;">
+                                <col style="width: 250px;">
+                                <col style="width: 250px;">
+                                <col style="width: 150px;">
+                                <col style="width: 150px;">
+                                <col style="width: 150px;">
+                                <col style="width: 150px;">
+                                <col style="width: 150px;">
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                    {{col.label}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                            <ng-container formArrayName="jobRateCardList">
+                                <tr [formGroupName]="i">
+                                    <td>{{data.get('jobTitle').value.title}}</td>
+                                    <td>{{data.get('experience').value.level}}</td>
+                                    <td class="p-fluid">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text border-right-0 bg-white">$</span>
+                                            </div>
+                                            <p-inputNumber [useGrouping]="false" mode="decimal" formControlName="minPayRate" maxlength="9" inputStyleClass="border-left-0 text-right w-60 form-control border-left-radius-0" [minFractionDigits]="2" [maxFractionDigits]="2" (onInput)="onEnterMinPayRate($event,i)">
+                                            </p-inputNumber>
+                                        </div>
+                                    </td>
+                                    <td class="p-fluid">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text border-right-0 bg-white">$</span>
+                                            </div>
+                                            <p-inputNumber [useGrouping]="false" mode="decimal" formControlName="maxPayRate" maxlength="9" [minFractionDigits]="2" [maxFractionDigits]="2" (onInput)="onEnterMaxPayRate($event,i)" inputStyleClass="border-left-0 text-right w-60 form-control border-left-radius-0">
+                                            </p-inputNumber>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{data.get('minBillRate').value | currency:'USD'}}
+                                    </td>
+                                    <td>
+                                        {{data.get('maxBillRate').value | currency:'USD'}}
+                                    </td>
+                                    <td>
+                                        {{data.get('minProfit').value | currency:'USD' }}
+                                    </td>
+                                    <td>
+                                        {{data.get('maxProfit').value | currency:'USD'}}
+                                    </td>
+                                    <td>
+                                        {{data.get('profitMargin').value | currency:'USD'}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td [attr.colspan]="10" class="text-center">
+                                    {{'no.record.found' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                    </p-table>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-xl-12 text-right">
+            <button label="{{'save' | translate}}" pButton (click)="generateJobRateCard()" class="bg-admin"></button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+</div>

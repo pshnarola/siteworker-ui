@@ -1,0 +1,21 @@
+ngx-dropzone,
+img {
+    margin: 10px;
+    height: 100px;
+}
+
+::ng-deep body .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
+    margin: 5;
+    padding: 5px;
+    line-height: 1;
+    color: goldenrod;
+}
+
+ ::ng-deep .ui-datepicker .ui-datepicker-group {
+    background-color: cadetblue;
+}
+
+p-dialog .ui-dialog {
+    overflow: scroll;
+    max-height: 70%;
+}

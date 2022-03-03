@@ -1,0 +1,358 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold">
+                <span> Worker Comparison <span *ngIf="selectedJob">/{{selectedJob.title}}</span></span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <p-button class="float-right" (click)="onFilterOpen()">
+                <i class="fa fa-filter mr-1"></i> {{'filter' | translate}}</p-button>
+        </div>
+    </div>
+
+    <div class="card bg-grey2" *ngIf="isFilterOpened">
+        <div class="card-body">
+            <form [formGroup]="myForm">
+                <div class="row">
+                    <div class="p-field col-md-6 ProWid">
+                        <label>{{'worker.name' |translate}}</label>
+                        <p-autoComplete forceSelection="true" minLength="3" formControlName="workerName" [field]="getFullName" [multiple]="true" (completeMethod)="getWorkerByName($event)" delay="2000" [suggestions]="filterWorkers" placeholder="{{'select.worker.name' |translate}}"
+                            [style]="{'width':'100%','height':'35px'}" [inputStyle]="{'width':'100%'}">
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field col-md-6 ProWid">
+                        <label>{{'job.title' |translate}}</label>
+                        <p-autoComplete forceSelection="true" minLength="3" formControlName="jobTitle" [multiple]="true" (completeMethod)="getJobTitleOfWorker($event)" delay="2000" [suggestions]="titles" placeholder="{{ 'select.job.title' |translate}}" [style]="{'width': '100%','height':'35px'}"
+                            [inputStyle]="{'width': '100%'}">
+                        </p-autoComplete>
+                    </div>
+                </div>
+
+                <div class="row" style="position: relative;">
+                    <div class="p-field col-3" *ngIf="employementType === 'WORKER_1099' || employementType === 'WORKER_W2'">
+                        <label>{{"hourly.rate" | translate }} : </label>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text border-right-0 bg-white">$</span>
+                            </div>
+
+                            <input type="text" class="form-control text-right border-left-0" (change)="onChangeHourlyFromValue($event)" formControlName="minHourlyRate" placeholder="{{ 'min.0' | translate}}" pKeyFilter="pint" />
+                        </div>
+                    </div>
+                    <span style="position: absolute;left: 24.5%;top: 34px;" class="ttt"> 
+                    {{'to' | translate}} </span>
+                    <div class="p-field col-3" *ngIf="employementType === 'WORKER_1099' || employementType === 'WORKER_W2'">
+                        <label style="visibility: hidden;">{{"hourly.rate" | translate }} : </label>
+
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+                                <span class="input-group-text border-right-0 bg-white">$</span>
+                            </div>
+                            <input type="text" class="form-control text-right border-left-0" (change)="onChangeHourlyToValue($event)" formControlName="maxHourlyRate" placeholder="{{ 'max.0' | translate}}" pKeyFilter="pint" />
+                        </div>
+                        <div class="p-invalid" *ngIf="errorFlagHour; else none">
+                            {{feedback}}
+                        </div>
+                        <ng-template #none> </ng-template>
+                    </div>
+                    <div class="p-field col-3" *ngIf="employementType === 'FULL_TIME'">
+                        <label>{{"yearly.salary" | translate }} : </label>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text border-right-0 bg-white">$</span>
+                            </div>
+                            <input type="text" class="form-control text-right border-left-0" (change)="onChangeAnnualFrom($event)" formControlName="minAnnualSalary" placeholder="{{ 'min.0' | translate}}" pKeyFilter="pint" />
+                        </div>
+                    </div>
+
+                    <div class="p-field col-3" *ngIf="employementType === 'FULL_TIME'">
+                        <label style="visibility: hidden;">{{"yearly.salary" | translate }} : </label>
+
+                        <div class="input-group">
+                            {{'to' | translate}}
+                            <div class="input-group-prepend">
+                                <span class="input-group-text border-right-0 bg-white">$</span>
+                            </div>
+                            <input type="text" class="form-control text-right border-left-0" (change)="onChangeAnnualTo($event)" formControlName="maxAnnualSalary" placeholder="{{ 'max.0' | translate}}" pKeyFilter="pint" />
+                        </div>
+                        <div class="p-invalid" *ngIf="errorFlag; else none">
+                            {{feedback}}
+                        </div>
+                        <ng-template #none> </ng-template>
+                    </div>
+                    <div class="p-field col-md-3">
+                        <label>{{"bid.submitted.from.date" | translate }} : </label>
+                        <p-calendar [readonlyInput]="true" [maxDate]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}"></p-calendar>
+                    </div>
+                    <div class="p-field col-md-3">
+                        <label>{{"bid.submitted.to.date" | translate }} : </label>
+                        <p-calendar [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" [style]="{'height':'35px'}"></p-calendar>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="p-field col-md-3">
+                        <label>{{'average.ratings' |translate}}</label>
+                        <p-autoComplete forceSelection="true" [dropdown]="true" [style]="{'width':'100%','height':'35px'}" formControlName="avgRating" [inputStyle]="{'width':'100%'}" placeholder="{{'all' | translate}}" [suggestions]="filteredAverageRating" field="label" (completeMethod)="filterAverageRating($event)">
+                        </p-autoComplete>
+                    </div>
+                    <div class="p-field col-md-3">
+                        <label>{{'total.experience' |translate}}</label>
+                        <p-autoComplete [dropdown]="true" forceSelection="true" [style]="{ 'width': '100%','height':'35px'}" formControlName="totalExperience" (completeMethod)="filterExperience($event)" field="level" [suggestions]="filteredExpirience" [inputStyle]="{ 'width': '100%'}"
+                            placeholder="{{'all' | translate}}">
+                        </p-autoComplete>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <button pButton type="button" class="p-button-outlined mr-2" label="{{ 'apply' | translate}}" (click)="filterJobBidDetail()"></button>
+                        <button pButton type="button" class="p-button-danger" label="{{ 'clear' | translate}}" (click)="clear()"></button>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12 text-right">
+            <button pButton type="button" class="p-button" label="{{ 'review.&.offer' | translate}}" (click)="reviewAndOffer()" [disabled]="!this.flag"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="datatable-card">
+
+                <p-table #dt [columns]="selectedColumns" [value]="workers" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-gridlines" scrollHeight="400px">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 200px;">
+                            <col style="width: 200px;" *ngFor="let col of columns">
+                        </colgroup>
+                    </ng-template>
+
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th pResizableColumn>{{'shortlist' | translate}}</th>
+                            <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex" let-columns="columns">
+                        <tr>
+                            <td *ngIf="!isWorkerSelected(data.jobBidDetail.id)" class="text-center">
+
+                                <input type="checkbox" (change)="onSelectWorker(data)" id={{data.jobBidDetail.id}} checked>
+                                <label class="star" for={{data.jobBidDetail.id}}></label>
+
+                            </td>
+                            <td *ngIf="isWorkerSelected(data.jobBidDetail.id)" class="text-center">
+
+                                <input type="checkbox" (change)="removeFromSelectedWorker(data)" id={{data.jobBidDetail.id}}>
+                                <label class="star" for={{data.jobBidDetail.id}}></label>
+                            </td>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'worker'">
+                                    <p-button (click)="redirectToWorker(data.jobBidDetail.worker.id)" styleClass="p-button-link">{{data.jobBidDetail.worker.firstName}} {{data.jobBidDetail.worker.lastName}}</p-button>
+                                </div>
+                                <div *ngSwitchCase="'jobDetail'">
+                                    {{data.jobBidDetail.jobDetail.jobTitle.title}}
+                                </div>
+                                <div *ngSwitchCase="'workerAnnualSalary'">
+                                    {{data.jobBidDetail.workerAnnualSalary | currency: 'USD'}}
+                                </div>
+                                <div *ngSwitchCase="'workerHourlyRate'">
+                                    {{data.jobBidDetail.workerHourlyRate | currency: 'USD'}}
+                                </div>
+                                <div *ngSwitchCase="'workerCity'">
+                                    {{data.jobBidDetail.workerProfile.city}}
+                                </div>
+                                <div *ngSwitchCase="'workerState'">
+                                    {{data.jobBidDetail.workerProfile.state}}
+                                </div>
+                                <div *ngSwitchCase="'workerTotalExperience'">
+                                    <p *ngIf="data[col.field]!==null ; else none">
+                                        {{data[col.field]}}
+                                    </p>
+                                    <ng-template #none>
+                                        <p> New Worker </p>
+                                    </ng-template>
+                                </div>
+                                <div *ngSwitchCase="'workerAvgRating'">
+                                    {{data[col.field]}}
+                                </div>
+                                <div *ngSwitchCase="'workerSuccessRatio'">
+                                    {{data[col.field]}}
+                                </div>
+                                <div *ngSwitchCase="'workerTentativeStartDate'">
+                                    {{data.jobBidDetail.workerTentativeStartDate | date:'longDate'}}
+                                </div>
+                                <div *ngSwitchCase="'certificates'">
+                                    <p-button label="View" styleClass="p-button-link p-1" (click)="showCertificateDialog(data.jobBidDetail.id)"></p-button>
+                                </div>
+                                <div *ngSwitchCase="'screeningQuestions'">
+                                    <p-button label="View" styleClass="p-button-link p-1" (click)="showScreeningQuestionsDialog(data.jobBidDetail.id)"></p-button>
+
+                                </div>
+                        </tr>
+                        <div class="Dialog_Common">
+                            <p-dialog header="Certificates" [style]="{width: '450px'}" [(visible)]="displayCertificate" (onHide)="hideCertificateDialog()">
+                                <div *ngIf="certificates; else noCertificate">
+                                    <div *ngFor="let certificate of certificates">
+                                        {{certificate.certificate.name}}
+                                    </div>
+                                </div>
+                                <ng-template #noCertificate>
+                                    {{'no.certificates' | translate}}
+                                </ng-template>
+
+                                <ng-template pTemplate="footer">
+                                    <button pButton pRipple label="{{'close' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideCertificateDialog()"></button>
+                                </ng-template>
+                            </p-dialog>
+                        </div>
+                        <div class="Dialog_Common">
+                            <p-dialog header="Screening Questions" [style]="{width: '450px'}" [(visible)]="displayScreeningQuestions" (onHide)="hideScreeningDialog()">
+                                <div *ngIf="screeningQuestions.length > 0; else zeroScreeningQuestion">
+                                    <div *ngFor="let screeningQuestion of screeningQuestions">
+                                        <div> {{screeningQuestion.question.questionNo}}. {{screeningQuestion.question.question}}</div>
+                                        <div>answer: {{screeningQuestion.answer}} </div>
+                                    </div>
+
+                                </div>
+                                <ng-template #zeroScreeningQuestion>
+                                    {{'no.screening.questions' | translate}}
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <button pButton pRipple label="{{'close' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideScreeningDialog()"></button>
+                                </ng-template>
+                            </p-dialog>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="selectedColumns.length + 1" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+
+
+            </div>
+        </div>
+        <div class="col-xl-4 mt-5">
+            <div class="datatable-card mt-5">
+
+                <p-table #dt [value]="selectedWorkers" [lazy]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines"
+                    [scrollable]="true" scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 50px;">
+
+
+                        </colgroup>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns1" [hidden]="col.isHidden" pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                        <ng-container>
+                            <tr>
+                                <td>{{data.jobBidDetail.worker.firstName}} {{data.jobBidDetail.worker.lastName}}</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <a style="color:red;" class="btn" (click)="removeFromSelectedWorker(data)">
+                                                <i class="fa fa-remove"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-2">
+                                            <button class="btn" (click)="showMessageDialog(data.jobBidDetail.worker)">
+                                    <i class="fa fa-envelope"></i>
+                                </button>
+                                        </div>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </ng-container>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="2" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+                {{'maximum.10.selection.allowed' | translate}}
+            </div>
+        </div>
+    </div>
+    <div class="Dialog_Common">
+        <p-dialog [(visible)]="dialog" [style]="{width: '500px'}" (onHide)="hideDialog()" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid">
+
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="myChatForm" (ngSubmit)="sendMessage()">
+
+                    <div class="p-field">
+                        <label>{{'message' | translate}}</label>
+                        <textarea pInputText formControlName="message" placeholder="{{'enter.message' | translate}}" maxLength="1000"></textarea>
+                        <div class="p-invalid" *ngIf="(submitted && !myChatForm.get('message').valid) || (!myChatForm.get('message').valid && myChatForm.get('message').touched)">
+                            <div *ngIf="(myChatForm.get('message').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-field">
+                        <label>{{ 'upload.documents' | translate }}</label>
+                        <div class="custom-file">
+                            <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                <ngx-dropzone-label>{{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                </ngx-dropzone-label>
+                            </ngx-dropzone>
+                        </div>
+                    </div>
+                </form>
+                <div *ngIf="files">
+                    <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                        <p>
+                            {{file.name}}
+                        </p>
+                        <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></button>
+                    </div>
+                </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="{{'send' | translate}}" *ngIf="!isInEditMode" icon="pi pi-check" class="p-button-text" (click)="uploadFile()"></button>
+            </ng-template>
+
+        </p-dialog>
+    </div>

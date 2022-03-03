@@ -1,0 +1,63 @@
+
+    @keyframes ui-progress-spinner-color {
+      100%,
+      0% {
+        stroke: #ffffff;
+      }
+      40% {
+        stroke: #ffffff;
+      }
+      66% {
+        stroke: #ffffff;
+      }
+    
+      80%,
+      90% {
+        stroke: #ffffff;
+      }
+    }
+    .customProgress {
+      animation: ui-progress-spinner-color;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    
+    .navbar {
+      background: #0c73cc !important;
+    }
+    
+    .dropdown {
+      border-radius: 0;
+      border: 0;
+    }
+    .dropdown-menu {
+      background: #0c73cc;
+      border: 0;
+      top: 80%;
+      border-radius: 0px 0px 5px 5px;
+    }
+    .dropdown-item:hover {
+      background: #085ca5;
+      color: #fff;
+    }
+    .dropdown-menu a {
+      color: #fff;
+    }
+    .navbar .nav-item .nav-link {
+      color: #eee !important;
+    }
+    .navbar .nav-item .nav-link:hover .navbar .nav-item .nav-link {
+      color: red !important;
+    }
+    
+    .c-p {
+      cursor: pointer;
+    }
+    .m-r-15 {
+      margin-right: 15px;
+    }
+    li {
+      cursor: pointer;
+    }
+    

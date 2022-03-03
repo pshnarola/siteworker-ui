@@ -1,0 +1,130 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" *ngIf="showButtons" type="button" (click)="addContentMsa()" label="{{ 'add.new' | translate }} "></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field p-fluid">
+                                <label for="contentMsaSearch" class="search-field">{{ 'search' | translate }} : </label>
+                                <input type="text" id="contentMsaSearch" [(ngModel)]="contentMsaFilterValue" class="form-control search-field" placeholder="Filter by Type" [pKeyFilter]="blockSpecial" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-3">
+                            <button pButton class="p-button-outlined" type="button" (click)="filter()" label="{{ 'search'| translate}}"></button>&nbsp;&nbsp;
+                            <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" class="" #dt [value]="contentMsaData" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} content msa" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col style="width: 20%;">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-contentMsa>
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td> V{{contentMsa.version}}.0</td>
+                        <td>{{contentMsa.type === 'JOBS' ? 'Jobs' : 'Project'}}</td>
+                        <td>{{contentMsa.createdDate | date:'shortDate'}}</td>
+                        <td>{{contentMsa.isActive ? "Active" : "Inactive"}}</td>
+                        <td>
+                            <p-button styleClass="p-button-sm" tooltipPosition="bottom" class="mr-2 CloseOut_grid_btn" icon="pi pi-check" pTooltip="Activate" (click)="openDialog(contentMsa.id,contentMsa.version,contentMsa.isActive)" *ngIf="!contentMsa.isActive"></p-button>
+                            <p-button styleClass="p-button-sm" tooltipPosition="bottom" class="ml-1 msa-content-view" icon="pi pi-eye" pTooltip="View MSA Content" (click)="openMSADialog(contentMsa)"></p-button>
+
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- dialog -->
+<p-dialog [(visible)]="contentMsaDialog" [style]="{width: '450px'}" header="{{'add.content.msa' | translate}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="orders">{{ 'types' | translate }}*</label>
+                <p-dropdown [options]="types" formControlName="type" placeholder="Select type"></p-dropdown>
+                <div class="p-invalid" *ngIf="(submitted && !myForm.get('type').valid) || 
+                        (!myForm.get('type').valid && myForm.get('type').touched) ">
+                    <div *ngIf=" ( myForm.get('type').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <div class="row">
+                    <p-editor #ed [style]="{'height':'320px'}" formControlName="content">
+                    </p-editor>
+                </div>
+                <div class="p-invalid" *ngIf="(submitted && !myForm.get('content').valid) || 
+                        (!myForm.get('content').valid && myForm.get('content').touched) ">
+                    <div *ngIf=" ( myForm.get('content').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+                <div class="p-invalid" *ngIf="myForm.get('content').touched && 
+                (myForm.get('content').hasError('maxlength') && 
+                !myForm.get('content').valid)">
+                    {{'content.maxLength' | translate}}
+                </div>
+            </div>
+
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog header="View MSA Content" [style]="{width: '600px'}" [(visible)]="contentDialog" (onHide)="closeMSADialog()">
+    <div [innerHtml]="MSAContent">
+    </div>
+</p-dialog>

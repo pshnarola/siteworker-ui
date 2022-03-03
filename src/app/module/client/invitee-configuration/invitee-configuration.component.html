@@ -1,0 +1,105 @@
+<div class="container-fluid">
+
+    <div class="row mt-5">
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 mt-3">
+                    <h4 class="my-2">{{'project.invitation.settings' | translate }}</h4>
+                    <form [formGroup]="projectInviteeConfigurationForm">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 filed-margin p-fluid form-group mr-auto">
+                                <label for="preferredStates">{{'preferred.states' | translate}}</label>
+                                <p-autoComplete placeholder="Select State" [multiple]="true" [minLength]="3" field="name" formControlName="states" [suggestions]="filteredProjectPreferredState" (completeMethod)="filterProjectPreferredState($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" [forceSelection]="true">
+                                </p-autoComplete>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group mt-4 mr-auto">
+                                <p-checkbox class="mr-3" formControlName="industryMatch" binary="true"> </p-checkbox>
+                                <span class="custom-fw" for="preferredStates">{{'industry.type.match' |
+                                    translate}}</span>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group slider-margin">
+                                <label for="preferredStates">{{'success.ratio' | translate}} :
+                                    {{projectInviteeConfigurationForm.value.rangeValuesProjectSuccessRatio[0]}} -
+                                    {{projectInviteeConfigurationForm.value.rangeValuesProjectSuccessRatio[1]}} (%)</label>
+                                <span class="ml-3">
+                                    <p-slider formControlName="rangeValuesProjectSuccessRatio" [range]="true">
+                                    </p-slider>
+                                </span>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group slider-margin">
+                                <label for="preferredStates">Average Quality Rating:
+                                    {{projectInviteeConfigurationForm.value.rangeValuesProjectAverageRating[0]}} -
+                                    {{projectInviteeConfigurationForm.value.rangeValuesProjectAverageRating[1]}}</label>
+                                <span class="ml-3">
+                                    <p-slider formControlName="rangeValuesProjectAverageRating" [range]="true"
+                                        [max]="5">
+                                    </p-slider>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="project-margin">
+                        <b class="mr-1">Note:</b>While Posting Project the Subcontractor Invitee list will appear by default according to this configuration.
+                    </p>
+                </div>
+            </div>
+        </div>
+      
+        <div class="col-md-5 border-left">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 mt-3">
+                    <h4 class="my-2">{{'job.invitation.settings' | translate }}</h4>
+                    <form [formGroup]="jobInviteeConfigurationForm">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 filed-margin p-fluid form-group mr-auto">
+                                <label for="preferredStates">{{'preferred.states' | translate}}</label>
+                                <p-autoComplete placeholder="Select State" [multiple]="true" [minLength]="3" field="name" [unique]="true" formControlName="states" [suggestions]="filteredJobPreferredState" (completeMethod)="filterJobPreferredState($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" [forceSelection]="true">
+                                </p-autoComplete>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group mt-4">
+                                <p-checkbox class="mr-3" formControlName="certificateMatch" binary="true"> </p-checkbox>
+                                <span class="custom-fw" for="preferredStates">{{'certificate.match' | translate}}</span>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group mt-4">
+                                <p-checkbox class="mr-3" formControlName="jobTitleMatch" binary="true"> </p-checkbox>
+                                <span class="custom-fw" for="preferredStates">{{'jobtitle.match' | translate}}</span>
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group mr-auto slider-margin">
+                                <label for="preferredStates">{{'success.ratio' | translate}} :
+                                    {{jobInviteeConfigurationForm.value.rangeValuesJobSuccessRatio[0]}} -
+                                    {{jobInviteeConfigurationForm.value.rangeValuesJobSuccessRatio[1]}} (%)</label>
+                                <span class="ml-3">
+                                    <p-slider formControlName="rangeValuesJobSuccessRatio" [range]="true"></p-slider>
+                                </span>
+
+                            </div>
+                            <div class="col-lg-12 col-md-12 filed-margin form-group mr-auto slider-margin">
+                                <label for="preferredStates">Average Quality Rating:
+                                    {{jobInviteeConfigurationForm.value.rangeValuesJobAverageRating[0]}} -
+                                    {{jobInviteeConfigurationForm.value.rangeValuesJobAverageRating[1]}}</label>
+                                <span class="ml-3">
+                                    <p-slider formControlName="rangeValuesJobAverageRating" [range]="true" [max]="5">
+                                    </p-slider>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="job-margin">
+                        <b class="mr-1">Note:</b>While Posting Job the Worker Invitee list will appear by default according to this configuration.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-lg-12 mt-3">
+            <hr>
+            <button class="m-5" pButton pRipple label="Save" class="mx-2 float-right" (click)="onSubmit()"></button>
+        </div>
+
+    </div>
+
+
+</div>

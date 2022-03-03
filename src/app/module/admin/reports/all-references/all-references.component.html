@@ -1,0 +1,244 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <p-tabView styleClass="tabview-custom" (onChange)="handleChange($event)">
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <span>{{'subcontractor' | translate}}</span>
+                    </ng-template>
+                    <div class="col-xl-12 text-right my-2">
+                        <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin" icon="fa fa-filter"></button>
+                    </div>
+                    <ng-container>
+                        <div class="col-xl-12 my-3">
+                            <form [formGroup]="myForm" *ngIf="isFilterOpened">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <div class="p-field p-fluid">
+                                            <label>{{ 'reference.given.by' | translate }} : </label>
+                                            <p-autoComplete minLength="3" formControlName="referenceGivenBySubcontractor" placeholder="{{'enter' |translate}}" forceSelection="true" [suggestions]="subcontractorReferences" (completeMethod)="getSubcontractorByName($event)" delay="2000" [multiple]="true">
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="p-field">
+                                            <label>{{ 'start.date' | translate }} : </label>
+                                            <p-calendar formControlName="startDateSubcontractor" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="p-field">
+                                            <label>{{ 'end.date' | translate }} : </label>
+                                            <p-calendar formControlName="endDateSubcontractor" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 d-inline mt-2">
+                                        <button pButton type="button" class="p-button-outlined mr-3" (click)="filterSubcontractorReference()" label="{{ 'apply' | translate}}"></button>
+                                        <button pButton type="button" class="bg-admin" (click)="clearSubcontractorReference()" label="{{ 'clear' | translate}}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-xl-12">
+                            <p-table #dt [columns]="selectedColumns" [value]="referenceList" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                                [totalRecords]="totalRecords" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                                <ng-template pTemplate="caption">
+                                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelSubcontractorRefrences()" class="bg-admin p-mr-2" pTooltip="{{'export.to.excel' | translate}}" tooltipPosition="bottom" *ngIf="referenceList.length > 0"></button>
+                                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '250px'}" placeholder="Choose Columns"></p-multiSelect>
+
+
+                                </ng-template>
+                                <ng-template pTemplate="colgroup" let-columns>
+                                    <colgroup>
+                                        <col style="width: 250px;" *ngFor="let col of columns">
+                                    </colgroup>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                            {{col.label}}
+                                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-reference let-i="rowIndex" let-columns="columns">
+                                    <tr>
+                                        <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                            <div *ngSwitchCase="'name'">
+                                                {{reference.fullName}}
+                                            </div>
+                                            <div *ngSwitchCase="'title'">
+                                                {{reference.jobTitle}}
+                                            </div>
+                                            <div *ngSwitchCase="'companyName'">
+                                                {{reference.companyName}}
+                                            </div>
+                                            <div *ngSwitchCase="'email'">
+                                                {{reference.email}}
+                                            </div>
+                                            <div *ngSwitchCase="'workPhone'">
+                                                {{reference.workPhone}}
+                                            </div>
+                                            <div *ngSwitchCase="'mobilePhone'">
+                                                <span *ngIf="reference.mobilePhone; else none;">
+                                                    {{reference.mobilePhone}}
+                                                </span>
+                                                <ng-template #none>
+                                                    {{'n.a' | translate}}
+                                                </ng-template>
+
+                                            </div>
+                                            <div *ngSwitchCase="'addedBy'">
+                                                <!-- {{reference.createdDate}}
+                                                 -->
+                                                {{reference.user.firstName}} {{reference.user.lastName}}
+
+                                            </div>
+                                            <div *ngSwitchCase="'addedOn'">
+                                                <!-- {{reference.createdDate}}
+                                                 -->
+                                                {{reference.createdDate | date: shortDate}}
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="8" class="text-center">
+                                            {{'no.record.found' | translate}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
+                        </div>
+
+
+
+
+
+                    </ng-container>
+
+                </p-tabPanel>
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <span>{{'worker' | translate}}</span>
+                    </ng-template>
+                    <div class="col-xl-12 text-right my-3">
+                        <button pButton pRipple type="button" (click)="onFilterOpenWorker()" label="{{'filter' | translate}}" class="bg-admin" icon="fa fa-filter"></button>
+                    </div>
+                    <ng-container>
+
+
+                        <div class="col-xl-12 my-3">
+                            <form [formGroup]="myWorkerForm" *ngIf="isWorkerFilterOpenend">
+                                <div class="row">
+                                    <div class="col-xl-4">
+                                        <div class="p-field p-fluid">
+                                            <label>{{ 'reference.given.by' | translate }} : </label>
+                                            <p-autoComplete minLength="3" formControlName="referenceGivenByWorker" [multiple]="true" placeholder="{{'enter' |translate}}" forceSelection="true" [suggestions]="workerReferences" (completeMethod)="getWorkerByName($event)" delay="2000">
+                                            </p-autoComplete>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="p-field">
+                                            <label>{{ 'start.date' | translate }} : </label>
+                                            <p-calendar formControlName="startDateWorker" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div class="p-field">
+                                            <label>{{ 'end.date' | translate }} : </label>
+                                            <p-calendar formControlName="endDateWorker" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 d-inline">
+                                        <button pButton type="button" class="p-button-outlined mr-3" (click)="filterWorkerReference()" label="{{ 'apply' | translate}}"></button>
+                                        <button pButton type="button" class="bg-admin" (click)="clearWorkerReference()" label="{{ 'clear' | translate}}"></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-xl-12">
+                            <p-table #dt [columns]="selectedColumnsWorker" [value]="workerReferenceList" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true"
+                                styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords">
+                                <ng-template pTemplate="caption">
+                                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelWorkerRefrences()" class="bg-admin p-mr-2" pTooltip="{{'export.to.excel' | translate}}" tooltipPosition="bottom" *ngIf="workerReferenceList"></button>
+
+                                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumnsWorker" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '250px'}" placeholder="Choose Columns"></p-multiSelect>
+                                </ng-template>
+                                <ng-template pTemplate="colgroup" let-columns>
+                                    <colgroup>
+                                        <col style="width: 250px;" *ngFor="let col of columns">
+                                    </colgroup>
+                                </ng-template>
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                            {{col.label}}
+                                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-reference let-i="rowIndex" let-columns="columns">
+                                    <tr>
+                                        <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                            <div *ngSwitchCase="'name'">
+                                                {{reference.fullName}}
+                                            </div>
+                                            <div *ngSwitchCase="'title'">
+                                                {{reference.jobTitle}}
+                                            </div>
+                                            <div *ngSwitchCase="'companyName'">
+                                                {{reference.companyName}}
+                                            </div>
+                                            <div *ngSwitchCase="'email'">
+                                                {{reference.email}}
+                                            </div>
+                                            <div *ngSwitchCase="'workPhone'">
+                                                {{reference.workPhone}}
+                                            </div>
+                                            <div *ngSwitchCase="'mobilePhone'">
+                                                <span *ngIf="reference.mobilePhone; else none;">
+                                                {{reference.mobilePhone}}
+                                            </span>
+                                                <ng-template #none>
+                                                    {{'n.a' | translate}}
+                                                </ng-template>
+
+                                            </div>
+                                            <div *ngSwitchCase="'addedBy'">
+                                                <!-- {{reference.createdDate}}
+                                             -->
+                                                {{reference.user.firstName}} {{reference.user.lastName}}
+
+                                            </div>
+                                            <div *ngSwitchCase="'addedOn'">
+                                                <!-- {{reference.createdDate}}
+                                             -->
+                                                {{reference.createdDate | date: shortDate}}
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="8" class="text-center">
+                                            {{'no.record.found' | translate}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
+                        </div>
+
+                    </ng-container>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>

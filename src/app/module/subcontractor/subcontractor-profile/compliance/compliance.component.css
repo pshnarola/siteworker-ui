@@ -1,0 +1,36 @@
+.card {
+    padding: 10px;
+}
+
+.card-bg {
+    background-color: lightsalmon;
+    margin: 10px 0 10px 0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+
+
+
+.steps {
+    margin: 10px;
+}
+
+ngb-accordion {
+    padding: 20px;
+}
+
+
+/* input,
+select,
+option,
+textarea {
+    border-radius: 15px;
+} */
+
+ngx-dropzone,
+img {
+    margin: 10px;
+    height: 50px;
+}

@@ -1,0 +1,145 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" type="button" (click)="addIndustryType()" label="{{'add.new' | translate}}" *ngIf="showButtons"></button>
+            <button pButton class="bg-admin" type="button" *ngIf="showButtons" (click)="disableSelectedIndustryType()" label="{{ 'disable.selected' | translate}}" pTooltip="{{'disable.selected.industry.type' | translate}}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field p-fluid">
+                                <label for="name">{{ "industry.name" | translate }} : </label>
+                                <input type="text" id="industry_searchbox" [(ngModel)]="indstryTypeFilterValue" class="form-control" placeholder="{{'type.to.filter' | translate}}" [pKeyFilter]="blockSpecial" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-3">
+                            <button pButton class="p-button-outlined" (click)="filter()" label="{{'search'|translate}}"></button>&nbsp;&nbsp;
+                            <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [(selection)]="selectedIndustryType" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [paginator]="true" [rows]="tableRowSize"
+                    [totalRecords]="totalRecords" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} industry types" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="tablePaginateDropdown">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 10%;">
+                            <col style="width: 10%;">
+                            <col style="width: 20%;">
+                            <col style="width: 20%;">
+                            <col style="width: 20%;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pResizableColumn>{{ "sr.no" | translate}}</th>
+                            <th pResizableColumn>{{ "logo" | translate}}</th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-industryType>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="industryType"></p-tableCheckbox>
+                            </td>
+                            <td>{{i+1}}</td>
+                            <td>
+                                <img *ngIf="industryType.logo else noImage" src="{{imageUrl + industryType.logo}}" class="img-responsive" style="max-height: 40px;">
+                                <ng-template #noImage>
+                                    <img src="{{industryImageUrl}}" class="img-responsive" style="max-height: 40px;">
+                                </ng-template>
+                            </td>
+                            <td>{{industryType.name}}</td>
+                            <td>
+
+                                <button [disabled]="btnDisabled" class="btn btn-sm btn-success mr-2" (click)="editIndustryType(industryType)" pTooltip="{{'edit'| translate}}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button [disabled]="btnDisabled" class="btn btn-sm btn-warning mr-2" *ngIf="!industryType.isEnable" (click)="openDialog(industryType.id,industryType.name,industryType.isEnable)" pTooltip="{{'enable.industry.type'|translate}}">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </button>
+                                <button [disabled]="btnDisabled" class="btn btn-sm btn-danger" *ngIf="industryType.isEnable" (click)="openDialog(industryType.id,industryType.name,industryType.isEnable)" pTooltip="{{'disable.industry.type'|translate}}">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="5" class="text-center">
+                                {{'no.record.found'| translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<p-dialog [(visible)]="industryTypeDialog" [style]="{width: '450px'}" (onHide)="hideDialog()" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="industryTypeForm">
+            <div class="p-field">
+                <label for="name">{{ "industry.name" | translate }}* </label>
+                <input class="form-control" type="text" placeholder="Enter Industry Name" pInputText id="name" formControlName="name" required [pKeyFilter]="blockSpecial" maxLength="50" />
+                <div class="p-invalid" *ngIf="industryTypeForm.controls['name'].touched && (industryTypeForm.controls['name'].hasError('required') && !industryTypeForm.controls['name'].valid)
+                    || (submitted && (industryTypeForm.controls['name'].hasError('required') && !industryTypeForm.controls['name'].valid))">
+                    {{'required' | translate}}</div>
+            </div>
+            <div class="p-field">
+                <label for="logo">{{ "upload.logo" | translate }} : </label>
+
+                <ngx-dropzone [accept]="'image/*'" [maxFileSize]="10000000" (change)="onLogoSelect($event)">
+                    <ngx-dropzone-label> {{ 'drag.and.drop.placeholder' | translate }} </ngx-dropzone-label>
+                    <ngx-dropzone-preview *ngFor="let f of files" [multiple]='false' [removable]="true" (removed)="onRemoveLogo(f)">
+                        <ngx-dropzone-label style="margin: 10px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                    </ngx-dropzone-preview>
+                </ngx-dropzone>
+            </div>
+            <div *ngIf="logoToShow.length !== 0">
+                <div class="card uploaded-files p-chip" *ngFor="let file of logoToShow;let i = index">
+                    <p>{{file.name}}</p>
+                    <button pButton pRipple icon="pi pi-times" (click)="openWarnigDialogToDelete(file)" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete"> </button>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="singleImageView">
+            <div class="p-field">
+                <label for="name" class="py-2 my-2 px-2">{{'uploaded.logo' | translate }}</label>
+                <img *ngIf="singleImageView else noImage" [src]="singleImageView" class="img-responsive" style="max-height: 40px;">
+            </div>
+        </div>
+        <ng-template #noImage>{{'no.image' | translate}}</ng-template>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button (click)="onAddIndustryType()" pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined"></button>
+    </ng-template>
+
+</p-dialog>

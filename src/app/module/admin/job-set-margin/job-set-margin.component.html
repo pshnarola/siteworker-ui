@@ -1,0 +1,126 @@
+<div class="container-fluid" *ngIf="marginData; else noMarginData">
+    <div class="row">
+        <div class="col-xl-12 bg-admin p-2 text-white">
+            <h4 class="font-weight-bold">
+                Set Margin <span *ngIf="selectedJob">/{{selectedJob.title}}</span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4">
+                            {{'employment.type' | translate}}
+                        </div>
+                        <div class="col-xl-4">
+                            {{selectedJob.employmentType === 'WORKER_1099'? 'Temporary Worker': selectedJob.employmentType === 'WORKER_W2' ? 'Temporary Worker': 'Full-time Employee'}}
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4">
+                            <span *ngIf="selectedJob.employmentType === 'WORKER_1099' || selectedJob.employmentType === 'WORKER_W2'">
+                                {{'pay.rate' | translate}}
+                            </span>
+                            <span *ngIf="!(selectedJob.employmentType === 'WORKER_1099' || selectedJob.employmentType === 'WORKER_W2')">
+                                Annual Salary
+                            </span>
+                        </div>
+                        <div class="col-xl-4">
+                            {{marginData.payRate | currency:'USD' }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3"></div>
+                        <div class="col-xl-3">
+                            {{'current.value' | translate}}
+                        </div>
+                        <div class="col-xl-3 ml-3">
+                            {{'new.value' | translate}}
+                        </div>
+                    </div>
+                    <div *ngIf="myForm">
+                        <form [formGroup]="myForm">
+                            <div class="row">
+                                <div class="col-xl-3">
+                                    %{{'value' | translate}}
+                                </div>
+                                <div class="col-xl-2">
+                                    {{marginData.currentMarginPercentage | number : '1.2-2'}} %
+                                </div>
+                                <div class="col-xl-1 text-right px-0">
+                                    <span class="invisible">$</span>
+                                </div>
+                                <div class="col-xl-3">
+                                    
+                                    <p-inputNumber inputId="minmaxfraction" maxlength="6" formControlName="percentValue" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" (onInput)="onEnterNewPercent($event)" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2">
+                                    </p-inputNumber>
+                                    <div class="p-invalid" *ngIf="(submitted && !myForm.get('percentValue').valid) || (!myForm.get('percentValue').valid && myForm.get('percentValue').touched) ">
+                                        <div *ngIf="(myForm.get('percentValue').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                        <div *ngIf="(myForm.get('percentValue').errors.min)">
+                                            Margin % must be greater than zero </div>
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    %
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-xl-3">
+                                    {{'platform.fee' | translate}}
+                                </div>
+                                <div class="col-xl-2">
+                                    {{marginData.platformFee | currency:'USD' }}
+                                </div>
+                                <div class="col-xl-1 text-right px-0">
+                                    <span>$</span>
+                                </div>
+                                <div class="col-xl-3">
+                                   
+                                    <p-inputNumber inputId="minmaxfraction" maxlength="9" [max]="marginData.payRate" formControlName="platformFee" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" (onInput)="onEnterNewPlateformFee($event)" (onBlur)="onBlur($event)" mode="decimal"
+                                        [minFractionDigits]="2" [maxFractionDigits]="2">
+                                    </p-inputNumber>
+                                    <div class="p-invalid" *ngIf="(submitted && !myForm.get('platformFee').valid) || (!myForm.get('platformFee').valid && myForm.get('platformFee').touched) ">
+                                        <div *ngIf="(myForm.get('platformFee').errors.min)">
+                                            Platform fee must be greater than zero </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-xl-3" *ngIf="selectedJob.employmentType === 'WORKER_1099' || selectedJob.employmentType === 'WORKER_W2'">
+                                    {{'hourly.rate.plus.platform.fee' | translate}}
+                                </div>
+                                <div class="col-xl-3" *ngIf="selectedJob.employmentType === 'FULL_TIME'">
+                                    {{'salary.plus.platform.fee' | translate}}
+                                </div>
+                                <div class="col-xl-2">
+                                    {{marginData.summedPlatformFee | currency:'USD' }}
+                                </div>
+                                <div class="col-xl-1 text-right px-0">
+                                    <span>$</span>
+                                </div>
+                                <div class="col-xl-3">
+                                    <p-inputNumber inputId="minmaxfraction" formControlName="hourlyRatePlusPlatformFee" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="true">
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button class="p-button-outlined" [disabled]="btnDisabled" pButton (click)="save()" label="{{'save' | translate}}"></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+        
+    </div>
+    <ng-template #noMarginData>
+        <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+    </ng-template>

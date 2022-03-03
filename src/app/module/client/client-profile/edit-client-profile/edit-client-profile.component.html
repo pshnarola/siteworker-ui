@@ -1,0 +1,259 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 col-lg-3 text-center">
+            <ng-container style="max-height: 150px; max-width: 150px;">
+                <ng-container *ngIf="(singleImageView && showPreview) || showPreview; else single">
+                    <ngx-dropzone-image-preview [multiple]="false" *ngFor="let f of profileFile" [file]="f">
+                    </ngx-dropzone-image-preview>
+                </ng-container>
+            </ng-container>
+            <ng-template #single>
+                <ng-container *ngIf="!displayDummyImage">
+                    <div>
+                        <img width="150" [src]="singleImageView" class="img-responsive">
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="displayDummyImage">
+                    <div style="background-color: #3A7CEC;" class="circle">
+                        <span>{{client.user.firstName.substring(0,1)+client.user.lastName.substring(0,1)
+                            }}</span>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </div>
+
+        <div class="col-md-6 align-self-center">
+            <ngx-dropzone [accept]="'image/png,image/jpeg'" [multiple]='false' [maxFileSize]="5000000"
+                (change)="onSelect($event)">
+                <ngx-dropzone-label>{{ 'drag.drop.placeholder' | translate }}</ngx-dropzone-label>
+            </ngx-dropzone>
+            <p class="text-center text-muted small">User should upload 150px x 150px image for optimum result.</p>
+        </div>
+    </div>
+
+    <form [formGroup]="_clientProfileService.clientEditForm">
+
+        <div class="row">
+            <div class="col-lg-2 col-md-6 form-group" formGroupName="user">
+                <label for="companName">{{'firstname' | translate}}*</label>
+                <input type="text" maxlength="50" formControlName="firstName" pInputText class="form-control"
+                    id="companName" placeholder="Enter First Name" required>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('user.firstName').valid) || (!_clientProfileService.clientEditForm.get('user.firstName').valid && _clientProfileService.clientEditForm.get('user.firstName').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('user.firstName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 form-group" formGroupName="user">
+                <label for="companName">{{'lastname' | translate}}*</label>
+                <input type="text" maxlength="50" formControlName="lastName" pInputText class="form-control"
+                    id="companName" placeholder="Enter Last Name" required>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('user.lastName').valid) || (!_clientProfileService.clientEditForm.get('user.lastName').valid && _clientProfileService.clientEditForm.get('user.lastName').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('user.lastName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('user.lastName').errors.maxlength">
+                        {{'fifty.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 form-group">
+                <label for="companName">{{'company.name' | translate}}*</label>
+                <input type="text" maxlength="50" formControlName="companyName" pInputText class="form-control"
+                    id="companName" placeholder="Enter Company Name" required [pKeyFilter]="blockSpecial">
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('companyName').valid) || (!_clientProfileService.clientEditForm.get('companyName').valid && _clientProfileService.clientEditForm.get('companyName').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('companyName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('companyName').errors.maxlength">
+                        {{'fifty.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 form-group" formGroupName="user">
+                <label for="companEmail">{{'company.email' | translate}}</label>
+                <input type="text" formControlName="email" disabled pInputText class="form-control" id="companEmail"
+                    placeholder="Enter Company Email">
+            </div>
+            <div class="col-lg-4 col-md-6 form-group Common_all">
+                <label for="companPhone">{{'company.phone' | translate}}*</label>
+                <br>
+                <p-inputMask id="companyPhone" mask="(999) 999-9999" required formControlName="companyPhone"
+                    placeholder="Enter Company Phone"></p-inputMask>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('companyPhone').valid) || (!_clientProfileService.clientEditForm.get('companyPhone').valid && _clientProfileService.clientEditForm.get('companyPhone').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('companyPhone').errors.required) ">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('companyPhone').errors.maxlength">
+                        {{'ten.maxlength' | translate}} </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-4 col-md-6 form-group">
+                <label for="contactName"> {{'contact.name' | translate}}*</label>
+                <input type="text" maxlength="50" formControlName="contactName" pInputText class="form-control"
+                    id="contactName" placeholder="Enter Contact Name" required [pKeyFilter]="blockSpecial">
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('contactName').valid) || (!_clientProfileService.clientEditForm.get('contactName').valid && _clientProfileService.clientEditForm.get('contactName').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('contactName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('contactName').errors.maxlength">
+                        {{'fifty.maxlength' | translate}} </div>
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-6 form-group">
+                <label for="contactEmail"> {{'contact.email' | translate}}*</label>
+                <input type="text" maxlength="100" formControlName="contactEmail" pInputText class="form-control"
+                    id="contactEmail" placeholder="Enter Contact Email" required>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('contactEmail').valid) || (!_clientProfileService.clientEditForm.get('contactEmail').valid && _clientProfileService.clientEditForm.get('contactEmail').touched)">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('contactEmail').errors.required) ">
+                        {{'required' | translate}} </div>
+
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('contactEmail').errors.maxlength">
+                        {{'hundred.maxlength' | translate}} </div>
+                    <div class="p-invalid" *ngIf=" (!_clientProfileService.clientEditForm.get('contactEmail').valid) ">
+
+                        <div *ngIf="_clientProfileService.clientEditForm.get('contactEmail').dirty &&
+                                (_clientProfileService.clientEditForm.get('contactEmail').errors.incorrectEmailFormat &&
+                                !_clientProfileService.clientEditForm.get('contactEmail').errors.required)">
+                            {{'invalid.email' | translate}} </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-md-6 form-group Common_all">
+                <label for="contactPhone"> {{'contact.phone' | translate}}*</label>
+                <br>
+                <p-inputMask id="contactPhone" mask="(999) 999-9999" required formControlName="contactPhone"
+                    placeholder="Enter Contact Phone"></p-inputMask>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('contactPhone').valid) || (!_clientProfileService.clientEditForm.get('contactPhone').valid && _clientProfileService.clientEditForm.get('contactPhone').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('contactPhone').errors.required) ">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('contactPhone').errors.maxlength">
+                        {{'ten.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-md-4 form-group">
+                <label for="yearFounded">{{'year.found' | translate}}*</label>
+                <input type="text" maxlength="4" pKeyFilter="pint" formControlName="yearFounded" pInputText
+                    class="form-control" id="yearFounded" placeholder="Enter Year Founded" required>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('yearFounded').valid) || (!_clientProfileService.clientEditForm.get('yearFounded').valid && _clientProfileService.clientEditForm.get('yearFounded').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('yearFounded').errors.required) ">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('yearFounded').errors.maxlength">
+                        {{'five.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-md-4 form-group">
+                <label for="noOfEmployees">{{'no.of.employee' | translate}}*</label>
+                <p-autoComplete [minLength]="3" formControlName="numberOfEmployee" [style]="{'width':'100%'}"
+                    [inputStyle]="{'width':'100%'}" [suggestions]="filterednumberOfEmployee"
+                    (completeMethod)="filternumberOfEmployee($event)" field="name" [dropdown]="true"
+                    [forceSelection]="true" placeholder="{{'select.no.of.employee' |translate}}"></p-autoComplete>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('numberOfEmployee').valid) || 
+                            (!_clientProfileService.clientEditForm.get('numberOfEmployee').valid && _clientProfileService.clientEditForm.get('numberOfEmployee').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('numberOfEmployee').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 form-group">
+                <label for="dunNo">{{'duns.no' | translate}}</label>
+                <input type="text" maxlength="50" formControlName="dunNumber" pInputText class="form-control"
+                    id="dunsNo" placeholder="Enter DUNS No">
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('dunNumber').valid) || (!_clientProfileService.clientEditForm.get('dunNumber').valid && _clientProfileService.clientEditForm.get('dunNumber').touched) ">
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('dunNumber').errors.maxlength">
+                        {{'fifty.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-12 form-group">
+                <label for="copanyDescription">{{'company.description' | translate}}*</label>
+                <textarea class="form-control" maxlength="300" formControlName="companyDescription"
+                    id="copanyDescription" rows="3" placeholder="Enter Company Description" required></textarea>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('companyDescription').valid) || (!_clientProfileService.clientEditForm.get('companyDescription').valid && _clientProfileService.clientEditForm.get('companyDescription').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('companyDescription').errors.required) ">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('companyDescription').errors.maxlength">
+                        {{'threeHundred.maxlength' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                <label for="address">{{'address' | translate}}*</label>
+                <input type="text" class="form-control" maxlength="100" (keydown.enter)="$event.preventDefault()"
+                    placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
+                    #search pInputText required formControlName="location">
+                <div class="p-invalid"
+                    *ngIf=" (submitted && !_clientProfileService.clientEditForm.get('location').valid) || (!_clientProfileService.clientEditForm.get('location').valid && _clientProfileService.clientEditForm.get('location').touched) ">
+                    <div
+                        *ngIf=" !_clientProfileService.clientEditForm.get('location').valid && _clientProfileService.clientEditForm.get('location').errors.required">
+                        {{'required' | translate}}
+                    </div>
+                    <div
+                        *ngIf=" !_clientProfileService.clientEditForm.get('location').valid && _clientProfileService.clientEditForm.get('location').errors.maxlength">
+                        {{'hundred.maxlength' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <label for="inputZip">{{'state' | translate}}*</label>
+                <p-autoComplete placeholder="Select State" [minLength]="3" formControlName="state"
+                    [suggestions]="filteredState" (completeMethod)="filterState($event)" [dropdown]="true"
+                    [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [forceSelection]="true">
+                </p-autoComplete>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('state').valid) || (!_clientProfileService.clientEditForm.get('state').valid && _clientProfileService.clientEditForm.get('state').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('state').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <label for="inputZip">{{'city' | translate}}*</label>
+                <p-autoComplete placeholder="Select City" virtualScroll="true" itemSize="10" [minLength]="3"
+                    formControlName="city" [suggestions]="filteredCity" (completeMethod)="filterCity($event)"
+                    [dropdown]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                    [forceSelection]="true">
+                    <ng-template let-country pTemplate="item">
+                        <div>{{country}}</div>
+                    </ng-template>
+                </p-autoComplete>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('city').valid) || (!_clientProfileService.clientEditForm.get('city').valid && _clientProfileService.clientEditForm.get('city').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('city').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <label for="inputZip">{{'zip.code' | translate}}*</label>
+                <input type="text" maxlength="5" [pKeyFilter]="blockSpecial" formControlName="zipCode" pInputText
+                    class="form-control" id="inputZip" placeholder="Enter Zip Code" required>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !_clientProfileService.clientEditForm.get('zipCode').valid) || (!_clientProfileService.clientEditForm.get('zipCode').valid && _clientProfileService.clientEditForm.get('zipCode').touched) ">
+                    <div *ngIf=" ( _clientProfileService.clientEditForm.get('zipCode').errors.required) ">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" _clientProfileService.clientEditForm.get('zipCode').errors.maxlength">
+                        {{'five.maxlength' | translate}} </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-action">
+            <button pButton pRipple type="button" icon="pi pi-times" label="{{'cancel' | translate}}"
+                class="p-button-outlined p-button-danger" (click)="redirectToDashboard()"></button>
+            <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" [disabled]="spinner" class="mx-2"
+                (click)="uploadLogo()"></button>
+            <button pButton pRipple label="{{'save.next' | translate}}" [disabled]="spinner" class=""
+                (click)="uploadLogo('next')"></button>
+        </div>
+
+    </form>
+</div>

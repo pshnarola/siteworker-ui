@@ -1,0 +1,334 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-3">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'work.exp' | translate}}
+                        <button pButton pRipple label="{{'add' | translate}}"
+                            class=" p-button-success accordion_add_btn" (click)="openWorkExpDialog()"></button>
+                    </ng-template>
+
+                    <ng-template pTemplate="content">
+                        <div class="row border-bottom mb-2" *ngFor="let workExp of workExpList">
+                            <div class="col-md-12">
+                                <div class="media">
+                                    <img class="mr-3" src="assets/images/App_Icon.png" alt="Generic placeholder image">
+                                    <div class="media-body">
+                                        <h3 class="mt-2 font-weight-bold text-success">{{workExp.companyName}}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 Exp_Work">
+                                <p-timeline [value]="workExp.experienceList">
+                                    <ng-template pTemplate="content" let-item>
+                                        <span>
+                                            <h5>{{item.designation}}
+                                                <button class="btn btn-sm btn-success mr-2" (click)="updateExp(item)">
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </button>
+                                            </h5>
+                                        </span>
+                                        <p class="text-muted" *ngIf="!item.isCurrentlyWorking">{{item.startDate |
+                                            date:'MMM, yyyy'}} to {{item.endDate | date:'MMM, yyyy'}}</p>
+                                        <p class="text-muted" *ngIf="item.isCurrentlyWorking">{{item.startDate |
+                                            date:'MMM, yyyy'}} to current
+                                        </p>
+                                        <p>{{item.description}}</p>
+                                    </ng-template>
+                                </p-timeline>
+                            </div>
+                        </div>
+                        <div *ngIf="!workExpList?.length" class="text-center"> {{'no.record.found' | translate}}</div>
+                    </ng-template>
+
+                </p-accordionTab>
+            </p-accordion>
+
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'education' | translate}}
+                        <button pButton pRipple label="{{'add' | translate}}"
+                            class=" p-button-success accordion_add_btn" (click)="openWorkerEducationDialog()"></button>
+                    </ng-template>
+
+                    <ng-template pTemplate="content">
+                        <div class="row border-bottom mb-2" *ngFor="let workerEducation of workerEducationList">
+                            <div class="col-md-12">
+                                <div class="media">
+                                    <img class="mr-3" src="assets/images/App_Icon.png" alt="Generic placeholder image">
+                                    <div class="media-body">
+                                        <h3 class="mt-2 font-weight-bold text-success">
+                                            {{workerEducation.institutionName}}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 Exp_Work">
+                                <p-timeline [value]="workerEducation.educationList">
+                                    <ng-template pTemplate="content" let-item>
+                                        <span>
+                                            <h5>{{item.degree}}
+                                                <button class="btn btn-sm btn-success mr-2"
+                                                    (click)="updateEducation(item)">
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </button>
+                                            </h5>
+                                        </span>
+                                        <p class="text-muted" *ngIf="!item.isCurrentlyWorking">{{item.startDate |
+                                            date:'MMM, yyyy'}} to {{item.endDate | date:'MMM, yyyy'}}</p>
+                                        <p class="text-muted" *ngIf="item.isCurrentlyWorking">{{item.startDate |
+                                            date:'MMM, yyyy'}} to current
+                                        </p>
+                                        <p>{{item.major}}</p>
+                                    </ng-template>
+                                </p-timeline>
+                            </div>
+                        </div>
+                        <div *ngIf="!workerEducationList?.length" class="text-center"> {{'no.record.found' | translate}}
+                        </div>
+
+                    </ng-template>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="workExpDialog" (onHide)="hideDialog()" header="{{expDialogHeader}}"
+            [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+        'max-height': '500px','min-height':'500px','width':'700px'}" [modal]="true" styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="WorkExpForm">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseName">{{ "company.name" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="companyName" type="text"
+                                pInputText id="licenseName" placeholder="{{'company.name.placeholder' | translate}}"
+                                [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !WorkExpForm.get('companyName').valid) || (!WorkExpForm.get('companyName').valid && WorkExpForm.get('companyName').dirty) ">
+                                <div *ngIf=" ( WorkExpForm.get('companyName').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" WorkExpForm.get('companyName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "designation" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="designation" type="text"
+                                pInputText id="licenseNumber" placeholder="{{'designation.placeholder' | translate}}"
+                                [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !WorkExpForm.get('designation').valid) || (!WorkExpForm.get('designation').valid && WorkExpForm.get('designation').dirty) ">
+                                <div *ngIf=" ( WorkExpForm.get('designation').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" WorkExpForm.get('designation').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "description" | translate }}*</label>
+                            <textarea maxlength="200" formControlName="description" class="form-control"
+                                id="copanyDescription" rows="4"
+                                placeholder="{{'description.placeholder' | translate}}"></textarea>
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !WorkExpForm.get('description').valid) || (!WorkExpForm.get('description').valid && WorkExpForm.get('description').dirty) ">
+                                <div *ngIf=" ( WorkExpForm.get('description').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" WorkExpForm.get('description').errors.maxlength">
+                                    {{'twoHundred.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="col-xl-12">
+                            <input class="mr-2" type="checkbox" formControlName="currentlyWorking"
+                                [value]="checkedCurrentlyWorking" (click)="onClick()">
+                            <label for="licenseNumber">{{ "currently.working" | translate }}</label>
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !WorkExpForm.get('currentlyWorking').valid) || (!WorkExpForm.get('currentlyWorking').valid && WorkExpForm.get('currentlyWorking').dirty) ">
+                                <div *ngIf=" ( WorkExpForm.get('currentlyWorking').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" WorkExpForm.get('currentlyWorking').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="col-xl-6">
+                            <label for="start-date">{{'start.date' |translate}}*</label>&nbsp;
+                            <div class="input-group">
+                                <p-calendar formControlName="startDate" appendTo="body" [showIcon]="true"
+                                    [(ngModel)]="startedDate" [maxDate]="endedDate" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" placeholder="MM/YYYY" view="month"
+                                    dateFormat="mm/yy" hourFormat="12" [inDate] inputId="icon">
+                                </p-calendar>
+                                <div class="p-invalid"
+                                    *ngIf="(submitted && !WorkExpForm.get('startDate').valid) || (!WorkExpForm.get('startDate').valid && WorkExpForm.get('startDate').dirty) ">
+                                    <div *ngIf=" ( WorkExpForm.get('startDate').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6" *ngIf="!checkedCurrentlyWorking">
+                            <label for="start-date">{{'end.date' |translate}}*</label>&nbsp;
+                            <div class="input-group">
+                                <p-calendar formControlName="endDate" appendTo="body" view="month" dateFormat="mm/yy"
+                                    [showIcon]="true" [(ngModel)]="endedDate" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" hourFormat="12" [inDate] inputId="icon"
+                                    placeholder="MM/YYYY" [minDate]="startedDate"></p-calendar>
+                                <div class="p-invalid"
+                                    *ngIf="(submitted && !WorkExpForm.get('endDate').valid) || (!WorkExpForm.get('endDate').valid && WorkExpForm.get('endDate').dirty) ">
+                                    <div *ngIf=" ( WorkExpForm.get('endDate').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" (click)="hideDialog()" icon="pi pi-times-circle"
+                    label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger mr-2"></button>
+                <button pButton pRipple label="Submit" (click)="onSubmitWorkExp()" type="button"
+                    class="p-button-success" icon="pi pi-check-circle">
+                </button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="workerEducationDialog" (onHide)="hideDialogworkerEducation()"
+            header="{{educationDialogHeader}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+        'max-height': '500px','min-height':'500px','width':'700px'}" [modal]="true" styleClass="p-fluid"
+            (onHide)="hideDialogworkerEducation()">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="workerEducationForm">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseName">{{ "institution.name" | translate }}*</label>
+                            <input class="form-control" maxlength="100" formControlName="institutionName" type="text"
+                                pInputText id="licenseName" placeholder="{{'institution.placeholder' | translate}}"
+                                [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid"
+                                *ngIf="(submittedWorkerEducation && !workerEducationForm.get('institutionName').valid) || (!workerEducationForm.get('institutionName').valid && workerEducationForm.get('institutionName').dirty) ">
+                                <div *ngIf=" ( workerEducationForm.get('institutionName').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" workerEducationForm.get('institutionName').errors.maxlength">
+                                    {{'hundred.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "degree" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="degree" type="text" pInputText
+                                id="licenseNumber" placeholder="{{'degree.placeholder' | translate}}"
+                                [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid"
+                                *ngIf="(submittedWorkerEducation && !workerEducationForm.get('degree').valid) || (!workerEducationForm.get('degree').valid && workerEducationForm.get('degree').dirty) ">
+                                <div *ngIf=" ( workerEducationForm.get('degree').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" workerEducationForm.get('degree').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "major" | translate }}</label>
+                            <input class="form-control" maxlength="100" formControlName="major" type="text" pInputText
+                                id="licenseNumber" placeholder="{{'major.placeholder' | translate}}"
+                                [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid"
+                                *ngIf="(submittedWorkerEducation && !workerEducationForm.get('major').valid) || (!workerEducationForm.get('major').valid && workerEducationForm.get('major').dirty) ">
+                                <div *ngIf=" workerEducationForm.get('major').errors.maxlength">
+                                    {{'hundred.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="col-xl-12">
+                            <input type="checkbox" class="mr-2" formControlName="currentlyWorking"
+                                [value]="checkedCurrentlyWorkerEducating" (click)="onClickCurrentlyEducating()">
+                            <label for="licenseNumber"> {{ "currently.educating" | translate }}</label>
+                        </div>
+                    </div>
+
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="col-xl-6">
+                            <label for="start-date">{{'start.date' |translate}}*</label>&nbsp;
+                            <div class="input-group">
+                                <p-calendar formControlName="startDate" appendTo="body" [showIcon]="true"
+                                    [(ngModel)]="startedDateOfEducatin" [maxDate]="endedDateOfEducatin"
+                                    [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" view="month"
+                                    dateFormat="mm/yy" hourFormat="12" placeholder="MM/YYYY" [inDate] inputId="icon">
+                                </p-calendar>
+                                <div class="p-invalid"
+                                    *ngIf="(submittedWorkerEducation && !workerEducationForm.get('startDate').valid) || (!workerEducationForm.get('startDate').valid && workerEducationForm.get('startDate').dirty) ">
+                                    <div *ngIf=" ( workerEducationForm.get('startDate').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6" *ngIf="!checkedCurrentlyWorkerEducating">
+                            <label for="start-date">{{'end.date' |translate}}*</label>&nbsp;
+                            <div class="input-group">
+                                <p-calendar formControlName="endDate" appendTo="body" [showIcon]="true"
+                                    [(ngModel)]="endedDateOfEducatin" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" view="month" dateFormat="mm/yy" hourFormat="12"
+                                    placeholder="MM/YYYY" [inDate] inputId="icon" [minDate]="startedDateOfEducatin">
+                                </p-calendar>
+                                <div class="p-invalid"
+                                    *ngIf="(submittedWorkerEducation && !workerEducationForm.get('endDate').valid) || (!workerEducationForm.get('endDate').valid && workerEducationForm.get('endDate').dirty) ">
+                                    <div *ngIf=" ( workerEducationForm.get('endDate').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" (click)="hideDialogworkerEducation()" icon="pi pi-times-circle"
+                    label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger"
+                    style="margin-left: 16px;"></button>
+                <button pButton pRipple label="Submit" (click)="onSubmitWorkerEducation()"
+                    type="button" class="p-button-success" icon="pi pi-check-circle">
+                </button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()"
+                class=" p-button-outlined p-button-success mr-2"></button>
+            <button pButton pRipple label="{{'next' | translate}}" (click)="next()"
+                class="ml-1 p-button-success"></button>
+        </div>
+    </div>
+
+</div>

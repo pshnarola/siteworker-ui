@@ -1,0 +1,169 @@
+<div class="container-fluid">
+
+    <div class="row align-items-center">
+        <div class="col-xl-6">
+            <h4 class="my-3"> {{'subcontractor' | translate}} : {{subcontractorName}}</h4>
+        </div>
+        <div class="col-xl-6 text-right">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin" icon="fa fa-filter"></button>
+        </div>
+
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="p-field">
+                                    <label for="name">{{ "Search" | translate }} : </label>
+                                    <input type="text" formControlName="genericSearch" class="form-control" placeholder="{{'type.to.filter' | translate}}" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-field">
+                                    <label for="name">{{ "name" | translate }} : </label>
+                                    <input type="text" formControlName="name" id="name_searchbox" class="form-control" placeholder="{{'type.to.filter' | translate}}" [pKeyFilter]="blockSpecial" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-field">
+                                    <label for="email">{{ "email" | translate }} : </label>
+                                    <input type="text" formControlName="email" id="email_searchbox" class="form-control" placeholder="{{'type.to.filter' | translate}}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-8">
+                                <label>{{"posted.between" | translate}} :</label>
+                                <div class="row">
+                                    <div class="col-xl-6">
+
+                                        <p-calendar formControlName="postedStart" [(ngModel)]="postedStartdate" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true" placeholder="MM/DD/YYYY"></p-calendar>
+
+                                    </div>
+                                    <div class="col-xl-6">
+
+                                        <p-calendar formControlName="postedEnd" [minDate]="postedStartdate" [readonlyInput]="true" inputId="range" [showIcon]="true" placeholder="MM/DD/YYYY"></p-calendar>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <button pButton type="button" class="p-button-outlined" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 mb-2">
+            <button pButton pRipple label="{{'view.all' | translate}}" class="bg-admin" (click)="clear()"></button> &nbsp;
+            <button class="d-inline-block" pButton pRipple type="button" label="{{ 'reject.selected' | translate }}" class="p-button-outlined" (click)="apply()"></button>
+
+        </div>
+
+        <br>
+
+        <div class="col-md-12">
+            <br>
+            <p-table #dt [value]="referenceList" [columns]="selectedColumns" [(selection)]="selectedreferences" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} references" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}" scrollHeight="400px"
+                [(selection)]="selectedReferencesList">
+                <ng-template pTemplate="caption">
+                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                </ng-template>
+                <!-- [value]="ChangeRequestList" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" -->
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width:50px;">
+                        <col style="width: 220px;" *ngFor="let col of columns">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem" pResizableColumn>
+                            <p-tableHeaderCheckbox *ngIf="totalStatusCount !== 0" #e></p-tableHeaderCheckbox>
+                        </th>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-reference let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="reference" #e *ngIf="reference.status ==='APPROVED'">
+                            </p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                            <div *ngSwitchCase="'fullName'">
+                                {{reference.fullName}}
+                            </div>
+                            <div *ngSwitchCase="'jobTitle'">
+                                {{reference.jobTitle}}
+                            </div>
+                            <div *ngSwitchCase="'email'">
+                                {{reference.email}}
+                            </div>
+                            <div *ngSwitchCase="'workPhone'">
+                                {{reference.workPhone}}
+                            </div>
+                            <div *ngSwitchCase="'mobilePhone'">
+                                <span *ngIf="reference.mobilePhone; else none;">
+                                    {{reference.mobilePhone}}
+                                </span>
+                                <ng-template #none>
+                                    {{'n.a' | translate}}
+                                </ng-template>
+
+                            </div>
+                            <div *ngSwitchCase="'comment'">
+                                <span *ngIf="reference.comment; else noneComment;">
+                                    {{reference.comment}}
+                                </span>
+                                <ng-template #noneComment>
+                                    {{'n.a' | translate}}
+                                </ng-template>
+
+                            </div>
+                            <div *ngSwitchCase="'createdDate'">
+                                <!-- {{reference.createdDate}}
+                                 -->
+                                {{reference.createdDate | date: shortDate}}
+
+                            </div>
+                            <div *ngSwitchCase="'status'">
+                                <!-- {{reference.status}} -->
+                                {{reference.status ==='APPROVED' ? 'Approved' : reference.status ==='PENDING'? 'Pending': 'Rejected'}}
+
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="col-md-12"></div>
+    </div>
+</div>

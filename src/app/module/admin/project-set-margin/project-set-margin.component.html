@@ -1,0 +1,115 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 bg-admin p-2 text-white">
+            <h3 class="font-weight-bold">Set Margin // {{selectedProject?.title}}</h3>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <form [formGroup]="subcontractorDetailForm">
+                    <p-table [columns]="columns" [paginator]="true" [value]="subcontractorDetailForm.get('lstProjectJobsiteMarginDTO')['controls']" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="250px">
+
+                        <ng-template pTemplate="colgroup" let-columns>
+                            <colgroup>
+                                <col style="width: 150px;" *ngFor="let col of columns">
+                            </colgroup>
+                        </ng-template>
+
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th rowspan="2">
+                                    Subcontractor
+                                </th>
+                                <th rowspan="2">
+                                    Total Cost
+                                </th>
+                                <th colspan="3">
+                                    <center>
+                                        Existing
+                                    </center>
+                                </th>
+                                <th colspan="3">
+                                    <center>
+                                        New
+                                    </center>
+                                </th>
+                            </tr>
+                            <tr>
+
+                                <th>
+                                    Current Margin %
+                                </th>
+                                <th>
+                                    Platform Fee
+                                </th>
+                                <th class="text-wrap">
+                                    Subcontractor Payout
+                                </th>
+                                <th>
+                                    New Margin %
+                                </th>
+                                <th>
+                                    New Platform Fee
+                                </th>
+                                <th class="text-wrap">
+                                    New Subcontractor Payout
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-marginData let-rowIndex="rowIndex" let-columns="columns">
+                            <ng-container formArrayName="lstProjectJobsiteMarginDTO">
+                                <tr [formGroupName]="rowIndex">
+                                    <td>
+                                        {{marginData.get('subContractorProfile').value.user.firstName}} {{marginData.get('subContractorProfile').value.user.lastName}}
+                                    </td>
+                                    <td>
+                                        {{marginData.get('totalCost').value | currency}}
+                                    </td>
+                                    <td>
+                                        {{marginData.get('currentMargin').value}}%
+                                    </td>
+                                    <td>
+                                        {{marginData.get('platformFee').value | currency}}
+                                    </td>
+                                    <td>
+                                        {{marginData.get('subcontractorPayout').value | currency}}
+                                    </td>
+                                    <td>
+                                        <p-inputNumber inputId="minmaxfraction" maxlength="5" formControlName="newMarginPercentage" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" (onInput)="onEnterNewMargin($event,rowIndex)" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" placeholder="0.00">
+                                        </p-inputNumber>
+                                    </td>
+                                    <td>
+                                        <div class="p-inputgroup">
+                                            <span class="p-inputgroup-addon">$</span>
+                                            <p-inputNumber mode="decimal" formControlName="newPlatformFee" maxlength="17" [max]="marginData.get('totalCost').value" (onBlur)="onBlur(rowIndex)" (onInput)="onEnterNewPlateformFee($event,rowIndex)" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [minFractionDigits]="2" [maxFractionDigits]="2" placeholder="0.00"></p-inputNumber> 
+                                        </div>
+                                       
+                                    </td>
+                                    <td>
+                                        <p-inputNumber mode="currency" currency="USD" formControlName="newSubcontractorPayout" maxlength="17" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" locale="en-US" [disabled]="true" placeholder="0.00"></p-inputNumber>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td class="text-center" [attr.colspan]="8" class="text-center">
+                                    {{'no.record.found' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                    </p-table>
+                </form>
+
+                <div class="float-right" *ngIf="showButtons">
+                    <button type="button" pButton class="bg-admin" label="{{'update' | translate}}" (click)="save()"></button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

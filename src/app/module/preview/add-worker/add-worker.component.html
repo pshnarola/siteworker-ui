@@ -1,0 +1,184 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">        
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+                
+                    <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35" alt="">
+                
+            </ng-container>             
+                {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid cust-min-h-70">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h4 class="font-weight-bold">Worker List</h4>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button pButton type="button" class="bg-admin" (click)="openFilter()" label="{{ 'filter'| translate}}"><i class="fa fa-filter mr-1"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="showFilterDialog">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <div class="p-field">
+                                    <label for="name">{{ "Search" | translate }} : </label>
+                                    <input type="text" formControlName="genericSearch" id="name_searchbox" class="form-control" placeholder="{{'type.to.filter.worker' | translate}}" />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="name_searchbox">{{'name' |translate}}</label>
+                                <p-autoComplete forceSelection="true" formControlName="name" [field]="getFullName" [multiple]="false" [dropdown]="false" (completeMethod)="getWorkerByName($event)" [suggestions]="filterWorkers" placeholder="{{'select.worker.name' |translate}}" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}">
+                                </p-autoComplete>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="email_searchbox">{{ "email.address" | translate }} :</label>
+                                <input type="text" id="email_searchbox" formControlName="email" class="form-control" placeholder="Filter by Email Address" />
+                            </div>
+            
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
+                                <label>{{"posted.between" | translate}} :</label>
+                                <div class="row">
+                                    <div class="col-xl-6 col-sm-6">
+                                        <div class="form-group">
+                                            <p-calendar formControlName="postedStart" appendTo="body" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-sm-6">
+                                        <div class="form-group">
+                                            <p-calendar formControlName="postedEnd" [minDate]="postedStartDate" [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate }}"></button>
+                                <button pButton pRipple label="{{'clear' | translate}}" class="p-button-danger" (click)="clear()"></button>
+
+                                
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-table #dt [value]="workers" [resizableColumns]="true" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} workers"
+        [(selection)]="selectedWorkers" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col style="width: 150px;">
+                <col style="width: 160px;">
+                <col style="width: 200px;">
+                <col style="width: 170px;">
+                <col style="width: 170px;">
+                <col style="width: 190px;">
+                <col style="width: 170px;">
+                <col style="width: 190px;">
+                <col style="width: 120px;">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                    {{col.label}}
+                    <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-worker>
+            <tr>
+                <td>
+                    <img *ngIf="worker.workerProfile.photo" src="{{imageUrl + worker.workerProfile.photo}}" alt="{{worker.workerProfile.user.firstName}}" class="rounded-circle mr-2" width="56" height="56" srcset="">
+                    <p-avatar *ngIf="!worker.workerProfile.photo" label={{setAvtar(worker.workerProfile.user.firstName,worker.workerProfile.user.lastName)}} styleClass="p-mr-2" size="xlarge" [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle"></p-avatar>
+
+                </td>
+                <td>
+                    {{worker.workerProfile.user.firstName}} {{worker.workerProfile.user.lastName}}
+                </td>
+                <td class="text-wrap">
+                    {{worker.workerProfile.user.email}}
+                </td>
+                <td>
+                    {{worker.workerProfile.mobilePhone}}
+                </td>
+                <td>
+                    {{worker.workerProfile.createdDate | date: shortDate}}
+                </td>
+                <td>
+                    <span class="text-success" *ngIf="worker.workerProfile.status === 'AVAILABLE' ; else unavailable">
+                        {{'available' | translate}}
+                    </span>
+                    <ng-template #unavailable>
+                        <span class="text-danger">
+                            {{'unavailable' | translate}}
+                        </span>
+                    </ng-template>
+                </td>
+                <td>
+                    <span *ngIf="worker.workerProfile.user.verified">
+                        Yes
+                    </span>
+                    <span *ngIf="!worker.workerProfile.user.verified">
+                        No
+                    </span>
+                </td>
+                <td class="text-wrap">
+                    <button pButton [disabled]="btnDisabled" type="button" label="View & Manage Certificate" class="p-button-link view_all_btn p-1" (click)="manageCertificates(worker.workerProfile.user)"></button>
+                </td>
+                <td>
+                    <span class="text-success" *ngIf="worker.workerProfile.user.active ; else inActive">
+                        {{'active' | translate}}
+                    </span>
+                    <ng-template #inActive>
+                        <span class="text-danger">
+                            {{'inactive' | translate}}
+                        </span>
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="9" class="text-center">
+                    <span>No records found</span>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

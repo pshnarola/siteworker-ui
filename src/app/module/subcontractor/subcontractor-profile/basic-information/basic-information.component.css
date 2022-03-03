@@ -1,0 +1,14 @@
+
+
+.dba {
+    display: none;
+}
+
+ngx-dropzone,
+img {
+    height: 100px;
+}
+
+.p-button-label {
+    color: black !important;
+}

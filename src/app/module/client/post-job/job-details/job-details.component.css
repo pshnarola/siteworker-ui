@@ -1,0 +1,59 @@
+input,
+select {
+    border-radius: 10px;
+}
+
+textarea {
+    border-radius: 10px;
+    resize: none;
+}
+
+button {
+    margin-left: 16px;
+}
+
+input.ng-invalid.ng-touched {
+    border-color: red;
+}
+
+.treetableDate .ui-widget-content {
+    width: 50%;
+}
+
+textarea.ng-invalid.ng-touched {
+    border-color: red;
+}
+
+select.ng-invalid.ng-touched {
+    border-color: red;
+}
+
+.add-certi {
+    width: 50px !important;
+}
+
+.add-title {
+    width: 100% !important;
+}
+
+
+/* ::ng-deep .ui-datepicker.ui-widget {
+    line-height: 0.5rem;
+}
+
+.custom-height {
+    height: 300px
+} */
+
+
+/* ::ng-deep p-calendar .ui-datepicker table td {
+    padding: 1px !important;
+}
+
+::ng-deep p-calendar .ui-datepicker .ui-timepicker {
+    padding: 2px 0 0 0 !important;
+}
+
+::ng-deep p-calendar .ui-datepicker {
+    padding: 0.857em 0.857em 0 0.857em !important;
+} */

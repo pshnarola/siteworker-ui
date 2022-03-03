@@ -1,0 +1,21 @@
+.image-radius-zero ngx-dropzone-image-preview {
+    height: 300px !important;
+    width: 300px !important;
+}
+
+.points-field-m {
+    width: 150px;
+}
+
+.points-field-l {
+    width: 200px;
+}
+
+.label-info {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+::ng-deep .p-tooltip {
+    max-width: 300px;
+}

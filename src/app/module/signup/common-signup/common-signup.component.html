@@ -1,0 +1,64 @@
+<app-signup-login-header></app-signup-login-header>
+
+<div class="container-fluid mt-4">
+    <div class="container text-center cust-min-h-70">
+        <span class=" bg-grey btn-lg common_signup_btn">{{'signup' | translate}}</span>
+        <h1 class="text-center mt-3 font-weight-bold">{{'common.signup.header.text' | translate}}</h1>
+        <div class="row common-sign-up">
+
+            <div class="col-12 col-md-4 mt-4">
+                <p-fieldset>
+                    <p-header><img src="assets/images/signup/icn_client.svg" alt=""></p-header>
+                    <h5 class="font-weight-bold mb-1">{{'energizing.client' | translate}}</h5>
+                    <p class="mt-3 pb-3 common_signup_p">{{'energizing.client.text' | translate}}</p>
+                </p-fieldset>
+                <button pButton type="button" class="font-weight-bold common_signup_main_btn" label="{{'signup' | translate}}" (click)="clientSignup()"></button>
+            </div>
+
+            <div class="col-12 col-md-4 mt-4">
+                <p-fieldset>
+                    <p-header><img src="assets/images/signup/icn_subcontractor.svg" alt=""></p-header>
+                    <h5 class="font-weight-bold mb-1">{{'energizing.subcontractor' | translate}}</h5>
+                    <p class="mt-3 pb-3 common_signup_p">{{'energizing.subcontractor.text' | translate}}</p>
+                </p-fieldset>
+                <button pButton class="p-button-warning font-weight-bold common_signup_main_btn" type="button" label="{{'signup' | translate}}" (click)="subcontractorSignup()"></button>
+            </div>
+
+            <div class="col-12 col-md-4 mt-4">
+                <p-fieldset>
+                    <p-header><img src="assets/images/signup/icn_workers.svg" alt=""></p-header>
+                    <h5 class="font-weight-bold mb-1">{{'energizing.worker' | translate}}</h5>
+                    <p class="mt-3 pb-3 common_signup_p">{{'energizing.worker.text' | translate}}</p>
+                </p-fieldset>
+                <button pButton class="p-button-success font-weight-bold common_signup_main_btn" type="button" label="{{'signup' | translate}}" (click)="workerSignup()"></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div>
+
+    <div class="container-fluid bg-grey">
+        <div class="container py-2 text-center">
+            <h3 class="my-2 py-1 font-weight-bold">Trusted By</h3>
+            <div class="trusted_client d-flex justify-content-center">
+                <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client3.png" alt="">
+                </div>
+                <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client2.png" alt="">
+                </div>
+                <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client1.png" alt="">
+                </div>
+                <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client5.png" alt="">
+                </div>
+                <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client4.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <mat-toolbar class="d-flex justify-content-between px-2 text-small fixed-bottom">
+        <span>© 2021 Site Worker. All Rights Reserved.</span>
+        <div>
+            <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+        </div>
+    </mat-toolbar>
+</div>

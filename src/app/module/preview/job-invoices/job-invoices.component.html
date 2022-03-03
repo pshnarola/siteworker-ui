@@ -1,0 +1,164 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large" [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+
+                <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35" alt="">
+
+            </ng-container>
+            {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid cust-min-h-70">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h4 class="font-weight-bold">
+                {{'invoices' | translate}}
+            </h4>
+
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button pButton pRipple type="button" class="bg-admin" (click)="onFilterOpen()" label="{{'filter' | translate}}" icon="fa fa-filter"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label>{{ 'worker' | translate }} : </label>
+                                    <p-autoComplete [field]="getFullName" formControlName="worker" forceSelection="true" [suggestions]="filterWorkers" minLength="3" (completeMethod)="getWorkerByName($event)" placeholder="Enter Worker Name" [dropdown]="true"></p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label>{{ 'start.work.week' | translate }} : </label>
+                                    <p-calendar formControlName="workerWeekStart" appendTo="body" [disabledDays]="[0,2,3,4,5,6]" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label> {{ 'end.work.week' | translate }} : </label>
+                                    <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true"></p-calendar>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                                <button pButton type="button" class="p-button-danger" (click)="clear()" label="{{ 'clear' | translate}}"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-12 my-2 text-right">
+            <button pButton pRipple type="button" label="{{'export.to.excel' |translate}}" class="p-button-outlined" (click)="downloadExcel()"></button>
+        </div>
+
+        <div class="col-xl-12">
+            <p-table #dt [columns]="columns" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [value]="invoiceList" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices" [totalRecords]="totalRecords">
+
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 150px;" *ngFor="let col of columns">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                    <tr>
+                        <td>
+                            <span *ngIf="data.toType==='WORKER_TO_PLATFORM'; else client">
+                        {{data.worker.firstName}} {{data.worker.lastName}}
+                    </span>
+                            <ng-template #client>
+                                {{data.client.firstName}} {{data.client.lastName}}
+                            </ng-template>
+
+                        </td>
+                        <td>
+                            <span *ngIf="data.weekStart && data.weekEnd; else none;">
+                        {{data.weekStart | date: shortDate}} - {{data.weekEnd | date: shortDate}}
+                    </span>
+                            <ng-template #none>
+                                {{'n.a' | translate}}
+                            </ng-template>
+
+                        </td>
+
+                        <td>
+                            {{data.invoiceDate | date: shortDate}}
+                        </td>
+                        <td>
+                            {{data.toType==='WORKER_TO_PLATFORM'? 'Worker': 'Client'}}
+                        </td>
+                        <td>
+                            {{data.invoiceNumber}}
+                        </td>
+                        <td>
+                            {{data.invoiceAmount | currency}}
+                        </td>
+                        <td>
+                            <button pButton label="{{'download' | translate}}" Class="p-button-link p-1" (click)="downloadDocument(data.invoiceDocPath,data.invoiceDocName)"></button>
+
+                        </td>
+                        <td>
+                            <p-dropdown [disabled]="btnDisabled" class="d-inline-block" [options]="status" [(ngModel)]="data.status" (onChange)="onStatusChange($event, data)" appendTo="body">
+                            </p-dropdown>
+
+                        </td>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="15" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+
+    </div>
+
+
+</div>
+
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

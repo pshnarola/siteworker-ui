@@ -1,0 +1,155 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="float-right">
+                <button pButton pRipple type="button" (click)="addReference()" label="{{'add.references' | translate}}" class=" p-button-success"></button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngFor="let reference of referenceList">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card refrence-card">
+                    <div class="card-title mb-0">
+                        <h5 class="font-weight-bold">{{reference.fullName}} ( {{reference.jobTitle}} | {{reference.companyName}} )</h5>
+                    </div>
+
+                    <div class="card-text p-formgroup-inline">
+                        <div class="p-field text-muted d-flex align-items-center" *ngIf="reference?.email">
+                            <span class="material-icons mr-2 mt-1">
+                                mail_outline
+                            </span>
+                            <span>{{reference.email}}</span>
+                        </div>
+                        <div class="p-field text-muted d-flex align-items-center" *ngIf="reference?.mobilePhone">
+                            <span class="material-icons mr-2 mt-1">
+                                smartphone
+                            </span>
+                            <span>{{reference.mobilePhone}}</span>
+                        </div>
+                        <div class="p-field text-muted d-flex align-items-center" *ngIf="reference?.workPhone">
+                            <span class="material-icons mr-2 mt-1">
+                                call
+                            </span>
+                            <span>{{reference.workPhone}}</span>
+                        </div>
+                    </div>
+                    <p class="card-text" *ngIf="reference.comment ; else noReference">
+                        " {{reference.comment}} "
+                    </p>
+                    <ng-template #noReference>
+                        {{'reference.comments' | translate}}
+                    </ng-template>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!referenceList?.length" class="text-center"> {{'no.record.found' | translate}}</div>
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="referenceDialog" header="{{'add.reference'|translate}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+                                        'max-height': '500px','min-height':'300px','width':'700px'}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="referenceForm">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseName">{{ "full.name" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="fullName" type="text" pInputText id="licenseName" placeholder="{{'enter.full.name'|translate}}" required [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid" *ngIf="(submitted && !referenceForm.get('fullName').valid) || (!referenceForm.get('fullName').valid && referenceForm.get('fullName').touched) ">
+                                <div *ngIf=" ( referenceForm.get('fullName').errors.required) ">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf=" referenceForm.get('fullName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "job.title" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="jobTitle" type="text" pInputText id="licenseNumber" placeholder="{{'enter.job.title'|translate}}" required [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid" *ngIf="(submitted && !referenceForm.get('jobTitle').valid) || (!referenceForm.get('jobTitle').valid && referenceForm.get('jobTitle').touched) ">
+                                <div *ngIf=" ( referenceForm.get('jobTitle').errors.required) ">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf=" referenceForm.get('jobTitle').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="licenseName">{{ "company.name" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="companyName" type="text" pInputText id="licenseName" placeholder="{{'company.name,placeholder'|translate}}" required [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid" *ngIf="(submitted && !referenceForm.get('companyName').valid) || (!referenceForm.get('companyName').valid && referenceForm.get('companyName').touched) ">
+                                <div *ngIf=" ( referenceForm.get('companyName').errors.required) ">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf=" referenceForm.get('companyName').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                            </div>
+
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="licenseNumber">{{ "email.id" | translate }}*</label>
+                            <input class="form-control" placeholder="{{'enter.personal.email' | translate}}" maxlength="50" formControlName="email" id="b" type="email" pInputText>
+                            <div class="p-invalid" *ngIf="(submitted && !referenceForm.get('email').valid) || (!referenceForm.get('email').valid && referenceForm.get('email').touched)">
+                                <div *ngIf=" ( referenceForm.get('email').errors.required) ">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf=" referenceForm.get('email').errors.maxlength">
+                                    {{'fifty.maxlength' | translate}} </div>
+                                <div class="p-invalid" *ngIf=" (!referenceForm.get('email').valid) ">
+
+                                    <div *ngIf="referenceForm.get('email').dirty &&
+                                    (referenceForm.get('email').errors.incorrectEmailFormat &&
+                                    !referenceForm.get('email').errors.required)">
+                                        {{'invalid.email' | translate}} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col">
+                            <label for="workPhone">{{'work.phone' | translate}}*</label>
+                            <p-inputMask id="workPhone" mask="(999) 999-9999" formControlName="workPhone" placeholder="Enter Work Phone"></p-inputMask>
+
+
+                            <div class="p-invalid" *ngIf="(submitted && !referenceForm.get('workPhone').valid) || (!referenceForm.get('workPhone').valid && referenceForm.get('workPhone').touched) ">
+                                <div *ngIf=" ( referenceForm.get('workPhone').errors.required) ">
+                                    {{'required' | translate}} </div>
+                            </div>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="mobilePhone">{{'mobile.phone' | translate}}</label>
+                            <p-inputMask id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" (click)="hideDialog()" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger" style="margin-left: 16px;"></button>
+                <button pButton pRipple label="{{ 'add.new' | translate }}" (click)="onSubmit()" type="button" class="p-button-success" icon="pi pi-check-circle">
+            </button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()" class=" p-button-outlined p-button-success mr-2"></button>
+            <button pButton pRipple label="{{'save' | translate}}" (click)="goToDashboard()" class=" p-button-success"></button>
+        </div>
+    </div>
+</div>

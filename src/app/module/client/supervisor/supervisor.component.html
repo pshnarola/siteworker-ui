@@ -1,0 +1,263 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="float-left">{{"supervisor.management" | translate}}</h4>
+            <div class="float-right">
+                <button style="background-color: #fff;color: #3A7CEC;" pButton pRipple type="button" label="{{ 'add.new' | translate }}" icon="pi pi-plus" (click)="openDialog()"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            {{"action" | translate}} :
+            <p-dropdown class="Super_Vis" placeholder="Select action" [options]="action" [(ngModel)]="selectedAction" optionLabel="name" [showClear]="true"></p-dropdown>
+            <button pButton pRipple type="button" label="{{ 'apply' | translate }}" class="p-button-sm p-button-outlined ml-2" (click)="openDialogBox()"></button>
+            <p-button label="{{ 'filter' | translate }}" class="float-right" (click)="onFilterOpen()"><i class="fa fa-filter mr-1"></i></p-button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="p-field">
+                                <label for="email">{{ "email.address" | translate }} : </label>
+                                <input type="text" id="email_searchbox" class="form-control" [(ngModel)]="emailFilterValue" placeholder="{{'type.to.filter' | translate}}" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center d-inline-block" mt->
+                            <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                            <button pButton pRipple type="button" label="{{'clear' |translate}}" (click)="onFilterClear()" class="p-button-danger"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="Dialog_Common">
+        <p-dialog [(visible)]="supervisorDialog" [style]="{width: '450px'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="supervisorForm">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="firstName">{{ "first.name" | translate }}*</label>
+                            <input class="form-control" type="text" pInputText id="firstName" placeholder="Enter first name" formControlName="firstName" required [pKeyFilter]="blockSpecial" maxlength="30" />
+                            <div class="p-invalid" *ngIf="supervisorForm.controls['firstName'].touched && (supervisorForm.controls['firstName'].hasError('required') && !supervisorForm.controls['firstName'].valid)
+                    || (submitted && (supervisorForm.controls['firstName'].hasError('required') && !supervisorForm.controls['firstName'].valid))">
+                                {{'required' | translate}}</div>
+                            <div class="p-invalid" *ngIf="supervisorForm.controls['firstName'].touched && (supervisorForm.controls['firstName'].hasError('maxlength') && !supervisorForm.controls['firstName'].valid)">
+                                {{'firstName.maxLength' | translate}}</div>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="lastName">{{ "last.name" | translate }}*</label>
+                            <input class="form-control" type="text" pInputText id="lastName" placeholder="Enter last name" formControlName="lastName" required [pKeyFilter]="blockSpecial" maxlength="30" />
+                            <div class="p-invalid" *ngIf="supervisorForm.controls['lastName'].touched && (supervisorForm.controls['lastName'].hasError('required') && !supervisorForm.controls['lastName'].valid)
+                    || (submitted && (supervisorForm.controls['lastName'].hasError('required') && !supervisorForm.controls['lastName'].valid))">
+                                {{'required' | translate}}</div>
+                            <div class="p-invalid" *ngIf="supervisorForm.controls['lastName'].touched && (supervisorForm.controls['lastName'].hasError('maxlength') && !supervisorForm.controls['lastName'].valid)">
+                                {{'lastName.maxLength' | translate}}</div>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <label for="email">{{ "email.address" | translate }}*</label>
+                        <input class="form-control" type="text" pInputText id="email" placeholder="Enter email" formControlName="email" [attr.disabled]="isInEditMode?'':null" required maxlength="50" />
+                        <div id="username-help" class="p-invalid" *ngIf="
+                supervisorForm.controls['email'].touched &&
+                    (supervisorForm.controls['email'].hasError('required') &&
+                    !supervisorForm.controls['email'].valid)
+                    || (submitted && (supervisorForm.controls['email'].hasError('required') && !supervisorForm.controls['email'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                        <div class="p-invalid" *ngIf=" (!supervisorForm.get('email').valid) ">
+                            <div *ngIf="supervisorForm.get('email').dirty &&
+                                (supervisorForm.get('email').errors.incorrectEmailFormat &&
+                                !supervisorForm.get('email').errors.required)">
+                                {{'invalid.email' | translate}} </div>
+                        </div>
+                        <div id="username-help" class="p-invalid" *ngIf="
+                supervisorForm.controls['email'].touched &&
+                    (supervisorForm.controls['email'].hasError('maxlength') &&
+                    !supervisorForm.controls['email'].valid)">
+                            {{'email.maxLength' | translate}}
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="workPhone">{{ "work.phone" | translate }}*</label>
+                            <p-inputMask id="workPhone" mask="(999) 999-9999" formControlName="workPhone" placeholder="Enter work Phone" required></p-inputMask>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['workPhone'].touched &&
+                        (supervisorForm.controls['workPhone'].hasError('required') &&
+                        !supervisorForm.controls['workPhone'].valid)
+                        || (submitted && (supervisorForm.controls['workPhone'].hasError('required') &&
+                         !supervisorForm.controls['workPhone'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['workPhone'].touched &&
+                        (supervisorForm.controls['workPhone'].hasError('minlength') &&
+                        !supervisorForm.controls['workPhone'].valid)">
+                                {{'contact.length' | translate}}
+                            </div>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['workPhone'].touched &&
+                        (supervisorForm.controls['workPhone'].hasError('maxlength') &&
+                        !supervisorForm.controls['workPhone'].valid)">
+                                {{'contact.length' | translate}}
+                            </div>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="mobilePhone">{{ "mobile.phone" | translate }}*</label>
+                            <p-inputMask id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['mobilePhone'].touched &&
+                        (supervisorForm.controls['mobilePhone'].hasError('required') &&
+                        !supervisorForm.controls['mobilePhone'].valid)
+                        || (submitted && (supervisorForm.controls['mobilePhone'].hasError('required') && !supervisorForm.controls['mobilePhone'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['mobilePhone'].touched &&
+                        (supervisorForm.controls['mobilePhone'].hasError('minlength') &&
+                        !supervisorForm.controls['mobilePhone'].valid)">
+                                {{'contact.length' | translate}}
+                            </div>
+                            <div id="username-help" class="p-invalid" *ngIf="
+                    supervisorForm.controls['mobilePhone'].touched &&
+                        (supervisorForm.controls['mobilePhone'].hasError('maxlength') &&
+                        !supervisorForm.controls['mobilePhone'].valid)">
+                                {{'contact.length' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="allowToPostProject">{{"is.allow.to.post.project" | translate}}</label>
+                        <br>
+                        <div style="display: inline;">
+                            <input type="radio" [value]="true" formControlName="isAllowToPostProject">
+                            <label class="radio-label">{{"yes" | translate}}</label>
+                            <input type="radio" [value]="false" formControlName="isAllowToPostProject">
+                            <label class="radio-label">{{"no" | translate}}</label>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger" (click)="hideDialog()" style="margin-left: 16px;"></button>
+                <p-button *ngIf="!isInEditMode" label="{{ 'add.new' | translate }}" type="button" (click)="onSupervisorFormSubmit()" icon="pi pi-check-circle"></p-button>
+                <p-button *ngIf="isInEditMode" label="{{ 'update' | translate }}" type="button" (click)="onSupervisorFormSubmit()" icon="pi pi-check-circle"></p-button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="card datatable-card">
+                <p-table #dt [columns]="selectedColumns" [value]="data" [(selection)]="selectedSupervisor" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} supervisors" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines"
+                    [scrollable]="true" [style]="{width:'100%'}" scrollHeight="400px">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px">
+                            <col style="width:220px" *ngFor="let col of columns">
+                            <col style="width:120px">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}">
+
+                                </p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-supervisor let-columns="columns">
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="supervisor"></p-tableCheckbox>
+                            </td>
+
+                            <td *ngFor="let col of columns" [ngSwitch]="col.value" class="text-wrap">
+                                <div *ngSwitchCase="'NAME'">
+                                    {{supervisor.supervisor.firstName}} {{supervisor.supervisor.lastName}}
+                                </div>
+                                <div *ngSwitchCase="'EMAIL'" class="text-wrap">
+                                    {{supervisor.supervisor.email}}
+                                </div>
+                                <div *ngSwitchCase="'IS_ACTIVE'">
+                                    <span *ngIf="supervisor.supervisor.active">{{'active' |translate}}</span>
+                                    <span *ngIf="!supervisor.supervisor.active">{{'inactive' |translate}}</span>
+                                </div>
+                                <div *ngSwitchCase="'WORK_PONE'">
+                                    {{supervisor.workPhone}}
+                                </div>
+                                <div *ngSwitchCase="'MOBILE_PHONE'">
+                                    {{supervisor.mobilePhone}}
+                                </div>
+                                <div *ngSwitchCase="'IS_ALLOW'">
+                                    <span *ngIf="supervisor.isAllowToPostProject">{{'yes' |translate}}</span>
+                                    <span *ngIf="!supervisor.isAllowToPostProject">{{'no' |translate}}</span>
+                                </div>
+                                <div *ngSwitchCase="'ASSIGNMENT'">
+                                    <a [routerLink]="" (click)="openAssignmentDialog(supervisor.supervisor.id)" pTooltip="{{'view.assignment' |translate}}">{{"view" | translate}}</a>
+                                </div>
+                            </td>
+                            <td>
+
+                                <button class="btn btn-success btn-sm mr-2" pTooltip="{{'edit.supervisor' |translate}}" (click)="editSupervisor(supervisor)"><i aria-hidden="true" class="fa fa-pencil"></i></button>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td class="text-center" [attr.colspan]="9">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+    <div class="Dialog_Common">
+        <p-dialog [(visible)]="assignmentDialog" [style]="{width: '60%'}" header="{{'assignment' | translate}}" [modal]="true" styleClass="p-fluid">
+            <section>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link" id="jobsite-tab" data-toggle="tab" href="#jobsite" role="tab" aria-controls="home" aria-selected="false">Jobsite</a>
+                    </li>
+                    <li class="nav-item waves-effect waves-light">
+                        <a class="nav-link active" id="job-tab" data-toggle="tab" href="#job" role="tab" aria-controls="contact" aria-selected="true">Job</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade" id="jobsite" role="tabpanel" aria-labelledby="jobsite-tab">
+                        <app-assignment-jobsite></app-assignment-jobsite>
+                    </div>
+                    <div class="tab-pane fade active show" id="job" role="tabpanel" aria-labelledby="job-tab">
+                        <app-assignment-job></app-assignment-job>
+                    </div>
+                </div>
+            </section>
+
+        </p-dialog>
+    </div>
+</div>

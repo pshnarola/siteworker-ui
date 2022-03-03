@@ -1,0 +1,65 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary" [ngClass]="{
+            'text-white': rolename !== 'SUBCONTRACTOR',
+            'text-black': rolename === 'SUBCONTRACTOR'}">
+            <h4 class="float-left font-weight-bold">
+                <span>{{'notifications' | translate}}</span>
+            </h4>
+            <div class="float-right">
+                <p-dropdown appendTo="body" [options]="notificationTypes" [(ngModel)]="selectedType" (onChange)="notificationTypeChanged($event)"></p-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div *ngFor="let notif of (data || [])">
+                <div class="card radius-10 notification-card mb-3">
+                    <div class="card-body ">
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-start">
+                                <ng-container *ngIf="user.roles[0].roleName==='CLIENT'">
+                                    <span [ngClass]="{'client_Client_MSA_Notification':notif.type==='CLIENT_MSA' || notif.type==='QUESTION_AND_ANSWER' || notif.type==='APPROVAL' || notif.type==='INVOICE',
+                                    'client_CloseOut_Notification':notif.type==='CLOSE_OUT_PACKAGE_REQUEST' || notif.type==='PROJECT' || notif.type==='JOB',
+                                    'client_Change_Request_Notification':notif.type==='CHANGE_REQUEST'}"></span>
+                                </ng-container>
+                                <ng-container *ngIf="user.roles[0].roleName==='SUBCONTRACTOR'">
+                                    <span [ngClass]="{'Sub_QA_Notification':notif.type==='QUESTION_AND_ANSWER' || notif.type==='INVOICE'|| notif.type==='PROJECT',
+                                    'Sub_Change_Request_Notification':notif.type==='CHANGE_REQUEST',
+                                    'Sub_CloseOut_Notification':notif.type==='CLOSE_OUT_PACKAGE_REQUEST' || notif.type==='CERTIFICATE'}"></span>
+                                </ng-container>
+                                <ng-container *ngIf="user.roles[0].roleName==='WORKER'">
+                                    <span [ngClass]="{'worker_Invoice_Notification':notif.type==='INVOICE','worker_Job_Notification':notif.type==='JOB','worker_Change_Request_Notification':notif.type==='CHANGE_REQUEST'}"></span>
+                                </ng-container>
+                                <div class="column">
+                                    <h5 class="text-primary mb-0">{{notif.name}}</h5>
+                                    <div *ngIf="notif.type==='INVOICE'">
+                                        <p class="text-muted mb-0">Posted By: System</p>
+                                    </div>
+                                    <div *ngIf="notif.type!=='INVOICE'">
+                                        <p class="text-muted mb-0">Posted By: {{notif.postedBy.firstName+" "+notif.postedBy.lastName}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">{{notif.createdDate | date: 'dd/MM/yyyy hh:mm a'}}</p>
+                        </div>
+                        <div class="mt-2 mb-0" [innerHtml]="notif.description"></div>
+                    </div>
+
+                </div>
+            </div>
+            <p-paginator #ppaginator [rows]="size" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true" [alwaysShow]="false" (onPageChange)="paginate($event)"></p-paginator>
+            <div class="justify-content-between" *ngIf="data==null || data.length==0">
+                <h5 class="text-muted text-center mt-3">
+                    {{'notify.noData' | translate}}
+                </h5>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>

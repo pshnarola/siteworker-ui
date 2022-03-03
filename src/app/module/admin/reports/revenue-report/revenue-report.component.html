@@ -1,0 +1,124 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin" icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm" *ngIf="isFilterOpened">
+                        <div class="row">
+                            <div class="col-xl-3">
+                                <div class="p-field">
+                                    <label>{{ 'revenue.source' | translate }} : </label>
+                                    <p-dropdown [(ngModel)]="revenueResourceData" formControlName="revenueSource" [options]="revenueSource" placeholder="{{'all' | translate}}" (onChange)="onSelectRevenueSource($event)">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="p-field">
+                                    <label>{{ 'report.period' | translate }} : </label>
+                                    <p-dropdown [(ngModel)]="reportPeriodData" formControlName="reportPeriod" [options]="reportPeriod" placeholder="{{'all' | translate}}" (onChange)="onSelectReportPeriod($event)">
+                                    </p-dropdown>
+
+                                </div>
+                            </div>
+                            <div class="col-xl-3" *ngIf="revenueResourceData === 'PROJECT'">
+                                <div class="p-field p-fluid">
+                                    <label>{{ 'client.project.name' | translate }} : </label>
+                                    <p-autoComplete minLength="3" formControlName="clientProjectName" placeholder="{{'enter' |translate}}" forceSelection="true" field="firstName">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="p-field p-fluid" *ngIf="revenueResourceData === 'JOB'">
+                                    <label>{{ 'job.worker.name' | translate }} : </label>
+                                    <p-autoComplete minLength="3" formControlName="jobWorkerName" placeholder="{{'enter' |translate}}" forceSelection="true" field="firstName">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-3" *ngIf="reportPeriodData === 'Specify Date Range'">
+                                <div class="p-field">
+                                    <label>{{ 'start.date' | translate }} : </label>
+                                    <p-calendar formControlName="startDate" [(ngModel)]="startDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-xl-3" *ngIf="reportPeriodData === 'Specify Date Range'">
+                                <div class="p-field">
+                                    <label>{{ 'end.date' | translate }} : </label>
+                                    <p-calendar formControlName="endDate" appendTo="body" [minDate]="startDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 d-inline">
+                                <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                                <button pButton type="button" class="bg-admin" (click)="clear()" label="{{ 'clear' | translate}}"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <p-table #dt [columns]="columns" [value]="sortData" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                [totalRecords]="totalRecords" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                <ng-template pTemplate="caption">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelRevenue()" class="p-button-success p-mr-2" pTooltip="{{'export.to.excel' | translate}}" tooltipPosition="bottom" *ngIf="revenueReportDTOList.length > 0"></button>
+                </ng-template>
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 150px;" *ngFor="let col of columns">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                    <tr>
+                        <td>
+                            {{data.month}}
+                        </td>
+                        <td>
+                            {{data.transactions}}
+                        </td>
+                        <td>
+                            {{data.paymentReceived | currency: 'USD'}}
+                        </td>
+                        <td>
+                            {{data.paymentSent | currency: 'USD'}}
+                        </td>
+                        <td>
+                            {{calculateNetRevenue(data.paymentReceived, data.paymentSent) | currency: 'USD'}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</div>

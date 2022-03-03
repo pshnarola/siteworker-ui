@@ -1,0 +1,48 @@
+/* .custom-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  } */
+
+/* .parent {
+    position: relative;
+  } */
+/* .child {
+    position: absolute;
+    top: 50%;
+    height: 100px;
+    margin-top: -50px; 
+  } */
+
+/* .child {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  } */
+
+/* .parent {
+    display: flex;
+    flex-direction: row;
+    resize: vertical;
+    justify-content: center;
+} */
+
+/* .child-1 {
+    vertical-align: bottom;
+} */
+
+.scroll {
+  max-height: 350px;
+  min-height: 350px;
+  overflow-y: auto;
+}
+.padding-comments {
+  padding: 12px 116px;
+}
+.overflow-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+}

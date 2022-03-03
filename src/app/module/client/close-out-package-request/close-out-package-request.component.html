@@ -1,0 +1,340 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold">
+                {{'pending.closeout.package.request' | translate}} <span *ngIf="projectTitle">/{{projectTitle}}</span>
+                <span *ngIf="jobsiteTitle">/ {{jobsiteTitle}}</span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row my-4">
+        <div class="col-xl-12 Close_Out">
+            {{'action' | translate}}
+            <p-autoComplete id="status" forceSelection="true" [(ngModel)]="approveOrReject"
+                [suggestions]="filteredApplyStatus" field="label" [dropdown]="true"
+                (completeMethod)="filterApplyStatus($event)" placeholder="{{'select.closeout.action' | translate}}">
+            </p-autoComplete>
+            <button pButton pRipple type="button" (click)="apply()" label="{{'apply' | translate}}"
+                class="p-button-outlined p-button-sm" style="margin-left: 16px;"></button>
+            <div class="float-right">
+                <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}"
+                    class="p-button" icon="fa fa-filter"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="p-grid">
+                            <div class="p-col-12">
+                                <p class="font_sm mb-0">{{'closeout.request.package.date' | translate}}</p>
+                            </div>
+                            <div class="p-col-6">
+                                <div class="p-field">
+                                    <label>{{ 'from' | translate }} : </label>
+                                    <p-calendar formControlName="createdFrom" [maxDate]="createdToDate" appendTo="body"
+                                        [(ngModel)]="createdFromDate" [readonlyInput]="true" [showIcon]="true"
+                                        inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="p-col-6">
+                                <div class="p-field">
+                                    <label>{{ 'to' | translate }} : </label>
+                                    <p-calendar formControlName="createdTo" appendTo="body" [(ngModel)]="createdToDate"
+                                        [minDate]="createdFromDate" [readonlyInput]="true" [showIcon]="true"
+                                        inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="p-col-6 Close_SubCon">
+                                <div class="p-field">
+                                    <label for="keyword">{{ "subcontractor" | translate }} : </label>
+                                    <p-autoComplete placeholder="{{'all' | translate}}" formControlName="assignedTo"
+                                        id="assignedTo" forceSelection="true" [suggestions]="subcontractors"
+                                        [field]="getFullName" minLength="3"
+                                        (completeMethod)="getSubcontractorByName($event)" delay="2000" minLength="3"
+                                        [dropdown]="true">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="p-col-6">
+                                <div class="p-field">
+                                    <label>{{ 'status' | translate }} : </label>
+                                    <p-autoComplete formControlName="status" id="status" forceSelection="true"
+                                        [suggestions]="filteredStatus" field="label" [dropdown]="true" minLength="3"
+                                        (completeMethod)="filterStatus($event)" placeholder="{{'all' | translate}}"
+                                        [style]="{'max-height':'37px'}">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="d-inline">
+                            <button pButton type="button" class="p-button-outlined mr-3" (click)="filter()"
+                                label="{{ 'apply' | translate}}"></button>
+                            <button pButton pRipple type="button" label="{{'clear' |translate}}"
+                                (click)="onFilterClear()" class="p-button-danger"></button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [columns]="selectedColumns" [value]="closeoutList" [paginator]="true" [lazy]="true"
+                    (onLazyLoad)="onLazyLoad($event)" [rows]="size" [scrollable]="true" scrollHeight="400px"
+                    [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                            selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                            placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 200px;" *ngFor="let col of columns">
+                            <col style="width: 150px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCount !== 0" #e (click)="selectAllCloseOut(e)">
+                                </p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn
+                                [pSortableColumn]="col.sortable?col.value:null">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="data" #e (click)="selectCloseOut(e)"
+                                    *ngIf="data.status ==='REQUESTED'"></p-tableCheckbox>
+                            </td>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'projectTitle'">
+                                    <span class="text-wrap">
+                                        {{data.projectDetail.title}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'jobsiteTitle'">
+                                    <span class="text-wrap">
+                                        {{data.jobSiteDetail.title}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'postedBy'">
+                                    <span class="text-wrap">
+                                        {{data.subContractor.firstName}} {{data.subContractor.lastName}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'region'">
+                                    {{data.projectDetail.region}}
+                                </div>
+                                <div *ngSwitchCase="'createdDate'">
+                                    {{data.createdDate| date:shortDate}}
+                                </div>
+                                <div *ngSwitchCase="'milestoneName'">
+                                    <span class="text-wrap">
+                                        {{data.paymentMileStone.name}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'lineItem'">
+                                    <span *ngIf="data.paymentMileStone.lineItem.length > 0; else zeroLineItem">
+                                        <p-button (click)="lineItemDeliverablePopup(data.paymentMileStone.lineItem)"
+                                            styleClass="p-button-link">
+                                            {{data.paymentMileStone.lineItem.length}}</p-button>
+                                    </span>
+                                    <ng-template #zeroLineItem>
+                                        {{data.paymentMileStone.lineItem.length}}
+                                    </ng-template>
+                                </div>
+                                <div *ngSwitchCase="'percentage'">
+                                    <p *ngIf="data.paymentMileStoneBidDetail!== null ; else none">
+                                        {{data.paymentMileStoneBidDetail.subContractorPercentage}}
+                                    </p>
+                                    <ng-template #none>
+                                        {{data.paymentMileStone.percentage}}
+                                    </ng-template>
+                                </div>
+                                <div *ngSwitchCase="'amount'">
+                                    {{data.cost | currency: 'USD'}}
+                                </div>
+                                <div *ngSwitchCase="'status'">
+                                    {{ data.status ==='NOT_SUBMITTED' ? 'Not Submitted' : data.status ==='SUBMITTED' ?
+                                    'Submitted' : data.status ==='APPROVED' ? 'Approved' : data.status ==='REQUESTED'?
+                                    'Requested': 'Rejected' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <p-button icon="pi pi-download" (click)="getCloseoutAttachmentByCloseOutId(data.id)"
+                                        pTooltip="{{'download.documents'|translate}}"></p-button>
+                                    <p-button class="ml-1" icon="pi pi-comment" (click)="openCommunicationHistory(data)"
+                                        pTooltip="{{'view.communication.history'|translate}}"></p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="12" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="lineItemPopup" (onHide)="hideLineItemDialog()" header="{{'line.item'|translate}}"
+            [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+    'max-height': '300px','min-height':'300px','width':'700px'}" [modal]="true" styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <div class="" *ngFor="let viewLineItem of viewLineItem">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <span class="text-muted">{{'line.item.id'|translate}} : </span>
+                                <span class="font-weight-bold" *ngIf="viewLineItem.lineItemId">
+                                    {{viewLineItem.lineItemId}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <span class="text-muted">{{'unit'|translate}} : </span>
+                                <span class="font-weight-bold" *ngIf="viewLineItem.unit">
+                                    {{viewLineItem.unit.name}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <span class="text-muted">{{'line.item.name'|translate}} : </span>
+                                <span *ngIf="viewLineItem.lineItemName">
+                                    {{viewLineItem.lineItemName}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <span class="text-muted">{{'quantity'|translate}} : </span>
+                                <span class="font-weight-bold" *ngIf="viewLineItem.quantity">
+                                    {{viewLineItem.quantity}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-12">
+                            <p>
+                                <span class="text-muted">{{'line.item.description'|translate}} : </span>
+                                <span class="font-weight-bold" *ngIf="viewLineItem.description"
+                                    [innerHtml]="viewLineItem.description"></span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12" *ngIf="viewLineItem.inclusions">
+                                    <span class="text-muted">
+                                        {{'inclusions' | translate }} :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.inclusions"
+                                        [innerHtml]="viewLineItem.inclusions"></span>
+                                </div>
+                                <div class="col-md-12" *ngIf="viewLineItem.exclusions">
+                                    <span class="text-muted">
+                                        {{'exclusions' | translate }} :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.exclusions"
+                                        [innerHtml]="viewLineItem.exclusions"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12" *ngIf="viewLineItem.dynamicLabel1">
+                                    <p>
+                                        <span class="text-muted">
+                                            {{'dynamic.label1' | translate }} :
+                                        </span>
+                                        <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel1">
+                                            {{viewLineItem.dynamicLabel1}} </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-12" *ngIf="viewLineItem.dynamicLabel2">
+                                    <p>
+                                        <span class="text-muted">
+                                            {{'dynamic.label2' | translate }} :
+                                        </span>
+                                        <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel2">
+                                            {{viewLineItem.dynamicLabel2}} </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-12" *ngIf="viewLineItem.dynamicLabel3">
+                                    <p>
+                                        <span class="text-muted">
+                                            {{'dynamic.label3' | translate }} :
+                                        </span>
+                                        <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel3">
+                                            {{viewLineItem.dynamicLabel3}} </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" (click)="hideLineItemDialog()" icon="pi pi-times-circle"
+                    label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger"
+                    style="margin-left: 16px;"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <p-dialog [(visible)]="rejectDialog" [style]="{width: '50%'}" header="{{'rejection.reason' | translate}}"
+        [modal]="true" styleClass="p-fluid" (onHide)="hideRejectDialog()">
+
+        <ng-template pTemplate="content">
+            <form [formGroup]="myRejectForm">
+
+                <div class="p-field">
+                    <label for="title">{{ "reason" | translate }}*</label>
+                    <input class="form-control" type="text" pInputText formControlName="rejectionReason"
+                        placeholder="Enter Reason" required maxlength="250" />
+                </div>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <p-button label="{{ 'ok' | translate }}" type="button" (click)="onSubmitRejection()"></p-button>
+            <button pButton pRipple type="button" label="{{'cancel' | translate}}"
+                class="p-button-outlined p-button-danger" style="margin-left: 16px;"
+                (click)="hideRejectDialog()"></button>
+        </ng-template>
+    </p-dialog>
+</div>

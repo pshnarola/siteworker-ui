@@ -1,0 +1,108 @@
+<ngx-spinner></ngx-spinner>
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" type="button" *ngIf="showButtons" (click)="addCertificate()" label="{{ 'add.new' | translate }}"></button>
+            <button pButton class="bg-admin" type="button" *ngIf="showButtons" (click)="disableSelectedCertificate()" label="{{ 'disable.selected' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field p-fluid">
+                                <label for="name">Name :</label>
+                                <input type="text" id="name_searchbox" [(ngModel)]="nameFilterValue" class="form-control" placeholder="Type to filter" [pKeyFilter]="blockSpecial" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-3">
+                            <button pButton class="p-button-outlined" type="button" (click)="filter()" label="{{ 'search'| translate}}"></button>&nbsp;&nbsp;
+                            <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [value]="data" [lazy]="true" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} certificates" [(selection)]="selectedCertificateArray" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>
+                            <p-tableHeaderCheckbox #e></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-certificate>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox #e [value]="certificate"></p-tableCheckbox>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td>{{certificate.name}}</td>
+                        <td>
+                            <button [disabled]="btnDisabled" class="btn btn-success mr-2 btn-sm" (click)="editCertificate(certificate)" pTooltip="{{'edit.certificate'  | translate}}">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-warning mr-2 btn-sm" *ngIf="!certificate.isEnable" (click)="openDialog(certificate.id, certificate.name, certificate.isEnable)" pTooltip="{{'enable.certificate' | translate}}">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-danger mr-2 btn-sm" *ngIf="certificate.isEnable" (click)="openDialog(certificate.id, certificate.name, certificate.isEnable)" pTooltip="{{'disable.certificate' | translate}}">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>
+
+<p-dialog [(visible)]="userDialog" [style]="{width: '450px'}" header="{{popupHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">Name*</label>
+                <input type="text" pInputText id="name" placeholder="Enter Name" formControlName="name" required autofocus [pKeyFilter]="blockSpecial" maxLength="50" />
+                <div class="p-invalid" *ngIf="myForm.controls['name'].touched && (myForm.controls['name'].hasError('required') && !myForm.controls['name'].valid)">
+                    {{'required' | translate}}
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-outlined" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>

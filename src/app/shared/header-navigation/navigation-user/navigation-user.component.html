@@ -1,0 +1,384 @@
+<header class="topbar user-header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="logo-blk d-none d-md-block" (click)="onProppie()" style="cursor: pointer;">
+            <img src="assets/images/proppie-logo.jpg" alt="logo" class="img-fluid" />
+        </div>
+
+        <div class="navbar-collapse">
+            <ul class="navbar-nav mr-auto d-none d-md-block mt-md-0"></ul>
+            <!-- ============================================================== -->
+            <!-- toggle and nav items -->
+            <!-- ============================================================== -->
+            <ul class="navbar-nav my-lg-0 align-items-center">
+                <!-- ============================================================== -->
+                <!-- Navbar Items -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown dmenu" ngbDropdown placement="bottom-left"
+                    *ngFor="let navbarItem of navbarItems"
+                    [ngClass]="{ 'd-none d-md-block': navbarItem.hideOnPhone == true }">
+                    <a ngbDropdownToggle class="nav-link dropdown-toggle waves-effect waves-dark"
+                        href="javascript:void(0)" data-toggle="dropdown">
+                        <img src="assets/images/top-nav/{{ navbarItem.icon }}.png" class="d-md-none" />
+                        <span class="d-none d-md-block">
+                            {{ navbarItem.title }}
+                        </span>
+                    </a>
+                    <div class="dropdown-menu sm-menu" ngbDropdownMenu>
+                        <div *ngFor="let navbarSubItem of navbarItem.submenu" class="dropdown-item"
+                            [routerLink]="navbarSubItem.path">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">{{ navbarSubItem.title }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Add Menu for Phone  -->
+                <li class="nav-item d-md-none dropdown" ngbDropdown placement="bottom-right">
+                    <a ngbDropdownToggle class="nav-link waves-effect waves-dark" href="javascript:void(0)">
+                        <img src="assets/images/top-nav/plus.png" />
+                    </a>
+                    <div class="dropdown-menu sm-menu" ngbDropdownMenu>
+                        <div class="dropdown-item" (click)="onAProperty()">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">Add a Property Listing</span>
+                            </span>
+                        </div>
+                        <div class="dropdown-item" (click)="onMyself()">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">Add a User Listing</span>
+                            </span>
+                        </div>
+                        <div class="dropdown-item" (click)="onATeam()">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">Add a Team Listing</span>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Message and Notification Menu for Mobile    -->
+                <li class="nav-item d-md-none dropdown" ngbDropdown placement="bottom-right">
+                    <a ngbDropdownToggle class="nav-link waves-effect waves-dark" href="javascript:void(0)">
+                        <img src="assets/images/top-nav/envelope.png" />
+                    </a>
+                    <div class="dropdown-menu sm-menu" ngbDropdownMenu>
+                        <div class="dropdown-item d-flex align-items-center justify-content-between"
+                            (click)="onMobileNotificationIconClick()">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">Notifications</span>
+                            </span>
+                            <!-- <span *ngIf="headerNotifications?.length > 0">
+                                <span *ngIf="unseenNotifiactionCount > 0"
+                                    class="notification-count-circle">{{ headerNotifications[0].noOfNewNotifications }}
+                                </span>
+                            </span> -->
+                        </div>
+                        <div class="dropdown-item" routerLink="/main/message">
+                            <span class="dw-user-box w-100">
+                                <span class="u-text">Messages</span>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+
+
+                <!-- Notification -->
+                <li class="nav-item dropdown d-none animated d-md-block" ngbDropdown placement="bottom-left">
+                    <a (click)="onNotificationIconClick()" ngbDropdownToggle class="nav-link waves-effect waves-dark"
+                        href="javascript:void(0)">
+                        <!-- <span class="notify-badge" *ngIf="notifNumber!=0"> {{notifNumber}}</span> -->
+                        <img src="assets/images/top-nav/bell.png" />
+                        <!--         <span class="badge">{{newNotif}}</span> -->
+                        <div *ngIf="false" class="notify">
+                            <span class="heartbit"></span> <span class="point"></span>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu fixed-right mailbox" ngbDropdownMenu>
+                        <!--    <ul *ngIf="noNotification">
+                <li><span class="text-black">No notifications</span></li>
+              </ul> -->
+                        <ul>
+                            <!-- <li>
+                                  <div class="drop-title">Notifications</div>
+                              </li> -->
+                            <li>
+                                <div class="message-center">
+                                    <!-- Message -->
+                                    <a *ngFor="let notification of headerNotifications">
+                                        <!-- <div class="d-flex align-items-center">
+                                              <div class="round {{ notification.round }} mr-1">
+                                                  <i class="{{ notification.icon }}"></i>
+                                              </div>
+                                              <h5>{{ notification.title }}</h5>
+                                          </div> -->
+                                        <div class="mail-contnet w-100"
+                                            *ngIf="notification.type != 'CONNECTION_REQUEST'"
+                                            (click)="routerPath(notification, 1)">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-black">{{ notification.text }}</span>
+                                                <span
+                                                    class="font-14-400 text-nowrap text-muted align-self-end text-right">{{ notification.createdDate | timeAgo }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mail-contnet w-100"
+                                            *ngIf="notification.type === 'CONNECTION_REQUEST'">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-black">{{ notification.text }}</span>
+                                                <span
+                                                    class="font-14-400 text-nowrap text-muted align-self-end text-right">{{ notification.createdDate | timeAgo }}
+                                                    <i style="font-size: 20px; color: green;"
+                                                        class="fas fa-check-circle fa-sm ml-2"
+                                                        (click)="routerPath(notification, 1)">
+                                                    </i>
+                                                    <i style="font-size: 20px; color: red;"
+                                                        class="fas fa-times-circle fa-sm ml-2"
+                                                        (click)="routerPath(notification, 0)">
+                                                    </i></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="nav-link text-center" href="javascript:void(0);"
+                                    routerLink="/main/notification">
+                                    <strong>View All</strong>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Notification End -->
+
+                <!-- Mail -->
+                <li class="nav-item d-none d-md-block dropdown" ngbDropdown placement="bottom-left">
+                    <a ngbDropdownToggle class="nav-link waves-effect waves-dark" href="javascript:void(0)">
+                        <img src="assets/images/top-nav/envelope.png" />
+                        <!-- <div class="notify">
+                <span class="heartbit"></span> <span class="point"></span>
+            </div> -->
+                    </a>
+                    <div class="dropdown-menu fixed-right mailbox" ngbDropdownMenu>
+                        <ul>
+                            <li><span class="text-black">No Messages</span></li>
+                        </ul>
+                        <ul *ngIf="false">
+                            <!-- <li>
+                                  <div class="drop-title">You have 4 new messages</div>
+                              </li> -->
+                            <li>
+                                <div class="message-center">
+                                    <a *ngFor="let dialogue of chatMessages">
+                                        <div (click)="onSeeFullConversation(dialogue)">
+                                            <div *ngIf="dialogue?.privateChat == true" class="d-flex align-items-center"
+                                                [ngClass]="i >= 1 ? 'mt-3' : ''">
+                                                <img [src]="imagePath + dialogue.groupMembers[0].memberId"
+                                                    onerror="this.src='assets/images/categoryImage.png'" alt="images"
+                                                    class="img-fluid img-round img-team" />
+                                                <!-- <img src="{{ dialogue.profileImgUrls. }}" class="img-fluid img-round img-team" /> -->
+                                                <div class="ml-2 w-100">
+                                                    <div class="font-16-500 pl-md-3">
+                                                        {{ dialogue.groupMembers[0].memberName }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div *ngIf="dialogue?.privateChat == false"
+                                                class="d-flex align-items-center">
+                                                <div class="px-1  flex-shrink-0">
+                                                    <ul class="d-flex mb-0 conersations-liting-img pl-0">
+                                                        <li *ngFor="let userProfile of dialogue.groupMembers" class="">
+                                                            <img [src]="imagePath + userProfile.memberId"
+                                                                onerror="this.src='assets/images/categoryImage.png'"
+                                                                alt="images" class="img-fluid" />
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <!-- User names and Messages for mobile -->
+                                                <div class="col px-0 flex-grow-1">
+                                                    <div>
+                                                        <span *ngFor="
+                              let userProfile of dialogue.groupMembers;
+                              let index = index
+                            " class="converations-names ml-0 font-16-500 pl-md-3">
+                                                            {{ userProfile.memberName}}
+                                                            <span *ngIf="
+                              dialogue?.groupMembers.length - 1 != index &&
+                              dialogue?.groupMembers.length - 2 != index
+                              ">,
+                                                            </span>
+                                                            <span *ngIf="dialogue.groupMembers.length - 2 === index">
+                                                                and
+                                                            </span>
+                                                        </span>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="mail-contnet w-100">
+                                                <div class="d-flex justify-content-between">
+                                                    <span class="mail-desc">{{
+                              dialogue.messages.content
+                            }}</span>
+                                                    <span class="time">
+                                                        {{ dialogue.messages.timestamp.toDate()| date: "shortTime"
+                              }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="nav-link text-center" href="javascript:void(0);">
+                                    <strong routerLink="/main/message">View All</strong>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- Mail End -->
+
+                <!-- Add -->
+                <ng-template #content let-c="close" let-d="dismiss">
+                    <div class="modal-header">
+                        <h4 class="modal-title">What do you want to list?</h4>
+                        <button type="button" class="close color-999" aria-label="Close" (click)="d('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <!-- Modal Body Start -->
+                    <div class="modal-body">
+                        <div>
+                            <button class="btn btn-outline-primary btn-block m-b-10" (click)="onAProperty()"
+                                (click)="d('Cross click')">
+                                A Property
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-primary btn-block m-b-10" (click)="onMyself()"
+                                (click)="d('Cross click')">
+                                Myself
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-primary btn-block m-b-10" (click)="onATeam()"
+                                (click)="d('Cross click')">
+                                A Team
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Modal Body End -->
+                </ng-template>
+                <li class="nav-item dropdown d-none d-md-block">
+                    <a class="nav-link waves-effect waves-dark" (click)="open(content)">
+                        <img src="assets/images/top-nav/plus.png" />
+                    </a>
+                </li>
+                <!-- Add End -->
+
+                <!-- Profile Dropdown -->
+                <li class="nav-item d-md-block dropdown d-flex align-items-center profile-pic-menu" ngbDropdown
+                    placement="bottom-left">
+                    <a ngbDropdownToggle id="profile_icon_right_outer"
+                        class="nav-link dropdown-toggle waves-effect waves-dark" href="javascript:void(0)"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="profile-pic-span d-md-inline-flex">
+                            <img *ngIf="profilePic; else defaultProfilePic" (load)="onLoad()" src="{{ userProfileUrl }}"
+                                alt="user" class="profile-pic d-none d-md-block"
+                                onerror="this.src='assets/images/users/ProfileImage.png'" />
+
+                            <img *ngIf="loading" src="assets/images/users/ProfileImage.png" alt="user"
+                                class="profile-pic d-none d-md-block"
+                                onerror="this.src='assets/images/users/ProfileImage.png'" />
+
+                            <!-- <p-progressSpinner
+                  [style]="{ width: '10px', height: '10px' }"
+                  strokeWidth="8"
+                  fill="#EEEEEE"
+                  animationDuration=".5s"
+                  *ngIf="loading"
+                >
+                </p-progressSpinner> -->
+                            <ng-template #defaultProfilePic>
+                                <img src="assets/images/users/ProfileImage.png" (load)="onLoad()"
+                                    class="profile-pic d-none d-md-block" />
+                            </ng-template>
+
+                            <!-- For Mobile Profile Image starts -->
+                            <img *ngIf="profilePic; else defaultProfilePic" (load)="onLoad()" src="{{ userProfileUrl }}"
+                                alt="user" class="profile-pic d-md-none" style="height: 30px; width: 30px;"
+                                onerror="this.src='assets/images/users/ProfileImage.png'" />
+
+                            <img *ngIf="loading" src="assets/images/users/ProfileImage.png" alt="user"
+                                class="profile-pic d-md-none" style="height: 30px; width: 30px;"
+                                onerror="this.src='assets/images/users/ProfileImage.png'" />
+
+                            <!-- <p-progressSpinner
+                  [style]="{ width: '10px', height: '10px' }"
+                  strokeWidth="8"
+                  fill="#EEEEEE"
+                  animationDuration=".5s"
+                  *ngIf="loading"
+                >
+                </p-progressSpinner> -->
+                            <ng-template #defaultProfilePic>
+                                <img src="assets/images/users/ProfileImage.png" (load)="onLoad()"
+                                    class="profile-pic d-md-none" style="height: 30px; width: 30px;" />
+                            </ng-template>
+                            <!-- For Mobile Profile Image ends -->
+                        </span>
+                    </a>
+                    <div class="dropdown-menu fixed-right sm-menu" ngbDropdownMenu>
+                        <div *ngFor="let profileItem of profileItems" class="dropdown-item"
+                            [routerLink]="profileItem.path">
+                            {{ profileItem.title }}
+                        </div>
+                        <div id="logout" style="cursor: pointer;" (click)="signOut()" class="dropdown-item">
+                            Log Out
+                        </div>
+                    </div>
+                </li>
+
+                <!--mobile-->
+                <!--  <li class="nav-item d-md-none d-md-block dropdown  d-flex align-items-center profile-pic-menu" ngbDropdown
+            placement="bottom-left">
+            <a ngbDropdownToggle id="profile_icon_right_outer" class="nav-link dropdown-toggle waves-effect  waves-dark"
+              href="javascript:void(0)" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="profile-pic-span d-md-none d-md-inline-flex">
+                <img *ngIf="profilePic; else defaultProfilePic" (load)="onLoad()" src={{userProfileUrl}} alt="user"
+                  class="profile-pic d-md-none d-md-block" onerror="this.src='assets/images/users/ProfileImage.png'" />
+  
+                <img *ngIf="loading" src="assets/images/users/ProfileImage.png" alt="user"
+                  class="profile-pic d-md-none d-md-block" onerror="this.src='assets/images/users/ProfileImage.png'" />
+  
+                <!-- <p-progressSpinner
+                  [style]="{ width: '10px', height: '10px' }"
+                  strokeWidth="8"
+                  fill="#EEEEEE"
+                  animationDuration=".5s"
+                  *ngIf="loading"
+                >
+                </p-progressSpinner> -->
+                <!-- <ng-template #defaultProfilePic>
+                  <img src="assets/images/users/ProfileImage.png" (load)="onLoad()"
+                    class="profile-pic d-md-none d-md-block" />
+                </ng-template>
+              </span>
+  
+            </a>
+            <div class="dropdown-menu fixed-right sm-menu" ngbDropdownMenu>
+              <div *ngFor="let profileItem of profileItems" class="dropdown-item" [routerLink]="profileItem.path">
+                {{ profileItem.title }}
+              </div>
+              <div id="logout" style="cursor:pointer;" (click)="signOut()" class="dropdown-item">
+                Log Out
+              </div>
+            </div>
+          </li> -->
+            </ul>
+        </div>
+    </nav>
+</header>>

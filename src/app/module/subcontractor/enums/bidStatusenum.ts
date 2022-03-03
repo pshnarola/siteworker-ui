@@ -1,0 +1,3 @@
+export enum BidStatus {
+    STARTED, APPLIED, ACCEPTED, REJECTED, OFFERED
+}

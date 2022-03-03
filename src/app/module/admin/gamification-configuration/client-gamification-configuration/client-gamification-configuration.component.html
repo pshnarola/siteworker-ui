@@ -1,0 +1,224 @@
+<div class="container-fluid">
+
+    <h3 class="text-center">Client Gamification Configuration</h3>
+    <div class="mx-auto m-5" style="width: 60%;">
+        <form [formGroup]="gamificationClientForm">
+
+            <div class="col-md-12">
+                <label class="row" style="font-weight: bold;">Closeout Package</label>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Response Time(In Days)*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Days within client either approves or rejects closeout package"
+                                tooltipPosition="right"></i>
+                            <!-- tooltipStyleClass="tp-width" -->
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="closeOutPackageResponseTime" formControlName="closeOutPackageResponseTime" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['closeOutPackageResponseTime'].touched && (gamificationClientForm.controls['closeOutPackageResponseTime'].hasError('required') && !gamificationClientForm.controls['closeOutPackageResponseTime'].valid)
+                        || (submitted && (gamificationClientForm.controls['closeOutPackageResponseTime'].hasError('required') && 
+                        !gamificationClientForm.controls['closeOutPackageResponseTime'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Points*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Points will be earned if client approves or rejects closeout package within response time"
+                                tooltipPosition="right"></i>
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="pointsForGivingResponseInTimeForCloseoutPackage"
+                            formControlName="pointsForGivingResponseInTimeForCloseoutPackage" required pKeyFilter="num"
+                            maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['pointsForGivingResponseInTimeForCloseoutPackage'].touched && (gamificationClientForm.controls['pointsForGivingResponseInTimeForCloseoutPackage'].hasError('required') && !gamificationClientForm.controls['pointsForGivingResponseInTimeForCloseoutPackage'].valid)
+                        || (submitted && (gamificationClientForm.controls['pointsForGivingResponseInTimeForCloseoutPackage'].hasError('required') && 
+                        !gamificationClientForm.controls['pointsForGivingResponseInTimeForCloseoutPackage'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="row" style="font-weight: bold;">
+                    Average Quality Rating in a Month
+                    <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                        pTooltip="Points will be earned on average quality rating" tooltipPosition="right"></i>
+                </label>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">Points for 4 to 5 Quality Rating*: </label>
+                        <input class="form-control points-field-m" type="text" pInputText id="ratingFourToFive"
+                            formControlName="ratingFourToFive" required pKeyFilter="num" maxLength="2" />
+
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['ratingFourToFive'].touched && (gamificationClientForm.controls['ratingFourToFive'].hasError('required') && !gamificationClientForm.controls['ratingFourToFive'].valid)
+                                    || (submitted && (gamificationClientForm.controls['ratingFourToFive'].hasError('required') && 
+                                    !gamificationClientForm.controls['ratingFourToFive'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">Points for 3 to 4 Quality Rating*: </label>
+                        <input class="form-control points-field-m" type="text" pInputText id="ratingThreeToFour"
+                            formControlName="ratingThreeToFour" required pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['ratingThreeToFour'].touched && (gamificationClientForm.controls['ratingThreeToFour'].hasError('required') && !gamificationClientForm.controls['ratingThreeToFour'].valid)
+                                    || (submitted && (gamificationClientForm.controls['ratingThreeToFour'].hasError('required') && 
+                                    !gamificationClientForm.controls['ratingThreeToFour'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">Points for Below 3 Quality Rating*: </label>
+                        <input class="form-control points-field-m" type="text" pInputText id="ratingBelowThree"
+                            formControlName="ratingBelowThree" required pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['ratingBelowThree'].touched && (gamificationClientForm.controls['ratingBelowThree'].hasError('required') && !gamificationClientForm.controls['ratingBelowThree'].valid)
+                                    || (submitted && (gamificationClientForm.controls['ratingBelowThree'].hasError('required') && 
+                                    !gamificationClientForm.controls['ratingBelowThree'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="row" style="font-weight: bold;">Weekly Timesheet</label>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Response Time(In Days)*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Days within client either approves or rejects timesheet"
+                                tooltipPosition="right"></i>
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="weeklyTimesheetResponseTime" formControlName="weeklyTimesheetResponseTime" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['weeklyTimesheetResponseTime'].touched && (gamificationClientForm.controls['weeklyTimesheetResponseTime'].hasError('required') && !gamificationClientForm.controls['weeklyTimesheetResponseTime'].valid)
+                                    || (submitted && (gamificationClientForm.controls['weeklyTimesheetResponseTime'].hasError('required') && 
+                                    !gamificationClientForm.controls['weeklyTimesheetResponseTime'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Points*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Points will be earned if client approves or rejects weekly timesheet within response time"
+                                tooltipPosition="right"></i>
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet"
+                            formControlName="pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid"
+                            *ngIf="gamificationClientForm.controls['pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet'].touched && (gamificationClientForm.controls['pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet'].hasError('required') && !gamificationClientForm.controls['pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet'].valid)
+                                    || (submitted && (gamificationClientForm.controls['pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet'].hasError('required') && 
+                                    !gamificationClientForm.controls['pointsForGivingResponseInTimeForApprovingOrRejectingTimesheet'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="row" style="font-weight: bold;">Conversion Rate</label>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Jobsite Conversion Rate(In %)*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Jobsite Conversion Rate required to earn points ((Total Jobsite Awarded Till Date / Total Jobsite Posted Till Date ) * 100)" tooltipPosition="right"></i>
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText id="jobsitesConversionRate"
+                            formControlName="jobsitesConversionRate" required pKeyFilter="num" maxLength="3" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['jobsitesConversionRate'].touched && (gamificationClientForm.controls['jobsitesConversionRate'].hasError('required') && !gamificationClientForm.controls['jobsitesConversionRate'].valid)
+                                    || (submitted && (gamificationClientForm.controls['jobsitesConversionRate'].hasError('required') && 
+                                    !gamificationClientForm.controls['jobsitesConversionRate'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">Points*:
+                            <i style="color: #bb002b;" class="pi pi-info-circle"
+                                pTooltip="Points will be earned on jobsite rate greater than or equal to jobsite conversion rate defined by Admin"
+                                tooltipPosition="right"></i>
+                        </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="pointsforConversionRateGreaterThanEqualTojobsitesConversionRate"
+                            formControlName="pointsforConversionRateGreaterThanEqualTojobsitesConversionRate" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid"
+                            *ngIf="gamificationClientForm.controls['pointsforConversionRateGreaterThanEqualTojobsitesConversionRate'].touched && (gamificationClientForm.controls['pointsforConversionRateGreaterThanEqualTojobsitesConversionRate'].hasError('required') && !gamificationClientForm.controls['pointsforConversionRateGreaterThanEqualTojobsitesConversionRate'].valid)
+                                    || (submitted && (gamificationClientForm.controls['pointsforConversionRateGreaterThanEqualTojobsitesConversionRate'].hasError('required') && 
+                                    !gamificationClientForm.controls['pointsforConversionRateGreaterThanEqualTojobsitesConversionRate'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <label class="row" style="font-weight: bold;"> Lead Days</label>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">
+                            Lead days for actual start date(In Days)*:
+                        </label>
+
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="leadDaysforActualStartDate" formControlName="leadDaysforActualStartDate" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['leadDaysforActualStartDate'].touched && (gamificationClientForm.controls['leadDaysforActualStartDate'].hasError('required') && !gamificationClientForm.controls['leadDaysforActualStartDate'].valid)
+                                    || (submitted && (gamificationClientForm.controls['leadDaysforActualStartDate'].hasError('required') && 
+                                    !gamificationClientForm.controls['leadDaysforActualStartDate'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" style="font-weight: unset;">Points for starting project in time*: </label>
+                        <input class="form-control points-field-m" type="text" pInputText
+                            id="pointsForStartingJobIntime" formControlName="pointsForStartingJobIntime" required
+                            pKeyFilter="num" maxLength="2" />
+                        <div class="p-invalid" *ngIf="gamificationClientForm.controls['pointsForStartingJobIntime'].touched && (gamificationClientForm.controls['pointsForStartingJobIntime'].hasError('required') && !gamificationClientForm.controls['pointsForStartingJobIntime'].valid)
+                                    || (submitted && (gamificationClientForm.controls['pointsForStartingJobIntime'].hasError('required') && 
+                                    !gamificationClientForm.controls['pointsForStartingJobIntime'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+        <button class="float-right bg-admin" pButton pRipple label="{{ 'submit' | translate }}" type="submit"
+            (click)="onSubmit()" icon="pi pi-check-circle"></button>
+    </div>
+</div>

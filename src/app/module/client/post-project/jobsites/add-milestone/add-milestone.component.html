@@ -1,0 +1,160 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="float-left">
+                <h5><b>{{'add.milestone.for' |translate}} {{selectedJobsite.title}}</b></h5>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div>
+            <div class="float-left">
+                <!-- <input type="checkbox" value="true" [(ngModel)]="copyMilestone"/> -->
+                <p-checkbox [(ngModel)]="copyMilestone" [binary]="true" (onChange)="onCopyMilestoneChange($event)"></p-checkbox>
+                {{ 'copy.milestone' |translate}}
+                <i class="pi pi-info-circle" pTooltip="Copy Milestone" tooltipPosition="bottom"></i>
+            </div>
+        </div>
+        <br>
+        <form [formGroup]="paymentMileStoneForm">
+            <p-table [value]="paymentMileStoneForm.get('paymentMileStoneList')['controls']" [resizableColumns]="true" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 150px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 150px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>{{"milestone.number" |translate}}</th>
+                        <th pResizableColumn>{{"milestone.name" |translate}}</th>
+                        <th pResizableColumn>{{"milestone.%" |translate}}</th>
+                        <th pResizableColumn>{{"deliverables" |translate}}</th>
+                        <th pResizableColumn>{{"action" |translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <ng-container formArrayName="paymentMileStoneList">
+                        <tr [formGroupName]="rowIndex">
+                            <td>
+                                {{rowIndex+1}}
+                            </td>
+                            <td>
+                                <input style="margin-top: 10%;" type="text" pInputText formControlName="name" class="form-control" />
+                                <div class="p-invalid" *ngIf="rowData.get('name').touched && 
+                                    (rowData.get('name').hasError('required') &&
+                                    !rowData.get('name').valid)
+                                    || (submitted &&
+                                    (rowData.get('name').hasError('required') && 
+                                    !rowData.get('name').valid))">
+                                    {{'required' | translate}}
+                                </div>
+                                <div class="p-invalid" *ngIf="rowData.get('name').touched && 
+                                    (rowData.get('name').hasError('maxlength') && 
+                                    !rowData.get('name').valid)">
+                                    {{'milestone.name.maxLength' | translate}}
+                                </div>
+
+                                <div class="form-check">
+                                    <!-- <input class="form-check-input" type="checkbox" value=""> -->
+                                    <p-checkbox formControlName="hasAdvancePayment" [binary]="true"></p-checkbox>
+                                    <label style="margin-left: 3%;margin-top: 5%;" class="form-check-label" for="defaultCheck1">
+                                        Advance Payment
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <p-inputNumber inputId="minmaxfraction" maxlength="6" formControlName="percentage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2">
+                                </p-inputNumber>
+                                <div class="p-invalid" *ngIf="rowData.get('percentage').touched && 
+                                    (rowData.get('percentage').hasError('required') &&
+                                    !rowData.get('percentage').valid)">
+                                    <small>{{'required' | translate}}</small>
+                                </div>
+                                <div class="p-invalid" *ngIf="rowData.get('percentage').touched && 
+                                    (rowData.get('percentage').hasError('min') && 
+                                    !rowData.get('percentage').valid)
+                                    || (submitted &&
+                                    (rowData.get('percentage').hasError('required') && 
+                                    !rowData.get('percentage').valid))">
+                                    <small>{{'milestone.percentage.min' | translate}}</small>
+                                </div>
+                                <div class="p-invalid" *ngIf="rowData.get('percentage').touched && 
+                                    (rowData.get('percentage').hasError('max') &&
+                                    !rowData.get('percentage').valid)">
+                                    <small>{{'milestone.percentage.max' | translate}}</small>
+                                </div>
+                            </td>
+                            <td>
+                                <b style="cursor: pointer;" (click)="openLineItemDialog(rowIndex)"><i class="pi pi-plus" aria-hidden="true"></i> Line Item</b>
+                                <b style="margin-right: 2%;margin-left: 2%;"> | </b>
+                                <b style="cursor: pointer;" (click)="openViewDialog(rowIndex)">
+                                <i class="pi pi-eye" aria-hidden="true"></i> View</b>
+                            </td>
+                            <td class="Add_Mile">
+                                <button (click)="openDialog(rowData.get('id').value,rowData.get('name').value,rowIndex)" class="btn btn-danger btn-sm" pTooltip="Delete">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+
+                                <button *ngIf="paymentMileStoneForm.get('paymentMileStoneList').length-1 === rowIndex" (click)="addRow()" class="btn btn-success btn-sm" pTooltip="+ Add Milestone">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+
+                            </td>
+                        </tr>
+                    </ng-container>
+                </ng-template>
+            </p-table>
+        </form>
+    </div>
+    <br>
+    <div style="text-align: right;">
+        <button type="button" class=" btn btn-outline-danger" (click)="onCancel()">
+                <i class="pi pi-chevron-left"></i>
+                {{'previous' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmitMilestone()">
+            {{'save' | translate}}</button>
+        <button type="button" class="btn btn-primary " (click)="onSubmitMilestoneAndNext()">
+                {{'save.and.next' | translate}}
+                <i class="pi pi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<p-dialog [(visible)]="lineItemDialog" (onHide)="onCloseDialogEvent($event)" [style]="{width: '60%'}" header="Milestone Payment" [modal]="true" styleClass="p-fluid">
+
+    <p-pickList [source]="sourceProducts" [target]="targetProducts" sourceHeader="Available" targetHeader="Selected" dragdrop="true" [responsive]="true" [sourceStyle]="{'height':'300px'}" [targetStyle]="{'height':'300px'}" filterBy="lineItemName" sourceFilterPlaceholder="Search by name"
+        targetFilterPlaceholder="Search by name">
+        <ng-template let-product pTemplate="item">
+            <div class="product-item">
+                <div class="product-list-detail">
+                    <h5 class="p-mb-2">{{product.lineItemName}}</h5>
+                </div>
+            </div>
+        </ng-template>
+    </p-pickList>
+    <br>
+    <div style="text-align: center;">
+        <button type="button" (click)="hideLineItemDialog()" class=" btn btn-outline-danger">
+            <i class="fa fa-times-circle"></i>
+            {{'close' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="onSaveLineItem()">
+            {{'save' | translate}}</button>
+    </div>
+</p-dialog>
+
+
+<p-dialog [(visible)]="isOpenLineItemViewDialog" [style]="{width: '20%'}" (onHide)="onHide($event)" header="Assigned Line Item" [modal]="true" styleClass="p-fluid">
+
+    <div *ngIf="!isAssigned">
+        No Record Found
+    </div>
+    <div *ngIf="isAssigned">
+        <div *ngFor="let item of lineItemToView">
+            <h5>{{item.lineItemName}}</h5>
+        </div>
+    </div>
+</p-dialog>

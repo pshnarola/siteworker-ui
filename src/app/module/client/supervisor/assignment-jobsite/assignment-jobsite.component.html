@@ -1,0 +1,45 @@
+<p-table #dt [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="tableRowSize"
+    [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true"
+    styleClass="p-datatable-gridlines" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites"
+    [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="tablePaginateDropdown">
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col style="width: 10%;">
+            <col style="width: 20%;">
+            <col style="width: 20%;">
+        </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th pResizableColumn>{{ "sr.no"| translate}}</th>
+            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" pResizableColumn>
+                {{col.label}}
+                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+            </th>
+            <th pResizableColumn>{{ "status"| translate}}</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-i="rowIndex" let-jobsite>
+        <tr>
+            <td>{{i+1}}</td>
+            <td>{{jobsite.project.title}}</td>
+            <td>{{jobsite.title}}</td>
+            <td>{{
+                jobsite.status ==='IN_PROGRESS' ? 'In Progress' :
+                jobsite.status ==='DRAFT' ? 'Draft' :
+                jobsite.status ==='CANCELLED' ? 'Cancelled' :
+                jobsite.status ==='COMPLETED' ? 'Completed' :
+                jobsite.status ==='AWARDED' ? 'Awarded' :
+                'Posted'
+                }}
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td class="text-center" [attr.colspan]="3">
+                {{'no.record.found' | translate}}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

@@ -1,0 +1,441 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" style="cursor: pointer;" (click)="redirectToDashboard()" alt="" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2 mx-1">
+            <button class="btn bg-warning text-black mr-2" type="submit" (click)="redirectToSignIn()" id="login_submit">
+                Sign In
+            </button>
+            <button class="btn bg-warning text-black" type="submit" (click)="redirectToSignUp()" id="signup_submit">
+                Sign Up
+            </button>
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid mb-3 Common_Profile_Border_Bottom" *ngIf="subcontractorDetail">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-black">
+            <h4 class="font-weight-bold">Subcontractor Profile</h4>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="row">
+                <div class="col-lg-2 d-flex align-items-center View_Ava">
+                    <ng-container *ngIf="!subcontractorDetail.basicProfile.photo">
+                        <p-avatar
+                            label={{subcontractorDetail.basicProfile.user.firstName.substring(0,1)+subcontractorDetail.basicProfile.user.lastName.substring(0,1)}}
+                            styleClass="p-mr-2" size="xlarge"
+                            [style]="{'background-color':'#FCCC00', 'color': '#ffffff'}" shape="circle">
+                        </p-avatar>
+                    </ng-container>
+                    <ng-container *ngIf="subcontractorDetail.basicProfile.photo">
+                        <img width="150" src="{{imageUrl + subcontractorDetail.basicProfile.photo}}" alt="profilePhoto"
+                            class="profileImage">
+                    </ng-container>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="rating-card">
+                        <h4 class="text-primary">
+                            {{subcontractorDetail.basicProfile.user.firstName}}
+                            {{subcontractorDetail.basicProfile.user.lastName}}
+                        </h4>
+                        <p class="text-muted text-break">
+                            <span *ngIf="subcontractorDetail.basicProfile.description; else noDataFound">
+                                {{subcontractorDetail.basicProfile.description}}
+                            </span>
+                        </p>
+                        <p class="text-dark font-weight-bold"
+                            *ngIf="subcontractorDetail.basicProfile.city;else noDataFoundss">
+                            {{subcontractorDetail.foundedYearsAgo}}</p>
+                        <a class="text-dark font-weight-bold"><i class="fa fa-map-marker"></i>
+                            <span *ngIf="subcontractorDetail.basicProfile.city;else noDataFound">
+                                {{subcontractorDetail.basicProfile.city}} , {{subcontractorDetail.basicProfile.state}}
+                            </span>
+                        </a>
+                    </div>
+                    <ng-template #noDataFound>
+                        <span class="text-dark mb-0"> {{'n.a' | translate }} </span>
+                    </ng-template>
+                    <ng-template #noDataFounds>
+                        <p class="text-dark mb-0"> {{'n.a' | translate }} </p>
+                    </ng-template>
+                    <ng-template #noDataFoundss>
+                        <p class="text-dark font-weight-bold"> {{'n.a' | translate }} </p>
+                    </ng-template>
+                </div>
+                <div class="col-lg-4 col-md-6 d-flex align-items-center">
+                    <div class="rounded rating-card bg-primary p-4 d-flex"
+                        *ngIf=" (subcontractorDetail.successRatio !== 'New Subcontractor') || (subcontractorDetail.averageRating !== 'New Subcontractor') ; else newSubcontractor ">
+                        <div class="rating-card mx-2">
+                            <h3 class="text-white text-center mb-1 font-weight-bold">
+                                <span *ngIf="subcontractorDetail.successRatio !== 'New Subcontractor' ; else noSuccess">
+                                    {{subcontractorDetail.successRatio}}
+                                    <i class="fa fa-percent" aria-hidden="true"></i>
+                                </span>
+                                <ng-template #noSuccess>
+                                    {{subcontractorDetail.successRatio}}
+                                </ng-template>
+                            </h3>
+                            <p class="text-white mb-0 text-center text-nowrap">
+                                {{'success.ratio' | translate}}
+                            </p>
+                        </div>
+                        <div class="mx-2 border-left"></div>
+                        <div class="rating-card mx-2">
+                            <h3 class="text-white text-center d-flex mb-1 font-weight-bold">
+                                <span
+                                    *ngIf="subcontractorDetail.averageRating !== 'New Subcontractor' ; else noAverage">
+                                    <i class="fa fa-star star mr-1" aria-hidden="true"></i>
+                                    {{subcontractorDetail.averageRating}}
+                                </span>
+                                <ng-template #noAverage>
+                                    {{subcontractorDetail.averageRating}}
+                                </ng-template>
+                            </h3>
+                            <p class="text-white mb-0 text-center text-nowrap">
+                                {{'average.rating' | translate}}
+                            </p>
+                        </div>
+                    </div>
+                    <ng-template #newSubcontractor>
+                        <div class=" rounded rating-card bg-primary p-4 d-flex">
+                            <div class="rating-card mx-2">
+                                <h5 class="text-white text-center d-flex mb-1 font-weight-bold">
+                                    New Subcontractor
+                                </h5>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="w-100 card mt-3">
+                <div class="card-header">
+                    <h5 class="font-weight-bold">{{'services' | translate}}</h5>
+                </div>
+                <div class="services p-3">
+                    <mat-chip-list class="example-chip">
+                        <ng-container
+                            *ngIf="subcontractorDetail.subContractorServices.length !== 0 ; else noServiceFound">
+                            <ng-container *ngFor="let service of subcontractorDetail.subContractorServices">
+                                <mat-chip class="example-box">
+                                    {{service.service.serviceName}}
+                                </mat-chip>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #noServiceFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.services.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <div class="w-100 card mt-3">
+                <div class="card-header">
+                    <h5 class="font-weight-bold">{{'contact' | translate}}</h5>
+                </div>
+
+                <div class="d-flex">
+                    <div class="flex-fill text-center p-3">
+                        <span class="material-icons text-primary h1">
+                            language
+                        </span>
+                        <p class="text-dark mb-0"
+                            *ngIf="subcontractorDetail.basicProfile.websiteURL ; else noDataFounds">
+                            <span>
+                                {{subcontractorwebsiteURL}}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">{{'web.site' | translate}}</p>
+
+                    </div>
+                    <div class="flex-fill text-center p-3">
+                        <span class="material-icons text-primary h1">
+                            contact_phone
+                        </span>
+                        <p class="text-dark mb-0"
+                            *ngIf="subcontractorDetail.basicProfile.workPhone ; else noDataFounds">
+                            <span>
+                                {{subcontractorDetailWorkPhone}}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">{{'contact.number' | translate}}</p>
+                    </div>
+                    <div class="flex-fill text-center p-3">
+                        <span class="material-icons text-primary h1">
+                            groups
+                        </span>
+                        <p class="text-dark mb-0">
+                            <span *ngIf="subcontractorDetail.basicProfile.numberOfEmployee; else noDataFounds">
+                                {{subcontractorDetail.basicProfile.numberOfEmployee.name}}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">{{'company.size' | translate}}</p>
+                    </div>
+                    <div class="flex-fill text-center p-3">
+                        <span class="material-icons text-primary h1">
+                            smartphone
+                        </span>
+                        <p class="text-dark mb-0"
+                            *ngIf="subcontractorDetail.basicProfile.mobilePhone ; else noDataFounds">
+                            <span>
+                                {{subcontractorMobilePhone}}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">{{'mobile.number' | translate}}</p>
+                    </div>
+                    <div class="flex-fill text-center p-3">
+                        <span class="material-icons text-primary h1">
+                            mail_outline
+                        </span>
+                        <p class="text-dark mb-0"
+                            *ngIf="subcontractorDetail.basicProfile.user.email ; else noDataFounds">
+                            <span>
+                                {{subcontractorEmail}}
+                            </span>
+                        </p>
+                        <p class="text-muted mb-0">{{'email' | translate}}</p>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 mt-3 Profile_Card_Height">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold"> {{'projects' | translate}}</h5>
+                        </div>
+                        <div class="card-body p-1 overflow-auto">
+                            <ng-container
+                                *ngIf="subcontractorDetail.subContractorRecentProjects.length !== 0; else noProjectFound">
+                                <ul class="list-group-wrapper"
+                                    *ngFor="let project of subcontractorDetail.subContractorRecentProjects">
+                                    <li>
+                                        <h5>
+                                            <a class="mb-0">{{project.projectDetail.title}}</a>
+                                        </h5>
+                                        <p class="text-muted mb-2">
+                                            <span class="text-break"
+                                                *ngIf="project.projectDetail.projectCompletedDate;else projectOngoing">
+                                                {{ project.projectDetail.projectPostedDate | date : 'mediumDate'}} to
+                                                {{project.projectDetail.projectCompletedDate | date : 'mediumDate'}}
+                                            </span>
+                                            <ng-template #projectOngoing>
+                                                {{'ongoing' | translate}} {{ project.projectDetail.projectPostedDate |
+                                                date :
+                                                'mediumDate'}}
+                                            </ng-template>
+                                        </p>
+                                        <p class="text-primary mb-2"><i class="fa fa-map-marker"></i> {{
+                                            project.projectDetail.region}} , {{ project.projectDetail.state}}
+                                        </p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #noProjectFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.projects.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-3 Profile_Card_Height">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold"> {{'references' | translate}}</h5>
+                        </div>
+                        <div class="card-body p-1 overflow-auto">
+                            <ng-container
+                                *ngIf="subcontractorDetail.subContractorRecentReferences.length !== 0 ; else noReferencesFound">
+                                <ul class="list-group-wrapper"
+                                    *ngFor="let reference of subcontractorDetail.subContractorRecentReferences">
+                                    <li>
+                                        <p class="text-primary font-weight-bold mb-0"> {{reference.fullName}} </p>
+                                        <p class="text-muted"> {{reference.jobTitle}} | {{reference.companyName}} </p>
+                                        <p class="font-weight-bold mb-0 mt-2"> {{reference.workPhone}} </p>
+                                        <p class=""> {{reference.email}} </p>
+                                        <p class="card-text">
+                                            <span *ngIf="reference.comment">
+                                                "{{reference.comment}}"
+                                            </span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #noReferencesFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.reference.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3 Profile_Card_Height">
+                <div class="col-lg-6 tile2">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold"> {{'rating.review' | translate}}</h5>
+                        </div>
+                        <div class="card-body p-1 overflow-auto">
+                            <ng-container
+                                *ngIf="subcontractorDetail.subContractorRecentRatingAndReview.length !== 0 ; else noRatingFound">
+                                <ul class="list-group-wrapper"
+                                    *ngFor="let ratingAndReview of subcontractorDetail.subContractorRecentRatingAndReview">
+                                    <li>
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="mb-0 text-primary">
+                                                    {{ratingAndReview.submittedBy.firstName}}
+                                                    {{ratingAndReview.submittedBy.lastName}}
+                                                </h5>
+                                                <p class="text-muted mb-1">
+                                                    <span *ngIf="ratingAndReview.jobsite">
+                                                        {{ratingAndReview.jobsite.title}}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="text-warning h2 text-nowrap">
+                                                <i class="fa fa-star star"
+                                                    aria-hidden="true"></i>{{ratingAndReview.rating}}
+                                            </div>
+                                        </div>
+                                        <p> {{ratingAndReview.ratingText}}</p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #noRatingFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.rating.review.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold"> {{'certifications' | translate}}</h5>
+                        </div>
+                        <div class="card-body p-1 overflow-auto">
+                            <h5 class="mb-0 pl-3 pt-3 text-primary">{{'emr' | translate}} </h5>
+                            <ng-container *ngIf="subcontractorDetail.subContractorEMRs.length !== 0 ; else noemrFound">
+                                <ul class="list-group-wrapper"
+                                    *ngFor="let emr of subcontractorDetail.subContractorEMRs">
+                                    <li>
+                                        <p class="mb-1 text-muted">
+                                            <span *ngIf="emr.status">
+                                                {{emr.year }} - {{
+                                                emr.status == 'APPROVED' ? 'Approved' :
+                                                emr.status == 'REJECTED' ? 'Rejected' : 'Under Review'
+                                                }}
+                                            </span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #noemrFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.emr.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+
+                            <h5 class="mb-0 pl-3 pt-3 text-primary">{{'osha' | translate}} </h5>
+                            <ng-container
+                                *ngIf="subcontractorDetail.subContractorOSHAs.length !== 0 ; else nooshaFound">
+                                <ul class="list-group-wrapper"
+                                    *ngFor="let osha of subcontractorDetail.subContractorOSHAs">
+                                    <li>
+                                        <p class="mb-1 text-muted">
+                                            <span *ngIf="osha.status">
+                                                {{osha.year }} -
+                                                {{
+                                                osha.status == 'APPROVED' ? 'Approved' :
+                                                osha.status == 'REJECTED' ? 'Rejected' : 'Under Review'
+                                                }}
+                                            </span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #nooshaFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.osha.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+
+                            <h5 class="mb-0 pl-3 pt-3 text-primary">{{'coi' | translate}} </h5>
+                            <ng-container *ngIf="subcontractorDetail.subContractorCOI ; else nocoiFound">
+                                <ul class="list-group-wrapper">
+                                    <li>
+                                        <p class="mb-1 text-muted">
+                                            <span *ngIf="subcontractorDetail.subContractorCOI.status">
+                                                {{
+                                                subcontractorDetail.subContractorCOI.status == 'APPROVED' ? 'Approved' :
+                                                subcontractorDetail.subContractorCOI.status == 'REJECTED' ? 'Rejected' :
+                                                'Under Review'
+                                                }}
+                                            </span>
+                                        </p>
+                                    </li>
+                                </ul>
+                            </ng-container>
+                            <ng-template #nocoiFound>
+                                <div class="w-100">
+                                    <p class="mt-3 text-center">{{'no.coi.found' | translate}}</p>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mt-3">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold"> {{'location' | translate}}</h5>
+                        </div>
+                        <div class="block location" *ngIf=" (lat !== 0 && lng !== 0) ;else noLocation1">
+                            <agm-map [latitude]="lat" [longitude]="lng">
+                                <agm-marker [latitude]="lat" [longitude]="lng">
+                                    <agm-info-window [isOpen]="true">
+                                        <h6>{{subcontractorDetail.basicProfile.location}}</h6>
+                                    </agm-info-window>
+                                </agm-marker>
+                            </agm-map>
+                        </div>
+                        <ng-template #noLocation1>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.location.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    </div>
+</div>
+
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a
+            (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a
+            (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

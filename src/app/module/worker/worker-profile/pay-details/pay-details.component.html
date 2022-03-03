@@ -1,0 +1,131 @@
+<div class="container-fluid">
+    <form [formGroup]="_workerProfileServices.payDetailForm">
+        <div class="row">
+            <div class="col-xl-5">
+                <label for="">{{'hourly.rate.min' | translate}}*</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    <p-inputNumber [useGrouping]="false" inputId="minmaxfraction"
+                        placeholder="{{ 'min.hourly.rate.placeholder' | translate }}"
+                        inputStyleClass="border-left-0 text-right w-100 form-control border-left-radius-0" maxlength="8"
+                        formControlName="minHourlyRate" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                        (keyup)="onChangeValueForMin($event)" class="">
+                    </p-inputNumber>
+                </div>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !payDetailForm.get('minHourlyRate').valid) || (!payDetailForm.get('minHourlyRate').valid && payDetailForm.get('minHourlyRate').touched)">
+                    <div *ngIf="(payDetailForm.get('minHourlyRate').errors.required)">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" payDetailForm.get('minHourlyRate').errors.min">
+                        {{'must.be.greater.zero' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <label for="">{{'hourly.rate.max' | translate}}*</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    <p-inputNumber [useGrouping]="false" inputId="minmaxfraction"
+                        placeholder="{{ 'max.hourly.rate.placeholder' | translate }}"
+                        inputStyleClass="border-left-0 text-right w-100 form-control border-left-radius-0" maxlength="9"
+                        formControlName="maxHourlyRate" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2"
+                        (keyup)="onChangeValue($event)">
+                    </p-inputNumber>
+                </div>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !payDetailForm.get('maxHourlyRate').valid) || (!payDetailForm.get('maxHourlyRate').valid && payDetailForm.get('maxHourlyRate').touched)">
+                    <div *ngIf="(payDetailForm.get('maxHourlyRate').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" payDetailForm.get('maxHourlyRate').errors.min">
+                        {{'must.be.greater.zero' | translate}}
+                    </div>
+                </div>
+                <div class="p-invalid" *ngIf="errorFlagHour; else none">
+                    {{'hourly.rate.max.smaller.than.hourly.rate.min' | translate}}
+                </div>
+                <ng-template #none> </ng-template>
+            </div>
+        </div>
+        <div>
+            <input class="mr-1" type="checkbox" (click)="onClick($event)" formControlName="willingToWorkFullTime"
+                [value]="fullTimeEmployee">
+            <label for="">{{'full.time' | translate}} </label>
+        </div>
+    </form>
+
+    <form [formGroup]="fullTimeEmployeeForm">
+        <div class="row" *ngIf="fullTimeEmployee">
+            <div class="col-xl-5">
+                <label for="">{{'full.time.salary.min' | translate}}*</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    <p-inputNumber [useGrouping]="false" inputId="minmaxfraction"
+                        placeholder="{{ 'max.hourly.rate.placeholder' | translate }}"
+                        inputStyleClass="border-left-0 text-right w-100 form-control border-left-radius-0" maxlength="13"
+                        formControlName="minFullTimeSalary" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (keyup)="onChangeFullTimeValueForMin($event)">
+                    </p-inputNumber>
+
+                </div>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !fullTimeEmployeeForm.get('minFullTimeSalary').valid) || (!fullTimeEmployeeForm.get('minFullTimeSalary').valid && fullTimeEmployeeForm.get('minFullTimeSalary').touched)">
+                    <div *ngIf="(fullTimeEmployeeForm.get('minFullTimeSalary').errors.required)">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" fullTimeEmployeeForm.get('minFullTimeSalary').errors.min">
+                        {{'must.be.greater.zero' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5">
+                <label for="">{{'full.time.salary.max' | translate}}*</label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    <p-inputNumber [useGrouping]="false" inputId="minmaxfraction"
+                        placeholder="{{ 'max.hourly.rate.placeholder' | translate }}"
+                        inputStyleClass="border-left-0 text-right w-100 form-control border-left-radius-0" maxlength="13"
+                        formControlName="maxFullTimeSalary" mode="decimal" [minFractionDigits]="2"
+                        [maxFractionDigits]="2" (keyup)="onChangeFullTimeValue($event)">
+                    </p-inputNumber>
+
+                </div>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !fullTimeEmployeeForm.get('maxFullTimeSalary').valid) || (!fullTimeEmployeeForm.get('maxFullTimeSalary').valid && fullTimeEmployeeForm.get('maxFullTimeSalary').touched)">
+                    <div *ngIf="(fullTimeEmployeeForm.get('maxFullTimeSalary').errors.required)">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" fullTimeEmployeeForm.get('maxFullTimeSalary').errors.min">
+                        {{'must.be.greater.zero' | translate}}
+                    </div>
+                </div>
+                <div class="p-invalid" *ngIf="errorFlagFullTimeEmployee; else none1">
+                    {{'annual.rate.max.smaller.than.annual.rate.min' | translate}}
+                </div>
+                <ng-template #none1> </ng-template>
+            </div>
+        </div>
+    </form>
+
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()"
+                class="p-button-outlined p-button-success mr-2"></button>
+            <button pButton pRipple label="{{'save' | translate}}" (click)="onSubmit()"
+                class="p-button-outlined p-button-success mr-2"></button>
+            <button pButton pRipple label="{{'save.next' | translate}}" (click)="onSubmit('next')"
+                class=" p-button-success"></button>
+        </div>
+    </div>
+</div>

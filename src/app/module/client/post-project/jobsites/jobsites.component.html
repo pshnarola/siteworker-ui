@@ -1,0 +1,148 @@
+<div class="container-fluid" *ngIf="jobsiteScreen === 'jobsiteListing' || reviewJobsite">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="float-left">
+                <h5><b class="mr-2">{{'jobsites' |translate}}</b> (Total Cost: {{totalCost | currency}})</h5>
+            </div>
+            <div class="float-right" *ngIf="jobsiteScreen === 'addLineItem' && !reviewJobsite">
+                <div class="some-class" style="width: 225px;">
+                    <div style="display: inline;">
+                        <input type="radio" value="ADD_MANUALLY">
+                        <label style="margin-left: 2%;margin-top: 1%;margin-right: 8%;">
+                                {{'add.manually' | translate}}</label>
+                        <input type="radio" value="UPLOAD_CSV">
+                        <label style="margin-left: 2%;margin-top: 1%;">
+                                {{'upload.csv' | translate}}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="card datatable-card">
+            <p-table #dt [columns]="selectedColumns" [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [style]="{width:'100%'}" scrollHeight="400px">
+                <ng-template pTemplate="caption">
+                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                </ng-template>
+
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width:265px" *ngFor="let col of columns">
+                        <col style="width:160px">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null" pResizableColumn>
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}">
+
+                            </p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-jobsite let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.value">
+
+                            <div *ngSwitchCase="'TITLE'">
+                                {{jobsite.title}}
+                            </div>
+                            <div *ngSwitchCase="'description'">
+                                <span class="text-wrap">
+                                {{jobsite.description}}
+                               </span>
+                            </div>
+                            <div *ngSwitchCase="'COST'">
+                                {{jobsite.cost | currency}}
+                            </div>
+                            <div *ngSwitchCase="'location'" class="text-wrap">
+                                {{jobsite.location}}
+                            </div>
+                            <div *ngSwitchCase="'CITY'">
+                                {{jobsite.city}}
+                            </div>
+                            <div *ngSwitchCase="'STATE'">
+                                {{jobsite.state}}
+                            </div>
+                            <div *ngSwitchCase="'zipcode'">
+                                {{jobsite.zipCode}}
+                            </div>
+                            <div *ngSwitchCase="'lineItem'">
+                                <p-button (click)="openLineItemDialog(jobsite.id)" styleClass="p-button-link">
+                                    {{jobsite.lineItem.length}}
+                                </p-button>
+                            </div>
+                        </td>
+
+                        <!-- <td>{{jobsite.title}}</td>
+                        <td>{{jobsite.description}}</td>
+                        <td>{{jobsite.cost}}</td>
+                        <td>{{jobsite.location}}</td>
+                        <td>{{jobsite.city}}</td>
+                        <td>{{jobsite.state}}</td>
+                        <td>{{jobsite.zipCode}}</td> -->
+                        <!-- <td>
+                            <p-button (click)="openLineItemDialog(jobsite.id)" styleClass="p-button-link">
+                                {{jobsite.lineItem.length}}
+                            </p-button>
+                        </td> -->
+                        <td>
+                            <button (click)="openEditDialog(jobsite)" class="btn btn-success btn-sm">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button (click)="openDialog(jobsite.id,jobsite.title)" class="btn btn-danger btn-sm">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+
+                            
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center" [attr.colspan]="selectedColumns.length + 1">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="footer-action" *ngIf="!reviewJobsite">
+        <button type="button" class=" btn btn-outline-danger" (click)="onPrevious()">
+                <i class="pi pi-chevron-left"></i>
+                {{'previous' | translate}}</button>
+        <!-- <button type="button" class="btn btn-primary">
+                {{'save' | translate}}</button>
+        <button type="button" class="btn btn-primary" (click)="onSaveAndAddJobsite()">
+                {{'save.and.add.jobsite' | translate}}</button> -->
+        <button type="button" class="btn btn-primary " (click)="onReviewAndConfirm()">
+                {{'review.confirm' | translate}}
+                <i class="pi pi-chevron-right"></i>
+        </button>
+    </div>
+</div>
+
+<div class="Dialog_Common">
+    <p-dialog [(visible)]="isOpenEditdialog" [style]="{width: '70%'}" (onHide)="onHideEdit($event)" header="Edit Jobsite" [modal]="true" styleClass="p-fluid">
+
+        <app-add-jobsite [editJobsite]="selectedJobsite" [isDialogOpen]="isOpenEditdialog" (cancelDialog)="onCancelDialog($event)"></app-add-jobsite>
+    </p-dialog>
+</div>
+
+<div class="Dialog_Common">
+    <p-dialog [(visible)]="isOpenLineItemdialog" [style]="{width: '90%'}" (onHide)="onHideLineItem($event)" header="Line Item List" [modal]="true" styleClass="p-fluid">
+
+        <app-get-line-item [id]="selectedJobsiteId" (cancelDialog)="cancelLineItemListingDialog($event)"></app-get-line-item>
+    </p-dialog>
+</div>
+
+<app-add-jobsite *ngIf="jobsiteScreen === 'addJobsite' && !reviewJobsite" (screenChange)="cancelScreen($event)">
+
+</app-add-jobsite>
+<app-add-line-item *ngIf="jobsiteScreen === 'addLineItem' && !reviewJobsite" (screenChange1)="cancelScreenLineItem($event)"></app-add-line-item>
+<app-add-milestone *ngIf="jobsiteScreen === 'addMilestone' && !reviewJobsite"></app-add-milestone>

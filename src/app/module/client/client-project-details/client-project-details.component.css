@@ -1,0 +1,11 @@
+.scroll {
+    max-height: 100px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}

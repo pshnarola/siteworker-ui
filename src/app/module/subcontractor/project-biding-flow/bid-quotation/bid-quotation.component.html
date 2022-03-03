@@ -1,0 +1,366 @@
+<div class="container-fluid" *ngIf="projectDetailToBid && jobsiteDetailToBid">
+    <div class="row bg-warning text-blac p-2">
+        <div class="col-lg-8 d-flex align-self-center">
+            <div class="col-lg-4 d-flex align-items-center">
+                <h5 class="font-weight-bold">{{'bid.quotation'| translate}}</h5>
+            </div>
+            <div class="col-lg-4 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/project_name_icon.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'project.name' | translate}}:</p>
+                    <p class="mb-0" *ngIf="projectDetailToBid">
+                        {{projectDetailToBid.title}}
+                    </p>
+
+                </div>
+            </div>
+            <div class="col-lg-4 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'client.name' | translate}}:</p>
+                    <p class="mb-0" *ngIf="projectDetailToBid.company ; else none">
+                        {{projectDetailToBid.company.name}}
+                    </p>
+                    <ng-template #none>
+                        <p class="mb-0"> {{'n.a' | translate }} </p>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 align-self-center">
+            <div class="float-right">
+                <p-button class="bg_black_button" (click)="openConfirmationDialog()">
+                    {{'previous' | translate}} </p-button>
+                <p-button class="bg_black_button ml-1" (click)="save()">{{'save' | translate}}</p-button>
+                <p-button class="bg_black_button ml-1" (click)="saveAndNext()">{{'save.and.next' | translate}}
+                </p-button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="jobsiteDetailToBid.status === 'IN_PROGRESS'" class="text-center text-blac font-weight-bold">
+        Jobsite assigned
+    </div>
+
+    <!-- <div *ngIf="jobsiteDetailToBid.bidStatus === 'OFFERED'" class="text-center text-blac font-weight-bold">
+        Jobsite is awarded , Not allowed to change the bid amount.
+    </div> -->
+
+    <div class="row" *ngIf="appliedOnProject">
+        <div class="col-md-12 text-center">
+            <div class="row align-items-center font-weight-bold bg-secondary text-white p-3">
+                <div class="col-md-3">
+                    <input class="form-check-input" type="checkbox" [value]="checkedProject"
+                        [(ngModel)]="checkedProject" (click)="onClick()">
+                    <label>Disable Work Type</label>
+                </div>
+                <div class="col-md-2">
+                    <span class="m-2"> {{'project.title' | translate}}
+                        <br>
+                        {{projectDetailToBid.title}}
+                    </span>
+                </div>
+                <div class="col-md-2">
+
+                    <span class="m-2"> {{'cost' | translate}}
+                        <br>
+                        {{projectDetailToBid.cost | currency}}
+                    </span>
+                </div>
+                <div class="col-md-5">
+                    <span class="m-2"> {{'total.bid.amount' | translate}}
+                        <br>
+                        <p-inputNumber prefix="$" currency="USD" [(ngModel)]="bidAmount"
+                            placeholder="{{'cost.placeholder' |translate}}" maxlength="14" locale="en-US">
+                        </p-inputNumber>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="datatable-card" [ngClass]="{'disableDiv': disableBid}">
+
+        <div class="row my-3">
+            <div class="col-md-6">
+                <h5 class="font-weight-bold text-left">Jobsite: &nbsp; {{jobsiteDetailToBid.title}}</h5>
+            </div>
+
+            <div class="col-md-6 text-right">
+                <span class="font-weight-bold" *ngIf="projectDetailToBid && jobsiteDetailToBid"> {{'total.bid.amount' |
+                    translate}} :
+                    {{calculateTotalBidAmountForJobsite(groupedLineItem) | currency}}
+                </span>
+            </div>
+
+            <div class="col-md-12">
+                <ng-container *ngFor="let item of groupedLineItem">
+                    <p-accordion>
+                        <p-accordionTab [disabled]="checkedProject">
+                            <ng-template pTemplate="header">{{item.key}} &nbsp; &nbsp;
+                                <span class="text-muted"> {{'bid.amount' | translate}} :
+                                    {{calculateTotalBidAmount(item.value) | currency}}
+                                </span>
+                            </ng-template>
+                            <ng-template pTemplate="content">
+                                <div class="card datatable-card" [ngClass]="{'disableDiv': checkedProject}">
+                                    <p-table [value]="item.value" [resizableColumns]="true"
+                                        styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo"
+                                        styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}">
+                                        <ng-template pTemplate="colgroup" let-columns>
+                                            <colgroup>
+                                                <col style="width: 100px;">
+                                                <col style="width: 200px;">
+                                                <col style="width: 130px;">
+                                                <col style="width: 250px;">
+                                                <col style="width: 110px;">
+                                                <col style="width: 150px;">
+                                                <col style="width: 100px;">
+                                            </colgroup>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th pResizableColumn>{{"line.item.id" |translate}}</th>
+                                                <th pResizableColumn>{{"line.item.name" |translate}}</th>
+                                                <th pResizableColumn>{{"cost" |translate}}</th>
+                                                <th pResizableColumn>{{"bid.amount" |translate}}</th>
+                                                <th pResizableColumn>{{"unit" |translate}}</th>
+                                                <th pResizableColumn>{{"quantity" |translate}}</th>
+                                                <th pResizableColumn>{{"view.info" |translate}}</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-lineItem let-rowIndex="rowIndex">
+                                            <ng-container>
+                                                <tr>
+                                                    <td>{{lineItem.lineItemId}}</td>
+                                                    <td>{{lineItem.lineItemName}}</td>
+                                                    <td>{{lineItem.cost | currency}}</td>
+                                                    <td>
+                                                        <p-inputNumber prefix="$" currency="USD"
+                                                            [(ngModel)]="lineItem.bidAmount"
+                                                            placeholder="{{'cost.placeholder' |translate}}"
+                                                            maxlength="14" locale="en-US"></p-inputNumber>
+                                                    </td>
+                                                    <td>{{lineItem.unit.name}}</td>
+                                                    <td>{{lineItem.quantity}}</td>
+                                                    <td>
+                                                        <i class="pi pi-eye" aria-hidden="true"
+                                                            style="color: black;font-size: 1.5rem;cursor: pointer;"
+                                                            (click)="showDialog(lineItem)">
+                                                        </i>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                        </ng-template>
+                                        <ng-template pTemplate="emptymessage">
+                                            <tr>
+                                                <td class="text-center" [attr.colspan]="7">
+                                                    No records found
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                                <br>
+                            </ng-template>
+                        </p-accordionTab>
+                    </p-accordion>
+                </ng-container>
+            </div>
+
+            <div class="col-md-6"></div>
+            <div class="col-md-6 mt-3 text-right">
+                <span class="font-weight-bold" *ngIf="projectDetailToBid && jobsiteDetailToBid">
+                    {{'total.bid.cost' | translate}} : {{jobsiteDetailToBid.cost | currency}}
+                    <!-- {{calculateTotalBidAmountForJobsite(groupedLineItem) | currency}} -->
+                </span>
+            </div>
+
+            <ng-container *ngIf="jobsiteDetailToBid">
+                <div class="col-md-12" *ngIf="jobsiteDetailToBid.paymentMileStone">
+                    <h5 class="font-weight-bold pb-3">{{"payment.milestone" |translate}}</h5>
+                    <p-table [value]="jobsiteDetailToBid.paymentMileStone" [resizableColumns]="true"
+                        styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo"
+                        styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}">
+                        <ng-template pTemplate="colgroup" let-columns>
+                            <colgroup>
+                                <col style="width: 100px;">
+                                <col style="width: 200px;">
+                                <col style="width: 200px;">
+                                <col style="width: 200px;">
+                                <col style="width: 200px;">
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pResizableColumn>{{"milestone.number" |translate}}</th>
+                                <th pResizableColumn>{{"milestone.name" |translate}}</th>
+                                <th pResizableColumn>{{"line.item.deliverables" |translate}}</th>
+                                <th pResizableColumn>{{"milestone.%" |translate}}</th>
+                                <th pResizableColumn>{{"amount.release" |translate}}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-mileStone let-rowIndex="rowIndex">
+                            <ng-container>
+                                <tr>
+                                    <td>{{rowIndex+1}}</td>
+                                    <td>{{mileStone.name}}</td>
+                                    <td>
+                                        <p-button (click)="redirectToLineItemDeliverables(mileStone)"
+                                            styleClass="p-button-link">
+                                            {{mileStone.lineItem.length}}
+                                        </p-button>
+                                    </td>
+                                    <td>
+                                        <p-inputNumber inputId="minmaxfraction" maxlength="6"
+                                            [(ngModel)]="mileStone.percentage" mode="decimal" [minFractionDigits]="2"
+                                            [maxFractionDigits]="2">
+                                        </p-inputNumber>
+                                    </td>
+                                    <td>
+                                        {{calculateAmountRelease(mileStone.percentage , mileStone.amount) | currency}}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td class="text-center" [attr.colspan]="5">
+                                    No records found
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <br>
+                    <br>
+                    <p-button (click)="saveAndNext()">{{'save.and.next' | translate}}</p-button>
+                    <br>
+                    <br>
+                    <br>
+
+                </div>
+            </ng-container>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="Dialog_Sub_Bid">
+
+    <p-dialog [(visible)]="viewInfo" (onHide)="hideDialog()" header="{{'line.item'|translate}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true',
+                                    'width':'700px'}" [modal]="true" styleClass="p-fluid">
+
+        <ng-template pTemplate="content">
+            <div class="">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>
+                            <span class="text-muted">{{'line.item.id'|translate}} : </span>
+                            <span class="font-weight-bold" *ngIf="viewLineItem.lineItemId">
+                                {{viewLineItem.lineItemId}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <span class="text-muted">{{'unit'|translate}} : </span>
+                            <span class="font-weight-bold" *ngIf="viewLineItem.unit">
+                                {{viewLineItem.unit.name}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <span class="text-muted">{{'line.item.name'|translate}} : </span>
+                            <span class="font-weight-bold" *ngIf="viewLineItem.lineItemName">
+                                {{viewLineItem.lineItemName}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>
+                            <span class="text-muted">{{'quantity'|translate}} : </span>
+                            <span class="font-weight-bold" *ngIf="viewLineItem.quantity">
+                                {{viewLineItem.quantity}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-12">
+                        <p>
+                            <span class="text-muted">{{'line.item.description'|translate}} : </span>
+                            <span class="font-weight-bold" *ngIf="viewLineItem.description ; else noneP"
+                                [innerHtml]="viewLineItem.description"></span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <span class="text-muted">
+                                        Inclusion :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.inclusions ; else noneP"
+                                        [innerHtml]="viewLineItem.inclusions"></span>
+                                </p>
+                            </div>
+                            <div class="col-md-12">
+                                <p>
+                                    <span class="text-muted">
+                                        Exclusion :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.exclusions ; else noneP"
+                                        [innerHtml]="viewLineItem.exclusions"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <span class="text-muted">
+                                        {{'dynamic.label1' | translate }} :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel1 ; else noneP">
+                                        {{viewLineItem.dynamicLabel1}} </span>
+                                </p>
+                            </div>
+                            <div class="col-md-12">
+                                <p>
+                                    <span class="text-muted">
+                                        {{'dynamic.label2' | translate }} :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel2 ; else noneP">
+                                        {{viewLineItem.dynamicLabel2}} </span>
+                                </p>
+                            </div>
+                            <div class="col-md-12">
+                                <p>
+                                    <span class="text-muted">
+                                        {{'dynamic.label3' | translate }} :
+                                    </span>
+                                    <span class="font-weight-bold" *ngIf="viewLineItem.dynamicLabel3 ; else noneP">
+                                        {{viewLineItem.dynamicLabel3}} </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple type="button" (click)="hideDialog()" icon="pi pi-times-circle"
+                label="{{'close' | translate}}" class="p-button-outlined p-button-danger"
+                style="margin-left: 16px;"></button>
+        </ng-template>
+    </p-dialog>
+</div>
+
+
+<ng-template #noneP>
+    <p class="font-weight-bold"> {{'n.a' | translate }} </p>
+</ng-template>

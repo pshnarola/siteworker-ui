@@ -1,0 +1,701 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button pButton type="button" class="bg-admin" (click)="openFilter()"
+                    label="{{ 'filter'| translate}}"><i class="fa fa-filter mr-1"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="showFilterDialog">
+                <div class="card-body">
+                    <form [formGroup]="filterForm">
+                        <div class="row">
+                            <div class="col-xl-3">
+                                <div class="form-group">
+                                    <label for="name">{{ "Search" | translate }} : </label>
+                                    <input type="text" formControlName="genericSearch" id="name_searchbox"
+                                        class="form-control" placeholder="{{'type.to.filter.client' | translate}}" />
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="form-group">
+                                    <label for="contactname_searchbox">{{ "contact.name" | translate }} :</label>
+                                    <p-autoComplete forceSelection="true" formControlName="name" [multiple]="false"
+                                        [dropdown]="false" (completeMethod)="getContactName($event)"
+                                        [suggestions]="filterContactNames"
+                                        placeholder="{{'select.contact.name' |translate}}" [style]="{'width':'100%'}"
+                                        [inputStyle]="{'width':'100%'}" minLength="3">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="form-group">
+                                    <label for="email_searchbox">{{ "contact.email.address" | translate }} :</label>
+                                    <input type="text" id="email_searchbox" formControlName="email" class="form-control"
+                                        placeholder="Filter by Email Address" />
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div class="form-group">
+                                    <label for="company_searchbox">{{ "company.name" | translate }} :</label>
+                                    <p-autoComplete forceSelection="true" formControlName="companyName"
+                                        [multiple]="false" (completeMethod)="getCompanyName($event)"
+                                        [suggestions]="filterCompanyNames" placeholder="Filter by Company Name"
+                                        [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" minLength="3">
+                                    </p-autoComplete>
+                                    <!-- <input type="text" id="company_searchbox" formControlName="companyName" class="form-control" placeholder="Filter by Company Name" [pKeyFilter]="blockSpecial" /> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-8">
+                                <label>{{"posted.between" | translate}} :</label>
+                                <div class="row">
+                                    <div class="col-xl-6 col-sm-6">
+                                        <div class="form-group">
+                                            <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY"
+                                                [maxDate]="postedEndDate" formControlName="postedStart"
+                                                [(ngModel)]="postedStartDate" appendTo="body" [readonlyInput]="true"
+                                                inputId="range" [showIcon]="true"></p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-sm-6">
+                                        <div class="form-group">
+                                            <p-calendar class="d-inline-block" placeholder="MM/DD/YYYY"
+                                                [(ngModel)]="postedEndDate" formControlName="postedEnd"
+                                                [minDate]="postedStartDate" appendTo="body" [readonlyInput]="true"
+                                                inputId="range" [showIcon]="true"></p-calendar>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="form-group">
+                                    <label for="emailStatus_searchbox">{{ "approval.status" | translate }} :</label>
+                                    <p-dropdown [options]="emailStatus" id="emailStatus_searchbox"
+                                        formControlName="status" placeholder="All" optionLabel="option">
+                                        <span>{{status.option}}</span>
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <button pButton type="button" (click)="filter()" label="{{ 'apply' | translate }}"
+                                    class="p-button-outlined mr-3"></button>
+                                <button pButton pRipple label="{{'clear' | translate}}" class="bg-admin"
+                                    (click)="clear()"></button>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 mb-2">
+            <button pButton type="button" class="bg-admin" *ngIf="showButtons" (click)="openAddClient()"
+                label="{{ 'add.client' | translate }}"></button>
+        </div>
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label for="status">{{ "change.status" | translate }} :</label>
+                                <p-dropdown [disabled]="btnDisabled" [options]="status" [(ngModel)]="selectedStatus"
+                                    placeholder="Select Status" optionLabel="option"></p-dropdown>
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-2">
+                            <button [disabled]="btnDisabled" pButton type="button" label="{{ 'apply'| translate}}"
+                                class="p-button-outlined" (click)="onChangeStatusOfselected()"></button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [value]="clients" [columns]="selectedColumns" [resizableColumns]="true" [lazy]="true"
+                    (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} clients"
+                    [(selection)]="selectedClients" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                            selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                            placeholder="Choose Columns">
+                        </p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 3rem;">
+                            <col *ngFor="let col of columns" style="width: 220px;">
+                            <col style="width: 150px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-client let-columns="columns">
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="client">
+                                </p-tableCheckbox>
+                            </td>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.value">
+
+                                <div *ngSwitchCase="'profile_image'">
+                                    <img *ngIf="client.photo" src="{{imageUrl + client.photo}}"
+                                        alt="{{client.user.firstName}}" class="rounded-circle mr-2" width="56"
+                                        height="56" srcset="">
+                                    <p-avatar *ngIf="!client.photo"
+                                        label={{setAvtar(client.user.firstName,client.user.lastName)}}
+                                        styleClass="p-mr-2 bg-admin text-white" size="xlarge" shape="circle">
+                                    </p-avatar>
+                                </div>
+                                <div *ngSwitchCase="'company_name'">
+                                    <span *ngIf="client?.companyName ; else none">
+                                        {{client.companyName}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'user_email'">
+                                    <span *ngIf="client.user.email ; else none">
+                                        {{client.user.email}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'company_phone'">
+                                    <span *ngIf="client?.companyPhone ; else none">
+                                        {{client.companyPhone}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'contact_name'">
+                                    <span *ngIf="client.contactName ; else none">
+                                        {{client.contactName}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'email'">
+                                    <span *ngIf="client.contactEmail ; else none">
+                                        {{client.contactEmail}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'mobile_phone'">
+                                    {{client.contactPhone ? client.contactPhone : 'N/A'}}
+                                </div>
+                                <div *ngSwitchCase="'created_date'">
+                                    {{client.createdDate | date:shortDate}}
+                                </div>
+                                <div *ngSwitchCase="'is_verified'">
+                                    <span *ngIf="client.user.verified">
+                                        Yes
+                                    </span>
+                                    <span *ngIf="!client.user.verified">
+                                        No
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'pending_job_clients'">
+                                    <span *ngIf="client.isJobApproved  && showButtons">
+                                        <a class="p-button-link p-1" style="cursor: pointer;" [disabled]="btnDisabled"
+                                            (click)="changeApprovalStatus(client, 'jobs')">
+                                            Approved
+                                        </a>
+                                    </span>
+                                    <span *ngIf="!client.isJobApproved && showButtons">
+                                        <a class="p-button-link p-1" style="cursor: pointer;" [disabled]="btnDisabled"
+                                            (click)="changeApprovalStatus(client,'jobs')">
+                                            Pending
+                                        </a>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'pending_project_clients'">
+                                    <span *ngIf="client.isProjectApproved  && showButtons">
+                                        <a class="p-button-link p-1" style="cursor: pointer;" [disabled]="btnDisabled"
+                                            (click)="changeApprovalStatus(client,'project')">
+                                            Approved
+                                        </a>
+                                    </span>
+                                    <span *ngIf="!client.isProjectApproved && showButtons">
+                                        <a class="p-button-link p-1" style="cursor: pointer;" [disabled]="btnDisabled"
+                                            (click)="changeApprovalStatus(client,'project')">
+                                            Pending
+                                        </a>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'msa'">
+                                    <span *ngIf="showButtons">
+                                        <a class="p-button-link p-1" style="cursor: pointer;" [disabled]="btnDisabled"
+                                            (click)="changeMSA(client)"> msa </a>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'project_access'">
+                                    <!-- ADMIN -->
+                                    <span
+                                        *ngIf="!btnDisabled && client.isProjectApproved && client.isProjectMSAccepted">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="btnDisabled"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="btnDisabled"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngIf="!btnDisabled && !client.isProjectApproved && client.isProjectMSAccepted"
+                                        pTooltip="Pending to approve">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngIf="!btnDisabled && client.isProjectApproved && !client.isProjectMSAccepted"
+                                        pTooltip="Pending to accept MSA by client">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngIf="!btnDisabled && !client.isProjectApproved && !client.isProjectMSAccepted"
+                                        pTooltip="Pending to accept MSA and approve">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <!-- SUB ADMIN -->
+                                    <span *ngIf="btnDisabled && client.isProjectApproved && client.isProjectMSAccepted">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="btnDisabled"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="btnDisabled"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span *ngIf="btnDisabled && !client.isProjectApproved && client.isProjectMSAccepted"
+                                        pTooltip="Pending to approve">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span *ngIf="btnDisabled && client.isProjectApproved && !client.isProjectMSAccepted"
+                                        pTooltip="Pending to accept MSA by client">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                    <span
+                                        *ngIf="btnDisabled && !client.isProjectApproved && !client.isProjectMSAccepted"
+                                        pTooltip="Pending to accept MSA and approve">
+                                        <span *ngIf="client.isProjectAccess">
+                                            <button class="btn btn-sm btn-success" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isProjectAccess">
+                                            <button class="btn btn-sm btn-danger" [disabled]="true"
+                                                (click)="changeProjectAccess(client,client.isProjectAccess)"
+                                                value="{{client.isProjectAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'job_access'">
+
+                                    <span *ngIf="!btnDisabled && client.isJobMSAccepted && client.isJobApproved">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="!btnDisabled && !client.isJobMSAccepted && client.isJobApproved"
+                                        pTooltip="Pending to accept MSA by client">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="!btnDisabled && client.isJobMSAccepted && !client.isJobApproved"
+                                        pTooltip="Pending to approve">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="!btnDisabled && !client.isJobMSAccepted && !client.isJobApproved"
+                                        pTooltip="Pending to accept MSA and approve">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="btnDisabled && client.isJobMSAccepted && client.isJobApproved">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="btnDisabled && !client.isJobMSAccepted && client.isJobApproved"
+                                        pTooltip="Pending to accept MSA by client">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="btnDisabled && client.isJobMSAccepted && !client.isJobApproved"
+                                        pTooltip="Pending to approve">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                    <span *ngIf="btnDisabled && !client.isJobMSAccepted && !client.isJobApproved"
+                                        pTooltip="Pending to accept MSA and approve">
+                                        <span *ngIf="client.isJobAccess">
+                                            <button class="btn btn-sm btn-success"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-check"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                        <span *ngIf="!client.isJobAccess">
+                                            <button class="btn btn-sm btn-danger"
+                                                (click)="changeJobAccess(client,client.isJobAccess)" [disabled]="true"
+                                                value="{{client.isJobAccess}}"><i class="fa fa-times"
+                                                    aria-hidden="true"></i></button>
+                                        </span>
+                                    </span>
+
+                                </div>
+                                <div *ngSwitchCase="'is_active'">
+                                    <span class="text-success" *ngIf="client.user.active ; else inActive">
+                                        {{'active' | translate}}
+                                    </span>
+                                    <ng-template #inActive>
+                                        <span class="text-danger">
+                                            {{'inactive' | translate}}
+                                        </span>
+                                    </ng-template>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-success mr-2 btn-sm" (click)="redirectToClient(client.user.id)"
+                                    pTooltip="{{'viewProfile' | translate}}" tooltipPosition="bottom">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="roleName != 'SUBADMIN'" [disabled]="btnDisabled"
+                                    class="btn btn-warning mr-2 btn-sm" (click)="showloginAsDialog(client)"
+                                    pTooltip="{{'sign.on' | translate}}" tooltipPosition="bottom">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                </button>
+                                <button class="btn btn-primary mr-2 btn-sm" [disabled]="btnDisabled"
+                                    (click)="forgotPassword(client.user.email)"
+                                    pTooltip="{{'forgot.password' | translate}}" tooltipPosition="bottom">
+                                    <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="selectedColumns.length + 2" class="text-center">
+                                <span>No records found</span>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+<p-dialog [(visible)]="clientDialog" [closable]="false" [style]="{width: '450px'}" header="Add Client" [modal]="true"
+    styleClass="p-fluid">
+    <ng-template pTemplate="content">
+
+        <form [formGroup]="myForm">
+            <div class="p-field p-fluid">
+                <label for="companyName">{{'company.name' | translate}}*</label>
+                <input id="companyName" placeholder="Enter Company Name" type="text" formControlName="companyName"
+                    pInputText maxlength="50">
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('companyName').valid) || (!myForm.get('companyName').valid && myForm.get('companyName').touched) ">
+                    <div *ngIf=" ( myForm.get('companyName').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <p class="font-weight-bold">Contact Person</p>
+
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col">
+                    <label for="firstname">{{'first.name' | translate}}*</label>
+                    <input id="firstname" formControlName="firstName" placeholder="Enter First Name" type="text"
+                        pInputText maxlength="50">
+                    <div class="p-invalid"
+                        *ngIf="(submitted && !myForm.get('firstName').valid) || (!myForm.get('firstName').valid && myForm.get('firstName').touched) ">
+                        <div *ngIf=" ( myForm.get('firstName').errors.required) ">
+                            {{'required' | translate}} </div>
+                    </div>
+                </div>
+                <div class="p-field p-col">
+                    <label for="lastname">{{'last.name' | translate}}*</label>
+                    <input id="lastname" formControlName="lastName" placeholder="Enter Last Name" type="text" pInputText
+                        maxlength="50">
+                    <div class="p-invalid"
+                        *ngIf="(submitted && !myForm.get('lastName').valid) || (!myForm.get('lastName').valid && myForm.get('lastName').touched) ">
+
+                        <div *ngIf=" ( myForm.get('lastName').errors.required) ">
+                            {{'required' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-field p-fluid">
+                <label for="email">{{'email' | translate}}*</label>
+                <input id="email" formControlName="email" type="text" placeholder="Enter Email" pInputText
+                    pTooltip="{{'client.email' | translate}}" tooltipPosition="left" maxlength="50"
+                    tooltipPosition="bottom">
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('email').valid) || (!myForm.get('email').valid && myForm.get('email').touched) ">
+
+                    <div *ngIf=" ( myForm.get('email').errors.required) ">
+                        {{'required' | translate}} </div>
+
+                    <div class="p-invalid" *ngIf=" (!myForm.get('email').valid) ">
+
+                        <div *ngIf="myForm.get('email').dirty &&
+                                (myForm.get('email').errors.incorrectEmailFormat &&
+                                !myForm.get('email').errors.required)">
+                            {{'invalid.email' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-field p-fluid">
+                <label for="workPhone">{{'work.phone' | translate}}*</label>
+                <p-inputMask id="workPhone" mask="(999) 999-9999" required formControlName="workPhone"
+                    placeholder="Enter Work Phone"></p-inputMask>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('workPhone').valid) || (!myForm.get('workPhone').valid && myForm.get('workPhone').touched) ">
+                    <div *ngIf=" ( myForm.get('workPhone').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field p-fluid">
+                <label for="mobilePhone">{{'mobile.phone' | translate}}</label>
+                <p-inputMask id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone"
+                    placeholder="Enter Mobile Phone"></p-inputMask>
+            </div>
+        </form>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin"
+            (click)="openConfirmationDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>
+
+
+<!-- dialog -->
+<p-dialog [(visible)]="logInAsDialog" (onHide)="hideloginAsDialog()" [style]="{width: '450px'}" header="Log in as"
+    [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="loginAsForm" (submit)="onSubmitLoginAs()">
+            <div class="p-field">
+                <label for="name">{{ "user.name" | translate }} </label>
+                <p-autoComplete [disabled]="true" formControlName="userName" id="industryType" [multiple]="false"
+                    [dropdown]="false" (completeMethod)="getFilteredUsernameForLogin($event)" [field]="getFullName"
+                    [suggestions]="filteredUserNameForLoginAs">
+                    <ng-template let-user pTemplate="item">
+                        <div>
+                            <span>{{user.firstName}}</span> &nbsp;
+                            <span>{{user.lastName}}</span> &nbsp;
+                            <span>( {{user.email}} )</span>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.name" | translate }} </label>
+                <input type="text" pInputText id="regionName" maxlength="50" formControlName="adminUserName" required
+                    placeholder="Enter Admin Username" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !loginAsForm.get('adminUserName').valid) || (!loginAsForm.get('adminUserName').valid && loginAsForm.get('adminUserName').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminUserName').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.password" | translate }} </label>
+                <input type="password" pInputText id="regionName" formControlName="adminPassword" required
+                    placeholder="Enter Admin Password" (keydown.enter)="onSubmitLoginAs()" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !loginAsForm.get('adminPassword').valid) || (!loginAsForm.get('adminPassword').valid && loginAsForm.get('adminPassword').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminPassword').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Login" class="p-button-outlined" (click)="onSubmitLoginAs()"
+            type="submit"></button>
+    </ng-template>
+
+</p-dialog>
+
+<ng-template #none>
+    {{ 'n.a' | translate}}
+</ng-template>

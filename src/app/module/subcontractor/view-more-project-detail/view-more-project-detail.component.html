@@ -1,0 +1,198 @@
+<div class="container-fluid">
+    <div class="row bg-warning text-black p-2">
+        <div class="col-xl-10 d-flex align-self-center">
+            <div class="col-xl-2 align-self-center" style="font-weight: bold;">
+                <h4>{{'jobsites'| translate}}</h4>
+            </div>
+            <div class="col-xl-4 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/project_name_icon.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'project.name' | translate}}:</p>
+                    <p class="mb-0">
+                        {{projectDetail.title}}
+                    </p>
+
+                </div>
+            </div>
+            <div class="col-xl-4 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'client.name' | translate}}:</p>
+                    <p class="mb-0" *ngIf="projectDetail.company ; else none">
+                        {{projectDetail.company.name}}
+                    </p>
+                    <ng-template #none>
+                        <p class="mb-0"> {{'n.a' | translate }} </p>
+                    </ng-template>
+                    
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 align-self-center">
+            <div class="d-flex float-right">
+                <button style="font-size: 16px;" (click)="markAsFavourite()" class="btn btn-dark"
+                    *ngIf="!isFavourite"><i class="fa fa-heart"></i></button>
+                <button style="font-size: 16px;" (click)="markAsFavourite()" class="btn btn-danger"
+                    *ngIf="isFavourite"><i class="fa fa-heart"></i></button>
+                <p-button class="bg_black_button ml-1" (click)="goToBid()">{{'start.bid' | translate}}</p-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 mb-4 bg-grey2">
+        <div class="card-body">
+            <div class="d-flex flex-wrap">
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetail.user">
+                            {{projectDetail.user.firstName}}
+                            {{projectDetail.user.lastName}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/category.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'category' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetail.industry ? projectDetail.industry.name : ''}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/negotiation.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'bid.negotiable' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetail.isNegotiable === true ? 'Yes' : 'No'}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/location.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetail.region}} , {{projectDetail.state}}
+                        </p>
+                        <ng-template #none> </ng-template>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'bid.due.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetail.bidDueDate">
+                            {{projectDetail.bidDueDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/start_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'start.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetail.startDate">
+                            {{projectDetail.startDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/estimate_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'estimated.end.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetail.completionDate">
+                            {{projectDetail.completionDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class=col-md-12>
+            <h5 class="font-weight-bold">{{'jobsites'| translate}}</h5>
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" 
+             [resizableColumns]="true" #dt [value]="jobSiteDetail"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites"
+                [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [showCurrentPageReport]="true"
+                [rowsPerPageOptions]="rowsPerPageOptions">
+                <!-- [lazy]="true" (onLazyLoad)="onLazyLoad($event)" -->
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 180px;">
+                        <col style="width: 300px;">
+                        <col style="width: 120px;">
+                        <col style="width: 120px;">
+                        <col style="width: 150px;">
+                        <col style="width: 150px;">
+                        <col style="width: 180px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                            pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                    <tr *ngIf="jobSite.id !== 'jid'">
+                        <td class="text-wrap text-blue">
+                            <a style="cursor: pointer;" (click)="goToJobsite(jobSite.id)">
+                                {{jobSite.title}}
+                            </a>
+                        </td>
+                        <td class="text-wrap">
+                            <span class="col-xl-12" *ngIf="jobSite.description.length <= truncateLength ">
+                                {{jobSite.description}}
+                            </span>
+                            <span class="col-xl-12" *ngIf="jobSite.description.length > truncateLength ">
+                                <app-read-more [content]="jobSite.description" [limit]=truncateLength
+                                    [completeWords]="true">
+                                </app-read-more>
+                            </span>
+                        </td>
+                        <td>{{jobSite.city}} </td>
+                        <td>{{jobSite.state}} </td>
+                        <td>{{jobSite.zipCode}} </td>
+                        <td>{{jobSite.cost | currency}} </td>
+                        <td>
+                            <span *ngIf="jobSite.attachment?.length ; else noDocument">
+                                <a style="cursor: pointer;" (click)="downloadAttachments(jobSite.id)">
+                                    <span class="material-icons">
+                                        description
+                                    </span>
+                                </a>
+                            </span>
+                            <ng-template #noDocument>
+                                No Doument
+                            </ng-template>
+                        </td>
+                    </tr>
+                    <tr *ngIf="jobSiteDetail.length == 0">
+                        <td class="text-center" [attr.colspan]="7">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center" [attr.colspan]="7">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

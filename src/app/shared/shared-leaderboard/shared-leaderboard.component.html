@@ -1,0 +1,473 @@
+<div class="row">
+    <div class="col-md-12 my-3" *ngIf="roleName === 'CLIENT'">
+        <h3 class="text-center">All time Top 3 {{roleName | titlecase}}s </h3>
+    </div>
+    <div class="col-md-6 my-3" *ngIf="roleName !== 'CLIENT'">
+        <h3 class="text-center">Top 3 {{roleName | titlecase}}s for {{month | date:'MMMM yyyy'}}</h3>
+    </div>
+    <div class="col-md-6 my-3" *ngIf="roleName !== 'CLIENT'">
+        <h3 class="text-center">Benefits to Top 3 {{roleName | titlecase}}s</h3>
+    </div>
+</div>
+
+<div class="row parent" *ngIf="roleName !== 'CLIENT'">
+    <div class="col-xl-6" *ngIf="leaderBoardData && roleName !== 'CLIENT'; else noClientTotalLeaderBoardDataFound">
+        <div class="row">
+            <div class="col-xl-4 pt-4 pb-1" *ngIf="rankTwoList?.length; else noLeaderBoardDataFound">
+                <p-carousel [value]="rankTwoList" orientation="vertical" [style]="{'max-width':'700px', 'margin-top':'2em'}" verticalViewPortHeight="400px" [numVisible]="1" [numScroll]="1" [ngClass]="rankTwoList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                    <ng-template let-rankTwo pTemplate="item">
+                        <div class="text-center mt-0">
+                            <button pButton pRipple type="button" label="2" class="p-button-rounded "></button>
+                        </div>
+                        <div class="rankTwo-item">
+                            <div class="rankTwo-item-content text-center">
+                                <div class="p-my-3">
+                                    <ng-container *ngIf="!rankTwo.photo">
+                                        <p-avatar label="{{rankTwo.firstName.substring(0, 1) + rankTwo.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff' , 'height': '100px', 'width': '100px'}" shape="circle">
+                                        </p-avatar>
+                                    </ng-container>
+                                    <ng-container *ngIf="rankTwo.photo">
+                                        <div>
+                                            <img style="height: 100px; width: 100px;" [src]="imagePath + rankTwo.photo" class="rounded-circle mr-2 h-profile-pic" width="200" height="200" alt="">
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="mb-0">
+                                    <span *ngIf="rankTwo.avgRating; else noRating">
+                                        <p-rating stars="{{rankTwo.avgRating}}" [cancel]="false"
+                                            iconOffClass="pi pi-star" readonly="true">
+                                        </p-rating>
+                                    </span>
+                                    <hr>
+                                    <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankTwo.firstName}} {{rankTwo.lastName}}">{{rankTwo.firstName}} {{rankTwo.lastName}}
+                                    </h4>
+                                    Earned points in a month
+                                    <hr>
+                                    <h6 class="p-mt-0 p-mb-3">{{rankTwo.point}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-carousel>
+            </div>
+            <div class="col-xl-4 pb-1" *ngIf="rankOneList?.length; else noLeaderBoardDataFound">
+                <p-carousel [value]="rankOneList" orientation="vertical" [style]="{'max-width':'900px', 'margin-top':'2em'}" verticalViewPortHeight="450px" [numVisible]="1" [numScroll]="1" [ngClass]="rankOneList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                    <ng-template let-rankOne pTemplate="item">
+                        <div class="text-center mt-0">
+                            <button pButton pRipple type="button" label="1" class="p-button-rounded text-center"></button>
+                        </div>
+                        <div class="rankOne-item text-center">
+                            <div class="rankOne-item-content">
+                                <div class="p-my-3">
+                                    <ng-container *ngIf="!rankOne.photo">
+                                        <p-avatar label="{{rankOne.firstName.substring(0, 1) + rankOne.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color': '#000000', 'color': '#ffffff', 'height': '100px', 'width': '100px'}" shape="circle">
+                                        </p-avatar>
+                                    </ng-container>
+                                    <ng-container *ngIf="rankOne.photo">
+                                        <div>
+                                            <img style="height: 100px; width: 100px;" [src]="imagePath + rankOne.photo" class="rounded-circle mr-2 h-profile-pic" width="35" height="35" alt="">
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="mb-0">
+                                    <span *ngIf="rankOne.avgRating; else noRating">
+                                        <p-rating stars="{{rankOne.avgRating}}" [cancel]="false"
+                                            iconOffClass="pi pi-star" readonly="true">
+                                        </p-rating>
+                                    </span>
+                                    <hr>
+                                    <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankOne.firstName}} {{rankOne.lastName}}">{{rankOne.firstName}} {{rankOne.lastName}}
+                                    </h4>
+                                    Earned points in a month
+                                    <hr>
+                                    <h6 class="p-mt-0 p-mb-3">{{rankOne.point}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-carousel>
+            </div>
+            <div class="col-xl-4 pt-5 pb-1" *ngIf="rankThreeList?.length; else noLeaderBoardDataFound">
+                <p-carousel [value]="rankThreeList" orientation="vertical" [style]="{'max-width':'600px', 'margin-top':'2em'}" verticalViewPortHeight="380px" [numVisible]="1" [numScroll]="1" [ngClass]="rankThreeList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                    <ng-template let-rankThree pTemplate="item">
+                        <div class="text-center mt-0">
+                            <button pButton pRipple type="button" label="3" class="p-button-rounded text-center"></button>
+                        </div>
+                        <div class="rankThree-item">
+                            <div class="rankThree-item-content text-center">
+                                <div class="p-my-3">
+                                    <ng-container *ngIf="!rankThree.photo">
+                                        <p-avatar label="{{rankThree.firstName.substring(0, 1) + rankThree.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff', 'height': '100px', 'width': '100px'}" shape="circle">
+                                        </p-avatar>
+                                    </ng-container>
+                                    <ng-container *ngIf="rankThree.photo">
+                                        <div>
+                                            <img style="height: 100px; width: 100px;" [src]="imagePath + rankThree.photo" class="rounded-circle mr-2 h-profile-pic" width="200" height="200" alt="">
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="mb-0">
+                                    <span *ngIf="rankThree.avgRating; else noRating">
+                                        <p-rating stars="{{rankThree.avgRating}}" [cancel]="false"
+                                            iconOffClass="pi pi-star" readonly="true">
+                                        </p-rating>
+                                    </span>
+                                    <hr>
+                                    <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankThree.firstName}} {{rankThree.lastName}}">
+                                        {{rankThree.firstName}} {{rankThree.lastName}}</h4>
+                                    Earned points in a month
+                                    <hr>
+                                    <h6 class="p-mt-0 p-mb-3">{{rankThree.point}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-carousel>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 padding-comments" *ngIf="roleName !== 'CLIENT'">
+        <div class="scroll">
+            <span *ngIf="userGamificationDetail?.comments" [innerHtml]="userGamificationDetail.comments">
+            </span>
+        </div>
+        <div class="text-center mt-5 mb-2">
+            <img *ngIf="userGamificationDetail?.photo; else nogiveAwayPhoto" [src]="imagePath + userGamificationDetail.photo" class="img-responsive img-rounded rounded" style="max-height: 300px; max-width: 300px;">
+        </div>
+        <ng-template #nogiveAwayPhoto>
+            <img src="{{giveAwayImageUrl}}" class="img-responsive img-rounded rounded" style="max-height: 300px; max-width: 450px;">
+        </ng-template>
+    </div>
+
+
+
+    <div class="col-md-12 text-center my-4" *ngIf="roleName !== 'CLIENT'">
+        <h3>Power Users and Yellow Hard Hat Users for {{month | date:'MMMM yyyy'}}</h3>
+    </div>
+    <div class="col-md-12 my-3 text-center" *ngIf="roleName !== 'CLIENT'">
+        <button pButton pRipple (click)="onOpenPowerUserDialog()" class="mr-2 bg-admin">Power Users</button>
+        <button pButton pRipple (click)="onOpenYellowHardHatUserDialog()" class="bg-admin">Yellow Hard Hat
+            Users</button>
+    </div>
+</div>
+
+<div class="" *ngIf="roleName === 'CLIENT'">
+    <div class="row parent" *ngIf="leaderBoardData ; else noTotalLeaderBoardDataFound">
+        <div class="col-xl-3">
+        </div>
+        <div class="col-xl-2 pt-4 pb-1" *ngIf="rankTwoList?.length; else noLeaderBoardDataFound">
+            <p-carousel [value]="rankTwoList" orientation="vertical" [style]="{'max-width':'700px', 'margin-top':'2em'}" verticalViewPortHeight="400px" [numVisible]="1" [numScroll]="1" [ngClass]="rankTwoList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                <ng-template let-rankTwo pTemplate="item">
+                    <div class="text-center mt-0">
+                        <button pButton pRipple type="button" label="2" class="p-button-rounded "></button>
+                    </div>
+                    <div class="rankTwo-item">
+                        <div class="rankTwo-item-content text-center">
+                            <div class="p-my-3">
+                                <ng-container *ngIf="!rankTwo.photo">
+                                    <p-avatar label="{{rankTwo.firstName.substring(0, 1) + rankTwo.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff' , 'height': '100px', 'width': '100px'}" shape="circle">
+                                    </p-avatar>
+                                </ng-container>
+                                <ng-container *ngIf="rankTwo.photo">
+                                    <div>
+                                        <img style="height: 100px; width: 100px;" [src]="imagePath + rankTwo.photo" class="rounded-circle mr-2 h-profile-pic" width="200" height="200" alt="">
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="mb-0">
+                                <span *ngIf="rankTwo.avgRating; else noRating">
+                                    <p-rating stars="{{rankTwo.avgRating}}" [cancel]="false" iconOffClass="pi pi-star"
+                                        readonly="true">
+                                    </p-rating>
+                                </span>
+                                <hr>
+                                <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankTwo.firstName}} {{rankTwo.lastName}}">{{rankTwo.firstName}} {{rankTwo.lastName}}
+                                </h4>
+                                Earned points in a month
+                                <hr>
+                                <h6 class="p-mt-0 p-mb-3">{{rankTwo.point}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-carousel>
+        </div>
+        <div class="col-xl-2 pb-1" *ngIf="rankOneList?.length; else noLeaderBoardDataFound">
+            <p-carousel [value]="rankOneList" orientation="vertical" [style]="{'max-width':'900px', 'margin-top':'2em'}" verticalViewPortHeight="450px" [numVisible]="1" [numScroll]="1" [ngClass]="rankOneList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                <ng-template let-rankOne pTemplate="item">
+                    <div class="text-center mt-0">
+                        <button pButton pRipple type="button" label="1" class="p-button-rounded text-center"></button>
+                    </div>
+                    <div class="rankOne-item text-center">
+                        <div class="rankOne-item-content">
+                            <div class="p-my-3">
+                                <ng-container *ngIf="!rankOne.photo">
+                                    <p-avatar label="{{rankOne.firstName.substring(0, 1) + rankOne.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color': '#000000', 'color': '#ffffff', 'height': '100px', 'width': '100px'}" shape="circle">
+                                    </p-avatar>
+                                </ng-container>
+                                <ng-container *ngIf="rankOne.photo">
+                                    <div>
+                                        <img style="height: 100px; width: 100px;" [src]="imagePath + rankOne.photo" class="rounded-circle mr-2 h-profile-pic" width="35" height="35" alt="">
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="mb-0">
+                                <span *ngIf="rankOne.avgRating; else noRating">
+                                    <p-rating stars="{{rankOne.avgRating}}" [cancel]="false" iconOffClass="pi pi-star"
+                                        readonly="true">
+                                    </p-rating>
+                                </span>
+                                <hr>
+                                <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankOne.firstName}} {{rankOne.lastName}}">{{rankOne.firstName}} {{rankOne.lastName}}
+                                </h4>
+                                Earned points in a month
+                                <hr>
+                                <h6 class="p-mt-0 p-mb-3">{{rankOne.point}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-carousel>
+        </div>
+        <div class="col-xl-2 pt-5 pb-1" *ngIf="rankThreeList?.length; else noLeaderBoardDataFound">
+            <p-carousel [value]="rankThreeList" orientation="vertical" [style]="{'max-width':'600px', 'margin-top':'2em'}" verticalViewPortHeight="380px" [numVisible]="1" [numScroll]="1" [ngClass]="rankThreeList?.length===1 ? 'custom-carousel' : ''" [autoplayInterval]="4000">
+                <ng-template let-rankThree pTemplate="item">
+                    <div class="text-center mt-0">
+                        <button pButton pRipple type="button" label="3" class="p-button-rounded text-center"></button>
+                    </div>
+                    <div class="rankThree-item">
+                        <div class="rankThree-item-content text-center">
+                            <div class="p-my-3">
+                                <ng-container *ngIf="!rankThree.photo">
+                                    <p-avatar label="{{rankThree.firstName.substring(0, 1) + rankThree.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff', 'height': '100px', 'width': '100px'}" shape="circle">
+                                    </p-avatar>
+                                </ng-container>
+                                <ng-container *ngIf="rankThree.photo">
+                                    <div>
+                                        <img style="height: 100px; width: 100px;" [src]="imagePath + rankThree.photo" class="rounded-circle mr-2 h-profile-pic" width="200" height="200" alt="">
+                                    </div>
+                                </ng-container>
+                            </div>
+                            <div class="mb-0">
+                                <span *ngIf="rankThree.avgRating; else noRating">
+                                    <p-rating stars="{{rankThree.avgRating}}" [cancel]="false" iconOffClass="pi pi-star"
+                                        readonly="true">
+                                    </p-rating>
+                                </span>
+                                <hr>
+                                <h4 class="p-mb-1 overflow-text" tooltipPosition="bottom" pTooltip="{{rankThree.firstName}} {{rankThree.lastName}}">{{rankThree.firstName}} {{rankThree.lastName}}
+                                </h4>
+                                Earned points in a month
+                                <hr>
+                                <h6 class="p-mt-0 p-mb-3">{{rankThree.point}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-carousel>
+        </div>
+        <div class="col-xl-3">
+        </div>
+    </div>
+</div>
+
+<div class="text-center my-4">
+    <h3>All Time Top 10 {{roleName | titlecase}}s</h3>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <p-table #dt [value]="topTenUsers" [columns]="columns" [scrollable]="true" [resizableColumns]="true" [rows]="size" [totalRecords]="totalRecords" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} companies"
+            [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width: 100px;">
+                    <col style="width: 150px;">
+                    <col style="width: 250px;">
+                    <col style="width: 100px;">
+                    <col style="width: 100px;">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pResizableColumn> Rank</th>
+                    <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
+                        {{col.label}}
+                        <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-data>
+                <tr>
+                    <td>{{data.rank}}</td>
+                    <td>
+                        <span *ngIf="data.photo; else avatar">
+                            <img [src]="imagePath + data.photo" style="height: 70px; width: 70px"
+                                class="rounded-circle mr-2 h-profile-pic" alt="">
+                        </span>
+                        <ng-template #avatar>
+                            <p-avatar label="{{data.firstName.substring(0, 1) + data.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff', 'height': '70px', 'width': '70px'}" shape="circle">
+                            </p-avatar>
+                        </ng-template>
+                    </td>
+                    <td class="text-wrap text-break">
+                        <p-button class="text-wrap text-break" (click)="redirectToProfile(data.user)" styleClass="p-button-link">{{data.firstName}} {{data.lastName}}
+                        </p-button>
+                    </td>
+                    <td>
+                        <span *ngIf="data.avgRating; else noRating">
+                            <p-rating stars="{{data.avgRating}}" [cancel]="false" iconOffClass="pi pi-star"
+                                readonly="true">
+                            </p-rating>
+                        </span>
+                    </td>
+                    <td>{{data.point}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="6" class="text-center">
+                        No Ranking Found
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+
+    </div>
+</div>
+
+<ng-template #noRating>
+    N/A
+</ng-template>
+
+<ng-template #noTotalLeaderBoardDataFound>
+    <div class="col-xl-12 pb-1 my-5">
+        <h5 class="text-muted text-center mt-3">No Ranking Found</h5>
+    </div>
+</ng-template>
+
+<ng-template #noClientTotalLeaderBoardDataFound>
+    <div class="col-xl-6 pb-1">
+        <h5 class="text-muted text-center mt-3">No Ranking Found</h5>
+    </div>
+</ng-template>
+
+<ng-template #noLeaderBoardDataFound>
+    <div class="col-xl-2 pb-1">
+    </div>
+</ng-template>
+<p-dialog [(visible)]="isOpenPowerUserDialog" [style]="{width: '70%'}" (onHide)="onHidePowerUserDialog($event)" header="Power Users For Month" [modal]="true" styleClass="p-fluid">
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table #dt [value]="powerUserData" [columns]="columnsForPowerAndYellowHardHat" [scrollable]="true" [resizableColumns]="true" [rows]="size" [totalRecords]="totalRecords" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} companies"
+                [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 100px;">
+                        <col style="width: 150px;">
+                        <col style="width: 250px;">
+                        <col style="width: 100px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn> Rank</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columnsForPowerAndYellowHardHat" [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-data>
+                    <tr>
+                        <td>{{data.userRank}}</td>
+                        <td>
+                            <span *ngIf="data.photo; else avatar">
+                                <img [src]="imagePath + data.photo" style="height: 70px; width: 70px"
+                                    class="rounded-circle mr-2 h-profile-pic" alt="">
+                            </span>
+                            <ng-template #avatar>
+                                <p-avatar label="{{data.firstName.substring(0, 1) + data.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff', 'height': '70px', 'width': '70px'}" shape="circle">
+                                </p-avatar>
+                            </ng-template>
+                        </td>
+                        <td class="text-wrap text-break">
+                            <button class="text-wrap text-break p-button p-button-link" (click)="redirectToProfile(data.user)">
+                                {{data.firstName}} {{data.lastName}}</button>
+                        </td>
+
+                        <td>{{data.point}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No Ranking Found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+</p-dialog>
+
+<p-dialog [(visible)]="isOpenYellowHardHatUserDialog" [style]="{width: '70%'}" (onHide)="onHideYellowHardHatUserDialog($event)" header="Yellow Hard Hat Users For Month" [modal]="true" styleClass="p-fluid">
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table #dt [value]="yellowHardHatUserData" [columns]="columnsForPowerAndYellowHardHat" [scrollable]="true" [resizableColumns]="true" [rows]="size" [totalRecords]="totalRecords" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} companies"
+                [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 100px;">
+                        <col style="width: 150px;">
+                        <col style="width: 250px;">
+                        <col style="width: 100px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn> Rank</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columnsForPowerAndYellowHardHat" [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-data>
+                    <tr>
+                        <td>{{data.userRank}}</td>
+                        <td>
+                            <span *ngIf="data.photo; else avatar">
+                                <img [src]="imagePath + data.photo" style="height: 70px; width: 70px"
+                                    class="rounded-circle mr-2 h-profile-pic" alt="">
+                            </span>
+                            <ng-template #avatar>
+                                <p-avatar label="{{data.firstName.substring(0, 1) + data.lastName.substring(0, 1)}}" styleClass="p-mr-2 h-profile-pic" size="large" [style]="{'background-color':'#000000', 'color': '#ffffff', 'height': '70px', 'width': '70px'}" shape="circle">
+                                </p-avatar>
+                            </ng-template>
+                        </td>
+                        <td class="text-wrap text-break">
+                            <button class="text-wrap text-break p-button p-button-link" (click)="redirectToProfile(data.user)">{{data.firstName}} {{data.lastName}}</button>
+                        </td>
+
+                        <td>{{data.point}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="6" class="text-center">
+                            No Ranking Found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+</p-dialog>

@@ -1,0 +1,352 @@
+<h4><b>Basic Details:</b></h4>
+<app-job-details [reviewForm]="postJobDetails.jobDetails" (submitChangedReviewForm)="changedJobDetails($event)">
+</app-job-details>
+<h4><b>Pay Details:</b></h4>
+<form [formGroup]="payDetailsForm">
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label for="employment-type">{{'employement.type' | translate}}*</label>&nbsp;
+            <a (click)="onEditEmploymentType()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+            <p-dropdown [options]="employeType" formControlName="employmentType" (onChange)="onemploymentTypeChange($event)" [disabled]="!this.editableEmploymentType"></p-dropdown>
+            <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('employmentType').valid) || (!payDetailsForm.get('employmentType').valid && payDetailsForm.get('employmentType').touched)">
+                <div *ngIf="(payDetailsForm.get('employmentType').errors.required)">
+                    {{'required' | translate}} </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3 col-md-6" *ngIf="employmentType ==='WORKER_1099' || employmentType ==='WORKER_W2'">
+            <label for="hourlyRateFrom">{{'hourly.rate.range.from' | translate}}*</label>&nbsp;
+            <a (click)="onEditHourlyRangeFrom()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">$</span>
+                <p-inputNumber [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" class="amount" inputId="minmaxfraction" maxlength="15" formControlName="hourlyRateFrom" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableHourlyRangeFrom"
+                    (keyup)="onChangeHourlyFromValue($event)" [useGrouping]="false"></p-inputNumber>
+            </div>
+
+            <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('hourlyRateFrom').valid) || (!payDetailsForm.get('hourlyRateFrom').valid && payDetailsForm.get('hourlyRateFrom').touched)">
+                <div *ngIf="(payDetailsForm.get('hourlyRateFrom').errors.required) || payDetailsForm.get('hourlyRateTo').errors.min">
+                    {{'required' | translate}} </div>
+                <div *ngIf=" payDetailsForm.get('hourlyRateFrom').errors.maxlength">
+                    {{'four.maxlength' | translate}} </div>
+                
+            </div>
+
+
+        </div>
+        <div class="col-lg-3 col-md-6" *ngIf="employmentType ==='WORKER_1099' || employmentType ==='WORKER_W2'">
+            <label for="hourlyRateTo">{{'hourly.rate.range.to' | translate}}*</label>&nbsp;
+            <a (click)="onEditHourlyRangeTo()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">$</span>
+                <p-inputNumber [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" class="amount" inputId="minmaxfraction" maxlength="15" formControlName="hourlyRateTo" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableHourlyRangeTo"
+                    (keyup)="onChangeHourlyToValue($event)" [useGrouping]="false"></p-inputNumber>
+            </div>
+
+            <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('hourlyRateTo').valid) || (!payDetailsForm.get('hourlyRateTo').valid && payDetailsForm.get('hourlyRateTo').touched)">
+                <div *ngIf="(payDetailsForm.get('hourlyRateTo').errors.required) || payDetailsForm.get('hourlyRateTo').errors.min">
+                    {{'required' | translate}} </div>
+                <div *ngIf=" payDetailsForm.get('hourlyRateTo').errors.maxlength">
+                    {{'four.maxlength' | translate}} </div>
+               
+            </div>
+            <div class="p-invalid" *ngIf="errorFlagHour; else none">
+                {{'hourly.rate.to.smaller.than.hourly.rate.from' | translate}}
+            </div>
+            <ng-template #none> </ng-template>
+        </div>
+    </div>
+    <div *ngIf="employmentType ==='WORKER_1099' || employmentType ==='WORKER_W2'">
+        <div class="row">
+
+            <div class="col-md-6 col-lg-3 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="offer-a-daily">{{'do.you.offer.daily.per.diem' | translate}}*</label>&nbsp;
+                        <a (click)="onEditPerDiem()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+                            <input type="radio" [value]="true" formControlName="isPerDiem" [attr.disabled]="!this.editablePerDiem ?'' : null">
+
+                            <label class="radio-label">{{'yes' | translate}}</label>
+
+                            <input type="radio" [value]="false" formControlName="isPerDiem" [attr.disabled]="!this.editablePerDiem ?'' : null">
+                            <label class="radio-label">{{'no' | translate}}</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="col-md-6 col-lg-3 form-group" *ngIf="this.payDetailsForm.get('isPerDiem').value">
+
+                <label for="per-diem-rate">{{'per.diem.rate' | translate}}*</label>&nbsp;
+                <a (click)="onEditPerDiemRate()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">$</span>
+                    <p-inputNumber [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" class="amount" inputId="minmaxfraction" maxlength="9" formControlName="perDiemRate" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editablePerDiemRate"
+                        (onBlur)="onChangePerDiemRate($event)" [useGrouping]="false"></p-inputNumber>
+                </div>
+
+                <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('perDiemRate').valid) || (!payDetailsForm.get('perDiemRate').valid && payDetailsForm.get('perDiemRate').touched)">
+                    <div *ngIf="(payDetailsForm.get('perDiemRate').errors.required)">
+                        {{'required' | translate}} </div>
+
+
+                </div>
+                <div class="p-invalid" *ngIf="perDiemZero">
+                    {{'per.diem.rate.cannnot.be.zero' | translate}}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="pay-for-mileage">{{'do.you.pay.for.mileage' | translate}}*</label>&nbsp;
+                        <a (click)="onEditMiles()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+                            <input type="radio" [value]="true" formControlName="isPayForMilage" [attr.disabled]="!this.editableMiles ?'' : null">
+                            <label class="radio-label">{{'yes' | translate}}</label>
+
+                            <input type="radio" [value]="false" formControlName="isPayForMilage" [attr.disabled]="!this.editableMiles ?'' : null">
+                            <label class="radio-label">{{'no' | translate}}</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="col-lg-3 col-md-6 form-group" *ngIf="this.payDetailsForm.get('isPayForMilage').value">
+
+                <label for="minimum-miles">{{'minimum.miles'| translate}}*</label>&nbsp;
+                <a (click)="onEditMinimumMiles()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+                <div class="input-group">
+                    <p-inputNumber class="amount" inputId="minmaxfraction" inputStyleClass="text-right w-60 form-control" maxlength="8" formControlName="minimumMile" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableMinimumMiles" (onBlur)="onChangeMinimumMiles($event)"
+                        [useGrouping]="false">
+                    </p-inputNumber>
+
+                </div>
+                <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('minimumMile').valid) || (!payDetailsForm.get('minimumMile').valid && payDetailsForm.get('minimumMile').touched)">
+                    <div *ngIf="(payDetailsForm.get('minimumMile').errors.required)">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" payDetailsForm.get('minimumMile').errors.maxlength">
+                        {{'four.maxlength' | translate}} </div>
+                </div>
+                <div class="p-invalid" *ngIf="minimumMilesZero">
+                    {{'minimum.miles.cannnot.be.zero' | translate}}
+                </div>
+
+            </div>
+            <div class="col-lg-3 col-md-6 form-group" *ngIf="this.payDetailsForm.get('isPayForMilage').value">
+
+                <label for="mileage-rate">{{'mileage.rate' | translate}}*</label>&nbsp;
+                <a (click)="onEditMileageRate()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">$</span>
+                    <p-inputNumber [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" class="amount" inputId="minmaxfraction" maxlength="9" formControlName="milageRate" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableMileageRate"
+                        (onBlur)="onChangeMileageRate($event)" [useGrouping]="false"></p-inputNumber>
+                </div>
+
+                <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('milageRate').valid) || (!payDetailsForm.get('milageRate').valid && payDetailsForm.get('milageRate').touched)">
+                    <div *ngIf="(payDetailsForm.get('milageRate').errors.required)">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" payDetailsForm.get('milageRate').errors.maxlength">
+                        {{'four.maxlength' | translate}} </div>
+                </div>
+                <div class="p-invalid" *ngIf="mileageRateZero">
+                    {{'mileage.rate.cannnot.be.zero' | translate}}
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-12 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="job-type">{{'job.type' | translate}}</label>
+                        <br>
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="jobType" [attr.disabled]="true">
+                            <label class="radio-label">
+                                {{'open.market.request' | translate}}
+                                <i class="fa fa-unlock" style="margin-right: 15px;"></i></label>
+
+                            <input type="radio" [value]="false" formControlName="jobType" [attr.disabled]="true">
+                            <label class="radio-label">
+                                {{'private.request' | translate}}
+                                <i class="fa fa-lock"></i></label>
+                        </div>
+                        <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('jobType').valid) || (!payDetailsForm.get('jobType').valid && payDetailsForm.get('jobType').touched)">
+                            <div *ngIf="(payDetailsForm.get('jobType').errors.required)">
+                                {{'required' | translate}} </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+    </div>
+    <div *ngIf="employmentType==='FULL_TIME'">
+        <div class="row">
+            <div class="col-lg-3 form-group">
+                <label for="salary-range-from">{{'annual.salary.range.from' | translate}}</label>&nbsp;
+                <a (click)="onEditAnnualRangeFrom()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    
+                    <p-inputNumber class="amount" inputId="minmaxfraction" inputStyleClass="border-left-0 text-right w-60 form-control border-left-radius-0" maxlength="15" formControlName="annualSalaryFrom" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableAnnualRangeFrom"
+                        (keyup)="onChangeAnnualFrom($event)" [useGrouping]="false">
+                    </p-inputNumber>
+                </div>
+                <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('annualSalaryFrom').valid) || (!payDetailsForm.get('annualSalaryFrom').valid && payDetailsForm.get('annualSalaryFrom').touched)">
+                    <div *ngIf="(payDetailsForm.get('annualSalaryFrom').errors.required) || payDetailsForm.get('annualSalaryFrom').errors.min">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" payDetailsForm.get('annualSalaryFrom').errors.maxlength">
+                        {{'nine.maxlength' | translate}} </div>
+                </div>
+
+            </div>
+            <div class="col-lg-3 form-group">
+                <label for="salary-range-to">{{'annual.salary.range.to' | translate}}</label>&nbsp;
+                <a (click)="onEditAnnualRangeTo()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text border-right-0 bg-white">$</span>
+                    </div>
+                    <p-inputNumber class="amount" inputId="minmaxfraction" inputStyleClass="border-left-0 text-right w-60 form-control border-left-radius-0" maxlength="15" formControlName="annualSalaryTo" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" [disabled]="!editableAnnualRangeTo"
+                        (keyup)="onChangeAnnualTo($event)" [useGrouping]="false">
+                    </p-inputNumber>
+                </div>
+                <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('annualSalaryTo').valid) || (!payDetailsForm.get('annualSalaryTo').valid && payDetailsForm.get('annualSalaryTo').touched)">
+                    <div *ngIf="(payDetailsForm.get('annualSalaryTo').errors.required) || payDetailsForm.get('annualSalaryTo').errors.min">
+                        {{'required' | translate}} </div>
+                    <div *ngIf=" payDetailsForm.get('annualSalaryTo').errors.maxlength">
+                        {{'nine.maxlength' | translate}} </div>
+                </div>
+                <div class="p-invalid" *ngIf="errorFlag">
+                    {{'annual.rate.to.smaller.than.annual.rate.from' | translate}}
+                </div>
+
+            </div>
+            <div class="col-lg-3 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="yearly-bonus" style="width: 250px;">{{'yearly.bonus' | translate}}</label>
+                        <a (click)="onEditYearlyBonus()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="isYearlyBonus" [attr.disabled]="!this.editableYearlyBonus ?'' : null">
+                            <label class="radio-label">{{'yes' | translate}}</label>
+
+                            <input type="radio" [value]="false" formControlName="isYearlyBonus" [attr.disabled]="!this.editableYearlyBonus ?'' : null">
+                            <label class="radio-label">{{'no' | translate}}</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="col-lg-3 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="health-benefits" style="width: 250px;">{{'health.benefits' | translate}}</label>
+                        <a (click)="onEditHealthBenefit()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="isHealthBenifit" [attr.disabled]="!this.editableHealthBenefit ?'' : null">
+                            <label class="radio-label">Yes</label>
+
+                            <input type="radio" [value]="false" formControlName="isHealthBenifit" [attr.disabled]="!this.editableHealthBenefit ?'' : null">
+                            <label class="radio-label">No</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+
+
+            <div class="col-lg-3 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="is401KRetirement" style="width: 250px;">{{'401k.requirement' |translate}}</label>
+                        <a (click)="onEditRetirement()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="is401KRetirement" [attr.disabled]="!this.editableRetirement ?'' : null">
+                            <label class="radio-label">{{'yes' | translate}}</label>
+                            <input type="radio" [value]="false" formControlName="is401KRetirement" [attr.disabled]="!this.editableRetirement ?'' : null">
+
+                            <label class="radio-label">{{'no' | translate}}</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="col-lg-3 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="relocation-benefits" style="width: 250px;">{{'relocation.benefits' |
+                            translate}}</label>
+                        <a (click)="onEditRelocationBenifit()" class="p-button-link"><i class="fa fa-pencil"></i></a>
+
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="isRelocationBenifit" [attr.disabled]="!this.editableRelocationBenefit ?'' : null">
+                            <label class="radio-label">{{'yes' | translate}}</label>
+                            <input type="radio" [value]="false" formControlName="isRelocationBenifit" [attr.disabled]="!this.editableRelocationBenefit ?'' : null">
+
+                            <label class="radio-label">{{'no' | translate}}</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="col-lg-5 col-md-12 form-group">
+                <fieldset>
+                    <div class="some-class">
+                        <label for="job-type">{{'job.type' | translate}}</label>
+
+                        <div>
+
+                            <input type="radio" [value]="true" formControlName="jobType" [attr.disabled]="true">
+                            <label class="radio-label">
+                                {{'open.market.request' | translate}}
+                                <i class="fa fa-unlock" style="margin-right: 15px;"></i></label>
+
+                            <input type="radio" [value]="false" formControlName="jobType" [attr.disabled]="true">
+                            <label class="radio-label">
+                                {{'private.request' | translate}}
+                                <i class="fa fa-lock"></i></label>
+                        </div>
+                        <div class="p-invalid" *ngIf="(submitted && !payDetailsForm.get('jobType').valid) || (!payDetailsForm.get('jobType').valid && payDetailsForm.get('jobType').touched)">
+                            <div *ngIf="(payDetailsForm.get('jobType').errors.required)">
+                                {{'required' | translate}} </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+    </div>
+</form>
+<hr>
+<div class="footer-action border-top-0" style="text-align: right;">
+    <button class="p-button-danger p-button-outlined" pButton type="button" label="{{'previous' | translate}}" (click)="previous()">
+        <i class="fa fa-chevron-left mr-2"></i>
+    </button>
+
+    <button type="button" class="btn btn-primary mr-1" (click)="saveDraft()"> {{'save' | translate}}</button>
+
+    <button type="button" class="btn btn-primary" (click)="postJob()"> {{'post.job' | translate}} </button>
+
+    
+
+
+
+
+
+</div>

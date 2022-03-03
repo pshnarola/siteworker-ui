@@ -1,0 +1,28 @@
+/*.disabled {
+    pointer-events: none;
+    cursor: default;
+    color: #6c757d!important;
+  }*/
+.mat-button.mat-button-disabled.mat-button-disabled{
+    color: #6c757d!important;
+ }
+ .disabled {
+    color: #6c757d!important;
+  }
+  
+  @media screen and (max-width: 1199px) {
+  
+    .brand-logo {
+      width: 180px;
+    }
+    .nav-link ,
+    .mat-button {
+      padding: 0 5px;
+    }
+  } 
+  @media screen and (min-width: 1025px) and (max-width: 1299px) { 
+    .brand-logo {
+      width: 180px;
+    }
+    
+  }

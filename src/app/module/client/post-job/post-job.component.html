@@ -1,0 +1,47 @@
+<div class="">
+    <div class="w-100">
+        <div id="post-job-stepper" class="bs-stepper">
+            <div class="bs-stepper-header">
+                <div class="step col" data-target="#job-details">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">1</span><br>
+                        <span class="bs-stepper-label">Job Details</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#pay-details">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Pay Details</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#review-and-confirm">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Review & Confirm</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#worker-selection">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">4</span>
+                        <span class="bs-stepper-label">Worker Selection</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bs-stepper-content">
+                <div id="job-details" class="content" role="tabpanel">
+                    <app-job-details (submittedJobDetails)="saveJobDetails($event)"></app-job-details>
+                </div>
+                <div id="pay-details" class="content" role="tabpanel">
+                    <app-pay-details (submittedPayDetails)="savePayDetails($event)" (previousClick)="previousPayDetails($event)"></app-pay-details>
+                </div>
+                <div id="review-and-confirm" class="content" role="tabpanel">
+                    <app-review-and-confirm *ngIf="isFormCompleted" (submittedReviewFormDetails)="saveReviewFormDetails($event)" (previousClick)="previousReviewDetails($event)"></app-review-and-confirm>
+                </div>
+                <div id="worker-selection" class="content" role="tabpanel">
+                    <app-worker-selection (previousClick)="goToPrevious($event)"></app-worker-selection>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

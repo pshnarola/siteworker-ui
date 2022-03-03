@@ -1,0 +1,64 @@
+<div class="container-fluid" *ngIf="projectDetail && JobSiteDetail">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-warning text-dark">
+            <h4 class="float-left font-weight-bold">{{projectDetail.title}} - {{JobSiteDetail.title}} - Payment Milestone</h4>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold pb-3">Payment Milestone</h5>
+            <p-table [value]="JobSiteDetail.paymentMileStone" [resizableColumns]="true" styleClass="p-datatable-striped"
+                styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true"
+                [style]="{width:'100%'}">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 150px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>{{"milestone.number" |translate}}</th>
+                        <th pResizableColumn>{{"milestone.name" |translate}}</th>
+                        <th pResizableColumn>{{"line.item.deliverables" |translate}}</th>
+                        <th pResizableColumn>{{"milestone.%" |translate}}</th>
+                        <th pResizableColumn>{{"amount.release" |translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-mileStone let-rowIndex="rowIndex">
+                    <ng-container>
+                        <tr>
+                            <td>{{rowIndex+1}}</td>
+                            <td class="text-wrap">{{mileStone.name}}</td>
+                            <td>
+                                <p-button (click)="redirectToLineItemDeliverables(mileStone)"
+                                    styleClass="p-button-link">
+                                    {{mileStone.lineItem.length}}
+                                </p-button>
+                            </td>
+                            <td>{{mileStone.percentage}} % </td>
+                            <td>{{mileStone.amount | currency}}</td>
+                        </tr>
+                    </ng-container>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+
+</div>
+
+<div *ngIf="!projectDetail">
+    <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+</div>

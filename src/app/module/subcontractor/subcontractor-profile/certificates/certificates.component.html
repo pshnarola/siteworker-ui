@@ -1,0 +1,498 @@
+<div class="container-fluid">
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'emr' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="p-formgroup-inline">
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="true" [(ngModel)]="hasEMR" (onClick)="onClick($event)"
+                                    inputId="city7">
+                                </p-radioButton>
+                                <label for="city7">{{ 'yes' | translate}}</label>
+                            </div>
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="false" [(ngModel)]="hasEMR" (onClick)="onClick($event)"
+                                    inputId="city8">
+                                </p-radioButton>
+                                <label for="city8">{{ 'no' | translate}}</label>
+                            </div>
+                        </div>
+
+                        <p>
+                            Does anyone in your team hold current Emergency Medical Responder 
+                            credentials for the state where the project is located?
+                        </p>
+                        <div *ngIf="hasEMR">
+                            <p-table styleClass="p-datatable-gridlines" [scrollable]="false" scrollHeight="400px"
+                                [resizableColumns]="true" #dt [value]="listOfEMRTemp" [lazy]="false" [paginator]="false"
+                                [rows]="3" [totalRecords]="3" [loading]="loading" [showCurrentPageReport]="true"
+                                [sortOrder]="-1">
+                                <ng-template pTemplate="colgroup" let-columns>
+                                    <colgroup>
+                                        <col style="width: 20%;">
+                                        <col style="width: 20%;">
+                                        <col>
+                                        <col>
+                                    </colgroup>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                                            pSortableColumn="{{col.value}}">
+                                            {{col.label}}
+                                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn>{{ "action" | translate }}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-i="rowIndex" let-emr>
+                                    <tr>
+
+                                        <td>{{emr.year}}</td>
+                                        <td>{{ emr.status === 'UNDER_REVIEW' ? 'Under Review' : emr.status ===
+                                            'APPROVED' ? 'Approved' : emr.status === 'REJECTED' ? 'Rejected' : '' }}
+                                        </td>
+                                        <td><a style="cursor: pointer;"
+                                                (click)="download(emr.id,emr.documentName)">{{emr.documentName}}</a>
+                                        </td>
+                                        <td>
+                                            <button *ngIf="!(emr.status === 'APPROVED')&& !(emr.status === '')" pButton
+                                                pRipple icon="pi pi-pencil"
+                                                class="p-button-rounded p-button-primary p-mr-2" pTooltip="Edit EMR"
+                                                (click)="editEmr(emr)">
+                                            </button>
+                                            <button *ngIf="!(emr.status === 'APPROVED')&& !(emr.status === '')" pButton
+                                                pRipple icon="pi pi-times"
+                                                class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete EMR"
+                                                (click)="openEMRDialog(emr.id,emr.documentName)">
+                                            </button>
+                                            <button *ngIf="!emr.documentName" pButton pRipple label="+ Add"
+                                                class="p-button-rounded p-button-warning p-mr-2" pTooltip="Add New EMR"
+                                                (click)="addEmr(emr.year)">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="4" class="text-center">
+                                            No records found
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
+                        </div>
+
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+            <div class="Dialog_Sub_Bid">
+                <p-dialog [(visible)]="emrDialog" (onHide)="hideDialog()"
+                    [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 'max-height': '300px','min-height':'300px','width':'500px'}"
+                    [modal]="true" styleClass="p-fluid" [header]="header">
+
+                    <ng-template pTemplate="header">
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="col-xl-12">
+                                <ngx-dropzone [accept]="'application/pdf'" [multiple]='false'
+                                    (change)="onSelect($event)" [maxFileSize]="10000000">
+                                    <ngx-dropzone-label>{{'drag.drop.pdf.placeholder' | translate }}
+                                    </ngx-dropzone-label>
+                                </ngx-dropzone>
+
+                                <div *ngIf="files">
+                                    <div class="card upload-attachment-div uploaded-files p-chip"
+                                        *ngFor="let file of files; let i = index">
+                                        <p>
+                                            {{file.name}}
+                                        </p>
+                                        <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDeleteDialogForTempEmr(i,file.name)"></i>
+                                    </div>
+                                </div>
+
+                                <div class="card upload-attachment-div uploaded-files p-chip" *ngIf="editMode">
+                                    <p>
+                                        {{ emrDto.documentName }}
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple type="button" (click)="hideDialog()" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger"></button>
+
+                        <button pButton pRipple label="{{ spinner ? 'please wait' : 'Save'}}" (click)="uploadFile()" type="button" class="p-button-warning ml-2" icon="pi pi-check-circle"></button>
+                    </ng-template>
+                </p-dialog>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'osha' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="p-formgroup-inline">
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="true" [(ngModel)]="hasOSHA" (onClick)="onClickOsha($event)"
+                                    inputId="city7">
+                                </p-radioButton>
+                                <label for="city7">{{ 'yes' | translate}}</label>
+                            </div>
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="false" [(ngModel)]="hasOSHA" (onClick)="onClickOsha($event)"
+                                    inputId="city8">
+                                </p-radioButton>
+                                <label for="city8">{{ 'no' | translate}}</label>
+                            </div>
+                        </div>
+
+                        <p>
+                            Please list your company’s OSHA certifications below.
+                        </p>
+                        <div *ngIf="hasOSHA" class="certificate_hasOSHA">
+
+                            <p-table styleClass="p-datatable-gridlines" [scrollable]="true"
+                                [resizableColumns]="true" #dt [value]="listOfOshaTemp" [lazy]="false"
+                                [paginator]="false" [rows]="3" [totalRecords]="3" [loading]="loading"
+                                [showCurrentPageReport]="true" [sortOrder]="-1" >
+                                <ng-template pTemplate="colgroup" let-columns>
+                                    <colgroup>
+                                        <col style="width: 20%;">
+                                        <col style="width: 20%;">
+                                        <col>
+                                        <col>
+                                    </colgroup>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columnsOsha"
+                                            pSortableColumn="{{col.value}}">
+                                            {{col.label}}
+                                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                                        </th>
+                                        <th pResizableColumn>{{ "action" | translate }}</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-osha>
+                                    <tr>
+                                        <td>{{osha.year}}</td>
+                                        <td>{{ osha.status === 'UNDER_REVIEW' ? 'Under Review' : osha.status ===
+                                            'APPROVED' ? 'Approved' : osha.status === 'REJECTED' ? 'Rejected' : '' }}
+                                        </td>
+                                        <td *ngIf="osha.optOutReason">{{osha.optOutReason}}</td>
+                                        <td *ngIf="!osha.optOutReason"><a style="cursor: pointer;"
+                                                (click)="download(osha.id,osha.documentName)">{{osha.documentName}}</a>
+                                        </td>
+                                        <td>
+                                            <button *ngIf="!(osha.status === 'APPROVED') && !(osha.status === '')"
+                                                pButton pRipple icon="pi pi-pencil"
+                                                class="p-button-rounded p-button-primary p-mr-2" pTooltip="Edit OSHA"
+                                                (click)="editOsha(osha)">
+                                            </button>
+                                            <button *ngIf="!(osha.status === 'APPROVED') && !(osha.status === '')"
+                                                pButton pRipple icon="pi pi-times"
+                                                class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete OSHA"
+                                                (click)="openOSHADialog(osha.id,osha.documentName,osha.optOutReason)">
+                                            </button>
+                                            <button
+                                                *ngIf=" osha.status === '' || (osha.status === '' && !(osha.status === 'APPROVED')) "
+                                                pButton pRipple label="+ Add"
+                                                class="p-button-rounded p-button-warning p-mr-2" pTooltip="Add New OSHA"
+                                                (click)="addOsha(osha.year)">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td [attr.colspan]="4" class="text-center">
+                                            No records found
+                                        </td>
+                                    </tr>
+                                </ng-template>
+
+                            </p-table>
+                        </div>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+
+
+            <div class="Dialog_Sub_Bid">
+                <p-dialog [(visible)]="oshaDialog" (onHide)="hideDialogOsha()"
+                    [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 'max-height': '300px','min-height':'300px','width':'500px'}"
+                    [modal]="true" styleClass="p-fluid" [header]="header">
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <form [formGroup]="oshaForm">
+                                <label for="city7">{{ 'opt.out.reason' | translate}}</label>
+                                <input type="text" maxlength="250" formControlName="outPutReason" pInputText
+                                    class="form-control" id="dunsNo" placeholder="Enter OptOutReason ">
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <ngx-dropzone [accept]="'application/pdf'" [multiple]='false'
+                                (change)="onSelectOsha($event)" [maxFileSize]="10000000">
+                                <ngx-dropzone-label>{{'drag.drop.pdf.placeholder' | translate }}</ngx-dropzone-label>
+                            </ngx-dropzone>
+
+                            <div *ngIf="filesOsha">
+                                <div class="card upload-attachment-div uploaded-files p-chip"
+                                    *ngFor="let file of filesOsha; let i = index">
+                                    <p>
+                                        {{file.name}}
+                                    </p>
+                                    <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDeleteDialogForTempOsha(i,file.name)"></i>
+                                </div>
+                            </div>
+
+                            <div class="card upload-attachment-div uploaded-files p-chip" *ngIf="editModeOsha">
+                                <p *ngIf="oshaDto.documentName">
+                                    {{ oshaDto.documentName }}
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <ng-template pTemplate="footer">
+                        <button pButton pRipple type="button" (click)="hideDialogOsha()" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger mr-2"></button>
+
+                        <button pButton pRipple label="{{ spinner ? 'please wait' : 'Save'}}" (click)="uploadOshaFile()" type="button" class="p-button-warning" icon="pi pi-check-circle"></button>
+                    </ng-template>
+                </p-dialog>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'certificate.of.insurance' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+
+                        <div class="p-formgroup-inline">
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="true" [(ngModel)]="hasCOI" (onClick)="onClickCOI($event)"
+                                    inputId="city7">
+                                </p-radioButton>
+                                <label for="city7">{{ 'yes' | translate}}</label>
+                            </div>
+                            <div class="p-field-checkbox">
+                                <p-radioButton [value]="false" [(ngModel)]="hasCOI" (onClick)="onClickCOI($event)"
+                                    inputId="city8">
+                                </p-radioButton>
+                                <label for="city8">{{ 'no' | translate}}</label>
+                            </div>
+                        </div>
+                        <div *ngIf="hasCOI">
+
+                            <div class="row steps">
+                                <div class="col-xl-12">
+                                    <h4 class="font-weight-bold pb-2">1.Please indicate wheather you meet the following
+                                        minimum insurance</h4>
+                                    <table class="table">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th scope="col">Type Of Insurance</th>
+                                                <th scope="col">Minimum Limits Required</th>
+                                                <th scope="col">Meet Minimum Limits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th>General Liability</th>
+                                                <td>1 million</td>
+                                                <td>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="true" [(ngModel)]="isGeneralLimitMeets"
+                                                            inputId="city7">
+                                                        </p-radioButton>
+                                                        <label for="city7">{{ 'yes' | translate}}</label>
+                                                    </div>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="false" [(ngModel)]="isGeneralLimitMeets"
+                                                            inputId="city8">
+                                                        </p-radioButton>
+                                                        <label for="city8">{{ 'no' | translate}}</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Automobile Liability</th>
+                                                <td>1 million</td>
+                                                <td>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="true"
+                                                            [(ngModel)]="isAutoMobileLimitMeets" inputId="city7">
+                                                        </p-radioButton>
+                                                        <label for="city7">{{ 'yes' | translate}}</label>
+                                                    </div>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="false"
+                                                            [(ngModel)]="isAutoMobileLimitMeets" inputId="city8">
+                                                        </p-radioButton>
+                                                        <label for="city8">{{ 'no' | translate}}</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Worker Compenstion / Employer Liability</th>
+                                                <td>1 million</td>
+                                                <td>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="true" [(ngModel)]="isWorkerLimitMeets"
+                                                            inputId="city7">
+                                                        </p-radioButton>
+                                                        <label for="city7">{{ 'yes' | translate}}</label>
+                                                    </div>
+                                                    <div class="p-field-checkbox">
+                                                        <p-radioButton [value]="false" [(ngModel)]="isWorkerLimitMeets"
+                                                            inputId="city8">
+                                                        </p-radioButton>
+                                                        <label for="city8">{{ 'no' | translate}}</label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p>
+                                        To bid for contracts on Site Worker, your company must have active 
+                                        minimum insurance in all applicable fields.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row steps">
+                                <div class="col-xl-6">
+                                    <h4 class="font-weight-bold pb-2">2.Umbrella / Excess Liability</h4>
+                                    <form [formGroup]="COIForm">
+
+                                        <div class="form-group">
+                                            <label for="umbrellaLiability">{{'umbrellaLiability' | translate}}*</label>
+                                            <p-dropdown [options]="umbrellaLiabilities"
+                                                formControlName="umbrellaLiability" placeholder="Select"
+                                                (onChange)="onStatusChange($event)">
+                                            </p-dropdown>
+                                            <div class="p-invalid"
+                                                *ngIf="(submitted && !COIForm.get('umbrellaLiability').valid) || (!COIForm.get('umbrellaLiability').valid && COIForm.get('umbrellaLiability').dirty) ">
+                                                <div *ngIf=" ( COIForm.get('umbrellaLiability').errors.required) ">
+                                                    {{'required' | translate}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="row steps">
+                                <div class="col-xl-12">
+                                    <h4 class="font-weight-bold pb-2">3.Upload your COI</h4>
+                                    <div class="row">
+                                        <div class="col-xl-6">
+                                            <p>
+                                                Attach proof of your Certificate of Insurance here. All COIs must be up-todate and meet minimum coverage standards.
+                                            </p>
+                                        </div>
+                                        <div class="col-xl-6">
+                                            <p class="text-center text-muted">User should upload 150px x 150px image for
+                                                optimum result.
+                                            </p>
+                                            <ngx-dropzone [accept]="'application/pdf'" [multiple]='false'
+                                                (change)="onSelectCOI($event)" [maxFileSize]="10000000">
+                                                <ngx-dropzone-label>{{ 'drag.and.drop.placeholder' | translate }}
+                                                </ngx-dropzone-label>
+                                            </ngx-dropzone>
+
+                                            <div *ngIf="filesCOI">
+                                                <div class="card upload-attachment-div uploaded-files p-chip"
+                                                    *ngFor="let file of filesCOI; let i = index">
+                                                    <p>
+                                                        {{file.name}}
+                                                    </p>
+                                                    <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row steps">
+                                <div class="col-xl-6 ml-auto">
+                                    <h4 class="font-weight-bold pb-2">My Company</h4>
+                                    <p>987 DFS , jackson 2@ 233</p>
+                                    <p>Austin Tx. 23323</p>
+                                </div>
+                                <div class="col-xl-6 mr-auto">
+                                    <button pButton pRipple label="{{ spinner ? 'please wait' : 'Save'}}"
+                                        (click)="uploadFileOfCOI()" class="p-button-warning"></button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="row steps" *ngIf="coiDto">
+                                    <div class="col-xl-6 ml-auto">
+                                        <span class="material-icons ml-auto">
+                                            description
+                                        </span>
+                                        <div class="upload-attachment-div">
+                                            <p *ngIf="coiFileName"> <a style="cursor: pointer;"
+                                                    (click)="download(coiDto.documentPath , coiDto.documentName)">{{coiFileName}}</a>
+                                            </p>
+                                            <p *ngIf="coiDto.umbrellaLiability">Excess Liability : $
+                                                {{coiDto.umbrellaLiability}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 mr-auto" *ngIf="coiDto.status">
+                                        {{coiDto.status === 'UNDER_REVIEW' ? 'Under Review' : coiDto.status ===
+                                        'APPROVED' ? 'Approved' : coiDto.status === 'REJECTED' ? 'Rejected' : ''}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()"
+                class=" p-button-outlined p-button-warning mr-3"></button>
+            <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}"
+                (click)="onSubmitSubcontractorDetail()" class=" p-button-warning mr-3"></button>
+            <button pButton pRipple label="{{'save.next' | translate}}" (click)="onSubmitSubcontractorDetail('next')"
+                class=" p-button-warning"></button>
+        </div>
+    </div>
+</div>

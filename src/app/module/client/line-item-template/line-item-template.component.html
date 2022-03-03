@@ -1,0 +1,287 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="float-left font-weight-bold">{{"line.item.template.management" | translate}}</h4>
+            <div class="float-right">
+                <button style="background-color: #fff;color: #3A7CEC;" pButton pRipple type="button" (click)="openDialog()" label="{{ 'add.new' | translate }}" icon="pi pi-plus"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="Dialog_Common">
+        <p-dialog [(visible)]="lineItemDialog" [style]="{width: '1120px'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="lineItemTemplateForm">
+                    <div class="row">
+                        <div class="form-group col-md">
+                            <label for="id">{{'line.item.id' |translate}}*</label>
+                            <input type="text" formControlName="lineItemId" pInputText maxlength="20" placeholder="{{'line.item.id.placeholder' |translate}}" class="form-control" id="id" [pKeyFilter]="blockSpecial">
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('lineItemId').touched && 
+                            (lineItemTemplateForm.get('lineItemId').hasError('required') &&
+                            !lineItemTemplateForm.get('lineItemId').valid)
+                            || (submitted &&
+                            (lineItemTemplateForm.get('lineItemId').hasError('required') && 
+                            !lineItemTemplateForm.get('lineItemId').valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('lineItemId').touched && 
+                            (lineItemTemplateForm.get('lineItemId').hasError('maxlength') && 
+                            !lineItemTemplateForm.get('lineItemId').valid)">
+                                {{'lineItemId.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md">
+                            <label for="name">{{'line.item.name' |translate}}*</label>
+                            <input type="text" formControlName="lineItemName" pInputText maxlength="100" placeholder="{{'line.item.name.placeholder' |translate}}" class="form-control" id="name" [pKeyFilter]="blockSpecial">
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('lineItemName').touched && 
+                            (lineItemTemplateForm.get('lineItemName').hasError('required') &&
+                            !lineItemTemplateForm.get('lineItemName').valid)
+                            || (submitted &&
+                            (lineItemTemplateForm.get('lineItemName').hasError('required') && 
+                            !lineItemTemplateForm.get('lineItemName').valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('lineItemName').touched && 
+                            (lineItemTemplateForm.get('lineItemName').hasError('maxlength') && 
+                            !lineItemTemplateForm.get('lineItemName').valid)">
+                                {{'lineItemName.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md">
+                            <label for="quantity">{{'quantity' |translate}}*</label>
+                            <p-inputNumber mode="decimal" formControlName="quantity" placeholder="{{'quantity.placeholder' |translate}}" id="quantity" maxlength="8" inputId="withoutgrouping" [useGrouping]="false">
+                            </p-inputNumber>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('quantity').touched && 
+                            (lineItemTemplateForm.get('quantity').hasError('required') &&
+                            !lineItemTemplateForm.get('quantity').valid)
+                            || (submitted &&
+                            (lineItemTemplateForm.get('quantity').hasError('required') && 
+                            !lineItemTemplateForm.get('quantity').valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('quantity').touched && 
+                            (lineItemTemplateForm.get('quantity').hasError('min') 
+                            && !lineItemTemplateForm.get('quantity').valid)">
+                                {{'quantity.minValue' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md">
+                            <label for="unit">{{'unit' |translate}}*</label>
+                            <p-autoComplete formControlName="unit" [suggestions]="filteredUom" forceSelection="true" (completeMethod)="filterUom($event)" field="name" [dropdown]="true" placeholder="{{'unit.placeholder' |translate}}" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
+                                <ng-template let-unit pTemplate="item">
+                                    <div>
+                                        <div>{{unit.name}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('unit').touched && 
+                            (lineItemTemplateForm.get('unit').hasError('required') &&
+                            !lineItemTemplateForm.get('unit').valid)
+                            || (submitted &&
+                            (lineItemTemplateForm.get('unit').hasError('required') && 
+                            !lineItemTemplateForm.get('unit').valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md">
+                            <label for="cost">{{'cost' |translate}}*</label>
+                            <p-inputNumber mode="currency" currency="USD" formControlName="cost" placeholder="{{'cost.placeholder' |translate}}" maxlength="17" locale="en-US"></p-inputNumber>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('cost').touched && 
+                            (lineItemTemplateForm.get('cost').hasError('required') &&
+                            !lineItemTemplateForm.get('cost').valid)
+                            || (submitted &&
+                            (lineItemTemplateForm.get('cost').hasError('required') && 
+                            !lineItemTemplateForm.get('cost').valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('cost').touched && 
+                            (lineItemTemplateForm.get('cost').hasError('min') 
+                            && !lineItemTemplateForm.get('cost').valid)">
+                                {{'cost.minValue' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="description">{{'line.item.description' |translate}}*</label>
+                            <p-editor formControlName="description" [style]="{'height':'150px'}">
+                                <p-header>
+                                    <ng-template [ngTemplateOutlet]="MsgRef">
+                                    </ng-template>
+                                </p-header>
+                            </p-editor>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('description').touched && 
+                                (lineItemTemplateForm.get('description').hasError('required') &&
+                                !lineItemTemplateForm.get('description').valid)
+                                || (submitted &&
+                                (lineItemTemplateForm.get('description').hasError('required') && 
+                                !lineItemTemplateForm.get('description').valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemTemplateForm.get('description').value) > 1000)">
+                                {{'lineItem.description.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inclusion">{{'inclusion' |translate}}</label>
+                            <p-editor formControlName="inclusions" [style]="{'height':'150px'}">
+                                <p-header>
+                                    <ng-template [ngTemplateOutlet]="MsgRef">
+                                    </ng-template>
+                                </p-header>
+                            </p-editor>
+                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemTemplateForm.get('inclusions').value) > 200)">
+                                {{'inclusion.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="exclusion">{{'exclusion' |translate}}</label>
+                            <p-editor formControlName="exclusions" [style]="{'height':'150px'}">
+                                <p-header>
+                                    <ng-template [ngTemplateOutlet]="MsgRef">
+                                    </ng-template>
+                                </p-header>
+                            </p-editor>
+                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemTemplateForm.get('exclusions').value) > 200)">
+                                {{'exclusion.maxLength' | translate}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="label1">{{'dynamic.label1' |translate}}</label>
+                            <textarea id="label1" rows="4" formControlName="dynamicLabel1" maxlength="200" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('dynamicLabel1').touched && 
+                                (lineItemTemplateForm.get('dynamicLabel1').hasError('maxlength') && 
+                                !lineItemTemplateForm.get('dynamicLabel1').valid)">
+                                {{'lineItem.label1.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="label2">{{'dynamic.label2' |translate}}</label>
+                            <textarea id="label2" rows="4" formControlName="dynamicLabel2" maxlength="200" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('dynamicLabel2').touched && 
+                                (lineItemTemplateForm.get('dynamicLabel2').hasError('maxlength') && 
+                                !lineItemTemplateForm.get('dynamicLabel2').valid)">
+                                {{'lineItem.label2.maxLength' | translate}}
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="label3">{{'dynamic.label3' |translate}}</label>
+                            <textarea id="label3" rows="4" formControlName="dynamicLabel3" maxlength="200" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
+                            <div class="p-invalid" *ngIf="lineItemTemplateForm.get('dynamicLabel3').touched && 
+                                (lineItemTemplateForm.get('dynamicLabel3').hasError('maxlength') && 
+                                !lineItemTemplateForm.get('dynamicLabel3').valid)">
+                                {{'lineItem.label3.maxLength' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger mr-2" (click)="hideDialog()"></button>
+
+                <button class="mr-0" pButton pRipple label="{{ 'add.new' | translate }}" *ngIf="lineItemTemplateForm.get('id').value === null" type="button" (click)="onLineItemSubmit()" icon="pi pi-check-circle"></button>
+                <button class="mr-0" pButton pRipple label="{{ 'update' | translate }}" *ngIf="lineItemTemplateForm.get('id').value !== null" type="button" (click)="onLineItemSubmit()" icon="pi pi-check-circle"></button>
+               
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="card datatable-card">
+                <p-table #dt [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                    styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} templates" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}"
+                    scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:150px">
+                            <col style="width:200px">
+                            <col style="width:200px">
+                            <col style="width:200px">
+                            <col style="width:150px">
+                            <col style="width:150px">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn>
+                                {{col.label}}
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-item>
+                        <tr>
+                            <td>{{item.lineItemId}}</td>
+                            <td>{{item.lineItemName}}</td>
+                            <td>{{item.quantity}}</td>
+                            <td>{{item.unit.name}}</td>
+                            <td>{{item.cost | currency}}</td>
+                            <td>
+                               
+
+
+                                <button class="btn btn-success btn-sm mr-2" (click)="editTemplate(item)"><i aria-hidden="true" class="fa fa-pencil"></i></button>
+                                <button class="btn btn-danger btn-sm" (click)="openDialogForDelete(item.id,item.lineItemName)"><i aria-hidden="true" class="fa fa-times"></i></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td class="text-center" [attr.colspan]="6">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #MsgRef>
+    <span class="ql-formats">
+        <select class="ql-header" tabindex="-1">
+          <option value="1" >hxbchxb</option>
+          <option value="2" >Subheading</option>
+          <option selected >Normal</option>
+        </select>
+        <select class="ql-font" tabindex="-1">
+          <option selected>Sans Serif</option>
+          <option value="serif">Serif</option>
+          <option value="monospace">Monospace</option>
+        </select>
+      </span>
+    <span class="ql-formats">
+        <button class="ql-bold" aria-label="Bold" tabindex="-1"></button>
+        <button class="ql-italic" aria-label="Italic" tabindex="-1"></button>
+        <button class="ql-underline" aria-label="Underline" tabindex="-1"></button>
+      </span>
+    <span class="ql-formats">
+        <select class="ql-color" tabindex="-1"></select>
+        <select class="ql-background" tabindex="-1"></select>
+      </span>
+    <span class="ql-formats">
+        <button class="ql-list" value="ordered" aria-label="Ordered List" tabindex="-1"></button>
+        <button class="ql-list" value="bullet" aria-label="Unordered List" tabindex="-1"></button>
+        <select class="ql-align" tabindex="-1">
+          <option selected tabindex="-1"></option>
+          <option value="center" tabindex="-1"></option>
+          <option value="right" tabindex="-1"></option>
+          <option value="justify" tabindex="-1"></option>
+        </select>
+      </span>
+    <span class="ql-formats">
+        <button class="ql-link" aria-label="Insert Link" tabindex="-1"></button>
+        <button class="ql-code-block" aria-label="Insert Code Block" tabindex="-1"></button>
+      </span>
+    <span class="ql-formats">
+        <button class="ql-clean" aria-label="Remove Styles" tabindex="-1"></button>
+      </span>
+</ng-template>

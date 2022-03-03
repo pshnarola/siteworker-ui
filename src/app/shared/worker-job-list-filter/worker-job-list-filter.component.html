@@ -1,0 +1,71 @@
+<div class="d-flex flex-wrap w-100 p-3">
+    <h4>Filter By</h4>
+    <div class="p-fluid p-formgrid">
+        <form *ngIf="jobFilterFormGroup" [formGroup]="jobFilterFormGroup">
+            <div class="p-field">
+                <label for="keyword">{{'keyword' | translate}}</label>
+                <input type="text" id="keyword" placeholder="Keyword" pInputText formControlName="keyword" />
+            </div>
+
+            <div class="p-field">
+                <label for="jobTitle">{{'job.name' | translate}}</label>
+                <p-autoComplete formControlName="jobTitle" id="jobTitle" [multiple]="true" (completeMethod)="getJobTitleForWorker($event)" delay="1000" [suggestions]="jobTitles" placeholder="Enter Job Name" minLength="3">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field">
+                <label for="employmentType">{{'employement.type' | translate}}</label>
+                <p-autoComplete class="small_font" formControlName="employmentType" [suggestions]="filteredEmployeType" field="label" id="employmentType" [multiple]="true" [dropdown]="true" (completeMethod)="filterEmployeType($event)" placeholder="Enter {{'employement.type' | translate}}">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field">
+                <label for="autocompletePlaces">{{'job.location' | translate}}</label>
+                <input type="text" class="form-control" maxlength="200" (keydown.enter)="$event.preventDefault()" placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search pInputText formControlName="location">
+            </div>
+
+            <div class="p-field">
+                <label for="employmentType">{{'location.radius' | translate}}</label>
+                <p-dropdown [options]="locationRadius" placeholder="Select {{'location.radius' | translate}}" formControlName="miles" (onChange)="onLocationRadius($event)"></p-dropdown>
+            </div>
+
+            <div class="p-field">
+                <label for="region">{{'region' | translate}}</label>
+                <p-autoComplete formControlName="region" (onDropdownClick)="filterAdminRegion($event)" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredRegionForJob($event)" delay="2000" [suggestions]="filteredRegionForJob"
+                    placeholder="Select {{'region' | translate}}">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field">
+                <label for="city">{{'city' | translate}}</label>
+                <p-autoComplete virtualScroll="true" itemSize="10" formControlName="city" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredCityForJob($event)" delay="2000" [suggestions]="filteredCityForJob" placeholder="Select {{'city' | translate}}">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field">
+                <label for="state">{{'state' | translate}}</label>
+                <p-autoComplete formControlName="state" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredStateForJob($event)" delay="2000" [suggestions]="filteredStateForJob" placeholder="Select {{'state' | translate}}">
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="postedBy">{{'posted.by' | translate}}</label>
+                <p-autoComplete formControlName="postedBy" id="postedBy" [field]="getFullName" [multiple]="true" forceSelection="true" minLength="3" (completeMethod)="getClientByName($event)" delay="2000" [suggestions]="clients" placeholder="Select Posted By">
+                </p-autoComplete>
+            </div>
+            <label class="font-weight-bold">{{'start.date' | translate}}</label>
+            <div class="p-field">
+                <label for="range">Range</label>
+                <p-calendar formControlName="dateRange" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range4" [showIcon]="true">
+                </p-calendar>
+            </div>
+
+
+
+            <div class="d-flex">
+                <button pButton pRipple type="button" label="Apply" (click)="filterJobList()" class="p-button-success mt-3  mr-2"></button>
+                <button pButton pRipple type="button" label="Clear" class="p-button-danger mt-3" (click)="clear($event)"></button>
+            </div>
+
+        </form>
+    </div>
+</div>

@@ -1,0 +1,228 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-success text-white">
+            <h4 class="float-left">{{'view.reimbursements' | translate}} <span *ngIf="selectedJob">:{{selectedJob.title}}</span></h4>
+            <div class="float-right">
+                <button pButton type="button" label="{{'add.reimbursements' | translate}}" class="p-button-success p-button-outlined" (click)="addReimbursement()" [disabled]="viewAddReimbursementButton"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="p-button-outlined p-button-success" icon="fa fa-filter"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card  bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label>{{ 'reimbursement.keyword' | translate }}: </label>
+                                <input style="height: 37px;" type="text" class="form-control" placeholder="{{'enter' | translate}}" formControlName="keyword" />
+                            </div>
+                            <div class="form-group col-md-4 TimeSheet_Client">
+                                <label>{{ 'reimbursements.status' | translate }}: </label>
+                                <p-autoComplete formControlName="status" id="status" forceSelection="true" [multiple]="true" [suggestions]="filteredStatus" field="label" [dropdown]="true" (completeMethod)="filterStatus($event)" placeholder="{{'all' | translate}}">
+                                </p-autoComplete>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>{{'reimbursement.created.dates.between' | translate}}</label>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label>{{ 'from' | translate }}: </label>
+                                <p-calendar formControlName="createdFrom" [(ngModel)]="createdFromDate" [maxDate]="createdToDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label>{{ 'to' | translate }}: </label>
+                                <p-calendar formControlName="createdTo" appendTo="body" [readonlyInput]="true" [(ngModel)]="createdToDate" [showIcon]="true" [minDate]="createdFromDate" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-xl-12 d-inline">
+                            <button pButton type="button" class="p-button-success mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                            <button pButton pRipple type="button" label="{{'clear' |translate}}" (click)="onFilterClear()" class="p-button-danger"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="datatable-card mt-3">
+        <p-table #dt [columns]="selectedColumns" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [value]="reimbursementList" [paginator]="true" [paginator]="true" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines"
+            [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="rowsPerPageOptions" [rows]="size" [totalRecords]="totalRecords">
+            <ng-template pTemplate="caption">
+                <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+            </ng-template>
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width: 170px;" *ngFor="let col of columns">
+                    <col style="width: 100px;">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                        {{col.label}}
+                        <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn>{{ "action" | translate }}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                        <div *ngSwitchCase="'CLIENT_NAME'">
+                            {{data.jobDetail.user.firstName}}
+                        </div>
+                        <div *ngSwitchCase="'JOB_TITLE'">
+                            {{data.jobDetail.title}}
+                        </div>
+                        <div *ngSwitchCase="'WORK_WEEK'">
+                            {{data.weekStart | date: 'shortDate'}} - {{data.weekEnd | date: 'shortDate'}}
+                        </div>
+                        <div *ngSwitchCase="'CREATED_DATE'">
+                            {{data.createdDate | date: 'shortDate'}}
+                        </div>
+                        <div *ngSwitchCase="'title'">
+                            {{data.title}}
+                        </div>
+                        <div *ngSwitchCase="'description'">
+                            {{data.description}}
+                        </div>
+                        <div *ngSwitchCase="'amount'">
+                            {{data.amount| currency:'USD'}}
+                        </div>
+                        <div *ngSwitchCase="'offCycle'">
+                            {{data.isOffCycle=== true ? 'Yes': 'No'}}
+                        </div>
+                        <div *ngSwitchCase="'status'">
+                            {{data.status === 'COMPLETED'? 'Completed': data.status === 'PAID' ? 'Paid': data.status === 'APPROVED'? 'Approved': data.status === 'CREATED'? 'Created':'Rejected'}}
+                        </div>
+                        <div *ngSwitchCase="'attachment'">
+                            <p-button label="{{'download' | translate}}" styleClass="p-button-link p-1" (click)="downloadDocuments(data.id)"></p-button>
+
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+
+
+
+                            <button class="btn btn-success mr-2 btn-sm" (click)="editReimbursement(data)" pTooltip="{{'edit'|translate}}" [disabled]="data.status==='APPROVED' || data.status==='PAID'">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="openDeleteReimbursementDialog(data)" [disabled]="data.status==='APPROVED' || data.status==='PAID'" pTooltip="{{'delete'|translate}}">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="10" class="text-center">
+                        {{'no.record.found' | translate}}
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+    </div>
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="dialog" [style]="{width: '500px'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="myAddForm" (ngSubmit)="onSubmitReimbursement()">
+                    <div class="p-field">
+                        <label>{{'selected.job' | translate}}:</label>
+                        <input type="text" pInputText formControlName="selectedJob" disabled />
+                    </div>
+                    <div class="p-field">
+                        <label>{{'reimbursement.title' | translate}}*</label>
+                        <input type="text" pInputText formControlName="title" placeholder="{{'enter.title' | translate}}" maxLength="100" [pKeyFilter]="blockSpecial" />
+                        <div class="p-invalid" *ngIf="(submitted && !myAddForm.get('title').valid) || (!myAddForm.get('title').valid && myAddForm.get('title').touched) ">
+                            <div *ngIf="(myAddForm.get('title').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <label>{{'description' | translate}}*</label>
+                        <textarea pInputText formControlName="description" placeholder="{{'enter.description' | translate}}" maxLength="500"></textarea>
+                        <div class="p-invalid" *ngIf="(submitted && !myAddForm.get('description').valid) || (!myAddForm.get('description').valid && myAddForm.get('description').touched) ">
+                            <div *ngIf="(myAddForm.get('description').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex ">
+                        <div class="p-field">
+                            <label>{{'amount' | translate}}*</label>
+
+
+                            <p-inputNumber mode="currency" currency="USD" maxlength="10" formControlName="amount" locale="en-US">
+                            </p-inputNumber>
+                            <div class="p-invalid" *ngIf="(submitted && !myAddForm.get('amount').valid) || (!myAddForm.get('amount').valid && myAddForm.get('amount').touched) ">
+                                <div *ngIf="(myAddForm.get('amount').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-field mt-4 pt-3 ml-3">
+                            <label>{{'off.cycle' | translate}}</label> &nbsp;&nbsp;
+                            <input type="checkbox" formControlName="offCycle">
+                        </div>
+                    </div>
+
+                    <div class="p-field">
+                        <label>{{ 'upload.documents' | translate }}</label>
+                        <div class="custom-file">
+                            <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                <ngx-dropzone-label>Drag & Drop PDF Document Or Image Here or Click to Upload
+                                </ngx-dropzone-label>
+                            </ngx-dropzone>
+                        </div>
+                    </div>
+                </form>
+                <div *ngIf="files">
+                    <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                        <p>
+                            {{file.name}}
+                        </p>
+                        <i pTooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                    </div>
+                </div>
+                <div *ngIf="isInEditMode && fetchedDBAttachmentList">
+                    <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of fetchedDBAttachmentList; let i = index">
+                        <p>
+                            {{file.fileName}}
+                        </p>
+                        <i pTooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialog(file.id,file.fileName,file.reimbursement.id)"></i>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="p-button-text text-danger border-danger " (click)="hideDialog()"></button>
+                <button pButton pRipple label="{{'add.reimbursements' | translate}}" *ngIf="!isInEditMode" icon="pi pi-check" class="p-button-primary" (click)="uploadFile()"></button>
+                <button pButton pRipple class="p-button-primary" *ngIf="isInEditMode" (click)="uploadFile('editMode')" label="{{ 'update' | translate }}" type="button" icon="pi pi-check-circle"></button>
+            </ng-template>
+
+        </p-dialog>
+    </div>
+</div>

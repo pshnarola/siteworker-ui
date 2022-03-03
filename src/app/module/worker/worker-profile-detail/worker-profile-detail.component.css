@@ -1,0 +1,82 @@
+.services {
+    padding: 10px;
+}
+
+.service-lable {
+    margin: 15px;
+    color: white;
+    justify-content: center;
+}
+
+.location {
+    width: auto;
+    padding: 10px;
+    height: 200px;
+}
+
+agm-map {
+    height: 200px;
+    width: auto;
+}
+
+.project-ul,
+.job-ul {
+    list-style-type: none;
+}
+
+p-button {
+    height: 5px;
+    width: auto;
+}
+
+.card-list-subheader {
+    color: white;
+    margin: 2px 10px 5px 50px;
+}
+
+.work-experience-card {
+    padding: 10px;
+    height: 150px;
+}
+
+.card-list-header {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.job-card {
+    padding: 10px;
+    height: 100px;
+    width: auto;
+}
+
+.references-card {
+    padding: 10px;
+    height: 200px;
+}
+
+.certificate-card {
+    padding: 10px;
+    height: 150px;
+    width: auto;
+}
+
+span .material-icons {
+    font-weight: 300;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 9px 0 #dee2e6;
+}
+
+.card-header {
+    background-color: #F3F4F6;
+    border-bottom: none;
+}
+
+.overflow-auto {
+    overflow: auto!important;
+    max-height: 357px;
+    height: 357px;
+}

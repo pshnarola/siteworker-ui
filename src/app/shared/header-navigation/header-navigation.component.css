@@ -1,0 +1,26 @@
+
+    @keyframes ui-progress-spinner-color {
+        100%,
+        0% {
+            stroke: #ffffff;
+        }
+        40% {
+            stroke: #ffffff;
+            
+        }
+        66% {
+            stroke: #ffffff;
+        }
+           
+        80%,
+        90% {
+            stroke: #ffffff;
+            
+        }
+    }
+    .customProgress {
+        animation:ui-progress-spinner-color; 
+    }
+     .navbar-brand b { 
+        font-size: 24px;
+    }

@@ -1,0 +1,197 @@
+<div class="container-fluid" *ngIf="projectDetail && JobSiteDetail">
+    <div class="row bg-primary text-black d-flex justify-content-between align-items-center flex-wrap">
+        <div class="col-xl-8">
+            <h3 class="font-weight-bold">{{projectDetail.title}} - {{JobSiteDetail.title}}</h3>
+        </div>
+        <div class="col-xl-2 my-2">
+            <p class="text-muted mb-0">{{'status' |translate}}</p>
+            <p class="font-weight-bold mb-0" *ngIf="JobSiteDetail">
+                {{JobSiteDetail.status === 'COMPLETED'? 'Completed': JobSiteDetail.status === 'CANCELLED'? 'Cancelled': JobSiteDetail.status === 'POSTED'? 'Posted': JobSiteDetail.status === 'DRAFT'? 'Draft': "In Progress"}}
+            </p>
+        </div>
+        <div class="col-xl-2">
+            <p class="text-muted mb-0">Assigned Supervisor</p>
+            <p class="font-weight-bold mb-0" *ngIf="JobSiteDetail.supervisor">
+                {{JobSiteDetail.supervisor.firstName}} {{JobSiteDetail.supervisor.lastName}}
+            </p>
+            <p class="font-weight-bold" *ngIf="!JobSiteDetail.supervisor">
+                {{'n.a' | translate }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-4">{{'jobsite.details' | translate}}</h5>
+            <div class="card bg-grey2">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <h5 class="font-weight-bold">{{'jobsite.title' | translate}} :</h5>
+                            <p class="text-dark" *ngIf="JobSiteDetail">{{JobSiteDetail.title}}</p>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="d-flex flex-fill mx-2 align-items-center mb-4">
+                                <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                                    <p class="text-muted mb-0">{{JobSiteDetail.user.firstName}} {{JobSiteDetail.user.lastName}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="d-flex flex-fill mx-2 align-items-center mb-4">
+                                <div class="mr-2"><img src="assets/images/total_cost.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Estimated/Total Cost :</p>
+                                    <p class="text-muted mb-0" *ngIf="JobSiteDetail.cost">{{JobSiteDetail.cost | currency}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="d-flex flex-fill mx-2 align-items-center mb-4">
+                                <div class="mr-2"><img src="assets/images/line_items.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">Line Items :</p>
+                                    <p class="text-muted mb-0" *ngIf="JobSiteDetail.lineItem">
+                                        {{JobSiteDetail.lineItem.length}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="d-flex flex-fill mx-2 align-items-center mb-4">
+                                <div class="mr-2"><img src="assets/images/location.svg"></div>
+                                <div>
+                                    <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                                    <p class="text-muted mb-0" *ngIf="JobSiteDetail.location; else none">
+                                        {{JobSiteDetail.location}} - {{JobSiteDetail.zipCode}}</p>
+                                    <ng-template #none> </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-xl-12">
+                            <h5 class="font-weight-bold mb-1">{{'jobsite.description' | translate}}:</h5>
+
+                            <p class="text-dark" *ngIf="JobSiteDetail.description.length <= truncateLength ">
+                                {{JobSiteDetail.description}}
+                            </p>
+                            <div class="w-100" *ngIf="JobSiteDetail.description.length > truncateLength ">
+                                {{(showMore) ? JobSiteDetail.description : JobSiteDetail.description | slice:0:30}} <span *ngIf="!showMore">...</span>
+                                    <a href="javascript:;" *ngIf="!showMore && JobSiteDetail.description.length > truncateLength" (click)="showMore=true">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-4">Line Items</h5>
+            <ng-container *ngIf="JobSiteDetail.lineItem">
+                <p-table styleClass="p-datatable-gridlines" [columns]="selectedColumns" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" #dt [value]="JobSiteDetail.lineItem" [first]="first" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} line items"
+                    (onPage)="paginate($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:200px" *ngFor="let col of columns">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-lineItem let-columns="columns">
+                        <tr>
+
+                            <td *ngFor="let col of columns" [ngSwitch]="col.value">
+
+                                <div *ngSwitchCase="'workType'">
+                                    {{lineItem.workType}}
+                                </div>
+                                <div *ngSwitchCase="'lineItemId'">
+                                    {{lineItem.lineItemId}}
+                                </div>
+                                <div *ngSwitchCase="'lineItemName'">
+                                    {{lineItem.lineItemName}}
+                                </div>
+                                <div *ngSwitchCase="'cost'">
+                                    {{lineItem.cost | currency}}
+                                </div>
+                                <div *ngSwitchCase="'description'" class="text-wrap text-break">
+                                    <span class="col-xl-12">
+                                        <div [innerHtml]="lineItem.description"></div>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'inclusions'" class="text-wrap text-break">
+                                    <span class="col-xl-12">
+                                        <div *ngIf="lineItem.inclusions ; else none" [innerHtml]="lineItem.inclusions"></div>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'exclusions'" class="text-wrap text-break">
+                                    <span class="col-xl-12">
+                                        <div *ngIf="lineItem.exclusions ; else none" [innerHtml]="lineItem.exclusions"></div>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'unit.name'">
+                                    {{lineItem.unit.name}}
+                                </div>
+                                <div *ngSwitchCase="'quantity'">
+                                    {{lineItem.quantity}}
+                                </div>
+                                <div *ngSwitchCase="'dynamicLabel1'" class="text-wrap">
+                                    <span class="col-xl-12">
+                                        <div *ngIf="lineItem.dynamicLabel1 ; else none" [innerHtml]="lineItem.dynamicLabel1"></div>
+                                    </span>
+                                </div>
+
+                                <div *ngSwitchCase="'dynamicLabel2'" class="text-wrap">
+                                    <span class="col-xl-12">
+                                        <div *ngIf="lineItem.dynamicLabel2 ; else none" [innerHtml]="lineItem.dynamicLabel2"></div>
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'dynamicLabel3'" class="text-wrap">
+                                    <span class="col-xl-12">
+                                        <div *ngIf="lineItem.dynamicLabel3 ; else none" [innerHtml]="lineItem.dynamicLabel3"></div>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="lineItem.length == '0'">
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #none>
+    {{'n.a' | translate }}
+</ng-template>
+
+<div *ngIf="!projectDetail">
+    <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+</div>

@@ -1,0 +1,103 @@
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold">Reference</h4>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="commentsForm">
+        <form [formGroup]="commentsForm">
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col">
+                    <label for="licenseName">{{ "full.name" | translate }}*</label>
+                    <input class="form-control" maxlength="50" formControlName="fullName" type="text" pInputText id="licenseName" placeholder="{{'enter.full.name'|translate}}" required [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="(submitted && !commentsForm.get('fullName').valid) || (!commentsForm.get('fullName').valid && commentsForm.get('fullName').touched) ">
+                        <div *ngIf="(commentsForm.get('fullName').errors.required) ">
+                            {{'required' | translate}} </div>
+                        <div *ngIf="commentsForm.get('fullName').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+                </div>
+                <div class="p-field p-col">
+                    <label for="licenseNumber">{{ "job.title" | translate }}*</label>
+                    <input class="form-control" maxlength="50" formControlName="jobTitle" type="text" pInputText id="licenseNumber" placeholder="{{'enter.job.title'|translate}}" required [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="(submitted && !commentsForm.get('jobTitle').valid) || (!commentsForm.get('jobTitle').valid && commentsForm.get('jobTitle').touched) ">
+                        <div *ngIf="(commentsForm.get('jobTitle').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf="commentsForm.get('jobTitle').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col">
+                    <label for="licenseName">{{ "company.name" | translate }}*</label>
+                    <input class="form-control" maxlength="50" formControlName="companyName" type="text" pInputText id="licenseName" placeholder="{{'company.name,placeholder'|translate}}" required [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="(submitted && !commentsForm.get('companyName').valid) || (!commentsForm.get('companyName').valid && commentsForm.get('companyName').touched) ">
+                        <div *ngIf=" ( commentsForm.get('companyName').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf=" commentsForm.get('companyName').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+
+                </div>
+                <div class="p-field p-col">
+                    <label for="licenseNumber">{{ "email.id" | translate }}*</label>
+                    <input placeholder="{{'enter.personal.email' | translate}}" maxlength="50" formControlName="email" id="b" type="email" pInputText>
+                    <div class="p-invalid" *ngIf="(submitted && !commentsForm.get('email').valid) || (!commentsForm.get('email').valid && commentsForm.get('email').touched)">
+                        <div *ngIf=" ( commentsForm.get('email').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf=" commentsForm.get('email').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                        <div class="p-invalid" *ngIf=" (!commentsForm.get('email').valid) ">
+
+                            <div *ngIf="commentsForm.get('email').dirty &&
+                                (commentsForm.get('email').errors.incorrectEmailFormat &&
+                                !commentsForm.get('email').errors.required)">
+                                {{'invalid.email' | translate}} </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-fluid p-formgrid p-grid">
+
+                <div class="p-field p-col">
+                    <label for="workPhone">{{'work.phone' | translate}}*</label>
+                    <p-inputMask id="workPhone" mask="(999) 999-9999" formControlName="workPhone" placeholder="Enter Work Phone"></p-inputMask>
+
+
+                    <div class="p-invalid" *ngIf="(submitted && !commentsForm.get('workPhone').valid) || (!commentsForm.get('workPhone').valid && commentsForm.get('workPhone').touched) ">
+                        <div *ngIf=" ( commentsForm.get('workPhone').errors.required) ">
+                            {{'required' | translate}} </div>
+                    </div>
+                </div>
+                <div class="p-field p-col">
+                    <label for="mobilePhone">{{'mobile.phone' | translate}}</label>
+                    <p-inputMask id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+                </div>
+            </div>
+
+            <label for="licenseName">Comment*</label>
+            <textarea id="label1" rows="10" cols="100" formControlName="comments" placeholder="Add comments" class="form-control"></textarea>
+            <div class="p-invalid" *ngIf="commentsForm.get('comments').touched && 
+                        (commentsForm.get('comments').hasError('required') && 
+                        !commentsForm.get('comments').valid)">
+                {{'required' | translate}}
+            </div>
+        </form>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <button pButton pRipple type="button" (click)="submit()" label="{{'submit' | translate}}" class="p-button-outlined"></button>
+        </div>
+
+    </div>
+</div>

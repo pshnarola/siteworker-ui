@@ -1,0 +1,61 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">        
+    </div>  
+    <div style="margin-right: 10px;" class="d-flex align-self-center main-nav">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+                <div>
+                    <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35" alt="">
+                </div>
+            </ng-container>            
+
+                {{loggedInUserName}}
+
+        </div>
+    </div>  
+</mat-toolbar>
+
+<div class="container-fluid mb-3 Common_Profile_Border_Bottom cust-min-h-70">
+<!-- <div class="container-fluid mb-3 Common_Profile_Border_Bottom"> -->
+    <div class=" mx-auto mt-1 bg">
+        <div class="row View_Profile_bg">
+            <div class="col-md-12 tile2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="text-truncate"> {{'work.exp' | translate}}</h4>
+                    </div>
+                    <ng-container *ngIf="workExpList.length !== 0 ; else noWorkExpFound">
+                        <ul class="list-group-wrapper" *ngFor="let workExp of workExpList">
+                            <h5 class="mb-0 pt-3 pl-3 text-primary">{{workExp.companyName}}</h5>
+                            <ng-container *ngFor="let exp of workExp.experienceList">
+                                <li>
+                                    <p class="card-text">{{exp.designation}} ,
+                                        <span *ngIf="exp.endDate; else currentlyEducating">
+                                            {{exp.startDate | date :'MMM, y'}} to {{exp.endDate | date :'MMM, y'}}
+                                        </span>
+                                        <ng-template #currentlyEducating>
+                                            {{exp.startDate | date :'MMM, y'}} to Current
+                                        </ng-template>
+                                    </p>
+                                </li>
+                            </ng-container>
+                        </ul>
+                    </ng-container>
+                    <ng-template #noWorkExpFound>
+                        <div class="w-100">
+                            <p class="mt-5 text-center">{{'no.workExp.found' | translate}}</p>
+                        </div>
+                    </ng-template>
+                    <p-paginator [rows]="size" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true" (onPageChange)="paginate($event)"></p-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

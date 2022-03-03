@@ -1,0 +1,9 @@
+h4 {
+    padding: 0px;
+    margin: 0px;
+}
+
+ngx-dropzone {
+    height: 50px;
+    width: 400px;
+}

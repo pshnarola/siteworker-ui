@@ -1,0 +1,158 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'safety.manual' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <p>
+                            Does your company provide a safety manual to all of 
+                            your workers?
+                        </p>
+                        <div class="card" class="card-bg">
+                            <div class="row">
+                                <form [formGroup]="complianceForm">
+                                    <div class="col-xl-1 ck">
+                                        <input type="checkbox" formControlName="isSafetyManualFollowed"
+                                            [value]="checkedSafetyManual" (click)="onClickSafetyManual()">
+                                    </div>
+                                </form>
+                                <div class="col-xl-11">
+                                    Your company must provide an updated safety manual to all workers before bidding on a project.
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'auto.insurance' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content" *ngIf="complianceForm">
+                        <form [formGroup]="complianceForm">
+                            <div class="p-formgroup-inline">
+                                <div class="p-field-checkbox">
+                                    <p-radioButton [value]="true" formControlName="hasAutoInsurance" inputId="city7">
+                                    </p-radioButton>
+                                    <label for="city7">{{ 'yes' | translate}}</label>
+                                </div>
+                                <div class="p-field-checkbox">
+                                    <p-radioButton [value]="false" formControlName="hasAutoInsurance" inputId="city8">
+                                    </p-radioButton>
+                                    <label for="city8">{{ 'no' | translate}}</label>
+                                </div>
+                            </div>
+                            <p>
+                                Does your company have active automobile insurance for workers who operate vehicles on-site or who transport workers and/or materials?
+                            </p>
+                        </form>
+
+                        <div class="row steps" *ngIf="complianceForm.get('hasAutoInsurance').value">
+                            <div class="col-xl-6">
+                                <form [formGroup]="complianceForm">
+                                    <label for="start-date">{{'expiration.date' |translate}}*</label>&nbsp;
+                                    <div class="input-group">
+                                        <p-calendar formControlName="autoInsuranceExpiryDate" appendTo="body"
+                                            [showIcon]="true" [(ngModel)]="date" [inDate] inputId="icon"
+                                            placeHolder="MM/DD/YYYY" [minDate]="dateTime">
+                                        </p-calendar>
+                                        <div class="p-invalid"
+                                            *ngIf="(submitted && !complianceForm.get('autoInsuranceExpiryDate').valid) || (!complianceForm.get('autoInsuranceExpiryDate').valid && complianceForm.get('autoInsuranceExpiryDate').dirty) ">
+                                            <div
+                                                *ngIf=" ( complianceForm.get('autoInsuranceExpiryDate').errors.required) ">
+                                                {{'required' | translate}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="col-xl-6 align-self-center mt-3">
+                                <ngx-dropzone [accept]="'application/pdf'" [multiple]='false'
+                                    (change)="onSelect($event)" [maxFileSize]="10000000">
+                                    <ngx-dropzone-label>{{'drag.drop.pdf.placeholder' | translate }}
+                                    </ngx-dropzone-label>
+                                </ngx-dropzone>
+
+                                <div *ngIf="files">
+                                    <div class="card upload-attachment-div uploaded-files p-chip"
+                                        *ngFor="let file of files; let i = index">
+                                        <p>
+                                            {{file.name}}
+                                        </p>
+                                        <i ptooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-xl-6" *ngIf="complianceDetail">
+                                <p>Document Name : {{complianceDetail.documentName}}</p>
+                            </div>
+
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'background.check' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <p>
+                            Have all your workers and supervisors undergone recent drug screening?
+                        </p>
+                        <div class="card" class="card-bg">
+                            <div class="row">
+                                <form [formGroup]="complianceForm">
+
+                                    <div class="col-xl-1 ck">
+                                        <input type="checkbox" formControlName="isBackgroundCheckAndDrugScreening"
+                                            [value]="checkedBackGroundCheck" (click)="onClickBackGroundCheck()">
+                                    </div>
+                                </form>
+                                <div class="col-xl-11">
+                                    All workers and supervisors must pass regular drug screenings in order 
+                                    to work on projects at Site Worker. Anyone who cannot provide proof of a drug screen will not 
+                                    be allowed on job sites.
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()"
+                class=" p-button-outlined p-button-warning mr-3"></button>
+            <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" [disabled]="spinner"
+                class=" p-button-warning mr-3" (click)="uploadFile()"></button>
+            <button pButton pRipple label="{{'save.next' | translate}}" [disabled]="spinner" class=" p-button-warning"
+                (click)="uploadFile('next')"></button>
+        </div>
+    </div>
+</div>

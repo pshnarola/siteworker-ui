@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1 mt-3">
+            <div class="mx-auto m-5" style="width: 40%;">
+                <form [formGroup]="myForm">
+                    <div class="row">
+                        <div class="col-lg-12 p-fluid form-group">
+                            <label for="inputZip">Preferred States</label>
+                            <p-autoComplete placeholder="Select State" [multiple]="true" [minLength]="3" field="name" formControlName="preferredStates" [suggestions]="filteredState" (completeMethod)="filterState($event)" [dropdown]="true" [forceSelection]="true">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-lg-6 p-fluid form-group">
+                            <p-checkbox formControlName="certificateMatch" [binary]="true"></p-checkbox>
+                            <span class="ml-1">Certificate Match</span>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-lg-6 p-fluid form-group">
+                            <p-checkbox formControlName="jobTitleMatch" [binary]="true"></p-checkbox>
+                            <span class="ml-1">Job Title Match</span>
+                        </div>
+                    </div>
+                </form>
+                <p class="mt-5">
+                    <b class="mr-1">Note:</b> Job listing will appear by default according to this configuration.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-12 mt-3">
+            <hr>
+            <button pButton pRipple label="Save" (click)="onSubmit()" class="mx-2 float-right p-button-outlined p-button-success"></button>
+        </div>
+    </div>
+</div>

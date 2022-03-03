@@ -1,0 +1,209 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary" [ngClass]="{
+            'text-white': rolename !== 'SUBCONTRACTOR',
+            'text-black': rolename === 'SUBCONTRACTOR'}">
+            <h4 class="font-weight-bold pl-2">
+                Messages
+            </h4>
+            <span class="input-group " *ngIf="((selectedProjectDetail) || (selectedJob)) && rolename === 'CLIENT' ">
+                <input type="text" class="form-control mx-1" [(ngModel)]="searchText" pInputText
+                    placeholder="{{'chat'| translate}}" />
+                <button pButton type="button" icon="pi pi-search "
+                    class="p-button-text bg-white text-primary overlap-button-left" (click)="getSearchText()"></button>
+            </span>
+            <span class="input-group " *ngIf="selectedProjectDetail && rolename === 'SUBCONTRACTOR' ">
+                <input type="text" class="form-control mx-1" [(ngModel)]="searchText" pInputText
+                    placeholder="{{'chat'| translate}}" />
+                <button pButton type="button" icon="pi pi-search " 
+                    class="p-button-text bg-white text-primary overlap-button-left" (click)="getSearchText()"></button>
+            </span>
+            <span class="input-group " *ngIf="selectedJob && rolename === 'WORKER' ">
+                <input type="text" class="form-control mx-1" [(ngModel)]="searchText" pInputText
+                    placeholder="{{'chat'| translate}}" />
+                <button pButton type="button" icon="pi pi-search " 
+                    class="p-button-text bg-white text-primary overlap-button-left" (click)="getSearchText()"></button>
+            </span>
+        </div>
+    </div>
+    <div class="row  ">
+
+
+        <div class="col-12 p-3 Chat_Change">
+            <ng-container *ngIf="userList?.length" class="input-group">
+                <ng-container *ngIf="rolename === 'CLIENT'" class="input-group">
+                    <p-autoComplete [minLength]="3" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [suggestions]="userList" [field]="getFullName" [(ngModel)]="userFromTheList" (ngModelChange)="onChange(userFromTheList)" (completeMethod)="filterUserList($event)"
+                        [dropdown]="true" [forceSelection]="true" placeholder="{{'select.user' |translate}}">
+                    </p-autoComplete>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngIf="!userList?.length && rolename === 'CLIENT' && ((selectedProjectDetail) || (selectedJob))">
+                Not assigned yet
+            </ng-container>
+        </div>
+
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12" *ngIf="(selectedProjectDetail) || (selectedJob) ; else noMessages">
+                    <div *ngFor="let chat of chatData">
+                        <div class="card" [ngClass]="{
+                            'class1': chat.chatMessage.postedBy.id !== loggedInUser.id,
+                            'class2': chat.chatMessage.postedBy.id == loggedInUser.id }">
+
+                            <div class="d-flex px-3">
+                                <div class="text-center align-self-center" *ngIf="chat.chatMessage.postedBy.id !== loggedInUser.id">
+                                    <span *ngIf="chat.postedByImagePath">
+                                        <img src="{{imageUrl + chat.postedByImagePath}}"
+                                            class="img rounded-circle img-fit" style="width: 40px; height: 40px;"
+                                            alt="">
+                                    </span>
+                                    <span *ngIf="!chat.postedByImagePath">
+                                        <img src="assets/images/App_Icon.png" class="img rounded-circle img-fit"
+                                            style="width: 40px; height: 40px;" alt="">
+                                    </span>
+                                </div>
+                                <div class="" [ngClass]="{
+                                'class1':chat.chatMessage.postedBy.id !== loggedInUser.id,
+                                'class2':chat.chatMessage.postedBy.id == loggedInUser.id
+                                                    }">
+                                    <div>
+                                        <p class="text-muted small mb-0">Date : {{chat.chatMessage.createdDate | date: 'shortDate'}}
+                                        </p>
+                                        <p>{{chat.chatMessage.message}}</p>
+
+                                        <div class="d-flex media-preview">
+                                            <a (click)="download(chat.chatMessage.documentPath1,chat.chatMessage.documentName1)" *ngIf="chat.chatMessage.documentPath1" style="cursor: pointer;">
+                                                <div class="card ">
+
+                                                    <img *ngIf="isImage(chat.chatMessage.documentName1)" src="{{imageUrl + chat.chatMessage.documentPath1}}" alt="" class="profileImage align-self-center" style="width: 50px;height: 50px;">
+                                                    <a class="align-self-center" *ngIf="!isImage(chat.chatMessage.documentName1)" style="cursor: pointer;" (click)="download(chat.chatMessage.documentPath1,chat.chatMessage.documentName1)">
+                                                        <span style="font-size: 50px;" class="material-icons">
+                                                            description
+                                                        </span>
+                                                    </a>
+                                                </div>
+
+                                            </a>
+
+                                            <a (click)="download(chat.chatMessage.documentPath2,chat.chatMessage.documentName2)" *ngIf="chat.chatMessage.documentPath2" style="cursor: pointer;">
+                                                <div class="card ">
+                                                    <img *ngIf="isImage(chat.chatMessage.documentName2)" src="{{imageUrl + chat.chatMessage.documentPath2}}" alt="" class="profileImage align-self-center" style="width: 50px;height: 50px;">
+                                                    <a class="align-self-center" *ngIf="!isImage(chat.chatMessage.documentName2)" style="cursor: pointer;" (click)="download(chat.chatMessage.documentPath2,chat.chatMessage.documentName2)">
+                                                        <span style="font-size: 50px;" class="material-icons">
+                                                            description
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </a>
+
+                                            <a (click)="download(chat.chatMessage.documentPath3,chat.chatMessage.documentName3)" *ngIf="chat.chatMessage.documentPath3" style="cursor: pointer;">
+                                                <div class="card ">
+                                                    <img *ngIf="isImage(chat.chatMessage.documentName3)" src="{{imageUrl + chat.chatMessage.documentPath3}}" alt="" class="profileImage align-self-center" style="width: 50px; height: 50px;">
+                                                    <a class="align-self-center" *ngIf="!isImage(chat.chatMessage.documentName3)" style="cursor: pointer;" (click)="download(chat.chatMessage.documentPath3,chat.chatMessage.documentName3)">
+                                                        <span style="font-size: 50px;" class="material-icons">
+                                                            description
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="text-center align-self-center" *ngIf="chat.chatMessage.postedBy.id == loggedInUser.id">
+                                    <span *ngIf="chat.postedByImagePath">
+                                        <img src="{{imageUrl + chat.postedByImagePath}}"
+                                            class="img rounded-circle img-fit" style="width: 40px; height: 40px;"
+                                            alt="">
+                                    </span>
+                                    <span *ngIf="!chat.postedByImagePath">
+                                        <img src="assets/images/App_Icon.png" class="img rounded-circle img-fit"
+                                            style="width: 40px; height: 40px;" alt="">
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div *ngIf="!chatData?.length">
+                        <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+                    </div>
+
+                    <div class="row m-2">
+                        <span class="d-flex w-100" *ngIf="rolename == 'WORKER'">
+                            <div class="input-group mr-3 chat-action">
+                                <input type="text" class="form-control p-4" [(ngModel)]="message" pInputText>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-addon2"
+                                        (click)="showMessageDialog()"><i class="pi pi-paperclip"></i></button>
+                                </div>
+                            </div>
+                            <button pButton type="button" label="{{'send' | translate}}" [disabled]="!message"
+                                class="p-button-success col-md-1" (click)="uploadFile()"></button>
+                        </span>
+
+                        <span class="input-group" *ngIf="rolename == 'CLIENT' && userList?.length">
+                            <span class="input-group" *ngIf="userFromTheList">
+                                <input type="text" class="form-control" [(ngModel)]="message" pInputText>
+                                <button class="btn btn-outline-primary ml-2 mr-2" type="button" id="button-addon2" (click)="showMessageDialog()"><i class="pi pi-paperclip"></i></button>
+                                <button pButton type="button" label="{{'send' | translate}}" [disabled]="!message" class="p-button-primary" (click)="uploadFile()"></button>
+                            </span>
+                        </span>
+
+                        <span class="input-group" *ngIf="rolename === 'SUBCONTRACTOR' && biddingType == 'BY_PROJECT' ">
+                            <input type="text" class="form-control" [(ngModel)]="message" pInputText>
+                            <button class="btn btn-outline-warning ml-2 mr-2" type="button" id="button-addon2" (click)="showMessageDialog()"><i class="pi pi-paperclip"></i></button>
+                            <button pButton type="button" label="{{'send' | translate}}" [disabled]="!message" class="p-button-warning" (click)="uploadFile()"></button>
+                        </span>
+
+                        <span class="input-group" *ngIf="rolename === 'SUBCONTRACTOR' && biddingType == 'BY_JOBSITE' && JobSiteDetail">
+                            <input type="text" class="form-control" [(ngModel)]="message" pInputText>
+                            <button class="btn btn-outline-warning ml-2 mr-2" type="button" id="button-addon2" (click)="showMessageDialog()"><i class="pi pi-paperclip"></i></button>
+                            <button pButton type="button" label="{{'send' | translate}}" [disabled]="!message" class="p-button-warning" (click)="uploadFile()"></button>
+                        </span>
+                    </div>
+                </div>
+
+                <ng-template #noMessages>
+                    <div class="col-md-12" *ngIf="!chatData?.length">
+                        <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [(visible)]="dialog" [style]="{width: '500px'}" (onHide)="hideDialog()" [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label>{{ 'upload.documents' | translate }}</label>
+            <div class="custom-file">
+                <ngx-dropzone [accept]="'application/pdf,image/png,image/jpeg'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                    <ngx-dropzone-label>{{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                    </ngx-dropzone-label>
+                </ngx-dropzone>
+            </div>
+        </div>
+        <div *ngIf="files">
+            <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                <p>
+                    {{file.name}}
+                </p>
+                <i pTooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                <!-- <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></button> -->
+            </div>
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'close' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    </ng-template>
+
+</p-dialog>

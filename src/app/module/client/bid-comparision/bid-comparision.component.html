@@ -1,0 +1,36 @@
+<div class="container-fluid" *ngIf="selectedProject;else none">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold float-left">
+                <span>{{"bid.comparison" | translate}}</span>
+                <span *ngIf="selectedProject"> - {{selectedProject.title}}</span>
+            </h4>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-xl-12">
+            <p-tabView>
+                <p-tabPanel header="Bid Recieved for Entire Project">
+                    <app-project-biding-comparison></app-project-biding-comparison>
+                </p-tabPanel>
+
+
+                <p-tabPanel header="Bid Recieved for Jobsites">
+                    <p-button label="Back" 
+                        (click)="onBack()"
+                        *ngIf="bidForjobsiteScreen === 'lineItemScreen'"
+                        class="float-right"></p-button>
+                    <p-button label="{{ 'compare.line.item' | translate }}" 
+                        (click)="onOpenLineItemTemplate()"
+                        class="float-right" *ngIf="bidForjobsiteScreen === 'jobsiteScreen'"></p-button>
+                    <app-jobsite-biding-comparison *ngIf="bidForjobsiteScreen === 'jobsiteScreen'"></app-jobsite-biding-comparison>
+                    <app-compare-line-item *ngIf="bidForjobsiteScreen === 'lineItemScreen'"></app-compare-line-item>
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>
+<ng-template #none>
+    No Projects to offer
+</ng-template>

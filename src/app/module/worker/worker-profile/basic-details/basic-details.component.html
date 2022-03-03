@@ -1,0 +1,237 @@
+<div class="container-fluid">
+
+    <form [formGroup]="_workerProfileServices.workerEditForm">
+
+        <div class="row">
+
+            <div class="col-md-6 col-lg-3 text-center">
+                <ng-container style="max-height: 150px; max-width: 150px;">
+                    <ng-container *ngIf="(singleImageView && showPreview) || showPreview; else single">
+
+                        <ngx-dropzone-image-preview [multiple]="false" *ngFor="let f of files" [file]="f">
+                        </ngx-dropzone-image-preview>
+                    </ng-container>
+                </ng-container>
+                <ng-template #single>
+                    <ng-container *ngIf=!displayDummyImage>
+                        <img [src]="singleImageView" class="img-responsive" style="max-height: 150px; max-width: 150px;">
+                    </ng-container>
+                    <ng-container *ngIf="displayDummyImage">
+                        <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="xlarge" [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle"></p-avatar>
+                    </ng-container>
+                </ng-template>
+            </div>
+            <div class="col-md-6 align-self-center">
+                <p class="text-center text-muted">{{ 'drag.drop.note' | translate }}</p>
+                <ngx-dropzone [accept]="'image/png,image/jpeg'" [multiple]="false" (change)="onSelect($event)" [maxFileSize]="5000000">
+                    <ngx-dropzone-label>{{ 'drag.drop.placeholder' | translate }}</ngx-dropzone-label>
+                </ngx-dropzone>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-xl-3">
+                <div class="form-group">
+                    <label for="companEmail">{{'first.name' | translate}}*</label>
+                    <input formControlName="firstName" maxlength="50" type="text" pInputText class="form-control" id="companEmail" placeholder="{{'first.name.placeholder' | translate}}">
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('firstName').valid) || (!basicDetailForm.get('firstName').valid && basicDetailForm.get('firstName').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('firstName').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                        <div *ngIf=" basicDetailForm.get('firstName').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3">
+                <div class="form-group">
+                    <label for="companEmail">{{'last.name' | translate}}*</label>
+                    <input formControlName="lastName" maxlength="50" type="text" pInputText class="form-control" id="companEmail" placeholder="{{'last.name.placeholder' | translate}}">
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('lastName').valid) || (!basicDetailForm.get('lastName').valid && basicDetailForm.get('lastName').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('lastName').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                        <div *ngIf=" basicDetailForm.get('lastName').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <span class="p-fluid form-group">
+                        <label for="companEmail">{{'job.title' | translate}}*</label>
+                        <p-autoComplete formControlName="jobTitle" [suggestions]="filteredJobTitle" (onSelect)="onSelectJobTitle($event)" (completeMethod)="filterJobTitle($event)" field="title" [dropdown]="true" forceSelection="true" placeholder="{{'jobTitle.name.placeholder' |translate}}"
+                            [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
+                            <ng-template let-JobTitle pTemplate="item">
+                                <div>
+                                    <div *ngIf="JobTitle.id !== 'buttonId'">{{JobTitle.title}}</div>
+                                    <div *ngIf="JobTitle.id === 'buttonId'">
+                                        <button pButton pRipple label="Add New Job Title" class="p-button-success" (click)="openJobTitleDialog()"></button>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-autoComplete>
+                        <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('jobTitle').valid) || (!basicDetailForm.get('jobTitle').valid && basicDetailForm.get('jobTitle').dirty) ">
+                            <div *ngIf=" ( basicDetailForm.get('jobTitle').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="form-group remove-loader">
+                    <label for="companEmail">{{'services' | translate}}*</label>
+                    <span class="p-fluid">
+                    <p-autoComplete placeholder="{{'service.name.placeholder' |translate}}" formControlName="service" [minLength]="3" delay="2000" [suggestions]="filteredServices" (completeMethod)="filterService($event)" field="serviceName" [multiple]="true"
+                        [(ngModel)]="list" (ngModelChange)="onChange(list)" [dropdown]="true">
+                    </p-autoComplete>
+                    </span>
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('service').valid) || (!basicDetailForm.get('service').valid && basicDetailForm.get('service').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('service').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <label for="companEmail">{{'status' | translate}}*</label>
+                    <p-dropdown [options]="statusList" formControlName="status" placeholder="Select a Status" (onChange)="onStatusChange($event)">
+                    </p-dropdown>
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('status').valid) || (!basicDetailForm.get('status').valid && basicDetailForm.get('status').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('status').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <label for="contactEmail"> {{'personal.email' | translate}}*</label>
+                    <input type="text" maxlength="100" formControlName="email" disabled pInputText class="form-control" id="contactEmail">
+                </div>
+            </div>
+            <div class="col-xl-6 Common_all">
+                <div class="form-group">
+                    <label for="contactName"> {{'mobile.phone' | translate}}*</label>
+                    <p-inputMask class="d-flex w-100" id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('mobilePhone').valid) || (!basicDetailForm.get('mobilePhone').valid && basicDetailForm.get('mobilePhone').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('mobilePhone').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="form-group">
+                    <label for="address">{{'address' | translate}}*</label>
+                    <input type="text" maxlength="200" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="{{'location.placeholder' | translate}}" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search pInputText required formControlName="location">
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('location').valid) || (!basicDetailForm.get('location').valid && basicDetailForm.get('location').dirty) ">
+                        <div *ngIf=" ( basicDetailForm.get('location').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                        <div *ngIf=" basicDetailForm.get('location').errors.maxlength">
+                            {{'twoHundred.maxlength' | translate}} </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-xl-4">
+                <label for="inputZip">{{'state' | translate}}*</label>
+
+                <p-autoComplete [minLength]="3" formControlName="state" [suggestions]="filteredState" (completeMethod)="filterState($event)" placeholder="{{'state.name.placeholder' | translate}}" [dropdown]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                    [forceSelection]="true">
+                </p-autoComplete>
+                <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('state').valid) || (!basicDetailForm.get('state').valid && basicDetailForm.get('state').touched) ">
+                    <div *ngIf=" ( basicDetailForm.get('state').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <label for="inputZip">{{'city' | translate}}*</label>
+                <p-autoComplete virtualScroll="true" itemSize="10" [minLength]="3" formControlName="city" [suggestions]="filteredCity" (completeMethod)="loadCityData($event)" placeholder="{{'city.name.placeholder' | translate}}" [dropdown]="true" [style]="{'width':'100%'}"
+                    [inputStyle]="{'width':'100%'}" [forceSelection]="true">
+                </p-autoComplete>
+                <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('city').valid) || (!basicDetailForm.get('city').valid && basicDetailForm.get('city').touched) ">
+                    <div *ngIf=" ( basicDetailForm.get('city').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <label for="inputZip">{{'zip.code' | translate}}*</label>
+                <input type="text" maxlength="5" formControlName="zipCode" [pKeyFilter]="blockSpecial" pInputText class="form-control" id="inputZip" placeholder="{{'zipcode.placeholder' | translate}}" required>
+                <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('zipCode').valid) || (!basicDetailForm.get('zipCode').valid && basicDetailForm.get('zipCode').dirty) ">
+                    <div *ngIf=" ( basicDetailForm.get('zipCode').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" basicDetailForm.get('zipCode').errors.maxlength">
+                        {{'five.maxlength' | translate}} </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="form-group">
+                    <label for="copanyDescription">{{'summary' | translate}}*</label>
+                    <textarea maxlength="250" formControlName="summary" class="form-control" id="copanyDescription" rows="4" placeholder="{{'summary.placeholder' | translate}}"></textarea>
+                    <div class="p-invalid" *ngIf="(submitted && !basicDetailForm.get('summary').valid) || (!basicDetailForm.get('summary').valid && basicDetailForm.get('summary').dirty) ">
+                        <div *ngIf=" basicDetailForm.get('summary').errors.maxlength">
+                            {{'six.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <hr>
+        <div class="row mt-4">
+            <div class="col-xl-12 text-right">
+                <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" [disabled]="spinner" (click)="uploadPhoto()" class="p-button-outlined p-button-success"></button>
+                <button pButton pRipple label="{{'save.next' | translate}}" [disabled]="spinner" (click)="uploadPhoto('next')" class=" p-button-success"></button>
+            </div>
+        </div>
+
+    </form>
+
+
+    <p-dialog [(visible)]="jobTitleDialog" [style]="{width: '450px'}" header="Add New Job Title" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+        <ng-template pTemplate="content">
+            <form [formGroup]="myJobTitleForm" (ngSubmit)="onSubmit()">
+                <div class="p-field">
+                    <label for="name">Name*</label>
+                    <input type="text" pInputText id="name" placeholder="Enter Name" formControlName="title" required autofocus [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="(submittedJobTitle && !myJobTitleForm.get('title').valid) || (!myJobTitleForm.get('title').valid && myJobTitleForm.get('title').dirty) ">
+                        <div *ngIf=" ( myJobTitleForm.get('title').errors.required) ">
+                            {{'required' | translate}}
+                        </div>
+                        <div *ngIf=" myJobTitleForm.get('title').errors.maxlength">
+                            {{'five.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="{{'cancel' |translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-text" (click)="onSubmitJobTitle()"></button>
+        </ng-template>
+    </p-dialog>
+
+
+</div>

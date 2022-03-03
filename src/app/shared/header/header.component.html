@@ -1,0 +1,409 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center ">
+        <img src="assets/images/logo_white.png" style="cursor: pointer;" (click)="redirectToDashboard()" class="brand-logo" alt="">
+        <span class="BoR ml-3 mr-3"></span>
+        <div class="d-flex align-items-center main-nav">
+            <button mat-icon-button (click)="toggleSideBarEvent()" style="line-height: normal;">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <li *ngIf="(rolename==='CLIENT' && hasProjectAccess) || (rolename==='SUPERVISOR' && isSupervisorAllowToPostProject)" class="list-inline-item main-nav">
+                <a class="nav-link" style="cursor: pointer;" (click)="postProject()">{{ 'postProject' | translate}}</a>
+            </li>
+            <li *ngIf="(rolename==='CLIENT' && !hasProjectAccess) || (rolename==='SUPERVISOR' && !isSupervisorAllowToPostProject)" class="list-inline-item main-nav">
+                <a class="nav-link disabled">{{ 'postProject' | translate}}</a>
+            </li>
+            <li *ngIf="(rolename==='CLIENT' && hasJobAccess)" class="list-inline-item main-nav">
+                <a class="nav-link" style="cursor: pointer;" (click)="postJob()">{{ 'postJob' | translate}}</a>
+            </li>
+            <li *ngIf="(rolename==='CLIENT' && !hasJobAccess)" class="list-inline-item main-nav">
+                <a class="nav-link disabled">{{ 'postJob' | translate}}</a>
+            </li>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center main-nav navbar-expand-lg">
+        <a class="navbar-toggler navbar-toggler-right" data-toggle="collapse" data-target="#navbarTogglerDemo02"><img width="20" src="assets/images/tab_menu.svg" alt=""></a>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="list-inline mb-0">
+                <li *ngIf="rolename==='CLIENT' || rolename==='SUBCONTRACTOR' || rolename==='WORKER'" class="list-inline-item">
+                    <button class="close-parent-item" mat-button (click)="openDashboard()">{{ 'dashboard' |
+                        translate}}</button>
+                </li>
+                <li *ngIf="rolename==='ADMIN'  || (rolename==='SUBADMIN' && menuAccessJson['default'].adminDashboard.canView)" class="list-inline-item">
+                    <button mat-button routerLink="/admin/dashboard">{{'adminDashboard.menuName' |
+                        translate}}</button>
+                </li>
+                <!-- <li *ngIf="rolename==='ADMIN' && isGamificationEnabled" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="adminGamification">
+                        {{'gamification.configuration' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #adminGamification>
+                        <button class="close-parent-item" mat-menu-item
+                            routerLink="/admin/client-gamification-configuration">Client Gamification</button>
+                        <button class="close-parent-item" mat-menu-item
+                            routerLink="/admin/worker-gamification-configuration">Worker Gamification</button>
+                        <button class="close-parent-item" mat-menu-item
+                            routerLink="/admin/subcontractor-gamification-configuration">Subcontractor Gamification</button>
+                    </mat-menu>
+                </li> -->
+                <li *ngIf="rolename==='ADMIN' || (rolename==='SUBADMIN' &&  menuAccessJson['default'].adminClients.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="adminClientsMenu">
+                        {{'adminClients.menuName' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #adminClientsMenu>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/client">Client list</button>
+                    </mat-menu>
+                </li>
+                <li *ngIf="rolename==='ADMIN' || (rolename==='SUBADMIN' &&  menuAccessJson['default'].adminSubcontractors.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="subcontractorsMenu">
+                        {{'adminSubcontractors.menuName' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #subcontractorsMenu>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/subcontractor">{{'subcontractor.list' |
+                            translate}}</button>
+                    </mat-menu>
+                </li>
+                <li *ngIf="rolename==='ADMIN' || (rolename==='SUBADMIN' && menuAccessJson['default'].adminWorkers.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="workersMenu">
+                        {{'adminWorkers.menuName' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #workersMenu>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/worker">Worker List</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='ADMIN' || (rolename==='SUBADMIN' && menuAccessJson['default'].adminProjects.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="menu">
+                        {{'adminProjects.menuName' | translate}}
+                        <mat-icon> keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button class="close-parent-item" mat-menu-item (click)="adminProjectDetailsClicked()">Project
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="adminJobsiteDetailsClicked()">Jobsite
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item routerLink={{routesData[0].routerlink}}>{{routesData[0].routetext}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="qAndAForAdminClicked()">Q & A</button>
+                        <button class="close-parent-item" mat-menu-item (click)="bidComparisonForAdminClicked()">Bid
+                            Comparison</button>
+                        <button class="close-parent-item" mat-menu-item (click)="adminCloseoutClicked()">{{'closeout.package.request' | translate}}</button>
+                        <!-- <ng-container *ngFor="let routes of 'adminProjects.routes' | translate; let indexOfelement=index;"> -->
+                        <button class="close-parent-item" mat-menu-item routerLink={{routesData[1].routerlink}}>{{routesData[1].routetext}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink={{routesData[2].routerlink}}>{{routesData[2].routetext}}</button>
+
+                        <!-- </ng-container> -->
+                        <button class="close-parent-item" mat-menu-item (click)="adminProjectRatingReviewClicked()">{{'rating.review' | translate}}</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='ADMIN'  || (rolename==='SUBADMIN' && menuAccessJson['default'].adminJobs.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="menu">{{'adminJobs.menuName' | translate}} <mat-icon>
+                            keyboard_arrow_down</mat-icon></button>
+                    <mat-menu #menu="matMenu">
+                        <button class="close-parent-item" mat-menu-item (click)="adminJobDetailsClicked()">{{'job.details' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="jobSetMarginClicked()">{{'set.margin' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="adminWorkerComparisonClicked()">{{'worker.comparison' |
+                            translate}}</button>
+                        <ng-container *ngFor="let routes of 'adminJobs.routes' | translate">
+                            <button mat-menu-item routerLink={{routes.routerlink}}>{{routes.routetext}}</button>
+                        </ng-container>
+                        <button class="close-parent-item" mat-menu-item (click)="adminJobRatingReviewClicked()">{{'rating.review' |
+                            translate}}</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='ADMIN'  || (rolename==='SUBADMIN' && menuAccessJson['default'].adminMasters.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="menu">{{'adminMasters.menuName' | translate}} <mat-icon>
+                            keyboard_arrow_down</mat-icon></button>
+                    <mat-menu #menu="matMenu">
+                        <button *ngIf="rolename==='ADMIN'" mat-menu-item routerLink='/admin/admin-users'>{{'subAdmin.user' |
+                            translate}}</button>
+                        <ng-container *ngFor="let routes of 'adminMasters.routes' | translate">
+                            <button mat-menu-item routerLink={{routes.routerlink}}>{{routes.routetext}}</button>
+                        </ng-container>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='ADMIN' ||  (rolename==='SUBADMIN' && menuAccessJson['default'].adminReports.canView)" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="menu">{{'adminReports.menuName' | translate}}<mat-icon>
+                            keyboard_arrow_down</mat-icon></button>
+                    <mat-menu #menu="matMenu">
+                        <button class="close-parent-item" mat-menu-item routerLink='/admin/login-history'>{{'login.history' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/all-references">{{'all.references' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/client-payment-report">{{'client.payment.aging.report'
+                            |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/revenue-report">{{'revenue.report' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/subcontractor-payout-report">{{'subcontractor.payout.aging.report' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/subcontractor-invoice-report">{{'subcontractor.invoice.report' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/admin/w2-worker-invoice-report">Worker Invoice Report</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='SUPERVISOR'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="projectAndJobsitemenu">{{ 'projectAndJobsite' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #projectAndJobsitemenu>
+                        <button class="close-parent-item" mat-menu-item (click)="projectDetailsClicked()">Project
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="jobsiteDetailsClicked()">Jobsite
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="changeRequestClicked()">Change
+                            Request</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='CLIENT'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="projectAndJobsitemenu" [disabled]="!hasProjectAccess">{{
+                        'projectAndJobsite' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #projectAndJobsitemenu>
+                        <button class="close-parent-item" mat-menu-item (click)="projectDetailsClicked()">Project
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="jobsiteDetailsClicked()">Jobsite
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="changeRequestClicked()">Change
+                            Request</button>
+                        <button class="close-parent-item" mat-menu-item (click)="bidComparisionClicked()">Bid
+                            Comparison</button>
+                        <button class="close-parent-item" mat-menu-item (click)="questionAndAnswerClicked()">Q &
+                            A</button>
+                        <button class="close-parent-item" mat-menu-item (click)="closeOutPackageRequestClicked()">{{'closeout.package.request' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="clientInvoicesClicked('PROJECT')">Invoices</button>
+                        <button class="close-parent-item" mat-menu-item (click)="clientProjectRatingReviewClicked()">Rating And Review</button>
+                        <button class="close-parent-item" mat-menu-item (click)="addLineItemClicked()">Add Line Item
+                            Template</button>
+                        <button class="close-parent-item" mat-menu-item (click)="copyProjectClicked()">Copy
+                            Project</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='SUBCONTRACTOR'" class="list-inline-item">
+                    <button class="close-parent-item" mat-button (click)="projectListingClicked('PROJECT')">{{
+                        'projects' | translate}} </button>
+                </li>
+
+
+                <li *ngIf="rolename==='SUBCONTRACTOR'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="MyprojectmenuForSubContractor">{{ 'My projects' |
+                        translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #MyprojectmenuForSubContractor>
+                        <button class="close-parent-item" mat-menu-item (click)="projectDetailSubcontractor()">Project
+                            Detail</button>
+                        <button class="close-parent-item" mat-menu-item (click)="jobsiteDetailSubcontractor()">Jobsite
+                            Detail</button>
+                        <button class="close-parent-item" mat-menu-item (click)="changeRequestClicked()">Change
+                            Request</button>
+                        <button class="close-parent-item" mat-menu-item (click)="projectBidSubcontractor()">Bid /
+                            Apply</button>
+                        <button class="close-parent-item" mat-menu-item (click)="questionAndAnswerClicked()">Question
+                            and Answer</button>
+                        <button class="close-parent-item" mat-menu-item (click)="paymentMilestoneSubcontractor()">Payment Milestone</button>
+                        <button class="close-parent-item" mat-menu-item (click)="subcontractorRatingAndReviewClicked()">Rating and Review</button>
+                        <button class="close-parent-item" mat-menu-item (click)="subcontractorInvoicesClicked()">{{'invoices' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="subcontractorCloseoutPackagesClicked()">{{'closeout.package.request'|
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="acceptRejectProjectClicked()">{{'accept.reject.project'|
+                            translate}}</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='SUPERVISOR'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="JobsMenu">{{ 'jobs' | translate}} <mat-icon>
+                            keyboard_arrow_down
+                        </mat-icon></button>
+                    <mat-menu #JobsMenu>
+                        <button class="close-parent-item" mat-menu-item (click)="jobDetailsClicked()">Job
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="timeSheetClicked()">{{'timesheet' |
+                            translate}}</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='CLIENT'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="JobsMenu" [disabled]="!hasJobAccess">{{ 'jobs' | translate}}
+                        <mat-icon>keyboard_arrow_down
+                        </mat-icon>
+                    </button>
+                    <mat-menu #JobsMenu>
+                        <button class="close-parent-item" mat-menu-item (click)="jobDetailsClicked()">Job
+                            Details</button>
+                        <button class="close-parent-item" mat-menu-item (click)="workerComparisionClicked()">Worker
+                            Comparison</button>
+                        <button class="close-parent-item" mat-menu-item (click)="timeSheetClicked()">{{'timesheet' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="clientInvoicesClicked('JOB')">Invoice</button>
+                        <button class="close-parent-item" mat-menu-item (click)="clientRatingAndReviewClicked('JOB')">Rating And Review</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='WORKER'" class="list-inline-item">
+                    <button mat-button (click)="jobListingClicked()">{{ 'jobs' | translate}} </button>
+                </li>
+
+                <li *ngIf="rolename==='WORKER'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="MyJobsMenuWorker">{{ 'my.jobs' | translate}} <mat-icon>
+                            keyboard_arrow_down</mat-icon></button>
+                    <mat-menu #MyJobsMenuWorker>
+                        <button class="close-parent-item" mat-menu-item (click)="workerJobDetailsClicked()">{{'job.details' | translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="applyJobsClicked()">{{'apply.job' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="acceptJobsClicked()">{{'accept.jobs' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="reimbursementsClicked()">{{'view.reimbursements' | translate}}</button>
+                        <button class="close-parent-item" mat-menu-item routerLink="/worker/timesheet">Timesheets</button>
+                        <button class="close-parent-item" mat-menu-item (click)="workerInvoicesClicked()">{{'invoices' |
+                            translate}}</button>
+                        <button class="close-parent-item" mat-menu-item (click)="workerRatingAndReviewClicked()">{{'rating.review' | translate}}</button>
+                    </mat-menu>
+                </li>
+
+                <li *ngIf="rolename==='CLIENT' || rolename==='SUBCONTRACTOR' || rolename==='WORKER' || rolename==='SUPERVISOR' || rolename==='ADMIN'" class="list-inline-item">
+                    <button mat-button [matMenuTriggerFor]="settingMenu">{{ 'settings' | translate}}
+                        <mat-icon>keyboard_arrow_down</mat-icon>
+                    </button>
+                    <mat-menu #settingMenu>
+                        <button mat-menu-item *ngIf="rolename==='CLIENT'" (click)="changePasswordClicked()">
+                            Change Password
+                        </button>
+                        <button mat-menu-item *ngIf="rolename==='SUBCONTRACTOR'" (click)="changePasswordClicked()">
+                            Change Password
+                        </button>
+                        <button mat-menu-item *ngIf="rolename==='SUBCONTRACTOR'" (click)="projectListingConfigurationCLicked()">
+                            Project Listing Configuration
+                        </button>
+                        <button mat-menu-item *ngIf="rolename==='WORKER'" (click)="changePasswordClicked()">
+                            Change Password
+                        </button>
+                        <button mat-menu-item *ngIf="rolename==='WORKER'" (click)="jobListingConfigurationCLicked()">
+                            Job Listing Configuration
+                        </button>
+                        <button mat-menu-item *ngIf="rolename==='SUPERVISOR'" (click)="changePasswordClicked()">
+                            Change Password
+                        </button>
+                        <button *ngIf="rolename==='CLIENT'" mat-menu-item (click)="supervisorManagementClicked()">
+                            Supervisor Management
+                        </button>
+                        <button *ngIf="rolename==='CLIENT'" mat-menu-item (click)="inviteeConfigurationClicked()">
+                            Invitee Configuration
+                        </button>
+                        <button *ngIf="rolename==='ADMIN'" mat-menu-item (click)="gamificationConfigurationClicked()">
+                            Gamification Configuration
+                        </button>
+                    </mat-menu>
+                </li>
+            </ul>
+        </div>
+
+
+        <div *ngIf="rolename==='CLIENT' || rolename==='SUBCONTRACTOR' || rolename==='WORKER'" class="d-flex align-items-center bad">
+            <a style="cursor: pointer;" (click)="openChat()" class="material-icons text-white p-2" matBadge={{totalMessages}} [matBadgeHidden]="messageHidden" pTooltip="Messages" tooltipPosition="bottom">
+                email
+            </a>
+            <a style="cursor: pointer;" (click)="bellNotificationClicked()" class="material-icons text-white p-2" matBadge={{totalNotifications}} [matBadgeHidden]="hidden" pTooltip="Notifications" tooltipPosition="bottom">
+                notifications
+            </a>
+
+        </div>
+        <div *ngIf="(rolename==='CLIENT' || rolename==='SUBCONTRACTOR' || rolename==='WORKER' || rolename==='ADMIN') && isGamificationEnabled">
+            <a style="cursor: pointer;" (click)="goToLeaderBoard()" class="material-icons text-white p-2" pTooltip="Leader Board" tooltipPosition="bottom">
+                <i class="fa fa-trophy" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <span class="BoR ml-2"></span>
+
+        <div class="py-2 user-info-block">
+            <button mat-button [matMenuTriggerFor]="usermenu">
+                <ng-container *ngIf="displayAvatar">
+                    <p-avatar label={{usernameLabel}} styleClass="p-mr-2 h-profile-pic" size="large"
+                        [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+                </ng-container>
+                <ng-container *ngIf="!displayAvatar">
+                    <div>
+                        <img [src]="singleImageView" class="rounded-circle mr-2 h-profile-pic" width="35" height="35"
+                            alt="">
+                    </div>
+                </ng-container>
+                <span class="text-capitalize" title="{{loggedInUserName}}">
+                    {{ (loggedInUserName?.length > 12) ? (loggedInUserName | slice:0:12)+'...' : (loggedInUserName) }}
+                </span>
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+            <mat-menu #usermenu>
+                <button mat-menu-item (click)="viewProfile()" *ngIf="rolename !=='SUPERVISOR' && rolename !=='SUBADMIN' && rolename !=='ADMIN'">{{ 'viewProfile' |
+                    translate}}</button>
+                <button mat-menu-item (click)="editProfile()" *ngIf="rolename !=='SUPERVISOR' && rolename !=='SUBADMIN' && rolename !=='ADMIN'">{{ 'editProfile' |
+                    translate}}</button>
+                <button mat-menu-item (click)="showloginAsDialog()" *ngIf="rolename =='ADMIN'">{{ 'loginAs' |
+                    translate}}</button>
+                <button mat-menu-item (click)="openDialog()">{{ 'logout' | translate }}</button>
+            </mat-menu>
+        </div>
+
+    </div>
+
+</mat-toolbar>
+
+<!-- dialog -->
+<p-dialog [(visible)]="logInAsDialog" (onHide)="hideloginAsDialog()" [style]="{width: '450px'}" header="Log in as" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="loginAsForm" (submit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">{{ "user.name" | translate }} </label>
+                <p-autoComplete formControlName="userName" id="industryType" [multiple]="false" [dropdown]="false" (completeMethod)="getFilteredUsernameForLogin($event)" [field]="getFullName" [suggestions]="filteredUserNameForLoginAs" placeholder="Enter Username">
+                    <ng-template let-user pTemplate="item">
+                        <div>
+                            <span>{{user.firstName}}</span> &nbsp;
+                            <span>{{user.lastName}}</span> &nbsp;
+                            <span>( {{user.email}} )</span>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <div class="p-invalid" *ngIf="(submitted && !loginAsForm.get('userName').valid) || (!loginAsForm.get('userName').valid && loginAsForm.get('userName').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('userName').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.name" | translate }} </label>
+                <input type="text" pInputText id="regionName" maxlength="50" formControlName="adminUserName" required placeholder="Enter Admin Username" />
+                <div class="p-invalid" *ngIf="(submitted && !loginAsForm.get('adminUserName').valid) || (!loginAsForm.get('adminUserName').valid && loginAsForm.get('adminUserName').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminUserName').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.password" | translate }} </label>
+                <input type="password" pInputText id="regionName" formControlName="adminPassword" required placeholder="Enter Admin Password" (keydown.enter)="onSubmit()" />
+                <div class="p-invalid" *ngIf="(submitted && !loginAsForm.get('adminPassword').valid) || (!loginAsForm.get('adminPassword').valid && loginAsForm.get('adminPassword').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminPassword').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Login" class="p-button-outlined" (click)="onSubmit()" type="submit"></button>
+    </ng-template>
+</p-dialog>

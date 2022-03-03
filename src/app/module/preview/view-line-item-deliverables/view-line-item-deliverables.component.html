@@ -1,0 +1,139 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-3 bg-warning text-dark">
+            <h3 class="float-left">{{"milestone" | translate}} - {{milestoneDetail.milestone.name}} | {{"line.item.deliverables" | translate }}</h3>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xl-12 p-3">
+            <p-accordion>
+                <p-accordionTab *ngFor="let lineItem of groupedLineItem">
+                    <ng-template pTemplate="header">
+                        <b>{{"jobsite" | translate}} - {{milestoneDetail.jobsiteDetail.title}} | {{"work.type" | translate}} - {{ lineItem.key}}</b>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div *ngIf="lineItem.value">
+                            <div *ngFor="let viewLineItem of lineItem.value;let i=index">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5><strong class="mr-2">{{i+1 | number:'2.0' }}</strong><span class="text-muted">{{'line.item.name'|translate}} :  </span><strong>{{viewLineItem.lineItemName}}</strong></h5>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <span class="text-muted">Line Item ID : </span>
+                                    <span class="text-dark" *ngIf="viewLineItem.lineItemId">
+                                        {{viewLineItem.lineItemId}}
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted">{{'unit'|translate}} : </span>
+                                    <span class="text-dark" *ngIf="viewLineItem.unit">
+                                        {{viewLineItem.unit.name}}
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <span class="text-muted">Qty : </span>
+                                    <span class="text-dark" *ngIf="viewLineItem.quantity">
+                                        {{viewLineItem.quantity}}
+                                    </span>
+                                </div>
+                                <div class="col-md-12 mt-3">
+                                    <span class="text-muted">{{'line.item.description'|translate}} : </span>
+                                    <div class="text-dark">
+                                        <span *ngIf="viewLineItem.description" [innerHtml]="viewLineItem.description"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-xl-12">
+                                                    <span class="text-muted">
+                                                        Inclusions :
+                                                    </span>
+                                                </div>
+                                                <div class="col-xl-12">
+                                                    <span *ngIf="viewLineItem.inclusions">
+                                                        <div>
+                                                            <span *ngIf="viewLineItem.inclusions" [innerHtml]="viewLineItem.inclusions"></span>
+                                                        </div>
+                                                    </span>
+                                                    <span class="text-dark" *ngIf="!viewLineItem.inclusions">No Inclusions</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="row">
+                                                <div class="col-xl-12">
+                                                    <span class="text-muted">
+                                                        Exclusions :
+                                                    </span>
+                                                </div>
+                                                <div class="col-xl-12">
+                                                    <span *ngIf="viewLineItem.exclusions">
+                                                        <div>
+                                                            <span *ngIf="viewLineItem.exclusions" [innerHtml]="viewLineItem.exclusions"></span>
+                                                        </div>
+                                                    </span>
+                                                    <span class="text-dark" *ngIf="!viewLineItem.exclusions">No Exclusions</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <span class="text-muted">
+                                                {{'dynamic.label1' | translate }} :
+                                            </span>
+                                            <span class="text-dark" *ngIf="!viewLineItem.dynamicLabel1">None</span><br>
+                                            <span *ngIf="viewLineItem.dynamicLabel1"> 
+                                                <div *ngIf="viewLineItem.dynamicLabel1.length < '30'">
+                                                    {{viewLineItem.dynamicLabel1}}
+                                                </div>
+                                                <div *ngIf="viewLineItem.dynamicLabel1.length > '30'">
+                                                    <app-read-more [content]="viewLineItem.dynamicLabel1" [limit]="30" [completeWords]="true"></app-read-more>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <span class="text-muted">
+                                                {{'dynamic.label2' | translate }} :
+                                            </span>
+                                            <span class="text-dark" *ngIf="!viewLineItem.dynamicLabel2">None</span><br>
+                                            <span *ngIf="viewLineItem.dynamicLabel2"> 
+                                                <div *ngIf="viewLineItem.dynamicLabel2.length < '30'">
+                                                   {{viewLineItem.dynamicLabel2}}
+                                                </div>
+                                                <div *ngIf="viewLineItem.dynamicLabel2.length > '30'">
+                                                    <app-read-more [content]="viewLineItem.dynamicLabel2" [limit]="30" [completeWords]="true"></app-read-more>
+                                                </div>
+                                            </span>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <span class="text-muted">
+                                                {{'dynamic.label3' | translate }} :
+                                            </span>
+                                            <span class="text-dark" *ngIf="!viewLineItem.dynamicLabel3">None</span><br>
+                                            <span *ngIf="viewLineItem.dynamicLabel3"> 
+                                                <div *ngIf="viewLineItem.dynamicLabel3.length < '30'">
+                                                   {{viewLineItem.dynamicLabel3}}
+                                                </div>
+                                                <div *ngIf="viewLineItem.dynamicLabel3.length > '30'">
+                                                    <app-read-more [content]="viewLineItem.dynamicLabel3" [limit]="30" [completeWords]="true"></app-read-more>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+</div>

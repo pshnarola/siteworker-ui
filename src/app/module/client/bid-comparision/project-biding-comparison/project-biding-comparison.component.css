@@ -1,0 +1,31 @@
+
+
+ngx-dropzone {
+    height: 50px;
+    width: 460px;
+}
+
+.star{
+    font-size: 25px;
+    cursor: pointer;
+    position: absolute;
+    left: 31px;
+    right: 0;
+    visibility: hidden;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    visibility: hidden;
+}
+
+.star::before{
+    content: "\2605";
+    position: absolute;
+    visibility: visible;
+}
+
+input[type=checkbox]:checked + .star::before {
+    content: "\2606";
+    position: absolute;
+ }
+

@@ -1,0 +1,51 @@
+form {
+    margin: 20px;
+}
+
+button {
+    margin: 0 5px 0 5px;
+}
+
+input,
+select,
+option,
+textarea,
+.card {
+    border-radius: 10px;
+}
+
+.card {
+    padding: 10px;
+}
+
+.card-bg {
+    background-color: lightsalmon;
+    margin: 10px 0 10px 0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.ck {
+    text-align: center;
+}
+
+.vertical-align {
+    vertical-align: center;
+}
+
+.tc-data {}
+
+body {
+    background: lightgrey;
+}
+
+.c {
+    /* width: 24%; */
+    height: 400px;
+    margin: 0px 20px 20px 20px auto;
+}
+
+.scrollable {
+    overflow-y: auto;
+    max-height: 300px;
+}

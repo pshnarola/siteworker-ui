@@ -1,0 +1,203 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12">
+            <form class="mt-3" [formGroup]="_subContractorProfileServices.compnayDetailEdit">
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label for="industry">{{'industry.type' | translate}}*</label>
+                            <p-autoComplete [minLength]="3" formControlName="industryType" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [suggestions]="filteredIndustryType" (completeMethod)="filterIndustryType($event)" field="name" [dropdown]="true" [forceSelection]="true"
+                                placeholder="{{'select.industry.type' |translate}}">
+                            </p-autoComplete>
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('industryType').valid) || 
+                                (!companyForm.get('industryType').valid && companyForm.get('industryType').touched) ">
+                                <div *ngIf=" ( companyForm.get('industryType').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <div class="form-group remove-loader">
+                            <label for="services">{{'services' | translate}}*</label>
+                            <p-autoComplete [minLength]="3" [style]="{'width':'100%'}" formControlName="service" placeholder="{{'select.service' |translate}}" [suggestions]="filteredServices" (completeMethod)="filterService($event)" field="serviceName" [multiple]="true" [(ngModel)]="list"
+                                (ngModelChange)="onChange(list)" [dropdown]="true">
+                            </p-autoComplete>
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('service').valid) || 
+                                (!companyForm.get('service').valid && companyForm.get('service').touched) ">
+                                <div *ngIf=" ( companyForm.get('service').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+
+                            <div class="p-formgroup-inline">
+                                <div class="p-field-checkbox">
+                                    <p-radioButton [value]="true" [(ngModel)]="ein" (onClick)="onClick($event)" formControlName="eins" inputId="city7">
+                                    </p-radioButton>
+                                    <label for="city7">{{ 'ein' | translate}}</label>
+                                </div>
+                                <div class="p-field-checkbox">
+                                    <p-radioButton [value]="false" [(ngModel)]="ein" (onClick)="onClick($event)" formControlName="eins" inputId="city8">
+                                    </p-radioButton>
+                                    <label for="city8">{{ 'ssn' | translate}}</label>
+                                </div>
+                            </div>
+                            <div *ngIf="ein">
+                                <input formControlName="ein" maxlength="10" type="text" pKeyFilter="num" pInputText class="form-control" id="yearFounded" placeholder="{{'enter.ein.pin' |translate}}">
+                                <div class="p-invalid" *ngIf="(submitted && !companyForm.get('ein').valid) || (!companyForm.get('ein').valid && companyForm.get('ein').dirty) ">
+                                    <div *ngIf=" ( companyForm.get('ein').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                    <div *ngIf=" companyForm.get('ein').errors.maxlength">
+                                        {{'nine.maxlength' | translate}} </div>
+                                    <div *ngIf=" companyForm.get('ein').errors.pattern">
+                                        {{'invalid.pin' | translate}} </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!ein">
+                                <input formControlName="ssn" maxlength="11" type="text" pInputText class="form-control" id="yearFounded" placeholder="{{'enter.ssn.pin' |translate}}">
+                                <div class="p-invalid" *ngIf="(submitted && !companyForm.get('ssn').valid) || (!companyForm.get('ssn').valid && companyForm.get('ssn').dirty) ">
+                                    <div *ngIf=" ( companyForm.get('ssn').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                    <div *ngIf=" companyForm.get('ssn').errors.maxlength">
+                                        {{'nine.maxlength' | translate}} </div>
+                                    <div *ngIf=" companyForm.get('ssn').errors.pattern">
+                                        {{'invalid.pin' | translate}} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2">
+                        <div class="form-group">
+                            <label for="noOfEmployees">{{'no.of.employee' | translate}}*</label>
+                            <p-autoComplete [minLength]="3" formControlName="numberOfEmployee" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [suggestions]="filteredNumberOfEmployee" (completeMethod)="filterNumberOfEmployee($event)" field="name" [dropdown]="true" [forceSelection]="true"
+                                placeholder="{{'select.no.of.employee' |translate}}"></p-autoComplete>
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('numberOfEmployee').valid) || 
+                                (!companyForm.get('numberOfEmployee').valid && companyForm.get('numberOfEmployee').touched) ">
+                                <div *ngIf=" ( companyForm.get('numberOfEmployee').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label for="noOfEmployees">{{'year.found' | translate}}*</label>
+                            <input formControlName="yearFounded" pKeyFilter="num" maxlength="4" pKeyFilter="num" type="url" pInputText class="form-control" id="yearFounded" placeholder="{{'enter.year.founded' |translate}}" required>
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('yearFounded').valid) || (!companyForm.get('yearFounded').valid && companyForm.get('yearFounded').dirty) ">
+                                <div *ngIf=" ( companyForm.get('yearFounded').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" companyForm.get('yearFounded').errors.maxlength">
+                                    {{'four.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label for="yearFounded">{{'web.site' | translate}} </label>
+                            <input formControlName="websiteURL" maxlength="70" type="url" pInputText class="form-control" id="yearFounded" placeholder="{{'enter.website' |translate}}">
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('websiteURL').valid) || (!companyForm.get('websiteURL').valid && companyForm.get('websiteURL').dirty) ">
+                                <div *ngIf=" companyForm.get('websiteURL').errors.pattern">
+                                    {{'invalid.url' | translate}} </div>
+                                <div *ngIf=" companyForm.get('websiteURL').errors.maxlength">
+                                    {{'seventy.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label for="diversityCategory">{{'diversity.status' | translate}}*</label>
+                            <p-autoComplete [minLength]="3" formControlName="diversityStatus" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [suggestions]="filteredDiversityStatus" (completeMethod)="filterDiversityStatus($event)" field="name" [dropdown]="true" [forceSelection]="true"
+                                placeholder="{{'select.diversity.status' |translate}}"></p-autoComplete>
+                            <div class="p-invalid" *ngIf="(submitted && !companyForm.get('diversityStatus').valid) || 
+                                (!companyForm.get('diversityStatus').valid && companyForm.get('diversityStatus').touched) ">
+                                <div *ngIf=" ( companyForm.get('diversityStatus').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label for="address">{{'address' | translate}}*</label>
+
+                            <input type="text" class="form-control" maxlength="200" (keydown.enter)="$event.preventDefault()" placeholder="{{'location.placeholder'|translate}}" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search pInputText required formControlName="location">
+
+                            <div class="p-invalid" *ngIf=" !companyForm.get('location').valid && companyForm.get('location').touched">
+                                <div *ngIf=" !companyForm.get('location').valid && companyForm.get('location').errors.required">
+                                    {{'required' | translate}}
+                                </div>
+                                <div *ngIf=" !companyForm.get('location').valid && companyForm.get('location').errors.maxlength">
+                                    {{'twoHundred.maxlength' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3">
+                        <label for="inputZip">{{'state' | translate}}*</label>
+
+                        <p-autoComplete [minLength]="3" placeholder="{{'state.name.placeholder' |translate}}" formControlName="state" [suggestions]="filteredState" (completeMethod)="filterState($event)" [dropdown]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                            [forceSelection]="true">
+                        </p-autoComplete>
+
+                        <div class="p-invalid" *ngIf="(submitted && !companyForm.get('state').valid) || (!companyForm.get('state').valid && companyForm.get('state').touched) ">
+                            <div *ngIf=" ( companyForm.get('state').errors.required) ">
+                                {{'required' | translate}} </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xl-3">
+                        <label for="inputZip">{{'city' | translate}}*</label>
+
+                        <p-autoComplete virtualScroll="true" itemSize="10" [minLength]="3" placeholder="{{'city.name.placeholder' |translate}}" formControlName="city" [suggestions]="filteredCity" (completeMethod)="loadCityData($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                            [inputStyle]="{'width':'100%'}" [forceSelection]="true">
+                        </p-autoComplete>
+                        <div class="p-invalid" *ngIf="(submitted && !companyForm.get('city').valid) || (!companyForm.get('city').valid && companyForm.get('city').touched) ">
+                            <div *ngIf=" ( companyForm.get('city').errors.required) ">
+                                {{'required' | translate}} </div>
+                        </div>
+
+                    </div>
+                    <div class="col-xl-3">
+
+                        <label for="inputZip">{{'zip.code' | translate}}*</label>
+                        <input formControlName="zipCode" maxlength="5" type="text" [pKeyFilter]="blockSpecial" pInputText class="form-control" id="inputZip" placeholder="{{'enter.zip.code' |translate}}" required>
+                        <div class="p-invalid" *ngIf="(submitted && !companyForm.get('zipCode').valid) || (!companyForm.get('zipCode').valid && companyForm.get('zipCode').dirty) ">
+                            <div *ngIf=" ( companyForm.get('zipCode').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                            <div *ngIf=" companyForm.get('zipCode').errors.maxlength">
+                                {{'five.maxlength' | translate}} </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row mt-4">
+                    <div class="col-xl-12 text-right">
+                        <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()" class=" p-button-outlined p-button-warning mr-3"></button>
+                        <button pButton pRipple label="{{'save' | translate}}" (click)="onSubmit()" class=" p-button-outlined p-button-warning mr-3"></button>
+                        <button pButton pRipple label="{{'save.next' | translate}}" (click)="onSubmit('next')" class=" p-button-warning"></button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+
+</div>

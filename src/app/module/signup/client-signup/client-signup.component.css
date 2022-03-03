@@ -1,0 +1,10 @@
+.ui-tooltip-text {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    width: 500px
+}
+
+.ui-tooltip {
+    width: 500px;
+    height: auto;
+}

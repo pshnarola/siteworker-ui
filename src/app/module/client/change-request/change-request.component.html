@@ -1,0 +1,335 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 align-items-center bg-primary d-flex justify-content-between p-2 text-white">
+            <h4 class="font-weight-bold text-left">
+                <span>{{"view.change.requests" | translate}}</span>
+                <span *ngIf="selectedProject">/ {{selectedProject.title}}</span>
+                <span *ngIf="selectedJobsite ">/ {{selectedJobsite.title}}</span>
+            </h4>
+            <!-- <div *ngIf="selectedProject && selectedJobsite && assignedToObject && roleName === 'CLIENT'" class="text-right">
+                <button style="background-color: #fff;color: #3A7CEC;" pButton pRipple type="button" label="{{ 'add.change.request' | translate }}" icon="pi pi-plus" (click)="openChangeRequestDialog()"></button>
+            </div> -->
+            <div *ngIf="roleName === 'CLIENT'" class="font-weight-bold text-right">
+                <span *ngIf="selectedProject && selectedJobsite && assignedToObject">
+                <button style="background-color: #fff;color: #3A7CEC;" pButton pRipple type="button" label="{{ 'add.change.request' | translate }}" icon="pi pi-plus" (click)="openChangeRequestDialog()"></button>
+                </span>
+                <span *ngIf="!selectedProject && !selectedJobsite">Select Project</span>
+                <span *ngIf="selectedProject && !selectedJobsite">Select Jobsite</span>
+                <span *ngIf="selectedProject && selectedJobsite && !assignedToObject">Jobsite not assigned</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            {{"action" | translate}} :
+            <p-dropdown class="Super_Vis" [options]="actionTypes" [(ngModel)]="selectedAction" placeholder="Select a status" optionLabel="value" [showClear]="true"></p-dropdown>
+            <button pButton pRipple type="button" label="{{ 'apply' | translate }}" class="p-button-sm p-button-outlined ml-2" (click)="onChangeStatusOfselected()"></button>
+            <p-button label="{{ 'filter' | translate }}" class="float-right" (click)="onFilterOpen()"><i class="fa fa-filter mr-1"></i></p-button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card bg-grey2 py-3" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="FilterFormGroup">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="p-field">
+                                    <label for="keyword">{{ "keyword" | translate }} : </label>
+                                    <input type="text" formControlName="keyword" id="keyword_searchbox" class="form-control" placeholder="{{'type.to.filter.cr' | translate}}" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-field Change_Req">
+                                    <label for="keyword">{{ "change.request.title" | translate }} : </label>
+                                    <p-autoComplete formControlName="changeRequestTitle" id="Title" placeholder="Filter by change request title" [multiple]="true" forceSelection="true" (completeMethod)="getChangeRequestTitle($event)" delay="2000" [suggestions]="ChangeReequestTitleList"
+                                        minLength="3">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="p-field Change_Req">
+                                    <label for="keyword">{{ "subcontractor" | translate }} : </label>
+                                    <p-autoComplete formControlName="assignedTo" id="assignedTo" forceSelection="true" placeholder="Filter by subcontractor name" [suggestions]="subcontractors" [multiple]="true" [field]="getFullName" (completeMethod)="getSubcontractorByName($event)" delay="2000"
+                                        minLength="3">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="range">{{"created.between" | translate}} :</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-field Cha_DatePicker">
+                                            <p-calendar [style]="{'height':'35px'}" formControlName="dateRangeFrom" [maxDate]="createdToDate" [(ngModel)]="createdFromDate" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY">
+                                            </p-calendar>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-field Cha_DatePicker">
+                                            <p-calendar [style]="{'height':'35px'}" [minDate]="createdFromDate" [(ngModel)]="createdToDate" formControlName="dateRangeTo" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY">
+                                            </p-calendar>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                        <div calss="col-md-12 d-inline-block w-100">
+                            <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                            <button pButton pRipple type="button" label="{{'clear' |translate}}" (click)="clear()" class="p-button-danger mr-3 mt-2"></button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Dialog_Common">
+        <p-dialog [(visible)]="changeRequestDialog" (onHide)="hideChangeRequestDialog()" [style]="{width: '60%'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideChangeRequestDialog()">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="changeRequestForm" (ngSubmit)="onSubmitChangeRequestForm()">
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="project">{{ "select.project" | translate }} : </label>
+                            <p-autoComplete [disabled]="'true'" formControlName="project" [suggestions]="filteredProject" (completeMethod)="filterProject($event)" forceSelection="true" field="title" [dropdown]="true" placeholder="Select project" appendTo="body" [style]="{'width':'100%'}"
+                                [inputStyle]="{'width':'100%'}">
+                                <ng-template let-project pTemplate="item">
+                                    <div>
+                                        <div>{{project.title}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="jobsite">{{ "select.jobsite" | translate }} : </label>
+                            <p-autoComplete [disabled]="'true'" formControlName="jobSite" [suggestions]="filteredJobsite" (completeMethod)="filterJobsite($event)" forceSelection="true" field="title" [dropdown]="true" placeholder="Select jobsite" appendTo="body" [style]="{'width':'100%'}"
+                                [inputStyle]="{'width':'100%'}">
+                                <ng-template let-jobsite pTemplate="item">
+                                    <div>
+                                        <div>{{jobsite.title}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-autoComplete>
+                        </div>
+                        <div class="p-field p-col">
+                            <label for="assignedTo">{{ "assigned.to" | translate }} : </label>
+                            <input disabled="true" class="form-control" type="text" formControlName="raisedTo" pInputText id="assignedTo" />
+                        </div>
+                    </div>
+                    <p><b>{{"add.change.request" | translate}}</b></p>
+                    <div class="p-field">
+                        <label for="title">{{ "title" | translate }}*</label>
+                        <input class="form-control" type="text" pInputText id="title" maxlength="100" formControlName="title" placeholder="Enter title" required [pKeyFilter]="blockSpecial" />
+                        <div class="p-invalid" *ngIf="changeRequestForm.controls['title'].touched && 
+                        (changeRequestForm.controls['title'].hasError('required') &&
+                        !changeRequestForm.controls['title'].valid)
+                        || (submitted &&
+                        (changeRequestForm.controls['title'].hasError('required') && 
+                        !changeRequestForm.controls['title'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                        <div class="p-invalid" *ngIf="changeRequestForm.controls['title'].touched && 
+                        (changeRequestForm.controls['title'].hasError('maxlength') && 
+                        !changeRequestForm.controls['title'].valid)">
+                            {{'title.maxLength' | translate}}
+                        </div>
+                    </div>
+                    <div class="p-field">
+                        <label for="title">{{ "description" | translate }}*</label>
+                        <textarea rows="3" class="form-control" maxlength="500" formControlName="description" placeholder="Enter Description" required pInputText></textarea>
+                        <div class="p-invalid" *ngIf="changeRequestForm.controls['description'].touched && 
+                        (changeRequestForm.controls['description'].hasError('required') && 
+                        !changeRequestForm.controls['description'].valid)
+                        || (submitted && (changeRequestForm.controls['description'].hasError('required') && 
+                        !changeRequestForm.controls['description'].valid))">
+                            {{'required' | translate}}
+                        </div>
+                        <div class="p-invalid" *ngIf="changeRequestForm.controls['description'].touched && 
+                        (changeRequestForm.controls['description'].hasError('maxlength') && 
+                        !changeRequestForm.controls['description'].valid)">
+                            {{'description.maxLength' | translate}}
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="locale-us">{{ "cost" | translate }}*</label>
+                            <p-inputNumber prefix="$" currency="USD" formControlName="cost" maxlength="14" locale="en-US"></p-inputNumber>
+                            <div class="p-invalid" *ngIf="changeRequestForm.controls['cost'].touched && (changeRequestForm.controls['cost'].hasError('required') && !changeRequestForm.controls['cost'].valid)
+                        || (submitted && (changeRequestForm.controls['cost'].hasError('required') && 
+                        !changeRequestForm.controls['cost'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="changeRequestForm.controls['cost'].touched && 
+                        (changeRequestForm.controls['cost'].hasError('min') 
+                        && !changeRequestForm.controls['cost'].valid)">
+                                {{'cost.minValue' | translate}}
+                            </div>
+                        </div>
+                        <div class="p-field p-col">
+                            <div>
+                                <label for="document">{{ "upload.documents" | translate }}</label>
+                            </div>
+                            <div class="custom-file">
+                                <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                    <ngx-dropzone-label>
+                                        {{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                    </ngx-dropzone-label>
+                                </ngx-dropzone>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div *ngIf="files">
+                    <div class="card upload-attachment-div uploaded-files p-chip mt-3" *ngFor="let file of files; let i = index">
+                        <p>
+                            {{file.name}}
+                        </p>
+                        <i ptooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                    </div>
+                </div>
+                <div *ngIf="isInEditMode && fatchedAttachmentList">
+                    <div class="card upload-attachment-div uploaded-files p-chip mt-3" *ngFor="let file of fatchedAttachmentList; let i = index">
+                        <p>
+                            {{file.fileName}}
+                        </p>
+                        <i ptooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openDeleteDialog(file.id,file.fileName)"></i>
+                    </div>
+                </div>
+
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger mr-2" (click)="hideChangeRequestDialog()"></button>
+
+                <button pButton pRipple label="{{ 'submit' | translate }}" *ngIf="!isInEditMode" type="button" (click)="uploadFile()" icon="pi pi-check-circle"></button>
+                <button pButton pRipple *ngIf="isInEditMode" (click)="uploadFile('editMode')" label="{{ 'submit' | translate }}" type="button" icon="pi pi-check-circle"></button>
+
+
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <p-dialog [(visible)]="rejectDialog" [style]="{width: '50%'}" (onHide)="hideDialog()" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid">
+
+        <ng-template pTemplate="content">
+            <form [formGroup]="reasonToRejectForm">
+
+                <div class="p-field">
+                    <label for="title">{{ 'are.you.sure.you.want.to.reject' | translate}}</label>
+                    <br>
+                    <label for="title">{{ "reason" | translate }}*</label>
+                    <input class="form-control" type="text" pInputText id="title" maxlength="250" formControlName="reason" placeholder="Enter Reason" required />
+                    <div class="p-invalid" *ngIf="reasonToRejectForm.controls['reason'].touched && (reasonToRejectForm.controls['reason'].hasError('required') && !reasonToRejectForm.controls['reason'].valid)
+                                    || (submitted && (reasonToRejectForm.controls['reason'].hasError('required') && !reasonToRejectForm.controls['reason'].valid))">
+                        {{'required'|translate}}</div>
+                </div>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <p-button label="{{ 'ok' | translate }}" type="button" (click)="onSubmitRejected()"></p-button>
+            <button pButton pRipple type="button" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger" style="margin-left: 16px;" (click)="hideDialog()"></button>
+        </ng-template>
+    </p-dialog>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [value]="ChangeRequestList" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [(selection)]="selectedChangeRequest" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} requests" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [style]="{width:'100%'}" scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px;">
+                            <col style="width:100px;">
+                            <col *ngIf="!isSelectedProject" style="width:200px;">
+                            <col *ngIf="!isSelectedJobsite" style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:250px;">
+                            <col style="width:270px;">
+                            <col style="width:150px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:150px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCount!== 0"></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-changeRequest>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="changeRequest" *ngIf="changeRequest.changeRequest.raisedBy.id !== loggedInUserId && changeRequest.changeRequest.status == 'PENDING'  ">
+                                </p-tableCheckbox>
+                            </td>
+                            <td>{{ changeRequest.changeRequest.status == 'PENDING' ? 'Pending' : changeRequest.changeRequest.status == 'APPROVED' ? 'Approved' : 'Rejected' }}
+                            </td>
+                            <td *ngIf="!isSelectedProject">{{changeRequest.changeRequest.project.title}}</td>
+                            <td *ngIf="!isSelectedJobsite">{{changeRequest.changeRequest.jobSite.title}}</td>
+                            <td><a (click)="redirectTo(changeRequest.changeRequest.jobSite.assignedTo.id)">
+                                    {{changeRequest.changeRequest.jobSite.assignedTo.firstName}}
+                                    {{changeRequest.changeRequest.jobSite.assignedTo.lastName}}
+                                </a>
+                            </td>
+                            <td><span class="text-wrap">
+                                    {{changeRequest.changeRequest.title}}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-wrap">
+                                    <span class="col-xl-12" *ngIf="changeRequest.changeRequest.description.length <= truncateLength ">
+                                        {{changeRequest.changeRequest.description}}
+                                    </span>
+                                    <span class="col-xl-12" *ngIf="changeRequest.changeRequest.description.length > truncateLength ">
+                                        <app-read-more [content]="changeRequest.changeRequest.description"
+                                            [limit]=truncateLength [completeWords]="true">
+                                        </app-read-more>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{changeRequest.changeRequest.createdDate | date:"shortDate"}}</td>
+                            <td>{{changeRequest.changeRequest.raisedBy.firstName}} {{changeRequest.changeRequest.raisedBy.lastName}}
+                            </td>
+                            <td>{{changeRequest.changeRequest.cost | currency}}</td>
+                            <td>
+                                <button pButton pRipple icon="pi pi-pencil" *ngIf="changeRequest.changeRequest.raisedBy.id === loggedInUserId && changeRequest.changeRequest.status == 'PENDING' " (click)="editChangeRequest(changeRequest)" pTooltip="Edit change request" class="p-button-rounded p-button-primary p-mr-2"></button>
+                                <button pButton pRipple icon="pi pi-pencil" *ngIf="changeRequest.changeRequest.raisedBy.id === loggedInUserId && changeRequest.changeRequest.status == 'REJECTED' " (click)="editChangeRequest(changeRequest)" pTooltip="Edit change request" class="p-button-rounded p-button-primary p-mr-2"></button>
+                                <button pButton pRipple icon="pi pi-check" *ngIf="changeRequest.changeRequest.raisedBy.id !== loggedInUserId && changeRequest.changeRequest.status == 'PENDING' " (click)="openDialog(changeRequest.changeRequest,changeRequest.changeRequest.title,'approve')"
+                                    pTooltip="Approve change request" class="p-button-rounded p-button-success p-mr-2"></button>
+                                <button pButton pRipple icon="pi pi-times" *ngIf="changeRequest.changeRequest.raisedBy.id !== loggedInUserId && changeRequest.changeRequest.status == 'PENDING' " (click)="onRejectChangeRequest(changeRequest.changeRequest)" pTooltip="Reject change request"
+                                    class="p-button-rounded p-button-danger p-mr-2"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td class="text-center" [attr.colspan]="11">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+
+    </div>
+</div>

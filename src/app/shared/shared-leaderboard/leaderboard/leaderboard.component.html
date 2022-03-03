@@ -1,0 +1,72 @@
+<div class="container-fluid">
+
+
+    <div class="row">
+        <div class="col-xl-12 align-items-center bg-admin d-flex justify-content-between p-2 text-white"
+            *ngIf="rolename==='ADMIN'">
+            <h4 class="font-weight-bold text-left">
+                <span>Leader Board</span>
+            </h4>
+        </div>
+        <div class="col-xl-12 align-items-center bg-primary d-flex justify-content-between p-2 text-white"
+            *ngIf="rolename==='CLIENT' || rolename==='WORKER'">
+            <h4 class="font-weight-bold text-left">
+                <span>Leader Board</span>
+            </h4>
+            <div class="text-right mr-3">
+                My Points:
+                <span class="ml-1">
+                    {{cumulativePoints ? cumulativePoints : ' 0'}}
+                </span>
+            </div>
+        </div>
+        <div class="col-xl-12 align-items-center bg-primary d-flex justify-content-between p-2 text-black"
+            *ngIf="rolename==='SUBCONTRACTOR'">
+            <h4 class="font-weight-bold text-left">
+                <span>Leader Board</span>
+            </h4>
+            <div class="text-right">
+                My Points:
+                <span class="ml-1">
+                    {{cumulativePoints ? cumulativePoints : ' 0'}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="">
+        <p-tabView styleClass="tabview-custom p-3" (onChange)="handleChange($event)">
+
+            <p-tabPanel
+                *ngIf="rolename==='CLIENT' || rolename==='SUBCONTRACTOR' || rolename==='WORKER' || rolename==='ADMIN'">
+                <ng-template pTemplate="header">
+                    <span>Client </span>
+                </ng-template>
+                <ng-container>
+                    <app-shared-leaderboard [roleName]="roleNameClient"></app-shared-leaderboard>
+                </ng-container>
+            </p-tabPanel>
+
+            <p-tabPanel *ngIf="rolename==='CLIENT' || rolename==='SUBCONTRACTOR'  || rolename==='ADMIN'">
+                <ng-template pTemplate="header">
+                    <span>Subcontractor </span>
+                </ng-template>
+                <ng-container>
+                    <app-shared-leaderboard [roleName]="roleNameSub"></app-shared-leaderboard>
+                </ng-container>
+            </p-tabPanel>
+
+            <p-tabPanel *ngIf="rolename==='CLIENT'  || rolename==='WORKER' || rolename==='ADMIN'">
+                <ng-template pTemplate="header">
+                    <span>Worker </span>
+                </ng-template>
+                <ng-container>
+                    <app-shared-leaderboard [roleName]="roleNameWorker"></app-shared-leaderboard>
+                </ng-container>
+            </p-tabPanel>
+
+        </p-tabView>
+
+    </div>
+</div>

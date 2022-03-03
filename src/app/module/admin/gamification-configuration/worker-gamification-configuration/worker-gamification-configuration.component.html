@@ -1,0 +1,320 @@
+<div class="container-fluid">
+    <h3 class="text-center">Worker Gamification Configuration</h3>
+
+    <div>
+        <div class="mx-auto m-5" style="width: 60%;">
+            <form [formGroup]="gamificationWorkerForm">
+
+
+                <div class="row">
+                    <div class="col-md-6 row">
+                        <div class="col-md-12 text-center image-radius-zero">
+                            <ng-container style="max-height: 300px; max-width: 300px;">
+                                <ng-container *ngIf="(singleImageView && showPreview) || showPreview; else single">
+                                    <ngx-dropzone-image-preview [multiple]="false" *ngFor="let f of profileFile" [file]="f">
+                                    </ngx-dropzone-image-preview>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #single>
+                                <ng-container>
+                                    <div *ngIf="singleImageView; else noGiveAwayImage">
+                                        <img width="300" height="300" [src]="singleImageView" class="img-responsive">
+                                    </div>
+                                    <ng-template #noGiveAwayImage>
+                                        <img width="300" height="300" [src]="giveAwayImageUrl" class="img-responsive">
+                                    </ng-template>
+                                </ng-container>
+                            </ng-template>
+                        </div>
+
+                        <div class="col-md-12 align-self-center">
+                            <div class="mt-3">
+                                <ngx-dropzone [accept]="'image/png,image/jpeg'" [multiple]='false' [maxFileSize]="5000000" (change)="onSelect($event)">
+                                    <ngx-dropzone-label>{{ 'drag.drop.placeholder' | translate }}</ngx-dropzone-label>
+                                </ngx-dropzone>
+                                <p class="text-center text-muted small">User should upload 450px x 450px image for optimum result.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">
+                                Benefits of a Month for Worker*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                    pTooltip="Benefits for current month to be given to Top 3 Worker. The uploaded image and content will be displayed to respective leaderboard."
+                                    tooltipPosition="right">
+                                </i>
+                            </label>
+
+                            <p-editor [style]="{'height':'300px'}" formControlName="benefitsofaMonthforWorker" placeholder="Enter benifit details here">
+                                <p-header>
+                                    <ng-template [ngTemplateOutlet]="ed">
+                                    </ng-template>
+                                </p-header>
+                            </p-editor>
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['benefitsofaMonthforWorker'].touched && (gamificationWorkerForm.controls['benefitsofaMonthforWorker'].hasError('required') && !gamificationWorkerForm.controls['benefitsofaMonthforWorker'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['benefitsofaMonthforWorker'].hasError('required') && 
+                                !gamificationWorkerForm.controls['benefitsofaMonthforWorker'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                            <div class="p-invalid" *ngIf="(validateLengthForComments(gamificationWorkerForm.get('benefitsofaMonthforWorker').value) > 1000)">
+                                {{'lineItem.description.maxLength' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label style="font-weight: bold;">References in a Month</label>
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Add References Points*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                    pTooltip="Points will be earned on each reference in a month"
+                                    tooltipPosition="right"></i>
+                            </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="addReferences" formControlName="addReferences" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['addReferences'].touched && (gamificationWorkerForm.controls['addReferences'].hasError('required') && !gamificationWorkerForm.controls['addReferences'].valid)
+                        || (submitted && (gamificationWorkerForm.controls['addReferences'].hasError('required') && 
+                        !gamificationWorkerForm.controls['addReferences'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label style="font-weight: bold;">Certificate in a Month</label>
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Add Certification Points*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                    pTooltip="Points will be earned on each certificate in a month"
+                                    tooltipPosition="right"></i>
+                            </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="addCertifications" formControlName="addCertifications" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['addCertifications'].touched && (gamificationWorkerForm.controls['addCertifications'].hasError('required') && !gamificationWorkerForm.controls['addCertifications'].valid)
+                        || (submitted && (gamificationWorkerForm.controls['addCertifications'].hasError('required') && 
+                        !gamificationWorkerForm.controls['addCertifications'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-8">
+                        <label style="font-weight: bold;">Work Experience</label>
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Work Experience Points*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                    pTooltip="Points will be earned on each work experience in a month"
+                                    tooltipPosition="right"></i>
+                            </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="workExperience" formControlName="workExperience" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['workExperience'].touched && (gamificationWorkerForm.controls['workExperience'].hasError('required') && !gamificationWorkerForm.controls['workExperience'].valid)
+                        || (submitted && (gamificationWorkerForm.controls['workExperience'].hasError('required') && 
+                        !gamificationWorkerForm.controls['workExperience'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="font-weight: bold;">Average Quality Rating in a Month
+                            <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                pTooltip="Points will be earned on average quality rating in a month"
+                                tooltipPosition="right"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;"> Points for 4 to 5 Quality Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="qualityRatingFourToFive" formControlName="qualityRatingFourToFive" required pKeyFilter="num" maxLength="2" />
+
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['qualityRatingFourToFive'].touched && (gamificationWorkerForm.controls['qualityRatingFourToFive'].hasError('required') && !gamificationWorkerForm.controls['qualityRatingFourToFive'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['qualityRatingFourToFive'].hasError('required') && 
+                                !gamificationWorkerForm.controls['qualityRatingFourToFive'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for 3 to 4 Quality Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="qualityRatingThreeToFour" formControlName="qualityRatingThreeToFour" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['qualityRatingThreeToFour'].touched && (gamificationWorkerForm.controls['qualityRatingThreeToFour'].hasError('required') && !gamificationWorkerForm.controls['qualityRatingThreeToFour'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['qualityRatingThreeToFour'].hasError('required') && 
+                                !gamificationWorkerForm.controls['qualityRatingThreeToFour'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for Below 3 Quality Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="qualityRatingBelowThree" formControlName="qualityRatingBelowThree" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['qualityRatingBelowThree'].touched && (gamificationWorkerForm.controls['qualityRatingBelowThree'].hasError('required') && !gamificationWorkerForm.controls['qualityRatingBelowThree'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['qualityRatingBelowThree'].hasError('required') && 
+                                !gamificationWorkerForm.controls['qualityRatingBelowThree'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="font-weight: bold;">Average Safety Rating in a Month
+                            <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                pTooltip="Points will be earned on average safety rating in a month"
+                                tooltipPosition="right"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for 4 to 5 Safety Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="safetyRatingFourToFive" formControlName="safetyRatingFourToFive" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['safetyRatingFourToFive'].touched && (gamificationWorkerForm.controls['safetyRatingFourToFive'].hasError('required') && !gamificationWorkerForm.controls['safetyRatingFourToFive'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['safetyRatingFourToFive'].hasError('required') && 
+                                !gamificationWorkerForm.controls['safetyRatingFourToFive'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for 3 to 4 Safety Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="safetyRatingThreeToFour" formControlName="safetyRatingThreeToFour" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['safetyRatingThreeToFour'].touched && (gamificationWorkerForm.controls['safetyRatingThreeToFour'].hasError('required') && !gamificationWorkerForm.controls['safetyRatingThreeToFour'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['safetyRatingThreeToFour'].hasError('required') && 
+                                !gamificationWorkerForm.controls['safetyRatingThreeToFour'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for Below 3 Safety Rating*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="safetyRatingBelowThree" formControlName="safetyRatingBelowThree" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['safetyRatingBelowThree'].touched && (gamificationWorkerForm.controls['safetyRatingBelowThree'].hasError('required') && !gamificationWorkerForm.controls['safetyRatingBelowThree'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['safetyRatingBelowThree'].hasError('required') && 
+                                !gamificationWorkerForm.controls['safetyRatingBelowThree'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="font-weight: bold;">Job Hours in a Month
+                            <i style="color: #bb002b;" class="pi pi-info-circle label-info"
+                                pTooltip="Points will be earned on total job hours in a month"
+                                tooltipPosition="right"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for 40 to 80 hrs*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="fourtyToEightyJobHours" formControlName="fourtyToEightyJobHours" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['fourtyToEightyJobHours'].touched && (gamificationWorkerForm.controls['fourtyToEightyJobHours'].hasError('required') && !gamificationWorkerForm.controls['fourtyToEightyJobHours'].valid)
+                                    || (submitted && (gamificationWorkerForm.controls['fourtyToEightyJobHours'].hasError('required') && 
+                                    !gamificationWorkerForm.controls['fourtyToEightyJobHours'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for 80 to 120 hrs*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="eightyToOneTwentyJobHours" formControlName="eightyToOneTwentyJobHours" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['eightyToOneTwentyJobHours'].touched && (gamificationWorkerForm.controls['eightyToOneTwentyJobHours'].hasError('required') && !gamificationWorkerForm.controls['eightyToOneTwentyJobHours'].valid)
+                                    || (submitted && (gamificationWorkerForm.controls['eightyToOneTwentyJobHours'].hasError('required') && 
+                                    !gamificationWorkerForm.controls['eightyToOneTwentyJobHours'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Points for Above 120 hrs*: </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="aboveOneTwentyJobHours" formControlName="aboveOneTwentyJobHours" required pKeyFilter="num" maxLength="2" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['aboveOneTwentyJobHours'].touched && (gamificationWorkerForm.controls['aboveOneTwentyJobHours'].hasError('required') && !gamificationWorkerForm.controls['aboveOneTwentyJobHours'].valid)
+                                            || (submitted && (gamificationWorkerForm.controls['aboveOneTwentyJobHours'].hasError('required') && 
+                                            !gamificationWorkerForm.controls['aboveOneTwentyJobHours'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label style="font-weight: bold;">Total Points to be earned in a Month</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Power User*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle"
+                                    pTooltip="Total points required to be Power user" tooltipPosition="right"></i>
+                            </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="powerUser" formControlName="powerUser" required pKeyFilter="num" maxLength="4" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['powerUser'].touched && (gamificationWorkerForm.controls['powerUser'].hasError('required') && !gamificationWorkerForm.controls['powerUser'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['powerUser'].hasError('required') && 
+                                !gamificationWorkerForm.controls['powerUser'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="name" style="font-weight: unset;">Yellow Hard Hat User*:
+                                <i style="color: #bb002b;" class="pi pi-info-circle"
+                                    pTooltip="Total points required to be Yellow Hard Hat User"
+                                    tooltipPosition="right"></i>
+                            </label>
+                            <input class="form-control points-field-m" type="text" pInputText id="yellowHardHat" formControlName="yellowHardHat" required pKeyFilter="num" maxLength="4" />
+                            <div class="p-invalid" *ngIf="gamificationWorkerForm.controls['yellowHardHat'].touched && (gamificationWorkerForm.controls['yellowHardHat'].hasError('required') && !gamificationWorkerForm.controls['yellowHardHat'].valid)
+                                || (submitted && (gamificationWorkerForm.controls['yellowHardHat'].hasError('required') && 
+                                !gamificationWorkerForm.controls['yellowHardHat'].valid))">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="bg-admin float-right" pButton pRipple label="{{ 'submit' | translate }}" type="submit" (click)="uploadPhoto()" icon="pi pi-check-circle"></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<ng-template #ed>
+    <span class="ql-formats">
+        <button class="ql-bold" aria-label="Bold" tabindex="-1"></button>
+        <button class="ql-italic" aria-label="Italic" tabindex="-1"></button>
+        <button class="ql-underline" aria-label="Underline" tabindex="-1"></button>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-list" value="ordered" aria-label="Ordered List" tabindex="-1"></button>
+        <button class="ql-list" value="bullet" aria-label="Unordered List" tabindex="-1"></button>
+        <select class="ql-align" tabindex="-1">
+            <option selected tabindex="-1"></option>
+            <option value="center" tabindex="-1"></option>
+            <option value="right" tabindex="-1"></option>
+            <option value="justify" tabindex="-1"></option>
+        </select>
+    </span>
+</ng-template>

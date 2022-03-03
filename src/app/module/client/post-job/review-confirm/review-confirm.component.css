@@ -1,0 +1,18 @@
+.button-to-link {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    text-decoration: none;
+}
+
+button {
+    margin-left: 16px;
+}
+
+a:link {
+    color: blue;
+}
+
+.p-inputgroup-addon{
+    padding: 0;
+}

@@ -1,0 +1,148 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" type="button" *ngIf="showButtons" (click)="addExperienceLevel()" label="{{'add.new' | translate}}"></button>
+            <button pButton class="bg-admin" type="button" *ngIf="showButtons" (click)="disableSelectedExperienceLevel()" label="{{'disable.selected' | translate}}"></button>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="p-field p-fluid">
+                                <label for="name">{{"experience" | translate }} :</label>
+                                <input type="text" id="experience_searchbox" [(ngModel)]="experienceFilterValue" class="form-control" placeholder="{{'type.to.filter' | translate}}" [pKeyFilter]="blockSpecial" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-3">
+                            <button pButton class="p-button-outlined" type="button" (click)="filter()" label="{{'search'| translate}}"></button>&nbsp;&nbsp;
+                            <button pButton (click)="clear()" class="bg-admin" label="{{'clear'| translate}}" class="p-button-danger"></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [columns]="selectedColumns" [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [(selection)]="selectedExperience" [paginator]="true" [rows]="tableRowSize" [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="400px"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} experiences" [resizableColumns]="true" styleClass="p-datatable-gridlines" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="tablePaginateDropdown">
+                    <!-- <ng-template pTemplate="caption">
+                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth:'200px'}" placeholder="Choose Columns"></p-multiSelect>
+                </ng-template> -->
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 50px;">
+                            <col style="width: 150px;" *ngFor="let col of columns">
+                            <col style="width: 150px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pResizableColumn>{{"sr.no"| translate}}</th>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{"action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-experience let-columns="columns">
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="experience"></p-tableCheckbox>
+                            </td>
+                            <td>{{i+1}}</td>
+                            <td *ngFor="let col of columns">{{experience[col.name]}}</td>
+                            <td>
+
+                                <button [disabled]="btnDisabled" class="btn btn-success mr-2 btn-sm" (click)="editExperience(experience)" pTooltip="{{'edit.experience.level'|translate}}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button [disabled]="btnDisabled" class="btn btn-warning mr-2 btn-sm" *ngIf="!experience.isEnable" (click)="openDialog(experience.id,experience.level,experience.isEnable)" pTooltip="{{'enable.experience.level'|translate}}">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </button>
+                                <button [disabled]="btnDisabled" class="btn btn-danger mr-2 btn-sm" *ngIf="experience.isEnable" (click)="openDialog(experience.id,experience.level,experience.isEnable)" pTooltip="{{'disable.experience.level'|translate}}">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="4" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<p-dialog [(visible)]="experienceLevelDialog" [style]="{width:'450px'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="experienceLevelForm" (ngSubmit)="onSubmitExperienceLevelForm()">
+            <div class="p-field">
+                <label for="expression">Experience Type*</label>
+                <p-autoComplete formControlName="expression" (onSelect)="onExpressionTypeChange($event)" forceSelection="true" [suggestions]="filteredExpressionType" [dropdown]="true" (completeMethod)="filterExpressionType($event)">
+                </p-autoComplete>
+            </div>
+            <div class="p-field" *ngIf="expression ==='Greater than' || expression ==='Less than'">
+                <label for="fromYear">{{"year" | translate }}* </label>
+                <input class="form-control" type="text" pInputText id="fromYear" placeholder="Enter Year" formControlName="fromYear" pKeyFilter="pint" />
+                <div class=" p-invalid" *ngIf="experienceLevelForm.controls['fromYear'].touched && (experienceLevelForm.controls['fromYear'].hasError('required') && !experienceLevelForm.controls['fromYear'].valid) || (submitted && (experienceLevelForm.controls[
+                   'fromYear'].hasError('required') && !experienceLevelForm.controls['fromYear'].valid))">
+                    {{'required' | translate}}
+                </div>
+            </div>
+            <div class="p-field" *ngIf="expression==='Between'">
+                <label for="fromYear">{{"from.year" | translate }}* </label>
+                <input class="form-control" type="text" pInputText id="fromYear" placeholder="Enter From Year" formControlName="fromYear" pKeyFilter="pint" />
+                <div class="p-invalid" *ngIf="experienceLevelForm.controls['fromYear'].touched && (experienceLevelForm.controls['fromYear'].hasError('required') && !experienceLevelForm.controls['fromYear'].valid) || (submitted && (experienceLevelForm.controls[
+                   'fromYear'].hasError('required') && !experienceLevelForm.controls['fromYear'].valid))">
+                    {{'required' | translate}}
+                </div>
+                <div class=" p-invalid">
+                    <div *ngIf="experienceLevelForm.controls['fromYear'].hasError('min')">
+                        Minimum value should be zero </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="expression==='Between'">
+                <label for="toYear">{{"to.year" | translate }}* </label>
+                <input class="form-control" type="text" pInputText id="toYear" placeholder="Enter To Year" formControlName="toYear" pKeyFilter="pint" />
+                <div class="p-invalid" *ngIf="experienceLevelForm.controls['toYear'].touched && (experienceLevelForm.controls['toYear'].hasError('required') && !experienceLevelForm.controls['toYear'].valid) || (submitted && (experienceLevelForm.controls[
+                   'toYear'].hasError('required') && !experienceLevelForm.controls['toYear'].valid))">
+                    {{'required' | translate}}
+                </div>
+                <div class=" p-invalid">
+                    <div *ngIf="experienceLevelForm.controls['toYear'].hasError('min')">
+                        Minimum value should be zero </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button (click)="onSubmitExperienceLevelForm()" pButton pRipple label="{{'save'| translate}}" icon="pi pi-check" class="p-button-outlined"></button>
+    </ng-template>
+
+</p-dialog>

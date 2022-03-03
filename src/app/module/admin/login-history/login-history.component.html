@@ -1,0 +1,109 @@
+<div class="container-fluid">
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="bg-admin float-right" icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="filterForm">
+                        <div class="row">
+                            <div class="form-group p-fluid col-md-3">
+                                <label for="company_searchbox">Company/Person Name :</label>
+                                <p-autoComplete formControlName="companyName" [multiple]="false" forceSelection="true" (completeMethod)="getName($event)" [suggestions]="userTitles" minLength="3" placeholder="Enter Company/Person name">
+                                </p-autoComplete>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="emailStatus_searchbox">User :</label>
+                                <p-dropdown [options]="userRole" id="userRole_searchbox" formControlName="user" placeholder="Select User" optionLabel="roleName" [showClear]="true">
+                                </p-dropdown>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>Start Date :</label>
+                                <p-calendar class="d-inline-block" appendTo="body" formControlName="startDate" [readonlyInput]="true" inputId="range" [showIcon]="true" placeholder="MM/DD/YYYY"></p-calendar>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label>End Date :</label>
+                                <p-calendar class="d-inline-block" formControlName="endDate" [readonlyInput]="true" inputId="range" [showIcon]="true" placeholder="MM/DD/YYYY"></p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button pButton type="button" label="{{ 'apply' | translate }}" (click)="filter()" class="p-button-outlined mr-2"></button>
+                            <button pButton pRipple label="{{'clear' | translate}}" (click)="clear()" class="bg-admin"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xl-12">
+            <p-table #dt [value]="data" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="caption">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcelLoginHistory()" class="bg-admin p-mr-2" pTooltip="{{'export.to.excel' | translate}}" tooltipPosition="bottom" *ngIf="data.length > 0"></button>
+                </ng-template>
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 50px;">
+                        <col style="width: 200px;">
+                        <col style="width: 210px;">
+                        <col style="width: 110px;">
+                        <col style="width: 150px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.isSortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-history let-rowIndex="rowIndex">
+                    <tr>
+                        <td>
+                            {{rowIndex + 1}}
+                        </td>
+                        <td>
+                            <!-- <div *ngIf="history.clientProfile">
+                                {{history.clientProfile.companyName}}
+                            </div>
+                            <div *ngIf="!history.clientProfile">
+                                {{history.user.firstName}} {{history.user.lastName}}
+                            </div> -->
+                            <div>
+                                {{history.companyOrPersonName}}
+                            </div>
+                        </td>
+                        <td>
+                            {{history.user.email}}
+                        </td>
+                        <td>
+                            {{ history.user.roles[0].roleName === 'ADMIN' ? 'Admin' : history.user.roles[0].roleName === 'CLIENT' ? 'Client' : history.user.roles[0].roleName === 'SUBCONTRACTOR' ? 'Subcontractor' : history.user.roles[0].roleName === 'WORKER' ? 'Worker' : history.user.roles[0].roleName
+                            === 'SUPERVISOR' ? 'Supervisor' : history.user.roles[0].roleName === 'SUBADMIN' ? 'Sub Admin' : 'N/A' }}
+                        </td>
+                        <td>
+                            {{history.createdDate | date: 'medium'}}
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="5" class="text-center">
+                            <span>No records found</span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>

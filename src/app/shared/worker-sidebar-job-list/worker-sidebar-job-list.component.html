@@ -1,0 +1,85 @@
+<!-- Overlay pannel for JobListing -->
+
+<p-overlayPanel [showTransitionOptions]="'0ms'" [hideTransitionOptions]="'0ms'" #jobListingFilter [dismissable]="true" [showCloseIcon]="true" appendTo="body" [style]="{width: '450px'}">
+    <ng-template pTemplate>
+        <div class="px-3">
+            <form [formGroup]="jobFilterFormGroup">
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="keyword">Keyword</label>
+                        <span class="p-fluid">
+                        <input style="padding: 0.5rem 0.5rem;" placeholder="Keyword" type="text" id="keyword" pInputText formControlName="keyword" />
+                        </span>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="jobTitle">{{'job.title' | translate}}</label>
+                        <span class="p-fluid">
+                        <p-autoComplete formControlName="jobTitle" placeholder="Enter Job Title" id="jobTitle" [multiple]="true" (completeMethod)="getJobTitleForWorker($event)" delay="2000" [suggestions]="jobTitles">
+                        </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="postedBy">{{'posted.by' | translate}}</label>
+                        <span class="p-fluid">
+                        <p-autoComplete formControlName="postedBy" placeholder="Select Posted By" id="postedBy" [field]="getFullName" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getClientByName($event)" delay="2000" [suggestions]="clients">
+                        </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="employmentType">Employment Type</label>
+                        <span class="p-fluid">
+                        <p-autoComplete formControlName="employmentType" placeholder="Select Employment Type" forceSelection="true" [suggestions]="filteredEmployeType" field="label" id="employmentType" [multiple]="true" [dropdown]="true" (completeMethod)="filterEmployeType($event)">
+                        </p-autoComplete>
+                        </span>
+                    </div>
+                </div>
+                <div class="ui-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="region">{{'region' | translate}}</label>
+                        <p-autoComplete formControlName="region" id="region" placeholder="Select Region" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredRegionForJob($event)" delay="2000" [suggestions]="filteredRegionForJob">
+                        </p-autoComplete>
+                    </div>
+
+                    <div class="p-field p-col">
+                        <label for="city">{{'city' | translate}}</label>
+                        <p-autoComplete virtualScroll="true" itemSize="10" placeholder="Select City" formControlName="city" id="city" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredCityForJob($event)" delay="2000" [suggestions]="filteredCityForJob">
+                        </p-autoComplete>
+                    </div>
+
+                    <div class="p-field p-col">
+                        <label for="state">{{'state' | translate}}</label>
+                        <p-autoComplete formControlName="state" placeholder="Select State" id="state" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" (completeMethod)="getFilteredStateForJob($event)" delay="2000" [suggestions]="filteredStateForJob">
+                        </p-autoComplete>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <button pButton pRipple type="button" label="Apply" class="p-button-md p-button-success  mr-2" (click)="setFilter()"></button>
+                    <button pButton pRipple type="button" label="Clear" class="p-button-md" class="p-button-danger" (click)="clear(event)"></button>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+</p-overlayPanel>
+<div *ngIf="jobData?.length > 0" class="px-3 mt-3">
+    <p-listbox [options]="jobData" optionLabel="title" [(ngModel)]="selectedJobDetail" (onChange)="jobChanged($event)" [listStyle]="{'max-height':'250px'}">
+        <ng-template pTemplate="header">
+            <h5>{{ 'jobs' | translate}}</h5> <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="jobListingFilter.toggle($event)"></button>
+        </ng-template>
+        <ng-template let-job pTemplate="item">
+            <div style="float: left; width: 100px"  pTooltip="Posted By Name: {{job.user?.firstName}} {{job.user?.lastName}}">{{job.title}}</div>
+        </ng-template>
+    </p-listbox>
+</div>
+
+<div *ngIf="jobData?.length === 0" class="px-3 mt-3">
+    <p-listbox [options]="noJobData" optionLabel="title" [(ngModel)]="noselectedJobModel" [listStyle]="{'max-height':'250px'}">
+        <ng-template pTemplate="header">
+            {{ 'jobs' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm bg-black" (click)="jobListingFilter.toggle($event)"></button>
+        </ng-template>
+    </p-listbox>
+</div>

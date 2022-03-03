@@ -1,0 +1,39 @@
+<div fxFill fxLayout="column">
+    <div fxLayout="column" fxFill fxLayoutAlign="center center">
+
+        <div>
+            <mat-card>
+                <mat-card-title>
+                    <mat-toolbar color="primary">
+                        <span>Login</span>
+                    </mat-toolbar>
+                </mat-card-title>
+                <mat-card-content>
+                    <form *ngIf="userRegistrationFormGroup" [formGroup]="userRegistrationFormGroup" (ngSubmit)="login()">
+                        <mat-error *ngIf="isUserCorrect" align=start>Username or Password incorrect</mat-error>
+                        <mat-form-field>
+                            <mat-label>Email</mat-label>
+                            <input formControlName="email" matInput placeholder="Enter your username">
+                            <!-- <mat-hint align="end">username:admin@abc.com</mat-hint> -->
+                            <mat-error *ngFor="let message of userRegistrationFormGroup.controls.email['errorMessages']">
+                                {{message}}</mat-error>
+                        </mat-form-field><br>
+                        <mat-form-field>
+                            <mat-label>Password</mat-label>
+                            <input formControlName="password" type="password" matInput placeholder="Enter your password">
+                            <!-- <mat-hint align="end">password:password</mat-hint> -->
+                            <mat-error *ngFor="let message of userRegistrationFormGroup.controls.password['errorMessages']">
+                                {{message}}</mat-error>
+                        </mat-form-field><br>
+                        <button mat-raised-button color="accent">Login</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="50px">
+                <div style="padding-top: 10px;">
+                    <mat-hint><small style="padding-right: 10px;">Dont have an account yet?</small> <a routerLink="/signup"><small>Signup</small></a></mat-hint>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

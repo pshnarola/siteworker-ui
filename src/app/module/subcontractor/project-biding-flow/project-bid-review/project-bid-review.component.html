@@ -1,0 +1,341 @@
+<div class="container-fluid">
+
+    <div class="row bg-warning text-black p-2">
+        <div class="col-lg-9 d-flex align-self-center">
+            <div class="col-lg-3 align-self-center" style="font-weight: bold;">
+                <h4>03 - {{'review'| translate}}</h4>
+            </div>
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/project_name_icon.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'project.name' | translate}}:</p>
+                    <p class="mb-0">
+                        {{projectDetailToBid.title}}
+                    </p>
+
+                </div>
+            </div>
+            <div class="col-lg-3 d-flex align-items-center">
+                <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                <div>
+                    <p class="font-weight-bold mb-0">{{'client.name' | translate}}:</p>
+                    <p class="mb-0" *ngIf="projectDetailToBid.company ; else none">
+                        {{projectDetailToBid.company.name}}
+                    </p>
+                    <ng-template #noneP>
+                        <p class="font-weight-bold"> {{'n.a' | translate }} </p>
+                    </ng-template>
+                    <ng-template #none>
+                        <p class="mb-0"> {{'n.a' | translate }} </p>
+                    </ng-template>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 align-self-center">
+            <div class="float-right">
+                <p-button class="bg_black_button" (click)="previous()">
+                    {{'previous' | translate}} </p-button>
+                <p-button class="bg_black_button ml-1" (click)="submitBid()">{{'submit.bid' | translate}}</p-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 mb-4 bg-grey2">
+        <div class="card-body">
+            <div class="d-flex flex-wrap">
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                        <p class="text-muted mb-0">Client</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetailToBid.company">
+                            {{projectDetailToBid.user.firstName}} {{projectDetailToBid.user.lastName}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/category.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'category' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetailToBid.industry ? projectDetailToBid.industry.name : ''}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/negotiation.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'bid.negotiable' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetailToBid.isNegotiable === true ? 'Yes' : 'No'}}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                    <div class="mr-2"><img src="assets/images/location.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                        <p class="text-muted mb-0">
+                            {{projectDetailToBid.region}} , {{projectDetailToBid.state}}
+                        </p>
+                        <ng-template #none> </ng-template>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'bid.due.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetailToBid.bidDueDate">
+                            {{projectDetailToBid.bidDueDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/start_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'start.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetailToBid.startDate">
+                            {{projectDetailToBid.startDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                    <div class="mr-2"><img src="assets/images/estimate_date.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'estimated.end.date' | translate}} :</p>
+                        <p class="text-muted mb-0" *ngIf="projectDetailToBid.completionDate">
+                            {{projectDetailToBid.completionDate | date:'mediumDate'}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <h5 class="font-weight-bold text-left">{{'jobsites'| translate}}</h5>
+        </div>
+
+        <div class="col-md-6 text-right">
+            {{'total.bid.amount' | translate}} :
+            <span class="font-weight-bold"> <span *ngIf="projectBidDetailDto ; else calculate">
+                    <span *ngIf="projectBidDetailDto.subContractorCost > 0 ; else calculatebid">
+                        {{projectBidDetailDto.subContractorCost | currency}}
+                    </span>
+                    <ng-template #calculatebid>
+                        {{calculateBidAmountForProjectType() | currency}}
+                    </ng-template>
+                </span>
+                <ng-template #calculate>
+                    {{calculateTotalBId() | currency}}
+                </ng-template>
+            </span>
+        </div>
+
+        <div class="col-xl-12 mt-3">
+            <ng-container *ngIf="bidDetailInfoDTO">
+                <p-table [value]="bidDetailInfoDTO" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [(selection)]="selectedJobsitesToBid" scrollHeight="400px" [resizableColumns]="true" #dt>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 180px;">
+                            <col style="width: 180px;">
+                            <col style="width: 150px;">
+                            <col style="width: 120px;">
+                            <col style="width: 180px;">
+                            <col style="width: 180px;">
+                            <col style="width: 250px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox [disabled]="true"></p-tableHeaderCheckbox>
+                            </th>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                                pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                        <tr>
+                            <td style="width: 3rem">
+                                <p-tableCheckbox [value]="jobSite" pTooltip="Jobsite status : 
+                                {{ jobSite.status === 'STARTED' ? 'Started' : 
+                                jobSite.status === 'APPLIED' ? 'Applied' : 
+                                jobSite.status === 'ACCEPTED' ? 'Accepted' : 
+                                jobSite.status === 'REJECTED' ? 'Rejected' : 
+                                jobSite.status === 'OFFERED' ? 'Offered' : 'Not set' }}"
+                                    [disabled]="jobSite.status !== 'STARTED'">
+                                </p-tableCheckbox>
+                            </td>
+                            <td class="text-wrap">
+                                <a style="cursor: pointer;" (click)="goToJobsite(jobSite.jobSiteDetail.id)">
+                                    {{jobSite.jobSiteDetail.title}}
+                                </a>
+                            </td>
+                            <td class="text-wrap">
+                                <span class="col-xl-12"
+                                    *ngIf="jobSite.jobSiteDetail.description.length <= truncateLength ">
+                                    {{jobSite.jobSiteDetail.description}}
+                                </span>
+                                <span class="col-xl-12"
+                                    *ngIf="jobSite.jobSiteDetail.description.length > truncateLength ">
+                                    <app-read-more [content]="jobSite.jobSiteDetail.description" [limit]=truncateLength
+                                        [completeWords]="true">
+                                    </app-read-more>
+                                </span>
+                            </td>
+                            <td>
+                                {{jobSite.jobSiteDetail.city}}
+                            </td>
+                            <td>
+                                {{jobSite.jobSiteDetail.state}}
+                            </td>
+                            <td>
+                                {{jobSite.jobSiteDetail.zipCode}}
+                            </td>
+                            <td>
+                                <span *ngIf="jobSite.subContractorCost !== 0">
+                                    {{jobSite.subContractorCost | currency}}
+                                </span>
+                            </td>
+                            <td>
+                                <span *ngIf="jobSite.jobSiteDetail.attachment?.length ; else noDocument">
+                                    <a style="cursor: pointer;" (click)="downloadAttachments(jobSite.jobSiteDetail.id)">
+                                        <span class="material-icons">
+                                            description
+                                        </span>
+                                    </a>
+                                </span>
+                                <ng-template #noDocument>
+                                    No Doument
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+            <ng-container *ngIf="!bidDetailInfoDTO && projectBidDetailDto ">
+                <p-table [value]="projectBidDetailDto.projectDetail.jobsite" styleClass="p-datatable-gridlines"
+                    [(selection)]="selectedJobsitesOfWholeProject" [scrollable]="true" scrollHeight="400px"
+                    [resizableColumns]="true" #dt>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                            <col>
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox [disabled]="true"></p-tableHeaderCheckbox>
+                            </th>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columnsOfProject"
+                                pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                        <tr>
+                            <td style="width: 3rem">
+                                <p-tableCheckbox [value]="jobSite" [disabled]="true">
+                                </p-tableCheckbox>
+                            </td>
+                            <td class="text-wrap">
+                                <a style="cursor: pointer;" (click)="goToJobsite(jobSite.id)">
+                                    {{jobSite.title}}
+                                </a>
+                            </td>
+                            <td class="text-wrap">
+                                <span class="col-xl-12" *ngIf="jobSite.description.length <= truncateLength ">
+                                    {{jobSite.description}}
+                                </span>
+                                <span class="col-xl-12" *ngIf="jobSite.description.length > truncateLength ">
+                                    <app-read-more [content]="jobSite.description" [limit]=truncateLength
+                                        [completeWords]="true">
+                                    </app-read-more>
+                                </span>
+                            </td>
+                            <td>
+                                {{jobSite.city}}
+                            </td>
+                            <td>
+                                {{jobSite.state}}
+                            </td>
+                            <td>
+                                {{jobSite.zipCode}}
+                            </td>
+                            <td>
+                                <span *ngIf="jobSite.attachment?.length ; else noDocument">
+                                    <a style="cursor: pointer;" (click)="downloadAttachments(jobSite.id)">
+                                        <span class="material-icons">
+                                            description
+                                        </span>
+                                    </a>
+                                </span>
+                                <ng-template #noDocument>
+                                    No Doument
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+            <br>
+            <p-button class="bg_black_button" (click)="previous()">
+                {{'previous' | translate}} </p-button>
+            <div class="float-right">
+                {{'total.bid.amount' | translate}} :
+                <span class="font-weight-bold"> <span *ngIf="projectBidDetailDto ; else calculate">
+                        <span *ngIf="projectBidDetailDto.subContractorCost > 0 ; else calculatebid">
+                            {{projectBidDetailDto.subContractorCost | currency}}
+                        </span>
+                        <ng-template #calculatebid>
+                            {{calculateBidAmountForProjectType() | currency}}
+                        </ng-template>
+                    </span>
+                    <ng-template #calculate>
+                        {{calculateTotalBId() | currency}}
+                    </ng-template>
+                </span>
+                <p-button (click)="submitBid()">{{'submit.bid' | translate}}</p-button>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>

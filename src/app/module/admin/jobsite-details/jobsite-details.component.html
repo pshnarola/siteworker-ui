@@ -1,0 +1,357 @@
+<div class="container-fluid" *ngIf="JobSiteDetail">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h4 class="font-weight-bold" *ngIf="JobSiteDetail.title ; else none">
+                 {{projectDetail.title}} // {{JobSiteDetail.title}}
+                </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-3">{{'jobsite.details' | translate}}</h5>
+            <div class="card bg-grey2">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex align-items-center flex-fill mx-2">
+                            <div class="mr-2">
+                                <img src="assets/images/jobsite_title.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'jobsite.title' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="JobSiteDetail.title ; else none">
+                                    {{JobSiteDetail.title}}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center flex-fill mx-2">
+                            <div class="mr-2">
+                                <img src="assets/images/assign_to.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'assigned.to' | translate}} :</p>
+                                <p class="text-muted mb-0">{{JobSiteDetail.assignedTo !== null ?
+                                    JobSiteDetail.assignedTo.firstName :
+                                    'Jobsite Award Pending'}}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center flex-fill mx-2">
+                            <div class="mr-2">
+                                <img src="assets/images/total_cost.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'total.cost' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="JobSiteDetail.cost ; else none">{{JobSiteDetail.cost |
+                                    currency}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center flex-fill mx-2">
+                            <div class="mr-2">
+                                <img src="assets/images/line_items.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'line.item' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="JobSiteDetail.lineItem.length ; else none">
+                                    {{JobSiteDetail.lineItem.length}}</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center flex-fill mx-2">
+                            <div class="mr-2"><i class="fa fa-map-marker h1 text-secondary"></i></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="JobSiteDetail.state ; else none">
+                                    {{JobSiteDetail.city}} , {{JobSiteDetail.state}}</p>
+                            </div>
+                        </div>
+
+                        <div class="w-100 mt-4">
+                            <p class="font-weight-bold mb-1">{{'jobsite.description' |translate}}:</p>
+                            <div class="w-100" *ngIf="JobSiteDetail.description ; else none">
+                                <span class="col-xl-12" *ngIf="JobSiteDetail.description.length <= truncateLength ">
+                                    {{JobSiteDetail.description}}
+                                </span>
+                                <span class="col-xl-12" *ngIf="JobSiteDetail.description.length > truncateLength ">
+                                    <!-- <app-read-more [content]="JobSiteDetail.description" [limit]=truncateLength
+                                        [completeWords]="true">
+                                    </app-read-more> -->
+                                    {{(showMore) ? JobSiteDetail.description : JobSiteDetail.description | slice:0:30}}
+                                    <span *ngIf="!showMore">...</span>
+                                    <a href="javascript:;"
+                                        *ngIf="!showMore && JobSiteDetail.description.length > truncateLength"
+                                        (click)="showMore=true">Read More</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'work.type.details' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+
+                        <p-table [columns]="selectedColumns" styleClass="p-datatable-gridlines" [scrollable]="true"
+                            scrollHeight="400px" [resizableColumns]="true" #dt [value]="JobSiteDetail.lineItem"
+                            [paginator]="true" [rows]="tableRowSize" [totalRecords]="totalRecords"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} work types"
+                            [rowsPerPageOptions]="tablePaginateDropdown">
+                            <ng-template pTemplate="caption">
+                                <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                                    selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                                    placeholder="Choose Columns"></p-multiSelect>
+                            </ng-template>
+                            <ng-template pTemplate="colgroup" let-columns>
+                                <colgroup>
+                                    <col style="width:200px" *ngFor="let col of columns">
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                                        pSortableColumn="{{col.value}}">
+                                        {{col.label}}
+                                        <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-i="rowIndex" let-lineItem let-columns="columns">
+                                <tr>
+                                    <td *ngFor="let col of columns" [ngSwitch]="col.value">
+
+                                        <div *ngSwitchCase="'workType'">
+                                            {{lineItem.workType}}
+                                        </div>
+                                        <div *ngSwitchCase="'lineItemId'">
+                                            {{lineItem.lineItemId}}
+                                        </div>
+                                        <div *ngSwitchCase="'lineItemName'">
+                                            {{lineItem.lineItemName}}
+                                        </div>
+                                        <div *ngSwitchCase="'cost'">
+                                            {{lineItem.cost | currency}}
+                                        </div>
+                                        <div *ngSwitchCase="'description'" class="text-wrap text-break">
+                                            <div *ngIf="lineItem.description ; else noneTd"
+                                                [innerHtml]="lineItem.description"></div>
+                                        </div>
+                                        <div *ngSwitchCase="'inclusions'" class="text-wrap text-break">
+                                            <div *ngIf="lineItem.inclusions ; else noneTd"
+                                                [innerHtml]="lineItem.inclusions"></div>
+                                        </div>
+                                        <div *ngSwitchCase="'exclusions'" class="text-wrap text-break">
+                                            <div *ngIf="lineItem.exclusions ; else noneTd"
+                                                [innerHtml]="lineItem.exclusions"></div>
+                                        </div>
+                                        <div *ngSwitchCase="'unit.name'">
+                                            {{lineItem.unit.name}}
+                                        </div>
+                                        <div *ngSwitchCase="'quantity'">
+                                            {{lineItem.quantity}}
+                                        </div>
+                                        <div *ngSwitchCase="'dynamicLabel1'" class="text-wrap">
+                                            <div *ngIf="lineItem.dynamicLabel1 ; else noneTd">
+                                                {{lineItem.dynamicLabel1}}
+                                            </div>
+                                        </div>
+                                        <div *ngSwitchCase="'dynamicLabel2'" class="text-wrap">
+                                            <div *ngIf="lineItem.dynamicLabel2 ; else noneTd">
+                                                {{lineItem.dynamicLabel2}}
+                                            </div>
+                                        </div>
+                                        <div *ngSwitchCase="'dynamicLabel3'" class="text-wrap">
+                                            <div *ngIf="lineItem.dynamicLabel3 ; else noneTd">
+                                                {{lineItem.dynamicLabel3}}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td [attr.colspan]="5" class="text-center">
+                                        No records found
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">{{'payment.milestone' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+
+                        <p-table [columns]="selectedColumns" styleClass="p-datatable-gridlines" [scrollable]="true"
+                            scrollHeight="400px" [resizableColumns]="true" #dt [value]="JobSiteDetail.paymentMileStone"
+                            [paginator]="true" [rows]="tableRowSize" [totalRecords]="totalRecords"
+                            [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} milestones"
+                            [rowsPerPageOptions]="tablePaginateDropdown">
+
+                            <ng-template pTemplate="colgroup" let-columns>
+                                <colgroup>
+                                    <col style="width:130px">
+                                    <col style="width:250px">
+                                    <col style="width:400px">
+                                    <col style="width:250px">
+                                    <col style="width:130px">
+                                </colgroup>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>{{'milestone.no' | translate}}</th>
+                                    <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of paymentColumns"
+                                        pSortableColumn="{{col.value}}">
+                                        {{col.label}}
+                                        <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-i="rowIndex" let-payment>
+                                <tr>
+                                    <td>{{i+1}} </td>
+                                    <td class="text-wrap">{{payment.name}} </td>
+                                    <td>
+                                        <span *ngIf="payment.lineItem?.length ; else lengthIsZero">
+                                            <p-button (click)="openLineItemDialog(payment)" styleClass="p-button-link">
+                                                {{payment.lineItem.length}}</p-button>
+                                        </span>
+                                        <ng-template #lengthIsZero>
+                                            {{payment.lineItem.length}}
+                                        </ng-template>
+                                    </td>
+                                    <td class="text-wrap">{{payment.amount | currency}} </td>
+                                    <td >{{payment.percentage}}%</td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td [attr.colspan]="6" class="text-center">
+                                        No records found
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+
+                    </ng-template>
+                </p-accordionTab>
+
+            </p-accordion>
+        </div>
+    </div>
+
+
+
+    <p-dialog [(visible)]="isOpenLineItemdialog" [style]="{width: '70%'}" (onHide)="onHideLineItem($event)"
+        header="Line Item List" [modal]="true" styleClass="p-fluid">
+
+
+        <p-table [columns]="selectedColumns" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px"
+            [resizableColumns]="true" #dt [value]="lineItem" [paginator]="true" [rows]="tableRowSize"
+            [totalRecords]="totalRecords" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} work types"
+            [rowsPerPageOptions]="tablePaginateDropdown">
+
+            <ng-template pTemplate="caption">
+                <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                    selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                    placeholder="Choose Columns"></p-multiSelect>
+            </ng-template>
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width:200px" *ngFor="let col of columns">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                        pSortableColumn="{{col.value}}">
+                        {{col.label}}
+                        <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-lineItem let-columns="columns">
+                <tr>
+                    <td *ngFor="let col of columns" [ngSwitch]="col.value">
+
+                        <div *ngSwitchCase="'workType'">
+                            {{lineItem.workType}}
+                        </div>
+                        <div *ngSwitchCase="'lineItemId'">
+                            {{lineItem.lineItemId}}
+                        </div>
+                        <div *ngSwitchCase="'lineItemName'">
+                            {{lineItem.lineItemName}}
+                        </div>
+                        <div *ngSwitchCase="'cost'">
+                            {{lineItem.cost | currency}}
+                        </div>
+                        <div *ngSwitchCase="'description'" class="text-wrap text-break">
+                            <div *ngIf="lineItem.description ; else noneTd" [innerHtml]="lineItem.description"></div>
+                        </div>
+                        <div *ngSwitchCase="'inclusions'" class="text-wrap text-break">
+                            <div *ngIf="lineItem.inclusions ; else noneTd" [innerHtml]="lineItem.inclusions"></div>
+                        </div>
+                        <div *ngSwitchCase="'exclusions'" class="text-wrap text-break">
+                            <div *ngIf="lineItem.exclusions ; else noneTd" [innerHtml]="lineItem.exclusions"></div>
+                        </div>
+                        <div *ngSwitchCase="'unit.name'">
+                            {{lineItem.unit.name}}
+                        </div>
+                        <div *ngSwitchCase="'quantity'">
+                            {{lineItem.quantity}}
+                        </div>
+                        <div *ngSwitchCase="'dynamicLabel1'" class="text-wrap">
+                            <div *ngIf="lineItem.dynamicLabel1 ; else noneTd"> {{lineItem.dynamicLabel1}}
+                            </div>
+                        </div>
+                        <div *ngSwitchCase="'dynamicLabel2'" class="text-wrap">
+                            <div *ngIf="lineItem.dynamicLabel2 ; else noneTd"> {{lineItem.dynamicLabel2}}
+                            </div>
+                        </div>
+                        <div *ngSwitchCase="'dynamicLabel3'" class="text-wrap">
+                            <div *ngIf="lineItem.dynamicLabel3 ; else noneTd"> {{lineItem.dynamicLabel3}}
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5" class="text-center">
+                        No records found
+                    </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+
+    </p-dialog>
+</div>
+
+
+<ng-template #noneTd> {{'n.a' | translate }} </ng-template>
+<ng-template #none>
+    <p class="text-muted mb-0"> {{'n.a' | translate }} </p>
+</ng-template>
+
+<div *ngIf="!JobSiteDetail">
+    <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+</div>

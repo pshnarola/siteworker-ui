@@ -1,0 +1,145 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton *ngIf="showButtons" class="bg-admin mr-3" type="button" (click)="addRegion()" label="{{ 'add.new' | translate }}"></button>
+            <button pButton *ngIf="showButtons" class="bg-admin mr-3" (click)="disableSelectedRegion()" label="{{ 'disable.selected' | translate }}"></button>
+            <button pButton class="bg-admin" (click)="download(fileName)" label="{{ 'template' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="row" *ngIf="showButtons">
+                                <div class="col-xl-6">
+                                    <div class="p-field mt-4 p-fluid">
+                                        <ngx-dropzone [accept]="'.xlsx, .xls'" [multiple]="false" (change)="selectFile($event)">
+                                            <ngx-dropzone-label><span style="font-size: small;">Drag & Drop Excel Document Here or Click to Upload</span></ngx-dropzone-label>
+                                        </ngx-dropzone>
+                                        <div *ngIf="selectedFiles">
+                                            <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of selectedFiles; let i = index">
+                                                <p>
+                                                    {{file.name}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 d-flex align-items-center mt-3">
+                                    <button pButton class="p-button-outlined" [disabled]="!selectedFiles" (click)="uploadBulk()" label="{{ 'bulk.upload' | translate }}"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="p-field p-fluid">
+                                        <label for="name" class="search-field">{{ "search" | translate }} : </label>
+                                        <input type="text" id="regionSearch" [(ngModel)]="regionNameFilterValue" class="form-control search-field" placeholder="Type to filter" [pKeyFilter]="blockSpecial" />
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 d-flex align-items-center mt-3">
+                                    <button pButton class="p-button-outlined" (click)="filter()" label="{{ 'search'| translate}}"></button>&nbsp;&nbsp;
+                                    <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" #dt [value]="regionData" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} regions" [(selection)]="selectedRegionArray" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col style="width: 20%;">
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-region>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="region"></p-tableCheckbox>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td>{{region.name}}</td>
+                        <td>
+
+
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-success mr-2" pTooltip="Edit" (click)="editRegion(region)">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </button>
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-warning mr-2" pTooltip="Enable" (click)="openDialog(region.id,region.name,region.isEnable)" *ngIf="!region.isEnable">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                    </button>
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-danger" pTooltip="Disable" (click)="openDialog(region.id,region.name,region.isEnable)" *ngIf="region.isEnable">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+    </div>
+
+
+
+
+
+
+</div>
+
+<!-- dialog -->
+<p-dialog [(visible)]="regionDialog" [style]="{width: '450px'}" header="{{popupHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">{{ "region.name" | translate }}* </label>
+                <input type="text" pInputText id="regionName" formControlName="name" placeholder="Enter Region Name" required autofocus [pKeyFilter]="blockSpecial" maxLength="50" />
+                <div class="p-invalid" *ngIf="myForm.controls['name'].touched && (myForm.controls['name'].hasError('required') && !myForm.controls['name'].valid)">
+                    {{'required' | translate}}</div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>

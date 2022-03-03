@@ -1,0 +1,27 @@
+form {
+    margin: 20px;
+}
+
+ngx-dropzone,
+img {
+    margin: 10px;
+    height: 130px;
+    border-radius: 10px;
+}
+
+ngx-dropzone-image-preview {
+    text-align: center;
+    height: 80px !important;
+    min-height: 80px !important;
+    min-width: 80px !important;
+    max-width: 150px !important;
+    max-height: 150px !important;
+}
+
+p-checkbox {
+    margin-right: 5px;
+}
+
+.ck {
+    text-align: center;
+}

@@ -1,0 +1,29 @@
+.class1 {
+    text-align: left;
+    margin: 10px;
+    border-radius: 10px 10px 10px 0;
+    border-color: #15B533;
+}
+
+.class2 {
+    text-align: right;
+    margin: 10px;
+    border-radius: 10px 10px 0px 10px;
+    border-color: #ddd;
+}
+
+.img-fit {
+    object-fit: cover;
+}
+.class2 > div {
+    -ms-flex-pack: end!important;
+    justify-content: flex-end!important;
+}
+
+.media-preview > a {margin-left: 15px;}
+.overlap-button-left {
+    margin-left: -11px;
+    padding: 0 0;
+}
+
+

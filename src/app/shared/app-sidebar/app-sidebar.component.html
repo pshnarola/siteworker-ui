@@ -1,0 +1,48 @@
+<app-header (toggle)="toggleDrawer($event)"></app-header>
+
+<mat-sidenav-container class="sidenav-container d-inline-block w-100">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+
+        
+        <div *ngIf="rolename==='CLIENT'">
+            <app-project-job-selection></app-project-job-selection>
+        </div>
+    
+        <div *ngIf="rolename==='SUPERVISOR'">
+            <app-project-job-selection></app-project-job-selection>
+        </div>
+       
+
+        <div *ngIf="(rolename==='ADMIN' || rolename==='SUBADMIN') && projectJobsideBarVisible">
+            <app-admin-sidebar></app-admin-sidebar>
+        </div>
+
+        <div *ngIf="rolename==='WORKER' && !hideJobListFilter">
+            <app-worker-job-list-filter></app-worker-job-list-filter>
+        </div>
+
+        <div *ngIf="rolename==='WORKER' && hideJobListFilter">
+            <app-worker-sidebar-job-list></app-worker-sidebar-job-list>
+        </div>
+
+        <div *ngIf="rolename==='SUBCONTRACTOR' && hideProjectListFilter">
+            <app-subcontractor-project-list-filter></app-subcontractor-project-list-filter>
+        </div>
+
+        <div *ngIf="rolename==='SUBCONTRACTOR' && showSubcontractorProjectListSidebar">
+            <app-subcontractor-project-selection></app-subcontractor-project-selection>
+        </div>
+
+        <div *ngIf="rolename==='SUBCONTRACTOR' && showJobsiteDetailFilterComponent">
+            <app-jobsite-detail-filter></app-jobsite-detail-filter>
+        </div>
+
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar color="warn" *ngIf="!isHeaderVisible">
+            <h3>{{headerCaption}}</h3>
+        </mat-toolbar>
+        <router-outlet></router-outlet>
+        <app-footer></app-footer>
+    </mat-sidenav-content>
+</mat-sidenav-container>

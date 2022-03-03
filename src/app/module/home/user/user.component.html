@@ -1,0 +1,123 @@
+<div class="datatable-card p-2">
+    <div class="">
+        <div>
+            <button pButton type="button" (click)="addUser()" label="Add New"></button>
+            <div class="row mb-0 mr-sm-2">
+                <div class="form-group col-md-3">
+                    <label for="name">{{ "email" | translate }} : </label>
+                    <input type="text" id="email_searchbox" [(ngModel)]="emailFilterValue" class="form-control" placeholder="Type to filter" />
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="name">{{ "first.name" | translate }} :</label>
+                    <input type="text" id="firstname_searchbox" [(ngModel)]="firstNameFilterValue" class="form-control" placeholder="Type to filter" pKeyFilter="alphanum" />
+                </div>
+            </div>
+            <button pButton type="button" (click)="filter()" label="Search"></button>
+        </div>
+    </div>
+    <p-table #dt [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                    <!-- <span > -->
+                    {{col.label}}
+                    <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                    <!-- </span> -->
+                </th>
+                <th>{{ "action" | translate }}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="user"></p-tableCheckbox>
+                </td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td>{{user.email}}</td>
+                <!-- <td>{{user.companyName}}</td>
+                <td>{{user.role}}</td>
+                <td>{{user.mobilePhone}}</td>
+                <td>{{user.workPhone}}</td> -->
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-0 p-mr-2" (click)="editUser(user)"></button>
+                    <!-- <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteProduct(product)"></button> -->
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="3" class="text-center">
+                    No records found
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+
+
+<!-- Dialoge -->
+
+<p-dialog [(visible)]="userDialog" [style]="{width: '450px'}" header="Edit Details" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">First Name</label>
+                <input type="text" pInputText id="firstName" formControlName="firstName" required autofocus pKeyFilter="alphanum" />
+                <small class="p-invalid" *ngIf="myForm.controls['firstName'].touched && (myForm.controls['firstName'].hasError('required') && !myForm.controls['firstName'].valid)">First
+                    Name is required.</small>
+            </div>
+            <div class="p-field">
+                <label for="name">Last Name</label>
+                <input type="text" pInputText id="lastName" formControlName="lastName" required autofocus pKeyFilter="alphanum" />
+                <small class="p-invalid" *ngIf="submitted && !user.lastName">Last Name is required.</small>
+            </div>
+            <div class="p-field">
+                <label for="name">Email</label>
+                <input type="text" pInputText id="email" formControlName="email" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !user.email">Email is required.</small>
+            </div>
+
+            <div class="p-field">
+                <label for="name">Password</label>
+                <input type="password" pInputText id="password" formControlName="password" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !user.email">Email is required.</small>
+            </div>
+
+            <div class="p-field">
+                <label for="name">Company Name</label>
+                <input type="text" pInputText id="companyName" formControlName="companyName" required autofocus [pKeyFilter]="blockSpecial" />
+                <small class="p-invalid" *ngIf="submitted && !user.firstName">Company Name is required.</small>
+            </div>
+            <div class="p-field">
+                <label for="name">mobilePhone</label>
+                <input type="text" pInputText id="mobilePhone" formControlName="mobilePhone" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !user.lastName">Last Name is required.</small>
+            </div>
+            <div class="p-field">
+                <label for="name">Role</label>
+                <input type="text" pInputText id="role" formControlName="role" required autofocus pKeyFilter="alphanum" />
+                <small class="p-invalid" *ngIf="submitted && !user.email">Email is required.</small>
+            </div>
+
+            <div class="p-field">
+                <label for="name">Work Phone</label>
+                <input type="text" pInputText id="workPhone" formControlName="workPhone" required autofocus />
+                <small class="p-invalid" *ngIf="submitted && !user.email">Email is required.</small>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>

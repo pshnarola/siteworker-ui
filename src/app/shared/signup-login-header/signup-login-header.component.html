@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div>
+        <img src="assets/images/logo_white.png" alt="" (click)="redirectToWordpressWebsite()" style="cursor: pointer;" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav">
+        <ul class="list-inline mb-0">
+
+            <li class="list-inline-item">
+                <a class="nav-link" href="#" *ngIf="loginLink">Sign In</a>
+                <a class="nav-link" [routerLink]="['../signup']" *ngIf="signupLink">Sign Up</a>
+            </li>
+        </ul>
+    </div>
+
+</mat-toolbar>

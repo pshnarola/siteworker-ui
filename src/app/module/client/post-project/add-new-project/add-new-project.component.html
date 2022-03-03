@@ -1,0 +1,336 @@
+<div class="container-fluid">
+
+    <div class="w-100" *ngIf="!reviewproject">
+        <div class="p-formgroup-inline">
+            <div class="p-field-checkbox">
+                <p-radioButton [value]="true" [(ngModel)]="selectedValue" (onClick)="onClick($event)" inputId="city7">
+                </p-radioButton>
+                <label for="city7">{{ 'add.manually' | translate}}</label>
+            </div>
+            <div class="p-field-checkbox">
+                <p-radioButton [value]="false" [(ngModel)]="selectedValue" (onClick)="onClick($event)" inputId="city8">
+                </p-radioButton>
+                <label for="city8">{{ 'upload.excel' | translate}}</label>
+
+
+            </div>
+            <p-dialog [(visible)]="uploadExcelDialog" [style]="{width: '500px'}" header="Upload file to import from Excel" (onHide)="hideDialogOfUploadExcel()" [modal]="true" styleClass="p-fluid">
+
+                <ng-template pTemplate="content">
+                    <div class="row">
+                        <div class="col-12 p-field">
+                            <button pButton pRipple (click)="download(fileName)" label="{{'download.sample.file' | translate}}" class="p-button-text">
+                            </button>
+                        </div>
+                        <div class="col-12 p-field">
+                            <label>{{ 'upload.documents' | translate }}</label>
+                            <div class="custom-file">
+                                <ngx-dropzone accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" [multiple]='false' (change)="onSelectExcelFile($event)" [maxFileSize]="10000000">
+                                    <ngx-dropzone-label>
+                                        Drag & Drop Excel document here or click to upload
+                                    </ngx-dropzone-label>
+                                </ngx-dropzone>
+                            </div>
+                        </div>
+                        <div class="col-12 p-field">
+                            <div *ngIf="excelFiles">
+                                <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of excelFiles; let i = index">
+                                    <p>
+                                        {{file.name}}
+                                    </p>
+                                    <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 p-field">
+                            <div class="card alert-primary" *ngIf="importFromExcelProjectValidationMessage">
+                                <div class="card-body">
+                                    <label class="font-weight-bold text-dark">
+                                        Validation Messages
+                                    </label>
+                                    <ul class="pl-0 scroll">
+                                        <li>
+                                            {{importFromExcelProjectValidationMessage}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="{{'close' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialogOfUploadExcel()"></button>
+                    <button pButton pRipple label="{{'upload.excel' | translate}}" class="btn btn-primary" (click)="uploadExcelData()"></button>
+                </ng-template>
+
+            </p-dialog>
+        </div>
+    </div>
+
+    <div class="datatable-card" [ngClass]="{'disableDiv': !selectedValue}">
+        <form [formGroup]="addNewProjectForm">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="title">{{'project.title' |translate}}*</label>
+                    <input type="text" pInputText class="form-control" formControlName="title" maxlength="50" placeholder="{{'project.title.placeholder' |translate}}" [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['title'].touched && 
+                    (addNewProjectForm.controls['title'].hasError('required') &&
+                    !addNewProjectForm.controls['title'].valid)
+                    || (submitted &&
+                    (addNewProjectForm.controls['title'].hasError('required') && 
+                    !addNewProjectForm.controls['title'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['title'].touched && 
+                    (addNewProjectForm.controls['title'].hasError('maxlength') && 
+                    !addNewProjectForm.controls['title'].valid)">
+                        {{'project.title.maxLength' | translate}}
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="client-name">{{'client.name' |translate}}</label>
+                    <p-autoComplete formControlName="company" [suggestions]="filteredClients" (completeMethod)="filterClient($event)" (onSelect)="onSelectCompany($event)" field="name" [dropdown]="true" minLength="3" forceSelection="true" placeholder="{{'client.name.placeholder' |translate}}"
+                        [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
+                        <ng-template let-client pTemplate="item">
+                            <div>
+                                <div *ngIf="client.id !== 'buttonId'">{{client.name}}</div>
+                                <div *ngIf="client.id === 'buttonId'">
+                                    <button pButton type="button" style="width:100%;margin: 0%;" label="Add Company name" (click)="openClientDialog()"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 form-group">
+                    <label for="region">{{'region' |translate}}*</label>
+                    <p-autoComplete formControlName="region" [suggestions]="filteredRegion" (completeMethod)="filterRegion($event)" forceSelection="true" minLength="3" field="name" [dropdown]="true" placeholder="{{'select.region' |translate}}" [style]="{'width':'100%'}"
+                        [inputStyle]="{'width':'100%'}">
+                        <ng-template let-region pTemplate="item">
+                            <div>
+                                <div>{{region.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['region'].touched && 
+                        (addNewProjectForm.controls['region'].hasError('required') &&
+                        !addNewProjectForm.controls['region'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['region'].hasError('required') && 
+                        !addNewProjectForm.controls['region'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <label for="state">{{'state' |translate}}*</label>
+                    <p-autoComplete formControlName="state" [suggestions]="filteredState" (completeMethod)="filterState($event)" forceSelection="true" minLength="3" field="name" [dropdown]="true" placeholder="{{'select.state' |translate}}" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
+                        <!-- <ng-template let-state pTemplate="item">
+                            <div>
+                                <div>{{state.name}}</div>
+                            </div>
+                        </ng-template> -->
+                    </p-autoComplete>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['state'].touched && 
+                        (addNewProjectForm.controls['state'].hasError('required') &&
+                        !addNewProjectForm.controls['state'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['state'].hasError('required') && 
+                        !addNewProjectForm.controls['state'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <label for="industry-type">{{'industry.type' |translate}}*</label>
+                    <p-autoComplete formControlName="industry" [suggestions]="filteredIndustryType" (completeMethod)="filterIndustryType($event)" field="name" [dropdown]="true" minLength="3" forceSelection="true" placeholder="{{'select.industry.type' |translate}}" [style]="{'width':'100%'}"
+                        [inputStyle]="{'width':'100%'}">
+                        <ng-template let-industryType pTemplate="item">
+                            <div>
+                                <div>{{industryType.name}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['industry'].touched && 
+                        (addNewProjectForm.controls['industry'].hasError('required') &&
+                        !addNewProjectForm.controls['industry'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['industry'].hasError('required') && 
+                        !addNewProjectForm.controls['industry'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 form-group">
+                    <label for="bid-due-date">
+                        {{'bid.due.date' |translate}}*
+                    </label>
+                    <div class="input-group">
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="bidDueDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon"></p-calendar>
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['bidDueDate'].touched && 
+                        (addNewProjectForm.controls['bidDueDate'].hasError('required') &&
+                        !addNewProjectForm.controls['bidDueDate'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['bidDueDate'].hasError('required') && 
+                        !addNewProjectForm.controls['bidDueDate'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['completionDate'].value !== null &&
+                        addNewProjectForm.controls['bidDueDate'].value !== null &&
+                        addNewProjectForm.controls['startDate'].value !== null &&
+                        isInvalidBidDueDate">
+                        {{'invalid.bid.due.date' |translate}}
+                    </div>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <label for="start-date">
+                        {{'start.date' |translate}}*
+                    </label>
+                    <div class="input-group">
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="startDate" [minDate]="dateTime" [readonlyInput]="true" (onSelect)="onFormChanged(addNewProjectForm)" [showIcon]="true" inputId="icon"></p-calendar>
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['startDate'].touched && 
+                        (addNewProjectForm.controls['startDate'].hasError('required') &&
+                        !addNewProjectForm.controls['startDate'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['startDate'].hasError('required') && 
+                        !addNewProjectForm.controls['startDate'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['completionDate'].value !== null &&
+                        addNewProjectForm.controls['bidDueDate'].value !== null &&
+                        addNewProjectForm.controls['startDate'].value !== null &&
+                        isInvalidStartDate">
+                        {{'invalid.start.date' |translate}}
+                    </div>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <label for="estimated-date">
+                        {{'estimated.completion.date' |translate}}*
+                    </label>
+                    <div class="input-group">
+                        <p-calendar appendTo="body" placeholder="mm/dd/yyyy" formControlName="completionDate" (onSelect)="onFormChanged(addNewProjectForm)" [minDate]="dateTime" [readonlyInput]="true" [showIcon]="true" inputId="icon"></p-calendar>
+
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['completionDate'].touched && 
+                        (addNewProjectForm.controls['completionDate'].hasError('required') &&
+                        !addNewProjectForm.controls['completionDate'].valid)
+                        || (submitted &&
+                        (addNewProjectForm.controls['completionDate'].hasError('required') && 
+                        !addNewProjectForm.controls['completionDate'].valid))">
+                        {{'required' | translate}}
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['completionDate'].value !== null &&
+                        addNewProjectForm.controls['bidDueDate'].value !== null &&
+                        addNewProjectForm.controls['startDate'].value !== null &&
+                        isInvalidCompletionDate">
+                        {{'invalid.completion.date' |translate}}
+                    </div>
+                </div>
+                <div class="col-lg-6 form-group">
+                    <div>
+                        <label for="file">{{'work.scope'|translate}}</label>
+                        <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" [accept]="'application/pdf,application/msword,
+                        application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
+                            <ngx-dropzone-label> {{ 'drag.and.drop.placeholder' | translate }} </ngx-dropzone-label>
+                            <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemoveFile(f)">
+                                <ngx-dropzone-label style="margin:5px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                            </ngx-dropzone-preview>
+                        </ngx-dropzone>
+                    </div>
+                    <div class="card uploaded-files p-chip" *ngFor="let file of uploadedFile;let i = index">
+                        <p>{{file.filename}} </p>
+                        <i pTooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openWarnigDialogForUploaded(file.filename,file.id)"></i>
+                        <!-- <button pButton pRipple icon="pi pi-times" (click)="openWarnigDialogForUploaded(file.filename,file.id)" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete">
+                        </button> -->
+                    </div>
+                    <div class="card uploaded-files p-chip" *ngFor="let file of selectedFile;let i = index">
+                        <p>{{file.name}} </p>
+                        <i pTooltip="Delete" class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" (click)="openWarnigDialog(file.name,i,file)"></i>
+                        <!-- <button pButton pRipple icon="pi pi-times" (click)="openWarnigDialog(file.name,i,file)" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete">
+                        </button> -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <fieldset>
+                        <div class="some-class">
+                            <label for="bid-negotiable">
+                                {{ 'bid.negotiable' | translate}}</label>
+                            <div>
+                                <input type="radio" [value]="true" formControlName="isNegotiable">
+                                <label class="radio-label">
+                                    {{'yes' | translate}}</label>
+                                <input type="radio" [value]="false" formControlName="isNegotiable">
+                                <label class="radio-label">
+                                    {{'no' | translate}}</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-lg-6 form-group">
+                    <fieldset>
+                        <div class="some-class">
+                            <label for="project-type">{{'project.type'| translate}}</label>
+                            <div>
+                                <input type="radio" value="OPEN_MARKET_REQUEST" formControlName="type">
+                                <label class="radio-label">
+                                    {{'open.market.request' | translate}}
+                                    <i class="fa fa-unlock" style="margin-right: 15px;"></i></label>
+                                <input type="radio" value="PRIVATE_REQUEST" formControlName="type">
+                                <label class="radio-label">
+                                    {{'private.request' | translate}}
+                                    <i class="fa fa-lock "></i></label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="footer-action" *ngIf="!reviewproject">
+                <button type="button" class=" btn btn-outline-danger" (click)="openWarningDialog()">
+                    <i class="fa fa-times-circle"></i>
+                    {{'cancel' | translate}}</button>
+                <button *ngIf="!isProjectPosted" type="button" class="btn btn-primary ml-3" (click)="onSaveAddNewProjectForm()">
+                    {{'save' | translate}}</button>
+                <button type="button" class="btn btn-primary ml-3" (click)="onSaveAndNext()">
+                    {{'jobsites' | translate}}
+                    <i class="pi pi-chevron-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <p-dialog [(visible)]="companyDialog" [style]="{width: '450px'}" (onHide)="hideDialog()" header="Add New Company" [modal]="true" styleClass="p-fluid">
+        <ng-template pTemplate="content">
+            <form [formGroup]="myCompanyForm" (ngSubmit)="onSubmit()">
+                <div class="p-field">
+                    <label for="name">Company name*</label>
+                    <input type="text" pInputText id="name" maxlength="50" formControlName="name" autofocus required [pKeyFilter]="blockSpecial" />
+                    <div class="p-invalid" *ngIf="myCompanyForm.controls['name'].touched &&
+                     (myCompanyForm.controls['name'].hasError('required') && 
+                     !myCompanyForm.controls['name'].valid)
+                    || (submittedCompany && 
+                    (myCompanyForm.controls['name'].hasError('required') &&
+                     !myCompanyForm.controls['name'].valid))">
+                        {{ 'required' | translate}}
+                    </div>
+                    <div class="p-invalid" *ngIf="myCompanyForm.controls['name'].touched && 
+                (myCompanyForm.controls['name'].hasError('maxlength') && 
+                !myCompanyForm.controls['name'].valid)">
+                        {{'company.name.maxLength' | translate}}
+                    </div>
+                </div>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="{{'cancel' |translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+            <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-text" (click)="onSubmit()"></button>
+        </ng-template>
+    </p-dialog>
+</div>

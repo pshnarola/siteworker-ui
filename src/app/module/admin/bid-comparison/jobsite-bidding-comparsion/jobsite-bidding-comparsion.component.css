@@ -1,0 +1,50 @@
+.star{
+    font-size: 25px;
+    cursor: pointer;
+    visibility: hidden;
+    text-align: center;
+}
+
+.star::before{
+    content: "\2605";
+    position: absolute;
+    visibility: visible;
+}
+
+input[type=checkbox]:checked + .star::before {
+    content: "\2606";
+    position: absolute;
+ }
+
+ngx-dropzone {
+    height: 50px;
+    width: 460px;
+}
+
+.filled-star {
+    /*border: 1px solid red;*/
+    position: relative;
+}
+.filled-star:before {    
+    content: "\2606";  
+    font-family: FontAwesome;
+    left:4px;
+    position:absolute;
+    top:-8px;
+    z-index: 1;
+    font-size: 24px;
+}
+
+.unfilled-star{
+    /*border: 1px solid green;*/
+    position: relative;
+}
+.unfilled-star:before {    
+    content: "\2605";  
+    font-family: FontAwesome;
+    left:4px;
+    position:absolute;
+    top:-8px;
+    z-index: 1;
+    font-size: 24px;
+}

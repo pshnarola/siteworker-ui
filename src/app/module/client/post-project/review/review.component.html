@@ -1,0 +1,17 @@
+<h5><b>Review & Confirm</b></h5>
+<br>
+<app-add-new-project [reviewproject]="reviewForm"
+    [reviewFormGroup]="reviewFormGroup" #addNewProjectComponent></app-add-new-project>
+<br>
+<app-jobsites [reviewJobsite]="reviewForm" [page]="pageNumber"></app-jobsites>
+<br>
+<div class="footer-action border-top-0 pt-1" style="text-align: right;">
+    <button type="button" class="btn btn-outline-danger" (click)="previous()">
+        <i class="pi pi-chevron-left mr-2"></i>{{'previous' | translate}}</button>
+    <button type="button" class="btn btn-primary" (click)="addNewProjectComponent.onSaveAddNewProjectForm()">
+           {{'save' | translate}}
+    </button>
+    <button type="button" class="btn btn-primary"
+    (click)="checkProjectIsValidForPost()">{{'post.project' | translate}}
+    </button>
+</div>

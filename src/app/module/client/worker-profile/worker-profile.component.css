@@ -1,0 +1,53 @@
+.roundable {
+    /* border-radius: 20px; */
+    border: 1px solid lightgray;
+}
+
+
+/* .vr {
+    width: 10px;
+    height: 100px;
+} */
+
+.tiles {
+    margin: 20px;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+
+.tile2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.project-ul,
+.job-ul {
+    list-style-type: none;
+}
+
+li {
+    width: 100%;
+}
+
+p-button {
+    height: 5px;
+    width: auto;
+}
+
+.card-list-subheader {
+    margin: 2px 10px 5px 50px;
+}
+
+.card-list-header {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.project-card {
+    height: 100px;
+    width: auto;
+}
+
+span .material-icons {
+    font-weight: 300;
+}

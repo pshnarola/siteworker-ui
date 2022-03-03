@@ -1,0 +1,411 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+                <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35"
+                    alt="">
+            </ng-container>
+            {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid" *ngIf="workerDetail">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold float-left mt-1">Worker Profile </h4>
+            <div class="float-right">
+                <button pButton label="{{'Available For Hire' | translate}}"
+                    *ngIf="workerDetail.basicProfile.status === 'AVAILABLE'" type="button"
+                    class="p-button-primary p-button-outlined">
+                </button>
+
+                <button pButton label="{{'Not Available For Hire' | translate}}"
+                    *ngIf="workerDetail.basicProfile.status != 'AVAILABLE'" type="button"
+                    class="p-button-primary p-button-outlined">
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <ng-template #noDataFound>
+        <span class="text-dark mb-0"> {{'n.a' | translate }} </span>
+    </ng-template>
+    <div class="Common_Profile_Border_Bottom bg">
+
+        <div class="row mt-3">
+            <div class="col-xl-2 d-flex align-items-center View_Ava">
+                <ng-container *ngIf="!workerDetail.basicProfile.photo">
+                    <p-avatar
+                        label={{workerDetail.basicProfile.user.firstName.substring(0,1)+workerDetail.basicProfile.user.lastName.substring(0,1)}}
+                        styleClass="p-mr-2" size="xlarge" [style]="{'background-color':'#2196F3', 'color': '#ffffff'}"
+                        shape="circle"></p-avatar>
+                </ng-container>
+                <ng-container *ngIf="workerDetail.basicProfile.photo">
+                    <img width="150" src="{{imageUrl + workerDetail.basicProfile.photo}}" alt="profilePhoto"
+                        class="profileImage">
+                </ng-container>
+            </div>
+            <div class="col-xl-6 col-md-6">
+                <div class="rating-card">
+                    <h4 class="text-primary">{{workerDetail.basicProfile.user.firstName}}
+                        {{workerDetail.basicProfile.user.lastName}}
+                    </h4>
+                    <p class="text-black font-weight-bold mb-2">
+                        <span *ngIf="workerDetail.basicProfile.jobTitle; else noDataFound">
+                            {{workerDetail.basicProfile.jobTitle.title}}
+                        </span> |
+                        <span *ngIf="workerDetail.totalExperience; else noDataFound">
+                            {{workerDetail.totalExperience}}
+                        </span>
+                    </p>
+                    <p class="text-muted text-break">
+                        <span *ngIf="workerDetail.basicProfile.summary; else noDataFound">
+                            {{workerDetail.basicProfile.summary}}
+                        </span>
+                    </p>
+                    <a class="text-dark font-weight-bold"><i class="fa fa-map-marker"></i>
+                        <span *ngIf="workerDetail.basicProfile.location; else noDataFound">
+                            {{workerDetail.basicProfile.location}}
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-6 d-flex align-items-center">
+                <div class=" rounded rating-card bg-primary p-4 d-flex"
+                    *ngIf="(workerDetail.jobSuccessRatio !== 'New Worker') || workerDetail.averageRating !== 'New Worker' ; else newWorker">
+                    <div class="rating-card mx-2">
+                        <h3 class="text-white text-center mb-1 font-weight-bold"
+                            *ngIf="workerDetail.jobSuccessRatio !== 'New Worker' ; else noSuccess">
+                            {{workerDetail.jobSuccessRatio}}
+                            <i class="fa fa-percent" aria-hidden="true"></i>
+
+                            <ng-template #noSuccess>
+                                <h3 class="text-white text-center mb-1 font-weight-bold">
+                                    {{workerDetail.jobSuccessRatio}}
+                                </h3>
+                            </ng-template>
+                        </h3>
+                        <p class="text-white mb-0 text-center text-nowrap">{{'job.success.ratio' | translate}}</p>
+                    </div>
+                    <div class="mx-2 border-left"></div>
+                    <div class="rating-card mx-2">
+                        <h3 class="text-white text-center mb-1 font-weight-bold">
+                            <span *ngIf="workerDetail.averageRating !== 'New Worker' ; else noAverage">
+                                <i class="fa fa-star star mr-1" aria-hidden="true"></i>
+                                {{workerDetail.averageRating}}
+                            </span>
+                            <ng-template #noAverage>
+                                <h5 class="text-white text-center mb-1 font-weight-bold">
+                                    {{workerDetail.averageRating}}
+                                </h5>
+                            </ng-template>
+                        </h3>
+                        <p class="text-white mb-0 text-center text-nowrap">{{'average.rating' | translate}}</p>
+                    </div>
+                </div>
+                <ng-template #newWorker>
+                    <div class=" rounded rating-card bg-primary p-4 d-flex">
+                        <div class="rating-card mx-2">
+                            <h5 class="text-white text-center mb-1 font-weight-bold">
+                                New Worker
+                            </h5>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+
+        <div class="w-100 card mt-4">
+            <div class="card-header">
+                <h5 class="font-weight-bold">{{'services' | translate}}</h5>
+            </div>
+            <div class="services">
+                <mat-chip-list class="example-chip">
+                    <ng-container *ngIf="workerDetail.workerServices.length !== 0 ; else noServiceFound">
+                        <ng-container *ngFor="let service of workerDetail.workerServices">
+                            <mat-chip class="example-box">
+                                {{service.service.serviceName}}
+                            </mat-chip>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noServiceFound>
+                        <div class="w-100">
+                            <p class="mt-3 text-center">{{'no.services.found' | translate}}</p>
+                        </div>
+                    </ng-template>
+                </mat-chip-list>
+            </div>
+        </div>
+        <div class="w-100 card mt-4">
+            <div class="card-header">
+                <h5 class="float-left font-weight-bold">{{'Contact' | translate}}</h5>
+            </div>
+            <div class="card-body p-1">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="text-center p-3">
+                            <span class="material-icons text-primary h1">
+                                smartphone
+                            </span>
+                            <p class="text-dark mb-0" *ngIf="isPrivate">{{workerDetail.basicProfile.mobilePhone}}</p>
+                            <p class="text-dark mb-0" *ngIf="!isPrivate">{{workerMobilePhone}}</p>
+                            <p class="text-muted mb-0">{{'mobile.number' | translate }}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="text-center p-3">
+                            <span class="material-icons text-primary h1">
+                                mail_outline
+                            </span>
+                            <p class="text-dark mb-0" *ngIf="isPrivate">{{workerDetail.basicProfile.user.email}}</p>
+                            <p class="text-dark mb-0" *ngIf="!isPrivate">{{workerEmail}}</p>
+                            <p class="text-muted mb-0">{{'email' | translate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row Profile_Card_Height">
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="font-weight-bold"> {{'jobs' | translate}}</h5>
+                        <a (click)="onViewAllJobClick(userId)" class="p-button-link p-1 view_all_btn">View All</a>
+                    </div>
+                    <div class="card-body p-1">
+                        <ng-container *ngIf="workerDetail.workerRecentJobs.length !== 0 ; else nojobFound">
+                            <ul class="list-group-wrapper" *ngFor="let job of workerDetail.workerRecentJobs">
+                                <li>
+                                    <h5 class="mb-0">{{job.jobDetail.title}}</h5>
+                                    <p> {{ job.jobDetail.user.firstName}} {{ job.jobDetail.user.lastName}} </p>
+                                    <p class="text-muted mb-2" *ngIf="job.jobAcceptedDate">
+                                        <span *ngIf="job.jobCompletionDate;else jobOngoing">
+                                            {{ job.jobAcceptedDate | date: 'mediumDate' }} to {{job.jobCompletionDate |
+                                            date: 'mediumDate' }}
+                                        </span>
+                                        <ng-template #jobOngoing>
+                                            Ongoing From {{ job.jobAcceptedDate | date: 'mediumDate' }}
+                                        </ng-template>
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        <ng-template #nojobFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.jobs.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate font-weight-bold"> {{'work.exp' | translate}}</h5>
+                        <a (click)="onViewAllWorkExperienceClick(userId)" class="p-button-link p-1 view_all_btn">View
+                            All</a>
+                    </div>
+                    <div class="card-body p-1 overflow-auto">
+                        <ng-container *ngIf="workerDetail.workerRecentExperience.length !== 0 ; else noWorkExpFound">
+                            <ul class="list-group-wrapper" *ngFor="let workExp of workerDetail.workerRecentExperience">
+                                <h5 class="mb-0 text-primary pl-3 pt-3">{{workExp.companyName}}</h5>
+                                <ng-container *ngFor="let exp of workExp.experienceList">
+                                    <li>
+                                        <p class="card-text">{{exp.designation}}
+                                        </p>
+                                        <span class="text-muted" *ngIf="exp.endDate; else currentlyEducating">
+                                            {{exp.startDate | date:'MMM, y'}} to {{exp.endDate | date:'MMM, y'}}
+                                        </span>
+                                        <ng-template #currentlyEducating>
+                                            <span class="text-muted">
+                                                {{exp.startDate | date:'MMM, y'}} to Current
+                                            </span>
+                                        </ng-template>
+                                    </li>
+                                </ng-container>
+                            </ul>
+                        </ng-container>
+                        <ng-template #noWorkExpFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.workExp.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate font-weight-bold"> {{'education' | translate}}</h5>
+                    </div>
+                    <div class="card-body p-1 overflow-auto">
+                        <ng-container *ngIf="workerDetail.workerRecentEducation.length !== 0 ; else noEducationFound">
+                            <ul class="list-group-wrapper"
+                                *ngFor="let workEducation of workerDetail.workerRecentEducation">
+                                <ng-container *ngFor="let education of workEducation.educationList">
+                                    <li>
+                                        <h5 class="mb-0 text-primary">{{education.institutionName}} </h5>
+                                        <p class="mb-1"> {{education.degree}} </p>
+                                        <p class="text-muted">
+                                            <span *ngIf="education.endDate;else onGoingStudy">
+                                                {{education.startDate | date:'MMM, y'}} -
+                                                {{education.endDate | date:'MMM, y'}}
+                                            </span>
+                                            <ng-template #onGoingStudy>
+                                                {{education.startDate | date:'MMM, y'}} to Current
+                                            </ng-template>
+                                        </p>
+                                    </li>
+                                </ng-container>
+                            </ul>
+                        </ng-container>
+                        <ng-template #noEducationFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.education.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate"> {{'certifications' | translate}}</h5>
+                    </div>
+                    <div class="card-body p-1 overflow-auto">
+                        <ng-container *ngIf="workerDetail.workerCertificates.length !== 0 ; else nocertificateFound">
+                            <ul class="list-group-wrapper" *ngFor="let certificate of workerDetail.workerCertificates">
+                                <li>
+                                    <h5 class="mb-0 text-primary">{{certificate.certificate.name}} </h5>
+                                    <p class="mb-1 text-muted">
+                                        <span>
+                                            {{certificate.certificationDate | date: 'mediumDate'}} to
+                                            {{certificate.expiryDate | date: 'mediumDate'}}
+                                        </span>
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        <ng-template #nocertificateFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.certificates.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate font-weight-bold"> {{'rating.review' | translate}}</h5>
+                        <a (click)="onViewAllRatingReviewClick(userId)" class="p-button-link p-1 view_all_btn">View
+                            All</a>
+                    </div>
+                    <div class="card-body p-1 overflow-auto">
+                        <ng-container
+                            *ngIf="workerDetail.workerRecentRatingAndReview.length !== 0 ; else noRatingFound">
+                            <ul class="list-group-wrapper"
+                                *ngFor="let ratingAndReview of workerDetail.workerRecentRatingAndReview">
+                                <li>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="mb-0 text-primary">
+                                                {{ratingAndReview.submittedBy.firstName}}
+                                                {{ratingAndReview.submittedBy.lastName}}
+                                            </h5>
+                                            <p class="text-muted mb-1">
+                                                <span *ngIf="ratingAndReview.jobDetail">
+                                                    {{ratingAndReview.jobDetail.title}}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div class="text-warning h2 text-nowrap">
+                                            <i class="fa fa-star star" aria-hidden="true"></i>{{ratingAndReview.rating}}
+                                        </div>
+                                    </div>
+                                    <p> {{ratingAndReview.ratingText}}</p>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        <ng-template #noRatingFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.rating.review.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate font-weight-bold"> {{'references' | translate}}</h5>
+                        <a (click)="onViewAllReferncesClick(userId)" class="p-button-link p-1 view_all_btn">View All</a>
+                    </div>
+                    <div class="card-body p-1 overflow-auto">
+                        <ng-container *ngIf="workerDetail.workerRecentReferences.length !== 0 ; else noReferencesFound">
+                            <ul class="list-group-wrapper"
+                                *ngFor="let reference of workerDetail.workerRecentReferences">
+                                <li>
+                                    <p class="text-primary font-weight-bold mb-0">{{reference.fullName}} </p>
+                                    <p class="text-muted"> {{reference.jobTitle}} | {{reference.companyName}}</p>
+                                    <p class="font-weight-bold mb-0 mt-2"> {{reference.workPhone}} </p>
+                                    <p class=""> {{reference.email}} </p>
+                                    <p class="card-text" *ngIf="reference.comment"> "{{reference.comment}}"
+
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        <ng-template #noReferencesFound>
+                            <div class="w-100">
+                                <p class="mt-3 text-center">{{'no.reference.found' | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mt-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="text-truncate font-weight-bold"> {{'location' | translate}}</h5>
+                    </div>
+                    <div class="block location" *ngIf="(lat !== 0 && lng !== 0) ;else noLocation">
+                        <agm-map [latitude]="lat" [longitude]="lng">
+                            <agm-marker [latitude]="lat" [longitude]="lng">
+                                <agm-info-window [isOpen]="true">
+                                    <h6>{{workerDetail.basicProfile.location}}</h6>
+                                </agm-info-window>
+                            </agm-marker>
+                        </agm-map>
+                    </div>
+                    <ng-template #noLocation>
+                        <div class="w-100">
+                            <p class="mt-3 text-center">{{'no.location.found' | translate}}</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

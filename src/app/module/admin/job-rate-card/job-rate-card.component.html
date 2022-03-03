@@ -1,0 +1,92 @@
+<ngx-spinner></ngx-spinner>
+<div class="container-fluid">
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" type="button" *ngIf="showButtons" label="{{ 'add.new' | translate }}" (click)="openManageJobRateCard()"></button>
+            <button pButton class="bg-admin" *ngIf="showButtons" label="{{ 'disable.selected' | translate }}" (click)="disableJobRateCard()"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <div class="p-field p-fluid">
+                                    <label for="state">{{'state' | translate}} :</label>
+                                    <p-autoComplete placeholder="{{'all' | translate}}" field="name" formControlName="state" forceSelection="true" [dropdown]="true" minLength="3" [suggestions]="filteredState" (completeMethod)="filterState($event)"></p-autoComplete>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 d-flex align-items-center mt-3">
+                                <button pButton class="p-button-outlined mr-3" type="button" (click)="filter()" label="{{ 'search'| translate}}"></button>
+                                <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [value]="jobRateCardList" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} rate cards" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines" [(selection)]="selectedJobRateCardList">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-data>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="data"></p-tableCheckbox>
+                        </td>
+                        <td>{{data.client.firstName}}</td>
+                        <td>{{data.state.name}}</td>
+                        <td>
+                            <button [disabled]="btnDisabled" pButton (click)="openManageJobRateCard(data)" class="p-button-link p-1" label="{{ 'manage' | translate }}"></button>
+                        </td>
+                        <td>
+
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-warning mr-2" *ngIf="!data.isEnable" (click)="openDialog(data, data.isEnable)" pTooltip="{{'enable' | translate}}">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-sm btn-danger" *ngIf="data.isEnable" (click)="openDialog(data, data.isEnable)" pTooltip="{{'disable' | translate}}">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>

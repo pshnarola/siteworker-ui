@@ -1,0 +1,49 @@
+agm-map {
+  width: auto;
+  height: 200px;
+}
+
+.location {
+  width: auto;
+  padding: 10px;
+  height: 225px;
+}
+/* .card {
+  min-height: 250px;
+} */
+
+.custom-margin {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.rounded_card_body{
+  border: 0 solid #ddd;
+  border-radius: 20px 20px 0px 0px;
+  /* overflow-y: scroll;
+  height: 196px; */
+  padding: 15px;
+}
+
+.card_scroll{
+  height: 207px;
+  max-height: 207px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.card_border_right {
+  position: relative;
+  
+}
+.card_border_right::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 100%;
+  bottom: -36px;
+  display: inline-block;
+  /* width: 100%; */
+  border-right: 2px solid #e9ecef;
+}
+    

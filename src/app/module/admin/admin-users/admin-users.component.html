@@ -1,0 +1,250 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <button class="bg-admin" pButton type="button" (click)="addCertificate()"
+                label="{{ 'add.new' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [scrollable]="true" [value]="userList" scrollHeight="400px" [resizableColumns]="true"
+                [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size"
+                [totalRecords]="totalRecords"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subadmins"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                styleClass="p-datatable-gridlines">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 300px">
+                        <col style="width: 300px">
+                        <col style="width: 300px">
+                        <col style="width: 300px">
+                        <col style="width: 300px">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                            pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{'action' | translate}}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-user>
+                    <tr>
+                        <td>
+                            {{user.userDTO.firstName}} {{user.userDTO.lastName}}
+                        </td>
+                        <td class="text-wrap">
+                            {{user.userDTO.email}}
+                        </td>
+                        <td>
+                            {{user.userDTO.subAdminContactNumber}}
+                        </td>
+                        <td>
+                            <a class="p-button-link p-1" style="cursor: pointer;"
+                                (click)="onSaveAndOpenAccessRights(user.userDTO)">
+                                {{'access.rights' | translate}} </a>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-success mr-2" (click)="editUser(user)"
+                                pTooltip="{{'edit'  | translate}}">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                            </button>
+                            <button *ngIf="!user.userDTO.isActive" class="btn btn-sm btn-warning mr-2"
+                                (click)="openDialog(user.userDTO.id,user.userDTO.firstName,user.userDTO.isActive)"
+                                pTooltip="{{'activate' | translate}}">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button *ngIf="user.userDTO.isActive" class="btn btn-sm btn-danger"
+                                (click)="openDialog(user.userDTO.id,user.userDTO.firstName,user.userDTO.isActive)"
+                                pTooltip="{{'deactivate' | translate}}">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>
+
+<p-dialog [(visible)]="userDialog" [style]="{width: '450px'}" header="{{popupHeader}}" (onHide)="hideDialog()"
+    [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="p-field" *ngIf="!editMode">
+                <label for="name">{{'first.name' | translate}}*</label>
+                <input type="text" maxlength="50" pInputText formControlName="firstName" placeholder="Enter First Name"
+                    />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('firstName').valid) || (!myForm.get('firstName').valid && myForm.get('firstName').touched) ">
+                    <div *ngIf="(myForm.get('firstName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="editMode">
+                <label for="name">{{'first.name' | translate}}*</label>
+                <input type="text" maxlength="50" disabled="true" pInputText formControlName="firstName"
+                    placeholder="Enter First Name" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('firstName').valid) || (!myForm.get('firstName').valid && myForm.get('firstName').touched) ">
+                    <div *ngIf="(myForm.get('firstName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="!editMode">
+                <label for="name">{{'last.name' | translate}}*</label>
+                <input type="text" maxlength="50" pInputText formControlName="lastName" placeholder="Enter Last Name"
+                    />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('lastName').valid) || (!myForm.get('lastName').valid && myForm.get('lastName').touched) ">
+                    <div *ngIf="(myForm.get('lastName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="editMode">
+                <label for="name">{{'last.name' | translate}}*</label>
+                <input type="text" disabled="true" maxlength="50" pInputText formControlName="lastName"
+                    placeholder="Enter Last Name" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('lastName').valid) || (!myForm.get('lastName').valid && myForm.get('lastName').touched) ">
+                    <div *ngIf="(myForm.get('lastName').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="!editMode">
+                <label for="name">{{'email' | translate}}*</label>
+                <input type="text" maxlength="50" pInputText formControlName="email" placeholder="Enter Email" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('email').valid) || (!myForm.get('email').valid && myForm.get('email').touched) ">
+                    <div *ngIf="(myForm.get('email').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf="myForm.get('email').dirty &&
+                    (myForm.get('email').errors.incorrectEmailFormat &&
+                    !myForm.get('email').errors.required)">
+                        {{'invalid.email' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field" *ngIf="editMode">
+                <label for="name">{{'email' | translate}}*</label>
+                <input type="text" maxlength="50" disabled="true" pInputText formControlName="email"
+                    placeholder="Enter Email" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('email').valid) || (!myForm.get('email').valid && myForm.get('email').touched) ">
+                    <div *ngIf="(myForm.get('email').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf="myForm.get('email').dirty &&
+                    (myForm.get('email').errors.incorrectEmailFormat &&
+                    !myForm.get('email').errors.required)">
+                        {{'invalid.email' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{'contact.number' | translate}}*</label>
+                <p-inputMask id="subAdminContactNumber" mask="(999) 999-9999" required
+                    formControlName="subAdminContactNumber" placeholder="Enter Contact Number"></p-inputMask>
+                <div class="p-invalid"
+                    *ngIf="(submitted && !myForm.get('subAdminContactNumber').valid) || (!myForm.get('subAdminContactNumber').valid && myForm.get('subAdminContactNumber').touched) ">
+                    <div *ngIf="(myForm.get('subAdminContactNumber').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-outlined"
+            (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog [(visible)]="accessRightDialog" [style]="{width: '450px'}" header="{{popupHeader}}"
+    (onHide)="hideAccessRightDialog()" [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <div class="p-field">
+            <label>{{ 'admin.user' | translate }} : </label>
+            <input type="text" *ngIf="user" disabled="true" pInputText value="{{user.firstName}} {{user.lastName}}" />
+        </div>
+        <br>
+        <form [formGroup]="accessRightsForm">
+            <p-table #dt [scrollable]="true" [value]="accessRightsForm.get('userPermissions')['controls']"
+                scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines"
+                [sortField]="userPermissionsList" [sortOrder]="-1">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col>
+                        <col>
+                        <col>
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of accessRightsColumns"
+                            pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-user>
+                    <ng-container formArrayName="userPermissions">
+                        <tr [formGroupName]="i">
+                            <td>
+                                {{user.get('menuName').value}}
+                            </td>
+                            <td>
+                                <p-checkbox (onChange)="onCheckedCanView($event,i)" formControlName="canView"
+                                    [binary]="true">
+                                </p-checkbox>
+                            </td>
+                            <td>
+                                <p-checkbox formControlName="canModify" [binary]="true"
+                                    (onChange)="onCheckedCanModify($event,i)">
+                                </p-checkbox>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="3" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin"
+            (click)="hideAccessRightDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-outlined"
+            (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>

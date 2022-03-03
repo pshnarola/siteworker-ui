@@ -1,0 +1,58 @@
+<div style="padding: 20px;">
+    <h4>Filter By</h4>
+    <div class="p-fluid">
+        <form *ngIf="jobSiteFilterFormGroup" [formGroup]="jobSiteFilterFormGroup">
+            <div class="p-field">
+                <label for="jobSiteTitle">{{'jobsite.title' | translate}}</label>
+                <p-autoComplete formControlName="jobSiteTitle" id="jobSiteTitle" [multiple]="true"  minLength="3"  delay="2000"
+                    placeholder="Enter {{'jobsite.title' | translate}}" [suggestions]="filteredJobsiteTitles"
+                    (completeMethod)="getJobsiteTitle($event)">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field p-col">
+                <label for="city">{{'city' | translate}}</label>
+                <p-autoComplete virtualScroll="true" itemSize="10" formControlName="city" id="city" [multiple]="true" [dropdown]="true"
+                    forceSelection="true" minLength="3" delay="2000" placeholder="Select {{'city' | translate}}"
+                    (completeMethod)="getFilteredCityForJobsite($event)" [suggestions]="filteredCityForJobsite">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field p-col">
+                <label for="state">{{'state' | translate}}</label>
+                <p-autoComplete formControlName="state" id="state" [multiple]="true" [dropdown]="true"
+                    forceSelection="true" minLength="3" delay="2000" placeholder="Select {{'state' | translate}}"
+                    (completeMethod)="getFilteredStateForJobsite($event)" [suggestions]="filteredStateForJobsite">
+                </p-autoComplete>
+            </div>
+
+            <div class="p-field p-col">
+                <label for="zipCode">Zip Code</label>
+                <input formControlName="zipCode" placeholder="Enter {{'zip.code' | translate}}" type="text" maxlength="5"
+                    pInputText class="form-control">
+            </div>
+
+            <label for="state">{{'budget' | translate}}</label>
+            <div class="p-formgroup-inline">
+                <br>
+                <div class="p-field p-col">
+                    <label for="state">{{'min' | translate}}</label>
+                    <p-inputNumber mode="currency" currency="USD" formControlName="min"
+                    placeholder="0" maxlength="17" locale="en-US"></p-inputNumber>
+                </div>
+                <div class="p-field p-col">
+                    <label for="region">{{'max' | translate}}</label>
+                    <p-inputNumber mode="currency" currency="USD" formControlName="max"
+                    placeholder="0" maxlength="17" locale="en-US"></p-inputNumber>
+                </div>
+            </div>
+        </form>
+
+        <div style="text-align: center;">
+            <button style="margin-top:20px" pButton pRipple type="button" label="Apply" class="p-button-warning"
+                (click)="applyFilter()"></button>
+            <button style="margin-top:20px" pButton pRipple type="button" label="Clear" class="p-button-danger"
+                (click)="clear($event)"></button>
+        </div>
+    </div>
+</div>

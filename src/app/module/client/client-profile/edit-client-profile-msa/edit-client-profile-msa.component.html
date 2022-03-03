@@ -1,0 +1,209 @@
+<div class="container-fluid">
+
+    <form [formGroup]="_clientProfileService.clientEditForm">
+
+        <div class="row">
+            <p class="mx-3 col-xl-12">Submit your Master Service Agreement contract by filling in the fields below.</p>
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <label for="leagalName">Full Leagal Name Of Company*</label>
+                    <input type="text" maxlength="50" formControlName="legalCompanyName" pInputText class="form-control" id="leagalName" placeholder="Enter Year Full Leagal Name Of Comapny" [pKeyFilter]="blockSpecial">
+                    <div class="p-invalid" *ngIf="(submitted && !_clientProfileService.clientEditForm.get('legalCompanyName').valid) || (!_clientProfileService.clientEditForm.get('legalCompanyName').valid && _clientProfileService.clientEditForm.get('legalCompanyName').touched) ">
+                        <div *ngIf=" ( _clientProfileService.clientEditForm.get('legalCompanyName').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf=" _clientProfileService.clientEditForm.get('legalCompanyName').errors.maxlength">
+                            {{'fifty.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="form-group">
+                    <label for="title">Your Full Title*</label>
+                    <input type="text" maxlength="30" formControlName="designation" pInputText class="form-control" id="title" placeholder="Fill Designation" [pKeyFilter]="blockSpecial">
+                    <div class="p-invalid" *ngIf="(submitted && !_clientProfileService.clientEditForm.get('designation').valid) || (!_clientProfileService.clientEditForm.get('designation').valid && _clientProfileService.clientEditForm.get('designation').touched) ">
+                        <div *ngIf=" ( _clientProfileService.clientEditForm.get('designation').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf=" _clientProfileService.clientEditForm.get('designation').errors.maxlength">
+                            {{'thirty.maxlength' | translate}} </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row my-3" *ngIf="isProjectAccess">
+            <div class="col-xl-12">
+                <p-accordion>
+                    <p-accordionTab>
+                        <ng-template pTemplate="header">MSA For Project
+                        </ng-template>
+
+                        <ng-template pTemplate="content">
+
+                            <div class="col-xl-12">
+                                <div class="card c">
+                                    <div class="card-body">
+                                        <h5 class="card-title">MSA Detail</h5>
+                                        <div class="scrollable">
+
+                                            <p class="card-text" [innerHtml]="content"> </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card" class="card-bg" *ngIf="content ; else noContent">
+                                <div class="row">
+                                    <div class="col-xl-1 ck">
+                                        <p-checkbox [(ngModel)]="checkedProject" (onChange)="onClickProjectMSACheck()" binary="true">
+                                        </p-checkbox>
+                                    </div>
+                                    <div class="col-xl-8">
+                                        By pressing “Submit”, you agree that all terms provided in the Master Service Agreement are both lawful and accurate.
+                                    </div>
+                                    <div class="col-xl-3 ">
+                                        <button pButton pRipple label="Submit" class="" (click)="onSubmitProject()" [disabled]="!checkedProject"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ng-template #noContent>
+                                <h5 class="text-muted text-center mt-3">
+                                    MSA not generated
+                                </h5>
+                            </ng-template>
+
+
+                            <div class="card" *ngIf="latestProjectAcceptedClientMSA">
+                                <div class="row">
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col-xl-12">
+                                                <h5>MSA Accepted</h5>
+                                                <p>You have agreed to the term of MSA </p>
+                                            </div>
+
+                                            <div class="col-xl-4">
+                                                <h6> <b>Accepted By</b></h6>
+                                                <h6 class="text-capitalize">{{latestProjectAcceptedClientMSA.acceptedBy.firstName }} {{latestProjectAcceptedClientMSA.acceptedBy.lastName }}</h6>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <h6> <b>Accepted On</b></h6>
+                                                <h6>{{latestProjectAcceptedClientMSA.acceptedDate | date:'shortDate'}} {{latestProjectAcceptedClientMSA.acceptedDate | date:'mediumTime'}} </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div>
+                                            <button pButton pRipple label="Download MSA" class="" (click)="downloadProjectMSA()"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p>Your company’s Master Service Agreement is a legally binding contract with subcontractors and workers. Please review all information above before submitting.
+                            </p>
+
+
+                        </ng-template>
+                    </p-accordionTab>
+
+                </p-accordion>
+            </div>
+        </div>
+
+        <div class="row my-3" *ngIf="isJobAccess">
+            <div class="col-xl-12">
+                <p-accordion>
+                    <p-accordionTab>
+                        <ng-template pTemplate="header">MSA For Job
+                        </ng-template>
+
+                        <ng-template pTemplate="content">
+
+                            <div class="col-xl-12">
+                                <div class="card c">
+                                    <div class="card-body">
+                                        <h5 class="card-title">MSA Detail</h5>
+                                        <div class="scrollable">
+                                            <p class="card-text" [innerHtml]="contentJob"> </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card" class="card-bg" *ngIf="contentJob ; else noContentJob">
+                                <div class="row">
+                                    <div class="col-xl-1 ck">
+                                        <p-checkbox [(ngModel)]="checkedJob" (onChange)="onClickJobMSACheck()" binary="true">
+                                        </p-checkbox>
+                                    </div>
+                                    <div class="col-xl-8 mt-2">
+                                        By pressing “Submit”, you agree that all terms provided in the Master Service Agreement are both lawful and accurate.
+                                    </div>
+                                    <div class="col-xl-3 ">
+                                        <button pButton pRipple label="Submit" class="" (click)="onSubmitJob()" [disabled]="!checkedJob"></button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ng-template #noContentJob>
+                                <h5 class="text-muted text-center mt-3">
+                                    MSA not generated
+                                </h5>
+                            </ng-template>
+
+
+                            <div class="card" *ngIf="latestJobAcceptedClientMSA">
+                                <div class="row">
+                                    <div class="col-xl-8">
+                                        <div class="row">
+                                            <div class="col-xl-12">
+                                                <h5>MSA Accepted</h5>
+                                                <p>You have agreed to the term of MSA </p>
+                                            </div>
+
+                                            <div class="col-xl-4">
+                                                <h6> <b>Accepted By</b></h6>
+                                                <h6>{{latestJobAcceptedClientMSA.acceptedBy.firstName | uppercase}} {{latestJobAcceptedClientMSA.acceptedBy.lastName | uppercase}}
+                                                </h6>
+                                            </div>
+                                            <div class="col-xl-4">
+                                                <h6> <b>Accepted On</b></h6>
+                                                <h6>{{latestJobAcceptedClientMSA.acceptedDate | date:'shortDate'}} {{latestJobAcceptedClientMSA.acceptedDate | date:'mediumTime'}}
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4">
+                                        <div>
+                                            <button pButton pRipple label="Download MSA" class="" (click)="downloadJobMSA()"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p>
+                                Your company’s Master Service Agreement is a legally binding contract with subcontractors and workers. Please review all information above before submitting.
+                            </p>
+
+                        </ng-template>
+                    </p-accordionTab>
+
+                </p-accordion>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 text-right">
+                <button pButton pRipple type="button" icon="pi pi-left-arrow" label="Previous" class="p-button-outlined p-button-danger" (click)="previous()"></button>
+                <button pButton pRipple label="Save" class="" (click)="onSubmit()"></button>
+            </div>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,166 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold pl-2">
+                {{'invoices' | translate}} <span *ngIf="jobTitle">/{{jobTitle}}</span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class=""
+                icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label>{{ 'invoice.date.from' | translate }} : </label>
+                                    <p-calendar formControlName="invoiceDateFrom" [(ngModel)]="invoiceDatefrom"
+                                        [maxDate]="invoiceDateto" appendTo="body" [readonlyInput]="true"
+                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label>{{ 'invoice.date.to' | translate }} : </label>
+                                    <p-calendar formControlName="invoiceDateTo" [(ngModel)]="invoiceDateto"
+                                        appendTo="body" [minDate]="invoiceDatefrom" [readonlyInput]="true"
+                                        [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="p-field">
+                                    <label>{{ 'invoice.status' | translate }} : </label>
+                                    <p-autoComplete formControlName="status" id="status" forceSelection="true"
+                                        [suggestions]="filteredStatus" field="label" [dropdown]="true"
+                                        (completeMethod)="filterStatus($event)" placeholder="{{'all' | translate}}">
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4">
+                                <label>{{ 'start.work.week' | translate }} : </label>
+                                <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]"
+                                    appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true"
+                                    [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                            </div>
+                            <div class="col-xl-4">
+                                <label> {{ 'end.work.week' | translate }} : </label>
+                                <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true"
+                                    [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"
+                                    [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-xl-12 d-inline">
+                                <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()"
+                                    label="{{ 'apply' | translate}}"></button>
+                                <button pButton pRipple type="button" label="{{'clear' |translate}}"
+                                    (click)="filterClear()" class="p-button-danger"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <p-table #dt [columns]="selectedColumns" [value]="invoicesList" [lazy]="true"
+                    (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [paginator]="true" [rows]="size"
+                    [scrollable]="true" scrollHeight="400px" [resizableColumns]="true"
+                    styleClass="p-datatable-gridlines" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} invoices">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                            selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                            placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 180px;" *ngFor="let cols of columns">
+
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn
+                                [pSortableColumn]="col.sortable?col.value:null">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.field">
+                                <div *ngSwitchCase="'jobTitle'">
+                                    <span class="text-wrap">
+                                        {{data.jobBidDetail.jobDetail.title}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'worker'">
+                                    <span class="text-wrap">
+                                        {{data.worker.firstName}} {{data.worker.lastName}}
+                                    </span>
+                                </div>
+
+                                <div *ngSwitchCase="'workWeek'">
+                                    <span *ngIf="data.weekStart && data.weekEnd">
+                                        {{data.weekStart | date: 'shortDate'}} - {{data.weekEnd | date: 'shortDate'}}
+                                    </span>
+                                    <span
+                                        *ngIf="!data.weekStart && !data.weekEnd && data.jobBidDetail.jobDetail.employmentType === 'FULL_TIME'">
+                                        {{'n.a' | translate}} (Full Time Employee)
+                                    </span>
+
+                                </div>
+                                <div *ngSwitchCase="'CREATED_DATE'">
+                                    {{data.invoiceDate | date: 'shortDate'}}
+                                </div>
+                                <div *ngSwitchCase="'invoiceNo'">
+                                    {{data.invoiceNumber}}
+                                </div>
+
+                                <div *ngSwitchCase="'amount'">
+                                    {{data.invoiceAmount | currency: 'USD'}}
+                                </div>
+
+
+                                <div *ngSwitchCase="'attachment'" class="text-center">
+                                    <button (click)="downloadDocument(data.invoiceDocPath,data.invoiceDocName)"
+                                        class="btn btn-primary btn-sm" pTooltip="{{'download' | translate}}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <div *ngSwitchCase="'status'">
+                                    {{data.status === 'DUE'? 'Due': 'Paid'}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="selectedColumns" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>

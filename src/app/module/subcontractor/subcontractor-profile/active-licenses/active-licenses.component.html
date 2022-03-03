@@ -1,0 +1,199 @@
+<div class="container-fluid">
+
+    <div class="card steps p-3">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="p-formgroup-inline">
+                    <div class="p-field-checkbox">
+                        <p-radioButton [value]="true" [(ngModel)]="license" (onClick)="onClick($event)" inputId="city7">
+                        </p-radioButton>
+                        <label for="city7">{{ 'yes' | translate}}</label>
+                    </div>
+                    <div class="p-field-checkbox">
+                        <p-radioButton [value]="false" [(ngModel)]="license" (onClick)="onClick($event)" inputId="city8">
+                        </p-radioButton>
+                        <label for="city8">{{ 'no' | translate}}</label>
+                    </div>
+                </div>
+               <p>
+                   Does your company currently hold Active Licenses?
+               </p>
+            </div>
+            <div class="col-xl-6 float-right mt-1" *ngIf="license">
+                <button pButton pRipple label="{{'add' | translate}}" class=" p-button-warning" (click)="addLicense()"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="license">
+        <div class="col-xl-12 m-3">
+            <p-dropdown class="Super_Vis" [options]="orderBy" [(ngModel)]="selectedOrder" optionLabel="name" (onChange)="selectOrder($event)"></p-dropdown>
+        </div>
+        <div class="col-xl-12">
+            <p class="my-3">
+                To qualify for a project bid, your company must hold Active 
+                Licenses for all relevant construction projects within the state where the project is based. Please 
+                list them below.
+            </p>
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" class="" #dt [value]="licenseList" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                [loading]="loading" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} licenses" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 200px;">
+                        <col style="width: 200px;">
+                        <col style="width: 150px;">
+                        <col style="width: 200px;">
+                        <col style="width: 100px;">
+                        <col style="width: 120px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "document" | translate }}</th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-license>
+                    <tr>
+
+                        <td>{{license.name}}</td>
+                        <td>{{license.number}}</td>
+                        <td>{{license.state}}</td>
+                        <td>{{license.expiryDate | date:'shortDate'}}</td>
+                        <td>
+                            <a style="cursor: pointer;" (click)="downloadFile(license.id)">
+                                <span class="material-icons">
+                                    description
+                                </span>
+                            </a>
+                        </td>
+                        <td>
+                            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-primary p-mr-2" pTooltip="Edit" (click)="editLicense(license)">
+                            </button>
+                            <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip=" Delete" (click)="openDialog(license.id,license.name)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center" [attr.colspan]="6">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div class="Dialog_Sub_Bid">
+        <p-dialog [(visible)]="licenseDialog" (onHide)="hideDialog()" header="{{'add.license'|translate}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+            'max-height': '500px','min-height':'500px','width':'700px'}" [modal]="true" styleClass="p-fluid">
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="licenseForm">
+                    <div class="row">
+                        <div class="p-field col-xl-6">
+                            <label for="licenseName">{{ "license.name" | translate }}*</label>
+                            <input class="form-control" maxlength="100" formControlName="name" type="text" pInputText id="licenseName" placeholder="Enter license  name" required [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid" *ngIf="(submitted && !licenseForm.get('name').valid) || (!licenseForm.get('name').valid && licenseForm.get('name').dirty) ">
+                                <div *ngIf=" ( licenseForm.get('name').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="p-field col-xl-6">
+                            <label for="licenseNumber">{{ "license.number" | translate }}*</label>
+                            <input class="form-control" maxlength="50" formControlName="number" type="text" pInputText id="licenseNumber" placeholder="Enter license Number" required [pKeyFilter]="blockSpecial" />
+                            <div class="p-invalid" *ngIf="(submitted && !licenseForm.get('number').valid) || (!licenseForm.get('number').valid && licenseForm.get('number').dirty) ">
+                                <div *ngIf=" ( licenseForm.get('number').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 p-field">
+                            <label for="inputZip">{{'state' | translate}}*</label>
+                            <p-autoComplete [minLength]="3" placeholder="{{'state.name.placeholder' |translate}}" formControlName="state" [suggestions]="filteredState" (completeMethod)="filterState($event)" [dropdown]="true" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                [forceSelection]="true">
+                            </p-autoComplete>
+                            <div class="p-invalid" *ngIf="(submitted && !licenseForm.get('state').valid) || (!licenseForm.get('state').valid && licenseForm.get('state').dirty) ">
+                                <div *ngIf=" ( licenseForm.get('state').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 p-field">
+                            <label for="start-date">{{'expiration.date' |translate}}*</label>&nbsp;
+                            <div class="input-group">
+                                <p-calendar placeholder="MM/DD/YYYY" formControlName="expirayDate" appendTo="body" [showIcon]="true" [(ngModel)]="date" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [minDate]="dateTime">
+                                </p-calendar>
+                                <div class="p-invalid" *ngIf="(submitted && !licenseForm.get('expirayDate').valid) || (!licenseForm.get('expirayDate').valid && licenseForm.get('expirayDate').dirty) ">
+                                    <div *ngIf=" ( licenseForm.get('expirayDate').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <ngx-dropzone [accept]="'application/pdf,image/*'" [multiple]='true' (change)="onSelect($event)" [maxFileSize]="10000000">
+                                <ngx-dropzone-label> {{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                </ngx-dropzone-label>
+                            </ngx-dropzone>
+
+                            <div *ngIf="files">
+                                <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                                    <p>
+                                        {{file.name}}
+                                    </p>
+                                    <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></i>
+                                    <!-- <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip=" Delete" ></button> -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12" *ngIf="editMode ">
+                            <div class="card upload-attachment-div uploaded-files p-chip" *ngIf="activeLicense.documentName1">
+                                <p>{{activeLicense.documentName1}}</p>
+                                <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDialog(activeLicense.id,activeLicense.documentName1,activeLicense.documentPath1)"></i>
+                            </div>
+                            <div class="card uploaded-files p-chip" *ngIf="activeLicense.documentName2">
+                                <p>{{activeLicense.documentName2}}</p>
+                                <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openDialog(activeLicense.id,activeLicense.documentName2,activeLicense.documentPath2)"></i>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" (click)="hideDialog()" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger" style="margin-left: 16px;"></button>
+                <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" *ngIf="editMode" (click)="uploadFile(true)" type="button" class="p-button-warning" icon="pi pi-check-circle"></button>
+                <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" *ngIf="!editMode" (click)="uploadFile()" type="button" class="p-button-warning" icon="pi pi-check-circle"></button>
+
+            </ng-template>
+        </p-dialog>
+    </div>
+    <hr>
+    <div class="row mt-4">
+        <div class="col-xl-12 text-right">
+            <button pButton pRipple label="{{'previous' | translate}}" (click)="previous()" class=" p-button-outlined p-button-warning"></button>
+            <button pButton pRipple label="{{ spinner ? 'Please wait' : 'Save'}}" (click)="onSubmitSubcontractor()" class=" p-button-warning ml-2"></button>
+            <button pButton pRipple label="{{'save.next' | translate}}" (click)="onSubmitSubcontractor('next')" class=" p-button-warning ml-2"></button>
+        </div>
+    </div>
+
+</div>

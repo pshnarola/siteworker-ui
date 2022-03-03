@@ -1,0 +1,494 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+
+                <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35"
+                    alt="">
+
+            </ng-container>
+            {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+
+
+<div class="container-fluid mb-5">
+    <div class="row">
+        <div class="col-xl-12 p-3 bg-admin text-white">
+            <h4 class="float-left">
+                <span>{{"manage.certificate.for.subcontractor" | translate}} : {{subcontractor.firstName}}
+                    {{subcontractor.lastName}}</span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row my-3">
+
+        <div class="col-xl-2  text-center">
+            <button pButton pRipple class="p-button-raised  bg-admin " type="button" label="{{ 'emr' | translate }}"
+                (click)="showEMR()"></button>
+        </div>
+
+        <div class="col-xl-2  text-center">
+            <button pButton pRipple class="p-button-raised  bg-admin" type="button" label="{{ 'osha' | translate }}"
+                (click)="showOSHA()"></button>
+        </div>
+
+        <div class="col-xl-2  text-center">
+            <button pButton pRipple class="p-button-raised  bg-admin" type="button" label="{{ 'coi' | translate }}"
+                (click)="showCOI()"></button>
+        </div>
+
+        <div class="col-xl-2  text-center">
+            <button pButton pRipple class="p-button-raised  bg-admin" type="button" label="{{ 'license' | translate }}"
+                (click)="showLicense()"></button>
+        </div>
+
+        <div class="col-md-12 my-3" *ngIf="header">
+            <h4>{{header | uppercase}}</h4>
+        </div>
+
+        <div class="col-md-12" *ngIf="header === 'EMR'">
+
+            <ng-container>
+
+                <span>
+
+                    &nbsp;
+                    <label for="" class="d-inline-block mr-2">
+                        {{"change.status" | translate}} :
+                    </label>
+                    <p-dropdown class="d-inline-block mr-2" [options]="actionTypes" [(ngModel)]="selectedActionOfEMR"
+                        placeholder="Select a status" optionLabel="value" [showClear]="true"></p-dropdown>
+                    <button class="d-inline-block" pButton pRipple type="button" label="{{ 'apply' | translate }}"
+                        class="p-button-outlined" (click)="apply()" style="margin-left: 16px;"></button>
+
+                </span>
+
+                <p-table #dt [value]="EMRcertificateList" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [style]="{width:'100%'}" scrollHeight="400px">
+
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px;">
+                            <col style="width:150px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCount !== 0" #e
+                                    (click)="selectAllEMRCertificates(e)"></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of EMRColumns" pSortableColumn="{{col.value}}"
+                                [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-EMR>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="EMR" #e (click)="selectEMRCertificate(e)"
+                                    *ngIf="EMR.status ==='UNDER_REVIEW'">
+                                </p-tableCheckbox>
+                            </td>
+                            <td>
+                                {{EMR.year}}
+                            </td>
+                            <td>
+                                {{EMR.documentName}}
+                            </td>
+                            <td>
+                                {{EMR.createdDate | date: shortDate}}
+                            </td>
+                            <td>
+                                <span *ngIf="EMR.approvedDate && EMR.status!=='UNDER_REVIEW'">
+                                    {{EMR.approvedDate | date: shortDate}}
+                                </span>
+                                <span *ngIf="!EMR.approvedDate && EMR.rejectedDate && EMR.status!=='UNDER_REVIEW'">
+                                    {{EMR.rejectedDate | date: shortDate}}
+                                </span>
+
+                            </td>
+                            <td>
+                                <span *ngIf="EMR.status==='APPROVED' || EMR.status==='REJECTED'; else none">
+                                    {{EMR.status ==='APPROVED' ? 'Approved' : 'Rejected'}}
+                                    <button icon="pi pi-times" pTooltip="Clear status" pButton
+                                        (click)="clearEmr(EMR)"></button>
+                                </span>
+                                <ng-template #none>
+                                    <button icon="pi pi-check" pTooltip="{{'approve' | translate}}" pButton
+                                        (click)="approveEMR(EMR)"></button>
+                                    <button icon="pi pi-times" pTooltip="{{'reject' | translate}}" pButton
+                                        (click)="rejectEMR(EMR)"></button>
+
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+
+        </div>
+
+        <div class="col-md-12" *ngIf="header === 'OSHA'">
+
+            <ng-container>
+                <span>
+
+                    &nbsp;
+                    <label for="" class="d-inline-block mr-2">
+                        {{"change.status" | translate}} :
+                    </label>
+                    <p-dropdown class="d-inline-block mr-2" [options]="actionTypes" [(ngModel)]="selectedActionOfOSHA"
+                        placeholder="Select a status" optionLabel="value" [showClear]="true"></p-dropdown>
+                    <button class="d-inline-block" pButton pRipple type="button" label="{{ 'apply' | translate }}"
+                        class="p-button-outlined" (click)="applyOSHA()" style="margin-left: 16px;"></button>
+
+                </span>
+
+                <p-table #dt [value]="OSHAcertificateList" [paginator]="true" [rows]="size"
+                    [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading"
+                    [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                    styleClass="p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [style]="{width:'100%'}" scrollHeight="400px">
+
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px;">
+                            <col style="width:150px;">
+                            <col style="width:250px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCountOSHA !== 0" #e
+                                    (click)="selectAllOSHACertificates(e)"></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of OSHAColumns"
+                                pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-OSHA>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="OSHA" #e (click)="selectOSHACertificate(e)"
+                                    *ngIf="OSHA.status ==='UNDER_REVIEW'">
+                                </p-tableCheckbox>
+                            </td>
+                            <td>
+                                {{OSHA.year}}
+                            </td>
+                            <td>
+                                <span *ngIf="OSHA.optOutReason">
+                                    {{OSHA.optOutReason}}
+                                </span>
+                                <span *ngIf="OSHA.documentName">
+                                    {{OSHA.documentName}}
+                                </span>
+                            </td>
+                            <td>
+                                {{OSHA.createdDate | date: shortDate}}
+                            </td>
+                            <td>
+                                <span *ngIf="OSHA.approvedDate && OSHA.status!=='UNDER_REVIEW'">
+                                    {{OSHA.approvedDate | date: shortDate}}
+                                </span>
+                                <span *ngIf="!OSHA.approvedDate && OSHA.rejectedDate && OSHA.status!=='UNDER_REVIEW'">
+                                    {{OSHA.rejectedDate | date: shortDate}}
+                                </span>
+
+                            </td>
+                            <td>
+                                <span *ngIf="OSHA.status==='APPROVED' || OSHA.status==='REJECTED'; else none">
+                                    {{OSHA.status ==='APPROVED' ? 'Approved' : 'Rejected'}}
+                                    <button icon="pi pi-times" pTooltip="Clear status" pButton
+                                        (click)="clearOsha(OSHA)"></button>
+                                </span>
+                                <ng-template #none>
+                                    <button icon="pi pi-check" pTooltip="{{'approve' | translate}}" pButton
+                                        (click)="approveOSHA(OSHA)"></button>
+                                    <button icon="pi pi-times" pTooltip="{{'reject' | translate}}" pButton
+                                        (click)="rejectOSHA(OSHA)"></button>
+
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+
+        </div>
+
+        <div class="col-md-12" *ngIf="header === 'COI'">
+
+            <ng-container>
+
+                <p-table #dt [value]="typesOfInsurance" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [style]="{width:'100%'}" scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of COIColumns" pSortableColumn="{{col.value}}"
+                                [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-data>
+                        <tr>
+                            <td>
+                                {{data.insurance}}
+                            </td>
+                            <td>
+                                {{data.minimumLimits}}
+                            </td>
+                            <td>
+                                {{data.isLimitMeets}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="3" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+            <ng-container>
+                <span>
+
+                    &nbsp;
+                    <label for="" class="d-inline-block mr-2">
+                        {{"change.status" | translate}} :
+                    </label>
+                    <p-dropdown class="d-inline-block mr-2" [options]="actionTypes" [(ngModel)]="selectedActionOfCOI"
+                        placeholder="Select a status" optionLabel="value" [showClear]="true"></p-dropdown>
+                    <button class="d-inline-block" pButton pRipple type="button" label="{{ 'apply' | translate }}"
+                        class="p-button-outlined" (click)="applyCOI()" style="margin-left: 16px;"></button>
+
+                </span>
+                <p-table #dt [value]="COIcertificateList" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    [style]="{width:'100%'}" scrollHeight="400px">
+
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:50px;">
+                            <col style="width:150px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem" pResizableColumn>
+                                <p-tableHeaderCheckbox *ngIf="totalStatusCountCOI !== 0" #e
+                                    (click)="selectAllCOICertificates(e)"></p-tableHeaderCheckbox>
+                            </th>
+                            <th id="column_{{col.value}}" *ngFor="let col of COIDocumentsColumns"
+                                pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-COI>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="COI" #e (click)="selectCOICertificate(e)"
+                                    *ngIf="COI.status ==='UNDER_REVIEW'">
+                                </p-tableCheckbox>
+                            </td>
+                            <td>
+                                ${{COI.umbrellaLiability}}
+                            </td>
+                            <td>
+                                {{COI.documentName}}
+                            </td>
+                            <td>
+                                {{COI.createdDate | date: shortDate}}
+                            </td>
+                            <td>
+                                <span *ngIf="COI.approvedDate && COI.status!=='UNDER_REVIEW'">
+                                    {{COI.approvedDate | date: shortDate}}
+                                </span>
+                                <span *ngIf="!COI.approvedDate && COI.rejectedDate && COI.status!=='UNDER_REVIEW'">
+                                    {{COI.rejectedDate | date: shortDate}}
+                                </span>
+
+                            </td>
+                            <td>
+                                <span *ngIf="COI.status==='APPROVED' || COI.status==='REJECTED'; else none">
+                                    {{COI.status ==='APPROVED' ? 'Approved' : 'Rejected'}}
+                                    <button icon="pi pi-times" pTooltip="Clear status" pButton
+                                        (click)="clearCoi(COI)"></button>
+                                </span>
+                                <ng-template #none>
+                                    <button icon="pi pi-check" pTooltip="{{'approve' | translate}}" pButton
+                                        (click)="approveCOI(COI)"></button>
+                                    <button icon="pi pi-times" pTooltip="{{'reject' | translate}}" pButton
+                                        (click)="rejectCOI(COI)"></button>
+
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+
+
+
+        </div>
+
+        <div class="col-md-12" *ngIf="header === 'License'">
+
+            <ng-container>
+                <p-table #dt [value]="LicenseList" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-striped"
+                    styleClass="p-datatable-responsive-demo"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}"
+                    scrollHeight="400px">
+
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of LicenseColumns"
+                                pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-license>
+                        <tr>
+                            <td>
+                                {{license.name}}
+                            </td>
+                            <td>
+                                {{license.number}}
+                            </td>
+                            <td>
+                                {{license.state}}
+                            </td>
+                            <td>
+                                {{license.expiryDate | date: shortDate}}
+                            </td>
+                            <td>
+                                <a style="cursor: pointer;" (click)="downloadFile(license.id)">
+                                    <span class="material-icons">
+                                        description
+                                    </span>
+                                </a>
+                            </td>
+                            <td>
+                                {{license.createdDate | date: shortDate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="6" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+
+
+        </div>
+    </div>
+</div>
+
+
+<mat-toolbar class="d-flex fixed-bottom justify-content-between px-2 text-small mt-5">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a
+            (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a
+            (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

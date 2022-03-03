@@ -1,0 +1,143 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+
+                <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35"
+                    alt="">
+
+            </ng-container>
+            {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid cust-min-h-70">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h4 class="font-weight-bold">{{'rating.review' | translate}}</h4>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [columns]="columns" [value]="ratingDTO" [paginator]="true" [paginator]="true" [rows]="size"
+                [scrollable]="true" scrollHeight="500px" [resizableColumns]="true" styleClass="p-datatable-gridlines"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [totalRecords]="totalRecords">
+
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 150px;" *ngFor="let col of columns">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn
+                            [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                            <div *ngSwitchCase="'clientToWorker'">
+                                <p *ngIf="data.clientRating.rating!==null ; else none">
+                                    {{data.clientRating.ratingText}}
+                                    <br>{{data.clientRating.submittedBy.submittedBy.firstName}}
+                                    {{data.clientRating.submittedBy.submittedBy.lastName}}
+                                    <br> {{data.clientRating.createdDate | date: shortDate}}<br>
+                                    <span>
+                                        <span class="d-inline-block mr-2">
+                                            Quality Rating: <p-rating stars="{{data.clientRating.rating}}"
+                                                [cancel]="false" iconOffClass="pi pi-star" readonly="true"></p-rating>
+                                        </span>
+                                        <span class="d-inline-block ml-2">
+                                            Safety Rating: <p-rating stars="{{data.clientRating.submittedBy.safetyRating}}"
+                                                [cancel]="false" iconOffClass="pi pi-star" readonly="true"></p-rating>
+                                        </span>
+                                    </span>
+                                    <br>
+                                    <button [disabled]="btnDisabled" class="btn btn-sm btn-success mr-2"
+                                        *ngIf="data.clientRating.submittedBy.isReportToAdmin && !data.clientRating.submittedBy.isRejectedByAdmin && !data.clientRating.submittedBy.isAcceptedByAdmin"
+                                        (click)="openAcceptDialog(data.clientRating)"
+                                        pTooltip="{{'accept.rating' | translate}}">
+                                        <i aria-hidden="true" class="fa fa-check"></i>
+                                    </button>
+
+                                    <button [disabled]="btnDisabled" class="btn btn-sm btn-danger"
+                                        *ngIf="data.clientRating.submittedBy.isReportToAdmin && !data.clientRating.submittedBy.isRejectedByAdmin && !data.clientRating.submittedBy.isAcceptedByAdmin"
+                                        (click)="openRejectDialog(data.clientRating)"
+                                        pTooltip="{{'reject.rating' | translate}}">
+                                        <i aria-hidden="true" class="fa fa-times"></i>
+                                    </button>
+
+                                </p>
+                                <ng-template #none>
+                                    <p style="color: red;"> PENDING </p>
+                                </ng-template>
+                            </div>
+                            <div *ngSwitchCase="'workerToClient'">
+                                <p *ngIf="data.workerRating.rating!==null; else none">
+                                    {{data.workerRating.ratingText}}
+                                    <br>{{data.workerRating.submittedBy.submittedBy.firstName}}
+                                    {{data.workerRating.submittedBy.submittedBy.lastName}}
+                                    <br> {{data.workerRating.createdDate | date: shortDate}}<br>
+                                    Quality rating<p-rating stars="{{data.workerRating.rating}}" [cancel]="false"
+                                        iconOffClass="pi pi-star" readonly="true"></p-rating>
+
+                                    <button [disabled]="btnDisabled" class="btn btn-sm btn-success mr-2"
+                                        *ngIf="data.workerRating.submittedBy.isReportToAdmin && !data.workerRating.submittedBy.isRejectedByAdmin && !data.workerRating.submittedBy.isAcceptedByAdmin"
+                                        (click)="openAcceptDialog(data.workerRating)"
+                                        pTooltip="{{'accept.rating' | translate}}">
+                                        <i aria-hidden="true" class="fa fa-check"></i>
+                                    </button>
+
+                                    <button [disabled]="btnDisabled" class="btn btn-sm btn-danger"
+                                        *ngIf="data.workerRating.submittedBy.isReportToAdmin && !data.workerRating.submittedBy.isRejectedByAdmin && !data.workerRating.submittedBy.isAcceptedByAdmin"
+                                        (click)="openRejectDialog(data.workerRating)"
+                                        pTooltip="{{'reject.rating' | translate}}">
+                                        <i aria-hidden="true" class="fa fa-times"></i>
+                                    </button>
+
+
+                                </p>
+                                <ng-template #none>
+                                    <p style="color: red;"> PENDING </p>
+                                </ng-template>
+
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="2" class="text-center">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+
+</div>
+
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a
+            (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a
+            (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

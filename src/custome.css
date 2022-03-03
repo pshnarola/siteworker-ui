@@ -1,0 +1,34 @@
+.p-button.p-button-danger:enabled:hover, .p-buttonset.p-button-danger > .p-button:enabled:hover, .p-splitbutton.p-button-danger > .p-button:enabled:hover {
+    background: #c02929;
+    color: #ffffff;
+    border-color: #c02929!important;
+}
+app-bid-quotation .p-datatable-scrollable-header-box{
+    padding: 0!important;
+}
+.mat-drawer-backdrop{
+    display: none!important;
+}
+.filter-data-popup .p-overlaypanel-content{
+    display: inline-block;
+    /* max-height: 450px; */
+    max-height: 470px;
+    overflow: auto;
+}
+/* p-autocomplete .p-autocomplete {
+    height: inherit!important;
+    min-height: 37px!important;
+}
+p-autocomplete .p-autocomplete-input-token input{
+    min-height: 31px;
+}
+p-autocomplete .p-autocomplete-input.p-inputtext{
+    min-height: 37px;
+}
+p-autocomplete .p-autocomplete.p-autocomplete-dd{
+    min-height: 37px!important;
+} */
+
+/* p-autocomplete .p-autocomplete{
+    min-height: 37px;
+} */

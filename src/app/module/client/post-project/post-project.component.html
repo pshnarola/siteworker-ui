@@ -1,0 +1,45 @@
+
+<div class="w-100">
+    <div id="post-project-stepper" class="bs-stepper">
+        <div class="bs-stepper-header">
+            <div class="step col" data-target="#add-new-project">
+                <button class="step-trigger">
+                    <span class="bs-stepper-circle">1</span><br>
+                    <span class="bs-stepper-label">Add New Project</span>
+                </button>
+            </div>
+            <div class="step col" data-target="#jobsites">
+                <button class="step-trigger">
+                    <span class="bs-stepper-circle">2</span>
+                    <span class="bs-stepper-label">Jobsites</span>
+                </button>
+            </div>
+            <div class="step col" data-target="#review-and-confirm">
+                <button class="step-trigger">
+                    <span class="bs-stepper-circle">3</span>
+                    <span class="bs-stepper-label">Review & Confirm</span>
+                </button>
+            </div>
+            <div class="step col" data-target="#subcontractor-selection">
+                <button class="step-trigger">
+                    <span class="bs-stepper-circle">4</span>
+                    <span class="bs-stepper-label">Subcontractor Selection</span>
+                </button>
+            </div>
+        </div>
+        <div class="bs-stepper-content">
+            <div id="add-new-project" class="content" role="tabpanel">
+                <app-add-new-project></app-add-new-project>
+            </div>
+            <div id="jobsites" class="content" role="tabpanel">
+                <app-jobsites></app-jobsites>
+            </div>
+            <div id="review-and-confirm" class="content" role="tabpanel">
+                <app-review></app-review>
+            </div>
+            <div id="subcontractor-selection" class="content" role="tabpanel">
+                <app-subcontractor-selection></app-subcontractor-selection>
+            </div>
+        </div>
+    </div>
+</div>

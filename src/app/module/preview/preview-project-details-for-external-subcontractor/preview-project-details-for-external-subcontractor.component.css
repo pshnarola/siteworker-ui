@@ -1,0 +1,23 @@
+/* .footer-part-custom {
+    position: relative;
+}
+
+.footer-part-custom:after {
+    content: "";
+    background: url(../../../../assets/images/WaterMark_img.png) no-repeat;
+    position: absolute;
+    bottom: 35px;
+    right: 0;
+    width: 125px;
+    height: 130px;
+    background-size: contain;
+    opacity: 0.2;
+    pointer-events: none;
+} */
+
+.footer-part {
+    /* position: relative; */
+    position: absolute !important;
+    width: 100%;
+    bottom: 0;
+}

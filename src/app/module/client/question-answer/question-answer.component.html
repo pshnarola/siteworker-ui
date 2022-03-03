@@ -1,0 +1,141 @@
+<div class="container-fluid" *ngIf="selectedProject">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold text-left">
+                <span>{{"q.a" | translate}}</span>
+                <span *ngIf="selectedProject"> - {{selectedProject.title}}</span>
+                <span *ngIf="selectedJobsite"> / {{selectedJobsite.title}}</span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 p-3">
+            <h5 class="float-left font-weight-bold">
+                <span>{{"q.a" | translate}}</span>
+            </h5>
+            <div class="float-right">
+                <button pButton pRipple type="button" (click)="downloadExcel()" label="{{'export.to.excel' |translate}}" class="p-button-outlined"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="datatable-card">
+                <form [formGroup]="questionAnswerForm" (ngSubmit)="submitAnswer()">
+                    <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" #dt (onLazyLoad)="customSort($event)" [lazy]="true" [value]="questionAnswerForm.get('questionAndAnswerList')['controls']" [paginator]="true"
+                        [rows]="size" [totalRecords]="totalRecords" [loading]="loading" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="rowsPerPageOptions">
+                        <ng-template pTemplate="colgroup" let-columns>
+                            <colgroup>
+                                <col style="width:150px;">
+                                <col style="width:150px;">
+                                <col style="width:160px;">
+                                <col style="width:300px;">
+                                <col style="width:250px;">
+                            </colgroup>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" [hidden]="col.isHidden" pResizableColumn>
+                                    {{col.label}}
+                                    <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-questionAnswer let-rowIndex="rowIndex">
+                            <ng-container formArrayName="questionAndAnswerList">
+                                <tr [formGroupName]="rowIndex">
+                                    <td>
+                                        <p-button (click)="redirectToSubcontractor(questionAnswer.get('subcontractor').value.id)" styleClass="p-button-link">
+                                            {{questionAnswer.get('subcontractor').value.firstName}} {{questionAnswer.get('subcontractor').value.lastName}}
+
+                                        </p-button>
+                                    </td>
+                                    <td>
+                                        <p-button (click)="redirectToJobsite(questionAnswer.get('jobSite').value.id)" styleClass="p-button-link">{{questionAnswer.get('jobSite').value.title}}
+
+                                        </p-button>
+                                    </td>
+                                    <td>{{questionAnswer.get('postedDate').value | date:"shortDate"}}</td>
+                                    <td>
+                                        <span class="text-wrap">
+                                            {{questionAnswer.get('question').value}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" type="text" maxlength="500" placeholder="Enter answer" formControlName="answer" pInputText id="answer"></textarea>
+                                        <div class="text-danger" *ngIf="questionAnswer.get('answer').errors &&
+                                    (questionAnswer.get('answer').dirty || questionAnswer.get('answer').touched)">
+                                            <div *ngIf="questionAnswer.get('answer').errors?.maxlength">Minimum length sould be 500</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td class="text-center" [attr.colspan]="5">
+                                    {{'no.record.found' | translate}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-6">
+            <div class="">
+                <label for="document">{{ "upload.documents" | translate }}</label>
+
+                <div class="d-flex">
+                    <ngx-dropzone class="mr-3 px-2" [accept]="'application/pdf,image/*'" (change)="selectFile($event)" multiple [maxFileSize]="10000000">
+                        <ngx-dropzone-label> {{ 'drag.drop.placeholder' | translate }} </ngx-dropzone-label>
+                        <ngx-dropzone-preview *ngFor="let f of files" [removable]="true">
+                            <ngx-dropzone-label style="margin:5px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                        </ngx-dropzone-preview>
+                    </ngx-dropzone>
+                    <button pButton pRipple type="button" label="Upload Document" (click)="uploadFiles()" class="d-flex p-button-outlined pl-1 pr-1"></button>
+                </div>
+            </div>
+            <div class="card uploaded-files p-chip" *ngFor="let file of uploadedFile;let i = index">
+                <p>{{file.fileName}}</p>
+                <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openWarnigDialogForUploaded(file.fileName,file.id)"></i>
+            </div>
+            <div class="card uploaded-files p-chip" *ngFor="let file of selectedFile;let i = index">
+                <p>{{file.name}}</p>
+                <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openWarnigDialog(file.name,i,file)"></i>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="">
+                <label for="document">Upload excel</label>
+                <div class="d-flex">
+                    <ngx-dropzone class="mr-3 px-2" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" (change)="onSelect($event)" [maxFileSize]="10000000">
+                        <ngx-dropzone-label>{{ 'drag.and.drop.placeholder' | translate }}</ngx-dropzone-label>
+                        <ngx-dropzone-preview *ngFor="let f of excelFile" [multiple]='false' [removable]="true" (removed)="onRemove(f)">
+                            <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                        </ngx-dropzone-preview>
+                    </ngx-dropzone>
+                    <button pButton pRipple type="button" label="{{'upload.excel' |translate}}" (click)="uploadExcel()" class="d-flex p-button-outlined"></button>
+                </div>
+                <div>
+                    <div class="card uploaded-files p-chip" *ngFor="let file of excelFileToShow;let i = index">
+                        <p>{{file.name}}</p>
+                        <i class="fa fa-times-circle text-danger h5 mb-0 cursor-pointer" pTooltip="Delete" (click)="openWarnigDialogForExcel(file)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 align-items-center text-right">
+            <button type="button" class="btn btn-primary" (click)="submitAnswer()" title="submit">Submit</button>
+        </div>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,19 @@
+::ng-deep.mat-dialog-container {
+    padding: 0 !important;
+    width: 100%;
+    overflow: hidden;
+}
+
+::ng-deep.mat-dialog-content {
+    padding: 30px;
+}
+
+::ng-deep.mat-dialog-container ::ng-deep.mat-dialog-content {
+    display: block;
+    overflow: hidden;
+}
+
+.mat-dialog-actions {
+    padding-bottom: 30px;
+    padding-right: 0px;
+}

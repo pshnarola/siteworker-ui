@@ -1,0 +1,85 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">        
+    </div>
+    <div style="margin-right: 10px;" class="d-flex align-self-center main-nav">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+                
+                    <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35" alt="">
+                
+            </ng-container>             
+                {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid mb-3 Common_Profile_Border_Bottom">
+    <div class=" mx-auto mt-1 bg">
+        <div class="row View_Profile_bg">
+            <div class="col-md-12 tile2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class=""> {{'projects' | translate }}</h4>
+                    </div>
+                    <ng-container *ngIf="projectData.length !== 0; else noProjectFound">
+
+                        <ng-container *ngIf="type === 'client'">
+                            <ul class="list-group-wrapper" *ngFor="let project of projectData">
+                                <li>
+                                    <h5 class="mb-0">{{project.title}}</h5>
+                                    <p class="text-muted mb-2">
+                                        <span *ngIf="project.projectCompletedDate;else projectOngoing">
+                                            {{ project.projectPostedDate | date : 'mediumDate'}} to
+                                            {{project.projectCompletedDate | date : 'mediumDate'}}
+                                        </span>
+                                        <ng-template #projectOngoing>
+                                            {{'ongoing' | translate}} {{ project.projectPostedDate | date
+                                            : 'mediumDate'}}
+                                        </ng-template>
+                                    </p>
+                                    <p class="text-primary mb-2"><i class="fa fa-map-marker"></i> {{
+                                        project.region}} , {{ project.state}}
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+
+                        <ng-container *ngIf="type === 'subcontractor'">
+                            <ul class="list-group-wrapper" *ngFor="let project of projectData">
+                                <li>
+                                    <h5 class="mb-0">{{project.projectDetail.title}}</h5>
+                                    <p class="text-muted mb-2">
+                                        <span *ngIf="project.projectDetail.projectCompletedDate;else projectOngoing">
+                                            {{ project.projectDetail.projectPostedDate | date : 'mediumDate'}} to
+                                            {{project.projectDetail.projectCompletedDate | date : 'mediumDate'}}
+                                        </span>
+                                        <ng-template #projectOngoing>
+                                            {{'ongoing' | translate}} {{ project.projectDetail.projectPostedDate | date
+                                            : 'mediumDate'}}
+                                        </ng-template>
+                                    </p>
+                                    <p class="text-primary mb-2"><i class="fa fa-map-marker"></i> {{
+                                        project.projectDetail.region}} , {{ project.projectDetail.state}}
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+
+                    </ng-container>
+                    <ng-template #noProjectFound>
+                        <div class="w-100">
+                            <p class="mt-5 text-center">{{'no.projects.found' | translate}}</p>
+                        </div>
+                    </ng-template>
+                    <p-paginator [rows]="size" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true" (onPageChange)="paginate($event)"></p-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

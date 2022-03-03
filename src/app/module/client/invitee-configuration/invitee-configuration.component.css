@@ -1,0 +1,20 @@
+.filed-margin {
+    margin-top: 15px;
+}
+
+.job-margin {
+    margin-top: 56px;
+}
+
+.project-margin {
+    margin-top: 121px;
+}
+
+.slider-margin {
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-fw {
+    font-weight: 600;
+}

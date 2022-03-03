@@ -1,0 +1,243 @@
+<div class="container-fluid" *ngIf="selectedProject">
+    <div class="row my-2">
+        <div class="col-xl-12">
+            <p-button styleClass="p-button-sm" style="cursor: auto!important;"> {{"client.suggested.project.cost" | translate}} : {{selectedProject.cost | currency}} </p-button>
+            <p-button label="{{ 'filter' | translate }}" class="float-right" (click)="onFilterOpen()"><i class="fa fa-filter mr-1"></i></p-button>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="isFilterOpened">
+                <div class="card-body">
+                    <form [formGroup]="myForm">
+                        <div class="row">
+                            <div class="col-md-4 p-field ProWid">
+                                <label>{{'subcontractor.name' |translate}}</label>
+                                <p-autoComplete forceSelection="true" minLength="3" formControlName="subcontractorName" [field]="getFullName" [multiple]="true" [dropdown]="true" (completeMethod)="getSubcontractorByName($event)" [suggestions]="filterSubcontractor" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" placeholder="Select subcontractor name">
+                                </p-autoComplete>
+                            </div>
+                            <div class="col-md-4 p-field">
+                                <label>{{"bid.amount.min" | translate }} : </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text border-right-0 bg-white">$</span>
+                                    </div>
+                                    <input type="text" class="form-control text-right border-left-0" (change)="onChangeAnnualFrom($event)" formControlName="minRate" placeholder="{{ 'min.0' | translate}}" pKeyFilter="pint" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 p-field">
+                                <label>{{"bid.amount.max" | translate }} : </label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text border-right-0 bg-white">$</span>
+                                    </div>
+                                    <input type="text" class="form-control text-right border-left-0" (change)="onChangeAnnualTo($event)" formControlName="maxRate" placeholder="{{ 'max.0' | translate}}" pKeyFilter="pint" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 p-field">
+                                <label>{{"bid.submitted.from.date" | translate }} : </label>
+                                <p-calendar [style]="{'height':'35px'}" [readonlyInput]="true" [showIcon]="true" [maxDate]="bidSubmittedToDate" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedFromDate"
+                                    placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy"></p-calendar>
+                            </div>
+                            <div class="col-md-6 p-field">
+                                <label>{{"bid.submitted.to.date" | translate }} : </label>
+                                <p-calendar [style]="{'height':'35px'}" [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY"
+                                    dateFormat="dd/mm/yy"></p-calendar>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 p-field">
+                                <label>{{'average.ratings' |translate}}</label>
+                                <p-autoComplete forceSelection="true" placeholder="Select average ratings" [dropdown]="true" [style]="{'width':'100%','height':'35px'}" formControlName="avgRating" [inputStyle]="{'width':'100%'}" [suggestions]="filteredAverageRating" field="label" (completeMethod)="filterAverageRating($event)">
+                                </p-autoComplete>
+                            </div>
+                            <div class="col-md-6 p-field ProWid">
+                                <label>{{'total.experience' |translate}}</label>
+                                <p-autoComplete [dropdown]="true" forceSelection="true" [style]="{ 'width': '100%','height':'35px'}" formControlName="totalExperience" (completeMethod)="filterExperience($event)" field="level" [suggestions]="filteredExceprience" [multiple]="true" [inputStyle]="{ 'width': '100%'}"
+                                    placeholder="Select total experience">
+                                </p-autoComplete>
+                            </div>
+                        </div>
+                        <div class="col-md-12 float-right d-inline">
+                            <button pButton type="button" class="p-button-outlined mr-3" label="{{ 'apply' | translate}}" (click)="onFilterProject()"></button>
+
+                            <button pButton pRipple type="button" label="Clear" class="p-button-sm" class="p-button-danger" (click)="onClearFilter()"></button>
+                        </div>
+                        <br>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="p-field col-lg-9">
+            <p-table #dt [columns]="subcontractorColumns" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [value]="subcontractors" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                [rowsPerPageOptions]="rowsPerPageOptions" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px">
+
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width:70px">
+                        <col style="width:140px">
+                        <col style="width:120px">
+                        <col style="width:120px">
+                        <col style="width:120px">
+                        <col style="width:114px">
+                    </colgroup>
+                </ng-template>
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-i="rowIndex" let-subcontractor>
+                    <tr>
+                        <td *ngIf="!isSubcontractorSelected(subcontractor.projectBidDetailDTO.subContractor.id)" class="text-center">
+
+                            <input style="display: none;" type="checkbox" (change)="onSelectSubcontractor(subcontractor)" id={{subcontractor.projectBidDetailDTO.subContractor.id}} checked>
+                            <label class="star" for={{subcontractor.projectBidDetailDTO.subContractor.id}}></label>
+                        </td>
+                        <td *ngIf="isSubcontractorSelected(subcontractor.projectBidDetailDTO.subContractor.id)" class="text-center">
+
+                            <input style="display: none;" type="checkbox" (change)="removeFromSelectedSubcontractor(subcontractor)" id={{subcontractor.projectBidDetailDTO.subContractor.id}}>
+                            <label class="star" for={{subcontractor.projectBidDetailDTO.subContractor.id}}></label>
+                        </td>
+                        <td>
+                            <p-button (click)="redirectToSubcontractor(subcontractor.projectBidDetailDTO.subContractor.id)" styleClass="p-button-link" class="text-wrap">
+                                {{subcontractor.projectBidDetailDTO.subContractor.firstName}} {{subcontractor.projectBidDetailDTO.subContractor.lastName}}
+                            </p-button>
+
+                        </td>
+                        <td class="text-wrap">{{subcontractor.projectBidDetailDTO.subContractorCost | currency}}</td>
+                        <td *ngIf="subcontractor.subContractorTotalExperience" class="text-wrap">{{subcontractor.subContractorTotalExperience}}</td>
+                        <td *ngIf="!subcontractor.subContractorTotalExperience" class="text-wrap">New Subcontractor</td>
+                        <td *ngIf="subcontractor.subContractorAvgRating" class="text-wrap">{{subcontractor.subContractorAvgRating}}</td>
+                        <td *ngIf="!subcontractor.subContractorAvgRating" class="text-wrap">New Subcontractor</td>
+                        <td *ngIf="subcontractor.subContractorSuccessRatio" class="text-wrap">{{subcontractor.subContractorSuccessRatio}}</td>
+                        <td *ngIf="!subcontractor.subContractorSuccessRatio" class="text-wrap">New Subcontractor</td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center" [attr.colspan]="6">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="datatable-card">
+                <p-table #dt [lazy]="true" [rows]="size" [value]="selectedSubcontractor" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines"
+                    [scrollable]="true" scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 50px;">
+                        </colgroup>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pResizableColumn style="white-space: break-spaces;">Shortlisted Subcontractor</th>
+                            <th pResizableColumn>Action</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                        <ng-container>
+                            <tr>
+                                <td class="text-wrap">{{data.projectBidDetailDTO.subContractor.firstName}} {{data.projectBidDetailDTO.subContractor.lastName}}</td>
+                                <td class="BtnPadd">
+
+                                    <a class="btn" (click)="redirectToAwardProject(data.projectBidDetailDTO.subContractor.id)">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+
+                                    <a style="color:red;" class="btn" (click)="removeFromSelectedSubcontractor(data)">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+
+                                    <button class="btn" (click)="showMessageDialog(data.projectBidDetailDTO.subContractor)">
+                                        <i class="fa fa-envelope"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td class="text-center" [attr.colspan]="2">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+                {{'maximum.10.selection.allowed' | translate}}
+            </div>
+        </div>
+    </div>
+
+    <div class="Dilog_job_bid">
+        <p-dialog [(visible)]="dialog" [style]="{width: '500px'}" header="{{dialogHeader}}" [modal]="true" (onHide)="hideDialog()" styleClass="p-fluid">
+
+
+            <ng-template pTemplate="content">
+                <form [formGroup]="myChatForm" (ngSubmit)="sendMessage()">
+
+                    <div class="p-field">
+                        <label>{{'message' | translate}}*</label>
+                        <textarea pInputText formControlName="message" placeholder="{{'enter.message' | translate}}" maxLength="1000"></textarea>
+                        <div class="p-invalid" *ngIf="(submitted && !myChatForm.get('message').valid) || (!myChatForm.get('message').valid && myChatForm.get('message').touched)">
+                            <div *ngIf="(myChatForm.get('message').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-field">
+                        <label>{{ 'upload.documents' | translate }}</label>
+                        <div class="custom-file">
+                            <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                <ngx-dropzone-label>{{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                </ngx-dropzone-label>
+                            </ngx-dropzone>
+                        </div>
+                    </div>
+                </form>
+                <div *ngIf="files">
+                    <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                        <p>
+                            {{file.name}}
+                        </p>
+                        <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></button>
+                    </div>
+                </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="{{'send' | translate}}" icon="pi pi-check" class="p-button-text" (click)="uploadFile()"></button>
+            </ng-template>
+
+        </p-dialog>
+    </div>
+</div>

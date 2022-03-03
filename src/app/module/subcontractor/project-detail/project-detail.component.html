@@ -1,0 +1,203 @@
+<div class="container-fluid" *ngIf="projectDetail">
+
+    <div class="row bg-primary text-black p-2">
+        <div class="col-xl-8 align-self-center">
+            <div class="row">
+                <div class="col-xl-6 col-md-6 d-flex align-items-center">
+                    <div class="mr-2"><img src="assets/images/project_name_icon.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">Project Name</p>
+                        <p class="mb-0" *ngIf="projectDetail">
+                            {{projectDetail.title}}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6 d-flex align-items-center">
+                    <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                    <div>
+                        <p class="font-weight-bold mb-0">Client Name</p>
+                        <p class="mb-0" *ngIf="projectDetail.company;else none">
+                            {{projectDetail.company.name}}
+                        </p>
+                        <ng-template #none>
+                            {{'n.a' | translate }}
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="row">
+                <div class="col-xl-6 col-md-6 align-self-center">
+                    <p class="text-muted mb-0" for="status">{{'status' |translate}}</p>
+                    <p class="font-weight-bold mb-0" *ngIf="projectDetail">
+                        {{projectDetail.status === 'COMPLETED'? 'Completed': projectDetail.status === 'CANCELLED'? 'Cancelled': projectDetail.status === 'POSTED'? 'Posted': projectDetail.status === 'DRAFT'? 'Draft': "In Progress"}}
+                    </p>
+                </div>
+                <div class="col-xl-6 col-md-6 align-self-center">
+                    <p class="text-muted mb-0" for="supervisor">Assigned Supervisor</p>
+                    <p class="font-weight-bold mb-0" *ngIf="projectDetail.supervisor">
+                        {{projectDetail.supervisor.firstName}} {{projectDetail.supervisor.lastName}}
+                    </p>
+                    <p class="mb-0" *ngIf="!projectDetail.supervisor">
+                        {{'n.a' | translate }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-4">{{'project.details' | translate}}</h5>
+            <div class="card mt-2 bg-grey2">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.user">
+                                    {{projectDetail.user.firstName}} {{projectDetail.user.lastName}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/category.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'category' | translate}} :</p>
+                                <p class="text-muted mb-0">
+                                    {{projectDetail.industry ? projectDetail.industry.name : ''}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                            <div class="mr-2"><img src="assets/images/negotiation.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.negotiable' | translate}} :</p>
+                                <p class="text-muted mb-0">
+                                    {{projectDetail.negotiable === true ? 'Yes' : 'No'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+
+                            <div class="mr-2"><img src="assets/images/location.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.region && projectDetail.state; else none">
+                                    {{projectDetail.region}} , {{projectDetail.state}}
+                                </p>
+                                <ng-template #none> </ng-template>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.due.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.bidDueDate; else none">
+                                    {{projectDetail.bidDueDate | date:'mediumDate'}}
+                                </p>
+                                <ng-template #none> </ng-template>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/start_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'start.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.startDate; else none">
+                                    {{projectDetail.startDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-md-6 col-lg-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/estimate_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'estimated.end.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.completionDate; else none">
+                                    {{projectDetail.completionDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-4">Jobsites</h5>
+            <ng-container *ngIf="projectDetail.jobsite">
+                <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" #dt [value]="projectDetail.jobsite" [first]="first" (onPage)="paginate($event)" [paginator]="true" [rows]="size" [totalRecords]="totalRecords"
+                    [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:150px">
+                            <col style="width:250px">
+                            <col style="width:130px">
+                            <col style="width:140px">
+                            <col style="width:130px">
+                            <col style="width:150px">
+                            <col style="width:150px">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                        <tr *ngIf="jobSite.id !== 'jid'">
+                            <td>
+                                <p-button (click)="onJobSiteClick(jobSite.id)" styleClass="p-button-link">{{jobSite.title}}</p-button>
+                            </td>
+                            <td class="text-wrap">
+                                <span class="col-xl-12" *ngIf="jobSite.description.length <= truncateLength ">
+                                {{jobSite.description}}
+                            </span>
+                                <span class="col-xl-12" *ngIf="jobSite.description.length > truncateLength ">
+                                <app-read-more [content]="jobSite.description" [limit]=truncateLength
+                                [completeWords]="true">
+                            </app-read-more>
+                        </span>
+                            </td>
+                            <td>{{jobSite.cost | currency}} </td>
+                            <td>
+                                <p *ngIf="jobSite.bidAmount">
+                                    {{jobSite.bidAmount | currency}}
+                                </p>
+                                <p *ngIf="!jobSite.bidAmount">
+                                    N/A
+                                </p>
+                            </td>
+                            <td>{{jobSite.city}} </td>
+                            <td>{{jobSite.state}} </td>
+                            <td>{{jobSite.zipCode}} </td>
+                        </tr>
+                        <tr *ngIf="jobSite.id == 'jid' && projectDetail.jobsite.length == 1">
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!projectDetail">
+    <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+</div>

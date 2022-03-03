@@ -1,0 +1,47 @@
+<div class="container-fluid">
+
+    <div class="m-5">
+        <p><b>Gamification Configuration</b></p>
+        <p-inputSwitch [(ngModel)]="isGamificationEnabled" pTooltip="{{isGamificationEnabled ? 'Status: Enabled' : 'Status: Disabled'}}" tooltipPosition="bottom" (onChange)="onToggle($event)">
+        </p-inputSwitch>
+        <p>By enabling Gamification Configuration, Leader Board will be displayed in respective modules and Gamification Algorithm will start calculating rankings at the end of each month.</p>
+    </div>
+
+    <div class="">
+
+        <p-tabView styleClass="tabview-custom p-3" (onChange)="handleChange($event)">
+
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <span>Client </span>
+                </ng-template>
+                <ng-container>
+                    <app-client-gamification-configuration>
+                    </app-client-gamification-configuration>
+                </ng-container>
+            </p-tabPanel>
+
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <span>Subcontractor </span>
+                </ng-template>
+                <ng-container>
+                    <app-subcontractor-gamification-configuration>
+                    </app-subcontractor-gamification-configuration>
+                </ng-container>
+            </p-tabPanel>
+
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <span>Worker </span>
+                </ng-template>
+                <ng-container>
+                    <app-worker-gamification-configuration>
+                    </app-worker-gamification-configuration>
+                </ng-container>
+            </p-tabPanel>
+
+        </p-tabView>
+
+    </div>
+</div>

@@ -1,0 +1,145 @@
+<div class="container-fluid">
+
+    <div class="row my-3">
+        <div class="col-md-12">
+            <button pButton class="bg-admin mr-3" (click)="addJobTitle()" *ngIf="showButtons" label="{{'add.new' | translate}}"></button>
+            <button pButton class="bg-admin mr-3" (click)="disableSelectedJobTitle()" *ngIf="showButtons" label="{{'disable.selected' | translate}}"></button>
+            <button pButton class="bg-admin" (click)="download(fileName)" label="{{ 'template' | translate }}"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="row" *ngIf="showButtons">
+                                <div class="col-xl-6">
+                                    <div class="p-field mt-4 p-fluid">
+                                        <ngx-dropzone [accept]="'.xlsx, .xls'" [multiple]="false" (change)="selectFile($event)">
+                                            <ngx-dropzone-label><span style="font-size: small;">Drag & Drop Excel Document Here or Click to Upload</span></ngx-dropzone-label>
+                                        </ngx-dropzone>
+                                        <div *ngIf="selectedFiles">
+                                            <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of selectedFiles; let i = index">
+                                                <p>
+                                                    {{file.name}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 d-flex align-items-center mt-3">
+                                    <button pButton class="p-button-outlined" [disabled]="!selectedFiles" (click)="uploadBulk()" label="{{'bulk.upload' | translate}}"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="p-field p-fluid">
+                                        <label for="name">{{ "worker.job.title" | translate }} : </label>
+                                        <input type="text" id="job_title_searchbox" [(ngModel)]="jobTitleFilterValue" class="form-control" placeholder="{{'type.to.filter'| translate}}" />
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 d-flex align-items-center mt-3">
+                                    <button pButton class="p-button-outlined" (click)="filter()" label="{{ 'search'| translate}}"></button>&nbsp;&nbsp;
+                                    <button pButton (click)="clear()" class="bg-admin" label="{{ 'clear'| translate}}" class="p-button-danger"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [value]="data" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [(selection)]="selectedJobTitle" [paginator]="true" [rows]="tableRowSize" [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} titles" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="tablePaginateDropdown">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 10%;">
+                        <col style="width: 20%;">
+                        <col style="width: 30%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn> {{ "sr.no" | translate }}</th>
+                        <th id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}" pResizableColumn>
+                            {{col.label}}
+                            <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-jobTitle>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="jobTitle"></p-tableCheckbox>
+                        </td>
+                        <td>{{i+1}}</td>
+                        <td>{{jobTitle.title}}</td>
+                        <td>
+
+                            <button [disabled]="btnDisabled" class="btn btn-success mr-2 btn-sm" (click)="editJobTitle(jobTitle)" pTooltip="{{'edit' | translate}}">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                            <button [disabled]="btnDisabled" class="btn btn-warning mr-2 btn-sm" *ngIf="!jobTitle.isEnable" (click)="openDialog(jobTitle.id,jobTitle.title,jobTitle.isEnable)" pTooltip="{{'enable' | translate}}">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                </button>
+                            <button [disabled]="btnDisabled" class="btn btn-danger mr-2 btn-sm" *ngIf="jobTitle.isEnable" (click)="openDialog(jobTitle.id,jobTitle.title,jobTitle.isEnable)" pTooltip="{{'disable' | translate}}">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="4" class="text-center">
+                            {{'no.record.found'|translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+
+<p-dialog [(visible)]="jobTitleDialog" [style]="{width: '450px'}" header="{{dialogHeader}}" [modal]="true" styleClass="p-fluid" (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="jobTitleForm" (ngSubmit)="onAddJobTitle()">
+            <div class="p-field">
+                <label for="name">{{ "name" | translate }}* </label>
+                <input class="form-control" type="text" placeholder="Enter Name" pInputText id="name" formControlName="title" required maxLength="50" />
+                <div class="p-invalid" *ngIf="jobTitleForm.controls['title'].touched && (jobTitleForm.controls['title'].hasError('required') && !jobTitleForm.controls['title'].valid)
+                    || (submitted && (jobTitleForm.controls['title'].hasError('required') && !jobTitleForm.controls['title'].valid))">
+                    {{'required' | translate}}</div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="bg-admin" (click)="hideDialog()"></button>
+        <button (click)="onAddJobTitle()" pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-outlined"></button>
+    </ng-template>
+
+</p-dialog>
+
+
+
+<!-- <app-ic-job-title></app-ic-job-title> -->

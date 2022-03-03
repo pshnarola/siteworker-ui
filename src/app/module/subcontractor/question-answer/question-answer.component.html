@@ -1,0 +1,109 @@
+<div class="container-fluid" *ngIf="isProjectSelected">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-warning text-dark">
+            <h3 class="font-weight-bold float-left">{{"q.a" | translate}}</h3>
+            <div class="float-right">
+                <button pButton pRipple type="button" class="bg-black"
+                label="{{ 'view.answer' | translate }}"
+                (click)="viewAnswer()"></button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="float-right">
+                <button type="button" 
+                    class="btn btn-warning" (click)="addTableRow()">Add Row</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12">  
+            <form [formGroup]="questionAnswerForm">  
+                <p-table [value]="questionAnswerForm.get('questionAndAnswerList')['controls']"
+                [resizableColumns]="true">  
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 20%;">
+                            <col style="width: 80%;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">  
+                        <tr>  
+                            <th pResizableColumn>{{"jobsite" |translate}}</th>
+                            <th pResizableColumn>{{"question" |translate}}</th>
+                        </tr>  
+                    </ng-template>  
+                    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">  
+                        <ng-container formArrayName="questionAndAnswerList">  
+                            <tr [formGroupName]="rowIndex">  
+                                <td>  
+                                    <p-autoComplete 
+                                        formControlName="jobSite"
+                                        [suggestions]="filteredJobsite" 
+                                        (completeMethod)="filterJobsite($event)"
+                                        forceSelection="true"
+                                        field="title" [dropdown]="true"
+                                        placeholder="Select jobsite"
+                                        appendTo="body"
+                                        [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                        #enterpriseIdDrpdwn
+                                        [ngClass]="{'p-dropdown': enterpriseIdDrpdwn.value === null
+                                        && rowData.get('question').value !== ''}">
+                                        <ng-template let-jobsite pTemplate="item">
+                                        <div>
+                                            <div>{{jobsite.title}}</div>
+                                        </div>
+                                        </ng-template>
+                                    </p-autoComplete>
+                                        <div 
+                                        *ngIf="enterpriseIdDrpdwn.value === null
+                                         && rowData.get('question').value !== ''"
+                                         style="color:red">
+                                           {{'select.jobsite.error' |translate}}
+                                        </div>
+                                </td>  
+                                <td>  
+                                    <textarea  
+                                        rows="3" 
+                                        maxlength="500"
+                                        class="form-control" 
+                                        placeholder="Enter question"
+                                        formControlName="question"
+                                        [ngClass]="{'invalid': (rowData.get('jobSite').value !== null 
+                                                && (rowData.get('question').touched && 
+                                                rowData.get('question').value === ''))
+                                                || (rowData.get('jobSite').value !== null 
+                                                && (submitted && 
+                                                rowData.get('question').value === ''))}"></textarea> 
+                                        <div 
+                                        *ngIf="(rowData.get('jobSite').value !== null 
+                                        && (rowData.get('question').touched && rowData.get('question').value === '') )
+                                        || (rowData.get('jobSite').value !== null 
+                                                && (submitted && 
+                                                rowData.get('question').value === ''))"
+                                         style="color:red">
+                                         {{'enter.question.error' |translate}}
+                                        </div>  
+                                </td>  
+                            </tr>  
+                        </ng-container>  
+                    </ng-template>  
+                </p-table>  
+            </form>  
+        </div> 
+        <br>
+        <div class="col-xl-12">
+            <div class="float-right">
+                <button type="button" class="btn btn-warning mt-2"
+                (click)="submitQuestions()"
+                title="submit">Submit</button>
+            </div>
+        </div> 
+    </div>
+</div>
+<!-- 
+  -->
+
+

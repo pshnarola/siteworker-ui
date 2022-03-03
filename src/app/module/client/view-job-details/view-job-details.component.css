@@ -1,0 +1,42 @@
+agm-map {
+    height: 200px;
+    width: 100%;
+}
+
+.scroll {
+    max-height: 100px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.labelOptions {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.rr {
+    font-size: 16px;
+    line-height: 16px;
+    height: 32px;
+    overflow: hidden;
+}
+
+.show {
+    overflow: visible;
+    height: auto;
+}
+
+.read-more {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: normal !important;
+    width: auto !important;
+    max-height: 25px !important;
+    display: inline-block;
+}

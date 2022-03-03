@@ -1,0 +1,63 @@
+<div class="container-fluid">
+    <div class="row">
+        <div id="worker-profile-stepper" class="bs-stepper w-100">
+            <div class="bs-stepper-header">
+                <div class="step col" data-target="#basic-details">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">1</span><br>
+                        <span class="bs-stepper-label">{{'basic.details'|translate}}</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#pay-details">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">{{'pay.details'|translate}}</span>
+                    </button>
+                </div>
+
+                <div class="step col" data-target="#work-exp-and-education">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">{{'work.exp.education'|translate}}</span>
+                    </button>
+                </div>
+
+                <div class="step col" data-target="#certificates">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">4</span>
+                        <span class="bs-stepper-label">{{'certificates'|translate}}</span>
+                    </button>
+                </div>
+
+                <div class="step col" data-target="#refrences">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">5</span>
+                        <span class="bs-stepper-label">{{'reference'|translate}}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bs-stepper-content">
+                <div id="basic-details" class="content" role="tabpanel">
+                    <app-basic-details (goToPayDetail)="goToNext($event)"></app-basic-details>
+                </div>
+                <div id="pay-details" class="content" role="tabpanel">
+                    <app-pay-details (goBackToBasicDetail)="goToPrevious($event)" (goToWorkExpAndEducation)="goToNext($event)"></app-pay-details>
+                </div>
+
+                <div id="work-exp-and-education" class="content" role="tabpanel">
+                    <app-work-exp-and-education (goBackToPayDetail)="goToPrevious($event)" (goToCertificates)="goToNext($event)"></app-work-exp-and-education>
+                </div>
+
+                <div id="certificates" class="content" role="tabpanel">
+                    <app-certificates (goBackToWorkExpAndEducation)="goToPrevious($event)" (goToReference)="goToNext($event)"></app-certificates>
+                </div>
+
+
+                <div id="refrences" class="content" role="tabpanel">
+                    <app-references (goBackToCertificates)="goToPrevious($event)"></app-references>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">
+    </div>
+    <div style="margin-right: 10px;" class="d-flex align-self-center main-nav">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':avatarColor, 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+
+                <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35"
+                    alt="">
+
+            </ng-container>
+            {{loggedInUserName}}
+        </div>
+    </div>
+</mat-toolbar>
+
+<div class="container-fluid mb-3 Common_Profile_Border_Bottom cust-min-h-70">
+    <div class="row View_Profile_bg">
+        <div class="col-md-12 tile2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class=""> {{'references' | translate }}</h4>
+                </div>
+                <ng-container *ngIf="referenceList.length > 0 ; else noReferencesFound">
+                    <ul class="list-group-wrapper" *ngFor="let reference of referenceList">
+                        <li>
+                            <p class="text-primary font-weight-bold mb-0"> {{reference.fullName}} </p>
+                            <p class="text-muted"> {{reference.jobTitle}} | {{reference.companyName}} </p>
+                            <p class="font-weight-bold mb-0 mt-2"> {{reference.workPhone}} </p>
+                            <p class=""> {{reference.email}} </p>
+                            <p class="card-text">
+                                <span *ngIf="reference.comment">
+                                    "{{reference.comment}}"
+                                </span>
+                            </p>
+                        </li>
+                    </ul>
+                </ng-container>
+                <ng-template #noReferencesFound>
+                    <div class="w-100">
+                        <p class="mt-5 text-center">{{'no.reference.found' | translate}}</p>
+                    </div>
+
+                </ng-template>
+                <p-paginator [rows]="size" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true" (onPageChange)="paginate($event)"></p-paginator>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

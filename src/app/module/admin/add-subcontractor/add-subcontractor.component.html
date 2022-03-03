@@ -1,0 +1,573 @@
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button pButton type="button" class="bg-admin" (click)="openFilter()" label="{{ 'filter'| translate}}"
+                    tooltipPosition="bottom"><i class="fa fa-filter mr-1"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-xl-12">
+            <div class="card bg-grey2" *ngIf="showFilterDialog">
+                <div class="card-body">
+                    <form [formGroup]="filterForm">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="name">{{ "Search" | translate }} : </label>
+                                <input type="text" formControlName="genericSearch" id="name_searchbox"
+                                    class="form-control" placeholder="{{'type.to.filter.subcontractor' | translate}}" />
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="name_searchbox">{{'name' |translate}} :</label>
+                                <p-autoComplete forceSelection="true" formControlName="name" [field]="getFullName"
+                                    [multiple]="false" [dropdown]="false"
+                                    (completeMethod)="getSubcontractorByName($event)"
+                                    [suggestions]="filterSubcontractors" minLength="3"
+                                    placeholder="Filter by Subcontractor Name" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}">
+                                </p-autoComplete>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="email_searchbox">{{ "email.address" | translate }} :</label>
+                                <input type="text" id="email_searchbox" class="form-control" formControlName="email"
+                                    placeholder="Filter by Email Address" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6">
+                                <label for="created_searchbox">{{ "created.between" | translate }} :</label>
+                                <div class="row">
+                                    <div class="col-xl-6 col-sm-6">
+                                        <p-calendar placeholder="MM/DD/YYYY" formControlName="postedStart"
+                                            [maxDate]="postedEndDate" appendTo="body" [(ngModel)]="postedStartDate"
+                                            [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                    </div>
+                                    <div class="col-xl-6 col-sm-6">
+                                        <p-calendar placeholder="MM/DD/YYYY" formControlName="postedEnd" appendTo="body"
+                                            [(ngModel)]="postedEndDate" [minDate]="postedStartDate"
+                                            [readonlyInput]="true" inputId="range" [showIcon]="true"></p-calendar>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group col-xl-3">
+                                <label for="Status_searchbox">{{ "status" | translate }} :</label>
+                                <p-dropdown [options]="status" id="Status_searchbox" formControlName="status"
+                                    placeholder="Select Status" optionLabel="option">
+                                    <span>{{status.option}}</span>
+                                </p-dropdown>
+                            </div>
+                            <div class="form-group col-xl-3">
+                                <label for="type_searchbox">{{ "type" | translate }} :</label>
+                                <p-dropdown [options]="companyType" id="type_searchbox" formControlName="type"
+                                    placeholder="Select Type" optionLabel="option">
+                                    <span>{{companyType.option}}</span>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <button pButton type="button" (click)="filter()" label="{{ 'apply' | translate }}"
+                                    class="p-button-outlined mr-3"></button>
+                                <button pButton pRipple label="{{'clear' | translate}}" class="bg-admin"
+                                    (click)="clear()"></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 mb-2">
+            <ng-container *ngIf="showButtons">
+                <button pButton type="button" class="bg-admin" *ngIf="showButtons" (click)="openAddsubcontractor()"
+                    label="{{ 'add.subcontractor' | translate }}" tooltipPosition="bottom"></button>
+            </ng-container>
+        </div>
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="form-group">
+                                <label for="status">{{ "change.status" | translate }} :</label>
+                                <p-dropdown [disabled]="btnDisabled" [options]="changeStatus"
+                                    [(ngModel)]="selectedStatus" placeholder="Select Status" optionLabel="option">
+                                </p-dropdown>
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 d-flex align-items-center mt-2">
+                            <button [disabled]="btnDisabled" pButton type="button" label="{{ 'apply'| translate}}"
+                                class="p-button-outlined" (click)="onChangeStatusOfselected()"></button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <p-table #dt [value]="subcontractors" [columns]="selectedColumns" [scrollable]="true" scrollHeight="400px"
+                [resizableColumns]="true" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [paginator]="true"
+                [rows]="size" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} subcontractors"
+                [totalRecords]="totalRecords" [(selection)]="selectedSubcontractors" [loading]="loading"
+                [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="caption">
+                    <p-multiSelect [options]="columns" [(ngModel)]="selectedColumns" optionLabel="label"
+                        selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}"
+                        placeholder="Choose Columns">
+                    </p-multiSelect>
+                </ng-template>
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 3rem;">
+                        <col *ngFor="let col of columns" style="width: 250px;">
+                        <col style="width: 240px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pResizableColumn style="width: 3rem">
+                            <p-tableHeaderCheckbox>
+                            </p-tableHeaderCheckbox>
+                        </th>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                            pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn>{{ "action" | translate }}</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-subcontractor let-columns="columns">
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="subcontractor">
+                            </p-tableCheckbox>
+                        </td>
+                        <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                            <div *ngSwitchCase="'profile_image'">
+                                <img *ngIf="subcontractor.subcontractorProfile.photo"
+                                    src="{{imageUrl + subcontractor.subcontractorProfile.photo}}"
+                                    alt="{{subcontractor.subcontractorProfile.user.firstName}}"
+                                    class="rounded-circle mr-2" width="56" height="56" srcset="">
+                                <p-avatar *ngIf="!subcontractor.subcontractorProfile.photo"
+                                    label={{setAvtar(subcontractor.subcontractorProfile.user.firstName,subcontractor.subcontractorProfile.user.lastName)}}
+                                    styleClass="p-mr-2 bg-admin text-white" size="xlarge" shape="circle"></p-avatar>
+                            </div>
+                            <div *ngSwitchCase="'name'">
+                                {{subcontractor.subcontractorProfile.user.firstName}}
+                                {{subcontractor.subcontractorProfile.user.lastName}}
+                            </div>
+                            <div *ngSwitchCase="'type'">
+                                <ng-container *ngIf="subcontractor.subcontractorProfile.isLoginAsCompany">
+                                    {{ "company" | translate }}
+                                </ng-container>
+                                <ng-container *ngIf="!subcontractor.subcontractorProfile.isLoginAsCompany">
+                                    {{ "individual" | translate }}
+                                </ng-container>
+                            </div>
+                            <div *ngSwitchCase="'company_name'">
+                                <ng-container *ngIf="subcontractor.subcontractorProfile.isLoginAsCompany ; else none">
+                                    {{subcontractor.subcontractorProfile.companyName}}
+                                </ng-container>
+                            </div>
+                            <div *ngSwitchCase="'email'">
+                                {{subcontractor.subcontractorProfile.user.email}}
+                            </div>
+                            <div *ngSwitchCase="'work_phone'">
+                                <span *ngIf="subcontractor.subcontractorProfile.workPhone ; else none">
+                                    {{subcontractor.subcontractorProfile.workPhone}}
+                                </span>
+                            </div>
+                            <div *ngSwitchCase="'mobile_phone'">
+                                {{subcontractor.subcontractorProfile?.mobilePhone ?
+                                subcontractor.subcontractorProfile?.mobilePhone : 'N/A'}}
+                            </div>
+                            <div *ngSwitchCase="'created_date'">
+                                {{subcontractor.subcontractorProfile.createdDate | date: shortDate}}
+                            </div>
+                            <div *ngSwitchCase="'payment_rails_id'">
+                                <span *ngIf="subcontractor.subcontractorProfile.paymentRailsId; else none">
+                                    {{subcontractor.subcontractorProfile.paymentRailsId}}
+                                </span>
+                                <ng-template #none>
+                                    N/A
+                                </ng-template>
+                            </div>
+                            <div *ngSwitchCase="'is_verified'">
+                                <span *ngIf="subcontractor.subcontractorProfile.user.verified">
+                                    Yes
+                                </span>
+                                <span *ngIf="!subcontractor.subcontractorProfile.user.verified">
+                                    No
+                                </span>
+                            </div>
+                            <div *ngSwitchCase="'set_margin'">
+                                <p-button [disabled]="btnDisabled" [ngClass]="{ 'nocursor' : btnDisabled}"
+                                    label="Set Margin" (click)="showMarginDialog(subcontractor)"
+                                    styleClass="p-button-link p-1">
+                                </p-button>
+                            </div>
+                            <div *ngSwitchCase="'references'">
+                                <p-button [disabled]="btnDisabled" [ngClass]="{ 'nocursor' : btnDisabled}"
+                                    label="View & Manage References" (click)="manageReferences(subcontractor)"
+                                    styleClass="p-button-link p-1">
+                                </p-button>
+                            </div>
+                            <div *ngSwitchCase="'certificates'">
+                                <p-button [disabled]="btnDisabled" [ngClass]="{ 'nocursor' : btnDisabled}"
+                                    label="Manage Certificate" (click)="manageCertificates(subcontractor)"
+                                    styleClass="p-button-link p-1">
+                                </p-button>
+                            </div>
+                            <div *ngSwitchCase="'is_active'">
+                                <span class="text-success"
+                                    *ngIf="subcontractor.subcontractorProfile.user.active ; else inActive">
+                                    {{'active' | translate}}
+                                </span>
+                                <ng-template #inActive>
+                                    <span class="text-danger">
+                                        {{'inactive' | translate}}
+                                    </span>
+                                </ng-template>
+                            </div>
+                        </td>
+
+                        <td>
+                            <button class="btn btn-success mr-2 btn-sm"
+                                (click)="redirectToSubcontractor(subcontractor.subcontractorProfile.user.id)"
+                                tooltipPosition="bottom" pTooltip="{{'viewProfile' | translate}}">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </button>
+                            <button *ngIf="roleName != 'SUBADMIN'" [disabled]="btnDisabled"
+                                class="btn btn-warning mr-2 btn-sm" (click)="showloginAsDialog(subcontractor)"
+                                tooltipPosition="bottom" pTooltip="{{'sign.on' | translate}}">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            </button>
+                            <button [disabled]="btnDisabled" class="btn btn-primary mr-2 btn-sm"
+                                (click)="forgotPassword(subcontractor.subcontractorProfile.user.email)"
+                                tooltipPosition="bottom" pTooltip="{{'forgot.password' | translate}}">
+                                <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="selectedColumns.length + 2" class="text-center">
+                            <span>No records found</span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+</div>
+
+
+<p-dialog [(visible)]="subcontractorDialog" [closable]="false" [style]="{width: '450px'}" header="Add Subcontractor"
+    [modal]="true" styleClass="p-fluid" (onHide)="hideAddsubcontractor()">
+    <ng-template pTemplate="content">
+
+        <form [formGroup]="myForm">
+            <div class="p-formgroup-inline mt-1">
+                <div class="p-field-checkbox">
+                    <p-radioButton [value]="true" [(ngModel)]="selectedValue" (onClick)="onClick($event)"
+                        formControlName="isLoginAsCompany" inputId="city7">
+                    </p-radioButton>
+                    <label for="city7">{{ 'company' | translate}}</label>
+                </div>
+                <div class="p-field-checkbox">
+                    <p-radioButton [value]="false" [(ngModel)]="selectedValue" (onClick)="onClick($event)"
+                        formControlName="isLoginAsCompany" inputId="city8">
+                    </p-radioButton>
+                    <label for="city8">{{ 'individual' | translate}}</label>
+                </div>
+            </div>
+            <div class="">
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="firstname1">{{'first.name' | translate}}*</label>
+                        <input placeholder="Enter First Name" maxlength="50" formControlName="firstName" id="firstname1"
+                            type="text" pInputText>
+                        <div class="p-invalid"
+                            *ngIf="(submitted && !myForm.get('firstName').valid) || (!myForm.get('firstName').valid && myForm.get('firstName').touched) ">
+                            <div *ngIf=" ( myForm.get('firstName').errors.required) ">
+                                {{'required' | translate}} </div>
+
+                            <div *ngIf=" myForm.get('firstName').errors.maxlength">
+                                {{'fifty.maxlength' | translate}} </div>
+                        </div>
+
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="lastname1">{{'last.name' | translate}}*</label>
+                        <input placeholder="Enter Last Name" maxlength="50" formControlName="lastName" id="lastname1"
+                            type="text" pInputText>
+                        <div class="p-invalid"
+                            *ngIf="(submitted && !myForm.get('lastName').valid) || (!myForm.get('lastName').valid && myForm.get('lastName').touched) ">
+                            <div *ngIf=" ( myForm.get('lastName').errors.required) ">
+                                {{'required' | translate}} </div>
+
+                            <div *ngIf=" myForm.get('lastName').errors.maxlength">
+                                {{'fifty.maxlength' | translate}} </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-field p-fluid" *ngIf="!selectedValue">
+                    <label for="b">{{'personal.email' | translate}}*</label>
+                    <input placeholder="Enter Personal Email" maxlength="50" formControlName="email" id="b" type="email"
+                        pInputText>
+                    <div class="p-invalid"
+                        *ngIf="(submitted && !myForm.get('email').valid) || (!myForm.get('email').valid && myForm.get('email').touched)">
+                        <div *ngIf=" ( myForm.get('email').errors.required) ">
+                            {{'required' | translate}} </div>
+
+                        <div *ngIf=" myForm.get('email').errors.maxlength">
+                            {{'hundred.maxlength' | translate}} </div>
+                        <div class="p-invalid" *ngIf=" (!myForm.get('email').valid) ">
+
+                            <div *ngIf="myForm.get('email').dirty &&
+                                        (myForm.get('email').errors.incorrectEmailFormat &&
+                                        !myForm.get('email').errors.required)">
+                                {{'invalid.email' | translate}} </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-fluid p-formgrid p-grid" *ngIf="selectedValue">
+                    <div class="p-field p-col">
+                        <label for="companyName">{{'company.name' | translate}} </label>
+                        <input placeholder="Enter Company Name" maxlength="50" formControlName="companyName"
+                            id="companyName" type="text" pInputText [pKeyFilter]="blockSpecial">
+                        <div class="p-invalid"
+                            *ngIf="(submitted && !myForm.get('companyName').valid) || (!myForm.get('companyName').valid && myForm.get('companyName').touched) ">
+                            <div *ngIf=" ( myForm.get('companyName').errors.required) ">
+                                {{'required' | translate}} </div>
+
+                            <div *ngIf=" myForm.get('companyName').errors.maxlength">
+                                {{'fifty.maxlength' | translate}} </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="companyEmail">{{'company.email' | translate}}*</label>
+
+                        <input placeholder="Enter Company Email" maxlength="50" formControlName="email"
+                            id="companyEmail" type="email" pInputText>
+                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('email').valid) ">
+                            <div *ngIf=" ( myForm.get('email').errors.required) ">
+                                {{'required' | translate}} </div>
+
+                            <div *ngIf=" myForm.get('email').errors.maxlength">
+                                {{'hundred.maxlength' | translate}} </div>
+                            <div class="p-invalid" *ngIf=" (!myForm.get('email').valid) ">
+
+                                <div *ngIf="myForm.get('email').dirty &&
+                                            (myForm.get('email').errors.incorrectEmailFormat &&
+                                            !myForm.get('email').errors.required)">
+                                    {{'invalid.email' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-fluid p-formgrid p-grid">
+                    <div class="p-field p-col">
+                        <label for="workPhone">{{'work.phone' | translate}}*</label>
+                        <p-inputMask id="workPhone" mask="(999) 999-9999" required formControlName="workPhone"
+                            placeholder="Enter Work Phone"></p-inputMask>
+                        <div class="p-invalid"
+                            *ngIf="(submitted && !myForm.get('workPhone').valid) || (!myForm.get('workPhone').valid && myForm.get('workPhone').touched) ">
+                            <div *ngIf=" ( myForm.get('workPhone').errors.required) ">
+                                {{'required' | translate}} </div>
+                        </div>
+                    </div>
+                    <div class="p-field p-col">
+                        <label for="mobilePhone">{{'mobile.phone' | translate}}</label>
+                        <p-inputMask id="mobilePhone" mask="(999) 999-9999" formControlName="mobilePhone"
+                            placeholder="Enter Mobile Phone">
+                        </p-inputMask>
+                        <!-- <div class="p-invalid" *ngIf="(submitted && !myForm.get('mobilePhone').valid) || (!myForm.get('mobilePhone').valid && myForm.get('mobilePhone').touched) ">
+                            <div *ngIf=" ( myForm.get('mobilePhone').errors.required) ">
+                                {{'required' | translate}} </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-outlined"
+            (click)="openConfirmationDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="bg-admin" (click)="onSubmit()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog [(visible)]="subcontractorRipplingDialog" (onHide)="hideRipplingDialog()" [style]="{width: '450px'}"
+    header="Add Rippling" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <p-card>
+            <div>
+                <form [formGroup]="myRipplingForm">
+                    <div class="">
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <label for="ripplingID">{{'payment.id' | translate}}*</label>
+                                <input placeholder="Enter Payment ID" maxlength="25" formControlName="ripplingID"
+                                    id="ripplingID" type="text" pInputText>
+                                <div class="p-invalid"
+                                    *ngIf="(submitted && !myRipplingForm.get('ripplingID').valid) || (!myRipplingForm.get('ripplingID').valid && myRipplingForm.get('ripplingID').touched) ">
+                                    <div *ngIf=" ( myRipplingForm.get('ripplingID').errors.required) ">
+                                        {{'required' | translate}} </div>
+
+                                    <div *ngIf=" myRipplingForm.get('ripplingID').errors.maxlength">
+                                        {{'twentyfive.maxlength' | translate}} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </p-card>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin"
+            (click)="hideRipplingDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined"
+            (click)="submitRiplingForm()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog [(visible)]="subcontractorMarginDialog" (onHide)="hideMarginDialog()" [style]="{width: '450px'}"
+    header="Set Margin" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <p-card>
+            <div>
+                <form [formGroup]="myMarginForm">
+                    <div class="">
+                        <div class="p-fluid p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <label for="margin">{{'Subcontractor' | translate}} : </label>
+                                <label for="margin">&nbsp;{{SubcontractorName}}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="setMargin">{{'set.margin.for.project' | translate}} </label>
+                            <!-- <input type="number" formControlName="setMargin" step="0.01" min="0" max="10"> -->
+                            <p-inputNumber inputId="minmaxfraction" maxlength="5" formControlName="setMargin"
+                                mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2">
+                            </p-inputNumber>
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !myMarginForm.get('setMargin').valid) || (!myMarginForm.get('setMargin').valid && myMarginForm.get('setMargin').touched) ">
+                                <div *ngIf=" (myMarginForm.get('setMargin').errors.required)">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf="myMarginForm.get('setMargin').errors.maxlength">
+                                    {{'three.maxlength' | translate}} </div>
+                                <div *ngIf="(myMarginForm.get('setMargin').errors.min)">
+                                    Margin % must be greater than zero </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-fluid p-formgrid p-grid">
+                        <div class="p-field p-col">
+                            <label for="paymentTerms">{{'payment.terms' | translate}}*</label>
+                            <p-inputNumber formControlName="paymentTerms" mode="decimal" maxlength="3"
+                                placeholder="Enter Payment Terms" inputId="withoutgrouping" [useGrouping]="false">
+                            </p-inputNumber>
+                            <div class="p-invalid"
+                                *ngIf="(submitted && !myMarginForm.get('paymentTerms').valid) || (!myMarginForm.get('paymentTerms').valid && myMarginForm.get('paymentTerms').touched) ">
+                                <div *ngIf=" ( myMarginForm.get('paymentTerms').errors.required) ">
+                                    {{'required' | translate}} </div>
+
+                                <div *ngIf=" myMarginForm.get('paymentTerms').errors.maxlength">
+                                    {{'three.maxlength' | translate}} </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </p-card>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="bg-admin"
+            (click)="hideMarginDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-outlined"
+            (click)="submitSetMarginForm()"></button>
+    </ng-template>
+
+</p-dialog>
+
+<!-- dialog -->
+<p-dialog [(visible)]="logInAsDialog" (onHide)="hideloginAsDialog()" [style]="{width: '450px'}" header="Log in as"
+    [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="loginAsForm" (ngSubmit)="onSubmitLoginAs()">
+            <div class="p-field">
+                <label for="name">{{ "user.name" | translate }} </label>
+                <p-autoComplete [disabled]="true" formControlName="userName" id="industryType" [multiple]="false"
+                    [dropdown]="false" (completeMethod)="getFilteredUsernameForLogin($event)" [field]="getFullName"
+                    [suggestions]="filteredUserNameForLoginAs">
+                    <ng-template let-user pTemplate="item">
+                        <div>
+                            <span>{{user.firstName}}</span> &nbsp;
+                            <span>{{user.lastName}}</span> &nbsp;
+                            <span>( {{user.email}} )</span>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.name" | translate }} </label>
+                <input type="text" pInputText id="regionName" maxlength="50" formControlName="adminUserName" required
+                    placeholder="Enter Admin Username" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !loginAsForm.get('adminUserName').valid) || (!loginAsForm.get('adminUserName').valid && loginAsForm.get('adminUserName').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminUserName').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="name">{{ "admin.user.password" | translate }} </label>
+                <input type="password" pInputText id="regionName" formControlName="adminPassword" required
+                    placeholder="Enter Admin Password" (keydown.enter)="onSubmitLoginAs()" />
+                <div class="p-invalid"
+                    *ngIf="(submitted && !loginAsForm.get('adminPassword').valid) || (!loginAsForm.get('adminPassword').valid && loginAsForm.get('adminPassword').touched) ">
+
+                    <div *ngIf=" ( loginAsForm.get('adminPassword').errors.required) ">
+                        {{'required' | translate}} </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Login" class="p-button-outlined" (click)="onSubmitLoginAs()"
+            type="submit"></button>
+    </ng-template>
+
+</p-dialog>
+<ng-template #none>
+    {{'n.a' | translate}}
+</ng-template>

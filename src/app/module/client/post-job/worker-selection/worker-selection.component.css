@@ -1,0 +1,53 @@
+.filter {
+    float: right;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-radius: 15px;
+}
+
+/*.card {
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.card-body {
+    padding: 0px;
+}*/
+
+p {
+    margin-bottom: 0px;
+}
+
+.add-button,
+.invite-button {
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-top: 15px;
+    border-radius: 15px;
+}
+
+.vertical-line {
+    border-left: 1px solid #e6e6e6;
+    height: 100px;
+    align-self: center;
+}
+
+.button-to-link {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    text-decoration: none;
+}
+
+input {
+    border-radius: 15px;
+}
+
+button {
+    margin-left: 16px;
+}
+
+.profileImage {
+    height: 100px;
+    width: 100px;
+}

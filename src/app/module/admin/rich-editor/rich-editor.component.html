@@ -1,0 +1,10 @@
+<p>rich-editor works!</p>
+
+<div class="row">
+    <!-- <p-editor #ed [style]="{'height':'320px'}" (onInit)="editorcall($event)"></p-editor> -->
+    <form [formGroup]="myForm" (ngSubmit)="console()"></form>
+    <p-editor #ed [style]="{'height':'320px'}" [(ngModel)]="text1"></p-editor>
+    <button type="submit" (click)="console()">
+        Save
+    </button>
+</div>

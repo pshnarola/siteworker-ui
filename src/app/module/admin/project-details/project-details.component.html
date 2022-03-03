@@ -1,0 +1,390 @@
+<div class="container-fluid" *ngIf="projectDetail">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-admin text-white">
+            <h3 class="font-weight-bold float-left">
+                <span *ngIf="projectDetail">{{projectDetail.title}}</span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-xl-12">
+            <h5 class="font-weight-bold my-3">{{'project.details' | translate}}</h5>
+            <div class="card mt-2 bg-grey2">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+                            <div class="mr-2">
+                                <img src="assets/images/posted_by.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.user">
+                                    {{projectDetail.user.firstName}} {{projectDetail.user.lastName}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+                            <div class="mr-2">
+                                <img src="assets/images/posted_by.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'customer.name' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.company ; else none">
+                                    {{projectDetail.company.name}}
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+
+                            <div class="mr-2">
+                                <img src="assets/images/category.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'category' | translate}} :</p>
+                                <p class="text-muted mb-0">
+                                    {{projectDetail.industry ? projectDetail.industry.name : 'N/A'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+
+                            <div class="mr-2">
+                                <img src="assets/images/negotiation.svg">
+                            </div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.negotiable' | translate}} :</p>
+                                <p class="text-muted mb-0">
+                                    {{projectDetail.isNegotiable === true ? 'Yes' : 'No'}}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+
+                            <div class="mr-2"><i class="fa fa-map-marker h1 text-secondary"></i></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                                <p class="text-muted mb-0"
+                                    *ngIf="projectDetail.region && projectDetail.state; else none">
+                                    {{projectDetail.region}} , {{projectDetail.state}}
+                                </p>
+                                <ng-template #none>
+                                    {{'n.a' | translate}}
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.due.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.bidDueDate; else none">
+                                    {{projectDetail.bidDueDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'start.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.startDate; else none">
+                                    {{projectDetail.startDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center col-xl-3 mb-4">
+                            <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'estimated.end.date' | translate}} :</p>
+                                <p class="text-muted mb-0" *ngIf="projectDetail.completionDate; else none">
+                                    {{projectDetail.completionDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="font-weight-bold" for="externalLink"> External URL:</label>
+                            <span *ngIf="projectDetail.type === 'OPEN_MARKET_REQUEST'; else privateRequest">
+                                <button pButton pRipple type="button" (click)="copyExternalLink()"
+                                    pTooltip="Copy to clipboard" class="p-button-rounded p-button-text"
+                                    style="color: #bb002b;">
+                                    <span style="font-size: 25px !important;" class="pi pi-copy px-0">
+                                    </span>
+                                </button>
+                            </span>
+                            <ng-template #privateRequest>
+                                Link not available as Project is of Private Request type
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class=" row mt-3">
+        <div class="col-xl-12">
+            <h5 class="my-3 font-weight-bold">{{'subcontractor'|translate}}</h5>
+        </div>
+        <div class="col-md-6">
+            <div class="card alert-danger">
+                <div class="card-body">
+                    <label class="font-weight-bold text-dark">
+                        {{'accepted.invitations' | translate}}
+                        <span *ngIf="acceptedInvitations.length !== 0 ">
+                            ( {{ acceptedInvitations.length }} ) :
+                        </span>
+                    </label>
+
+                    <ul class="pl-0 scroll list-unstyled">
+                        <li *ngFor="let invitee of acceptedInvitations">
+                            <p-button (click)="redirectToSubcontractor(invitee.user.id)" styleClass="p-button-link">
+                                {{invitee.user.firstName}} {{invitee.user.lastName}}
+                                <span *ngIf="invitee.status === 'ACCEPTED'">(Submitted)</span>
+                                <span *ngIf="invitee.status === 'ACCEPTED_PENDING'">(Submission
+                                    pending)</span>
+                            </p-button>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card alert-danger">
+                <div class="card-body">
+                    <label class="font-weight-bold text-dark">{{'pending.response' |
+                        translate}}
+                        <span *ngIf="pendingResponseData.length !== 0 ">
+                            ( {{pendingResponseData.length}} ) :
+                        </span>
+                    </label>
+                    <ul class="pl-0 scroll list-unstyled">
+                        <li *ngFor="let invitee of pendingResponseData">
+                            <p-button (click)="redirectToSubcontractor(invitee.user.id)" styleClass="p-button-link">
+                                {{invitee.user.firstName}} {{invitee.user.lastName}}
+                            </p-button>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <h5 class="my-3 font-weight-bold">{{'project.cost'|translate}}:
+                {{projectDetail.cost | currency}}</h5>
+        </div>
+        <div class="col-xl-6">
+            <h5 class="my-3 font-weight-bold">{{'project.bid.amount'|translate}}:
+                <span *ngIf="bidAmountOfProject ; else noneTd">
+                    {{bidAmountOfProject | currency}}
+                </span>
+            </h5>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <h5 class="my-3 font-weight-bold">{{'jobsites'|translate}}</h5>
+        </div>
+        <div class="col-xl-12">
+            <ng-container *ngIf="projectDetail.jobsite">
+                <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px"
+                    [resizableColumns]="true" #dt [value]="jobsiteDetailList" [paginator]="true" [rows]="tableRowSize"
+                    [totalRecords]="totalRecords" [showCurrentPageReport]="true"
+                    [rowsPerPageOptions]="tablePaginateDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:150px;">
+                            <col style="width:210px;">
+                            <col style="width:250px;">
+                            <col style="width:150px;">
+                            <col style="width:150px;">
+                            <col style="width:120px;">
+                            <col style="width:200px;">
+                            <col style="width:100px;">
+                            <col style="width:140px;">
+                            <col style="width:150px;">
+                            <col style="width:200px;">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns"
+                                pSortableColumn="{{col.value}}">
+                                {{col.label}}
+                                <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                            </th>
+                            <th>Work Document</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                        <tr *ngIf="jobSite.id !== 'jid'">
+                            <td>
+                                <span class="p-1">
+                                    <p-button (click)="onJobSiteClick(jobSite.id)" styleClass="p-button-link p-1">
+                                        {{jobSite.title}}
+                                    </p-button>
+                                </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span class="col-xl-12" *ngIf="jobSite.description">
+                                    {{jobSite.description}}
+                                </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span *ngIf="jobSite.location ; else noneTd">
+                                    {{jobSite.location}} </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span *ngIf="jobSite.city ; else noneTd"> {{jobSite.city}}
+                                </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span *ngIf="jobSite.state ; else noneTd"> {{jobSite.state}}
+                                </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span *ngIf="jobSite.zipCode ; else noneTd"> {{jobSite.zipCode}}
+                                </span>
+                            </td>
+                            <td class="text-wrap">
+                                <span *ngIf="jobSite.paymentMileStone?.length ; else noneTd">
+                                    <p-button (click)="showPaymentMileStoneDialog(jobSite.paymentMileStone)"
+                                        styleClass="p-button-link">
+                                        {{jobSite.paymentMileStone?.length}}
+                                    </p-button>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-wrap" *ngIf="jobSite.cost ; else noneTd">
+                                    {{jobSite.cost | currency}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-wrap" *ngIf="jobSite.bidAmount ; else noneTd">
+                                    {{jobSite.bidAmount | currency}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-wrap" *ngIf="jobSite.status ; else noneTd">
+                                    {{jobSite.status ==='IN_PROGRESS' ? 'In Progress' :
+                                    jobSite.status ==='DRAFT' ? 'Draft' :
+                                    jobSite.status ==='CANCELLED' ? 'Cancelled' :
+                                    jobSite.status ==='COMPLETED' ? 'Completed' :
+                                    jobSite.status ==='AWARDED' ? 'Awarded' :
+                                    'Posted' }}
+                                </div>
+                            </td>
+                            <td>
+                                <span *ngIf="jobSite.attachment?.length ; else noDocument">
+                                    <a style="cursor: pointer;"
+                                        (click)="showAttachmentDialog(jobSite.attachment,jobSite.id)">
+                                        <span class="material-icons">
+                                            description
+                                        </span>
+                                    </a>
+                                </span>
+                                <ng-template #noDocument>
+                                    No Doument
+                                </ng-template>
+                            </td>
+                        </tr>
+                        <tr *ngIf="jobSite.id == 'jid' && projectDetail.jobsite.length == 1">
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="7" class="text-center">
+                                No records found
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="paymentMileStoneDialog" (onHide)="hidePaymentMileStoneDialog()"
+    header="{{'payment.milestone'|translate}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+    'max-height': '300px','min-height':'300px','width':'900px'}" [modal]="true" styleClass="p-fluid">
+
+    <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" #dt
+        [value]="paymentMileStoneList" [paginator]="true" [rows]="tableRowSize" [totalRecords]="totalRecords"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} milestones"
+        [showCurrentPageReport]="true" [rowsPerPageOptions]="tablePaginateDropdown">
+
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col style="width:130px">
+                <col style="width:250px">
+                <col style="width:400px">
+                <col style="width:250px">
+                <col style="width:150px">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>{{'milestone.no' | translate}}</th>
+                <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of paymentColumns"
+                    pSortableColumn="{{col.value}}">
+                    {{col.label}}
+                    <p-sortIcon field="{{col.value}}"></p-sortIcon>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-payment>
+            <tr>
+                <td>{{i+1}} </td>
+                <td>{{payment.name}} </td>
+                <td>
+                    {{payment.lineItem.length}}
+                </td>
+                <td>{{payment.amount | currency}} </td>
+                <td>{{payment.percentage}}% </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td [attr.colspan]="6" class="text-center">
+                    No records found
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-dialog>
+
+<p-dialog [(visible)]="AttachmentDialog" [style]="{width: '50%'}" header="{{dialogHeader}}" [modal]="true"
+    styleClass="p-fluid" (onHide)="hideAttachmentDialog()">
+    <ng-template pTemplate="content">
+        <div class="card upload-attachment-div" *ngFor="let file of AttachmentList; let i = index">
+            <p>
+                {{file.filename}}
+            </p>
+            <br>
+        </div>
+        <div *ngIf="!AttachmentList?.length" class="text-center">
+            {{'no.record.found' | translate}}
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}"
+            class="p-button-outlined p-button-danger" style="margin-left: 16px;"
+            (click)="hideAttachmentDialog()"></button>
+        <button *ngIf="AttachmentList.length > 0" pButton pRipple icon="pi pi-download" (click)="downloadAttachments()"
+            label="{{'download.documents'|translate}}"></button>
+    </ng-template>
+</p-dialog>
+
+<ng-template #noneTd> {{'n.a' | translate }} </ng-template>
+<!-- <ng-template #none>
+    <p class="text-muted mb-0"> {{'n.a' | translate }} </p>
+</ng-template> -->
+<h5 class="text-muted text-center mt-3" *ngIf="!projectDetail">{{'no.record.found' | translate}}
+</h5>

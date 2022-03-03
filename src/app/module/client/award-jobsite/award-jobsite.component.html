@@ -1,0 +1,405 @@
+<div class="">
+    <div class="w-100 p-3 bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3>Review and Award Jobsite - {{projectDetail.title}}</h3>
+    </div>
+    <div class="row m-3">
+        <div class="col-md-9">
+            <p-card styleClass="bg-grey2" [style]="{'box-shadow':'none'}">
+                <div class="">
+                    <div class="d-flex flex-wrap">
+                        <div class="d-flex col-md-4 col-lg-3">
+                            <div class="mr-2"><img src="assets/images/posted_by.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'posted.by' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.user">
+                                    {{projectDetail.user.lastName}} {{projectDetail.user.firstName}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+                            <div class="mr-2"><img src="assets/images/cust_name.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'customer.name' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.company; else noneP">
+                                    {{projectDetail.company.name}}
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+
+                            <div class="mr-2"><img src="assets/images/category.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'category' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.industry">
+                                    {{projectDetail.industry.name}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+
+                            <div class="mr-2"><img src="assets/images/negotiation.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.negotiable' | translate}} :</p>
+                                <p class="text-muted">
+                                    {{projectDetail.negotiable === true ? 'Yes' : 'No'}}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex col-md-4 col-lg-3">
+
+                            <div class="mr-2"><img src="assets/images/location.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'location' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.region">
+                                    {{projectDetail.region}} , {{projectDetail.state}}
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+                            <div class="mr-2"><img src="assets/images/due_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'bid.due.date' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.bidDueDate">
+                                    {{projectDetail.bidDueDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+                            <div class="mr-2"><img src="assets/images/start_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'start.date' | translate}} :</p>
+                                <p class="text-muted" *ngIf="projectDetail.startDate">
+                                    {{projectDetail.startDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="d-flex col-md-4 col-lg-3">
+                            <div class="mr-2"><img src="assets/images/estimate_date.svg"></div>
+                            <div>
+                                <p class="font-weight-bold mb-0">{{'estimated.end.date' | translate}} :</p>
+                                <p class="text-muted">
+                                    {{projectDetail.completionDate | date:'mediumDate'}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p-card>
+        </div>
+
+        <div class="col-md-3 text-center">
+            <p-card styleClass="bg-lightBlue" [style]="{'box-shadow':'none'}">
+                {{totalBidAmount | currency}}
+                <p class="text-muted">Total Project Value</p>
+                <p-button label="Jobsite - {{jobsiteBidDetail.length}}" styleClass="p-mr-2"></p-button>
+            </p-card>
+        </div>
+
+        <div class="col-md-12 mt-3">
+            <p *ngIf="subcontractorProfile">
+                <b class="text-primary" *ngIf="subcontractorProfile.isLoginAsCompany">
+                    {{subcontractorProfile.companyName}}
+                </b>
+                <b class="text-primary" *ngIf="!subcontractorProfile.isLoginAsCompany">
+                    {{subcontractorDetail.firstName}}
+                    {{subcontractorDetail.lastName}}
+                </b>
+                <span *ngIf="jobsiteDetailToAward.subContractorTotalExperience">
+                    <b>
+                        ( {{jobsiteDetailToAward.subContractorTotalExperience}} )
+                    </b>
+                </span>
+            </p>
+            <p-card styleClass="bg-grey2" [style]="{'box-shadow':'none'}">
+                <div class="row mt-3">
+                    <div class="col-md-4 mr-auto" *ngIf="jobsiteDetailToAward.lstSubContractorServices">
+                        <b>
+                            {{'services' | translate}}
+                        </b>
+                        <ul *ngFor="let services of jobsiteDetailToAward.lstSubContractorServices ">
+                            <li class="text-muted">{{services.service.serviceName}}</li>
+                        </ul>
+                    </div>
+                    <div class="mr-auto left-border"></div>
+                    <div class="col-md-2 mr-auto SubCen">
+                        <i class="fa fa-line-chart fa-3x" style="color: #3385ff;"></i>
+                        <p class="mb-0" *ngIf="jobsiteDetailToAward.subContractorSuccessRatio !== 'New Subcontractor' ; else noData">
+                            {{jobsiteDetailToAward.subContractorSuccessRatio}}
+                            <i class="fa fa-percent" aria-hidden="true"></i>
+                        </p>
+                        <ng-template #noData>
+                            <p class="mb-0"> {{jobsiteDetailToAward.subContractorSuccessRatio}} </p>
+                        </ng-template>
+                        <p class="text-muted">Success Ratio</p>
+                    </div>
+                    <div class="col-md-2 mr-auto SubCen">
+                        <i class="fa fa-group fa-3x" style="color: #3385ff;"></i>
+                        <p class="mb-0" *ngIf="jobsiteDetailToAward.jobsiteBidDetailDTO.subContractorProfile.numberOfEmployee">
+                            {{jobsiteDetailToAward.jobsiteBidDetailDTO.subContractorProfile.numberOfEmployee.name}}</p>
+                        <p class="text-muted">Company Size</p>
+                    </div>
+                    <div class="mr-auto left-border"></div>
+                    <div class="col-md-2 mr-auto">
+                        <div class=" rounded rating-card bg-primary p-3">
+                            <div class="text-white text-center mb-1 SubRat">
+                                <span *ngIf="jobsiteDetailToAward.subContractorAvgRating === 'New Subcontractor'; else rating">
+                                    {{jobsiteDetailToAward.subContractorAvgRating}}
+                                </span>
+                                <ng-template #rating>
+                                    <i class="fa fa-star star fa-2x" aria-hidden="true"></i> {{jobsiteDetailToAward.subContractorAvgRating}}
+                                </ng-template>
+                                <p>Average Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </p-card>
+        </div>
+
+        <div class="col-md-12 mt-3">
+            <p-table styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px" [value]="jobsiteBidDetail" [resizableColumns]="true" #dt [paginator]="true" [rows]="size" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobsites"
+                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions">
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width: 140px;">
+                        <col style="width: 150px;">
+                        <col style="width: 140px;">
+                        <col style="width: 115px;">
+                        <col style="width: 95px;">
+                        <col style="width: 120px;">
+                        <col style="width: 190px;">
+                        <col style="width: 90px;">
+                    </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pResizableColumn id="column_{{col.value}}" *ngFor="let col of columns" pSortableColumn="{{col.value}}">
+                            {{col.label}}
+                            <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-jobSite>
+                    <tr>
+                        <td>
+                            <a style="cursor: pointer;">
+                                {{jobSite.jobSiteDetail.title}}
+                            </a>
+                        </td>
+                        <td class="text-wrap">
+                            <span class="col-xl-12" *ngIf="jobSite.jobSiteDetail.description.length <= truncateLength ">
+                                {{jobSite.jobSiteDetail.description}}
+                            </span>
+                            <span class="col-xl-12" *ngIf="jobSite.jobSiteDetail.description.length > truncateLength ">
+                                <app-read-more [content]="jobSite.jobSiteDetail.description" [limit]=truncateLength
+                                [completeWords]="true">
+                                </app-read-more>
+                            </span>
+                        </td>
+                        <td>{{jobSite.subContractorCost | currency}} </td>
+                        <td>{{jobSite.jobSiteDetail.city}} </td>
+                        <td>{{jobSite.jobSiteDetail.state}} </td>
+                        <td>{{jobSite.jobSiteDetail.zipCode}} </td>
+                        <td>
+                            <span *ngIf="jobSite.jobSiteDetail.paymentMileStone?.length ; else noPM">
+                                <a style="cursor: pointer;" (click)="showDialog(jobSite.jobSiteDetail.id)">
+                                    {{jobSite.jobSiteDetail.paymentMileStone.length}}
+                                </a>
+                            </span>
+                            <ng-template #noPM>
+                                N/A
+                            </ng-template>
+
+                        </td>
+                        <td>
+                            <span *ngIf="jobSite.jobSiteDetail.attachment?.length ; else noDocument">
+                                <a style="cursor: pointer;" (click)="downloadAttachments(jobSite.jobSiteDetail.id)">
+                                    <span class="material-icons">
+                                        description
+                                    </span>
+                            </a>
+                            </span>
+                            <ng-template #noDocument>
+                                N/A
+                            </ng-template>
+
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td [attr.colspan]="7" class="text-center">
+                            No records found
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <div class="col-md-12 mt-3 my-2">
+            <form [formGroup]="awardJobsiteForm">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="companName">{{'special.notes' | translate}} </label>
+                        <textarea pInputText formControlName="specialNotes" maxlength="500" name="specialNoted" id="" cols="200" rows="5" class="w-100"></textarea>
+                        <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('specialNotes').valid) || (!awardJobsiteForm.get('specialNotes').valid && awardJobsiteForm.get('specialNotes').dirty) ">
+                            <div *ngIf=" ( awardJobsiteForm.get('specialNotes').errors.required) ">
+                                {{'required' | translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="companName" class="ml-3" style="font-weight: bold;">{{'po.detail' | translate}} </label>
+
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3 form-group" *ngIf="!disableForm">
+                                <label for="companName">{{'po.name' | translate}}*</label>
+                                <input type="text" maxlength="50" formControlName="name" pInputText class="form-control" id="companName" placeholder="Enter PO Name" required>
+                                <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('name').valid) || (!awardJobsiteForm.get('name').valid && awardJobsiteForm.get('name').dirty) ">
+                                    <div *ngIf=" ( awardJobsiteForm.get('name').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group" *ngIf="disableForm">
+                                <label for="companName">{{'po.name' | translate}}*</label>
+                                <input type="text" disabled="disableForm" maxlength="50" formControlName="name" pInputText class="form-control" id="companName" placeholder="Enter PO Name" required>
+                                <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('name').valid) || (!awardJobsiteForm.get('name').valid && awardJobsiteForm.get('name').dirty) ">
+                                    <div *ngIf=" ( awardJobsiteForm.get('name').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group" *ngIf="!disableForm">
+                                <label for="companName">{{'po.number' | translate}}*</label>
+                                <input type="text" maxlength="50" formControlName="number" pInputText class="form-control" id="companName" placeholder="Enter PO Number" required>
+                                <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('number').valid) || (!awardJobsiteForm.get('number').valid && awardJobsiteForm.get('number').dirty) ">
+                                    <div *ngIf=" ( awardJobsiteForm.get('number').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group" *ngIf="disableForm">
+                                <label for="companName">{{'po.number' | translate}}*</label>
+                                <input type="text" disabled="disableForm" maxlength="50" formControlName="number" pInputText class="form-control" id="companName" placeholder="Enter PO Number" required>
+                                <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('number').valid) || (!awardJobsiteForm.get('number').valid && awardJobsiteForm.get('number').dirty) ">
+                                    <div *ngIf=" ( awardJobsiteForm.get('number').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <label for="companName">{{'po.amount' | translate}}*</label>
+                                <p-inputNumber [disabled]="disableForm" mode="currency" currency="USD" formControlName="amount" placeholder="{{'amount.placeholder' |translate}}" maxlength="17" locale="en-US" class="d-flex AwD">
+                                </p-inputNumber>
+                                <div class="p-invalid" *ngIf="(submitted && !awardJobsiteForm.get('amount').valid) || (!awardJobsiteForm.get('amount').valid && awardJobsiteForm.get('amount').dirty) ">
+                                    <div *ngIf=" ( awardJobsiteForm.get('amount').errors.required) ">
+                                        {{'required' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div>
+                                    <label for="document">{{ "attachments" | translate }}</label>
+                                </div>
+                                <div class="custom-file" style="display: inline-table;">
+                                    <ngx-dropzone [disabled]="disableForm" [multiple]='false' [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                        <ngx-dropzone-label>
+                                            {{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                        </ngx-dropzone-label>
+                                    </ngx-dropzone>
+                                </div>
+                                <div *ngIf="files">
+                                    <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                                        <p>
+                                            {{file.name}}
+                                        </p>
+                                        <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip=" Delete" (click)="onRemoveFromList(i)"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="col-md-12 mt-3">
+            <div class="float-right">
+                <button pButton pRipple type="button" label="{{ 'cancel' | translate }}" (click)="cancel()" class="p-button-outlined p-button-danger" style="margin-left: 16px;"></button>
+                <button pButton pRipple type="button" label="Award Jobsite" class="p-button-primary" (click)="uploadFile()" style="margin-left: 16px;"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<p-dialog [(visible)]="viewInfo" (onHide)="hideDialog()" header="{{'line.item'|translate}}" [contentStyle]="{'overflow-y': 'true', 'overflow-x': 'true', 
+                                    'max-height': '500px','min-height':'500px','width':'700px'}" [modal]="true" styleClass="p-fluid">
+
+    <ng-template pTemplate="content">
+
+        <p-table [value]="paymentBidDetailList" [resizableColumns]="true" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}">
+            <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                    <col style="width: 200px;">
+                    <col style="width: 200px;">
+                    <col style="width: 200px;">
+                    <col style="width: 200px;">
+                    <col style="width: 200px;">
+                </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pResizableColumn>{{"milestone.number" |translate}}</th>
+                    <th pResizableColumn>{{"milestone.name" |translate}}</th>
+                    <th pResizableColumn>{{"line.item.deliverables" |translate}}</th>
+                    <th pResizableColumn>{{"milestone.%" |translate}}</th>
+                    <th pResizableColumn>{{"amount.release" |translate}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-mileStone let-rowIndex="rowIndex">
+                <ng-container>
+                    <tr>
+                        <td>{{rowIndex+1}}</td>
+                        <td class="text-wrap">{{mileStone.paymentMileStone.name}}</td>
+                        <td>
+                            {{mileStone.paymentMileStone.lineItem.length}}
+                        </td>
+                        <td>
+                            {{mileStone.subContractorPercentage}}%
+                        </td>
+                        <td>
+                            {{mileStone.subContractorAmount | currency}}
+                        </td>
+                    </tr>
+                </ng-container>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td [attr.colspan]="5" class="text-center">
+                        No records found
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+    </ng-template>
+
+</p-dialog>
+
+<ng-template #noneP>
+    <p class="text-muted">
+        {{'n.a' | translate}}
+    </p>
+</ng-template>

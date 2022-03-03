@@ -1,0 +1,13 @@
+/* button {
+    margin-left: 16px;
+} */
+
+.scroll {
+    max-height: 100px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+.disableDiv {
+    pointer-events: none;
+}

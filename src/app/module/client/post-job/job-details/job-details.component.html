@@ -1,0 +1,413 @@
+<form [formGroup]="jobDetailsForm" (ngSubmit)="submitJobDetails()">
+    <div class="row">
+        <div class="col-6 form-group">
+
+            <label for="job-name">{{'job.name' |translate}}* &nbsp; <a (click)="onEditName()" *ngIf="this.reviewForm"><i
+                        class="fa fa-pencil"></i></a> </label>
+            <input type="text" placeholder="{{'enter.job.name' | translate}}" class="form-control"
+                formControlName="title" [readonly]="!this.editableName && this.reviewForm" pInputText maxLength="50"
+                [pKeyFilter]="blockSpecial">
+            <div class="p-invalid" *ngIf="jobDetailsForm.controls['title'].touched && 
+            (jobDetailsForm.controls['title'].hasError('required') &&
+             !jobDetailsForm.controls['title'].valid)
+            || (submitted &&
+             (jobDetailsForm.controls['title'].hasError('required') && 
+             !jobDetailsForm.controls['title'].valid))">
+                {{'required' | translate}}
+            </div>
+
+        </div>
+        <div class="col-6 form-group">
+            <span class="p-fluid form-group">
+                <label for="title">{{'job.title' |translate}}*</label> &nbsp; <a (click)="onEditJobTitle()"
+                    *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+                <p-autoComplete formControlName="jobTitle" [suggestions]="filteredJobTitle"
+                    (completeMethod)="filterJobTitle($event)" field="title" [dropdown]="true"
+                    (onSelect)="onSelectJobTitle($event)" [disabled]="!this.editablJobTitle && this.reviewForm"
+                    [forceSelection]="true" placeholder="{{'select.jobtitle' |translate}}" delay="1000">
+                    <ng-template let-JobTitle pTemplate="item">
+                        <div>
+                            <div *ngIf="JobTitle.id !== 'buttonIdTitle'">{{JobTitle.title}}</div>
+                            <div *ngIf="JobTitle.id === 'buttonIdTitle'">
+                                <p-button class="add-title" label="Add New Job Title" (click)="openJobTitleDialog()">
+                                </p-button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <div class="p-invalid" *ngIf="jobDetailsForm.controls['jobTitle'].touched && 
+                (jobDetailsForm.controls['jobTitle'].hasError('required') &&
+                 !jobDetailsForm.controls['jobTitle'].valid)
+                || (submitted &&
+                 (jobDetailsForm.controls['jobTitle'].hasError('required') && 
+                 !jobDetailsForm.controls['jobTitle'].valid))">
+                    {{'required' | translate}}
+                </div>
+            </span>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-6 form-group">
+            <label for="job-description">{{'job.description' |translate}}*</label>&nbsp; <a
+                (click)="onEditDescription()" *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <p-editor formControlName="description" [style]="{'height':'111px'}"
+                [readonly]="!this.editableDescription && this.reviewForm">
+                <p-header>
+                    <ng-template [ngTemplateOutlet]="MsgRef">
+                    </ng-template>
+                </p-header>
+            </p-editor>
+            <div class="p-invalid" *ngIf="(returnLengthOfDescription(jobDetailsForm.get('description').value) > 12500)">
+                Length should be less than 12500
+            </div>
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('description').valid) || (!jobDetailsForm.get('description').valid && jobDetailsForm.get('description').touched) ">
+                <div *ngIf="(jobDetailsForm.get('description').errors.required) ">
+                    {{'required' | translate}} </div>
+            </div>
+        </div>
+        <div class="col-lg-6 form-group">
+            <label for="special-qualification">{{'special.qualification' |translate}}</label>&nbsp; <a
+                (click)="onEditSpecialQualification()" *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <textarea rows="7" placeholder="{{'enter.special.qualification' | translate}}" class="form-control"
+                formControlName="specialQualification"
+                [readonly]="!this.editableSpecialQualification && this.reviewForm" pInputText
+                maxLength="12500"></textarea>
+            <div class="p-invalid" *ngIf="(submitted && !jobDetailsForm.get('specialQualification').valid)">
+                <div *ngIf=" jobDetailsForm.get('specialQualification').errors.maxlength">
+                    {{'twofifty.maxlength' | translate}} </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-4 form-group">
+            <label for="job-openings">No. of Job Openings*</label>&nbsp; <a (click)="onEditJobOpenings()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <input class="form-control" formControlName="noOfOpeningJob"
+                placeholder="{{'enter.no.ofjob.opening' | translate}}" type="text"
+                [readonly]="!this.editableJobOpening && this.reviewForm" pKeyFilter="num" pInputText maxLength="3">
+
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('noOfOpeningJob').valid) || (!jobDetailsForm.get('noOfOpeningJob').valid && jobDetailsForm.get('noOfOpeningJob').touched) ">
+                <div *ngIf="(jobDetailsForm.get('noOfOpeningJob').errors.required) ">
+                    {{'required' | translate}} </div>
+                <div *ngIf=" jobDetailsForm.get('noOfOpeningJob').errors.maxlength">
+                    {{'three.maxlength' | translate}} </div>
+            </div>
+
+        </div>
+        <div class="col-md-6 col-lg-4 form-group">
+
+            <label for="experience">{{'experience' |translate}}*</label>&nbsp; <a (click)="onEditExperience()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <br>
+            <p-autoComplete formControlName="experience" minLength="3" [suggestions]="filteredExperience"
+                (completeMethod)="filterExperience($event)" field="level" [dropdown]="true"
+                [disabled]="!this.editableExperience && this.reviewForm" [forceSelection]="true"
+                placeholder="{{'select.experience' |translate}}" delay="1000"></p-autoComplete>
+
+            <div class="p-invalid" *ngIf="(submitted && !jobDetailsForm.get('experience').valid) || 
+                    (!jobDetailsForm.get('experience').valid && jobDetailsForm.get('experience').touched)">
+                <div *ngIf=" ( jobDetailsForm.get('experience').errors.required) ">
+                    {{'required' | translate}}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 form-group">
+            <label for="start-date">{{'estimated.start.date' |translate}}*</label>&nbsp; <a
+                (click)="onEditEstimatedStartDate()" *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <div class="input-group">
+                <p-calendar formControlName="estimatedStartDate" appendTo="body" [minDate]="dateTime"
+                    [readonlyInput]="true" [showIcon]="true" inputId="icon"
+                    [disabled]="!this.editableEstimatedStartDate && this.reviewForm"
+                    placeholder="{{'enter.estimated.start.date' | translate}}"></p-calendar>
+            </div>
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('estimatedStartDate').valid) || (!jobDetailsForm.get('estimatedStartDate').valid && jobDetailsForm.get('estimatedStartDate').touched) ">
+                <div *ngIf="(jobDetailsForm.get('estimatedStartDate').errors.required) ">
+                    {{'required' | translate}} </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3 form-group">
+            <label for="address">{{'address' |translate}}*</label>&nbsp; <a (click)="onEditAddress()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <input type="text" class="form-control" maxlength="200" (keydown.enter)="$event.preventDefault()"
+                placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text"
+                #search pInputText required formControlName="location"
+                [readonly]="!this.editableAddress && this.reviewForm">
+
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('location').valid) || (!jobDetailsForm.get('location').valid && jobDetailsForm.get('location').touched) ">
+                <div *ngIf="(jobDetailsForm.get('location').errors.required) ">
+                    {{'required' | translate}} </div>
+            </div>
+
+        </div>
+        <div class="col-md-6 col-lg-2 form-group">
+            <label for="city">{{'city' |translate}}*</label>&nbsp; <a (click)="onEditCity()" *ngIf="this.reviewForm"><i
+                    class="fa fa-pencil"></i></a>
+            <p-autoComplete virtualScroll="true" itemSize="10" formControlName="city" [suggestions]="filteredCity"
+                minLength="3" (completeMethod)="filterCity($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                [inputStyle]="{'width':'100%'}" [disabled]="!this.editableCity && this.reviewForm"
+                [forceSelection]="true" placeholder="{{'select.city' |translate}}" delay="1000">
+
+            </p-autoComplete>
+
+
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('city').valid) || (!jobDetailsForm.get('city').valid && jobDetailsForm.get('city').touched) ">
+                <div *ngIf="(jobDetailsForm.get('city').errors.required) ">
+                    {{'required' | translate}} </div>
+
+
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-2 form-group">
+            <label for="zip-code">{{'zip.code' |translate}}*</label>&nbsp; <a (click)="onEditZipCode()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <input type="text" pkeyFilter="num" placeholder="{{'enter.zip.code' |translate}}" class="form-control"
+                formControlName="zipCode" [readonly]="!this.editableZipCode && this.reviewForm" pInputText maxLength="5"
+                [pKeyFilter]="blockSpecial">
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('zipCode').valid) || (!jobDetailsForm.get('zipCode').valid && jobDetailsForm.get('zipCode').touched) ">
+                <div *ngIf="(jobDetailsForm.get('zipCode').errors.required) ">
+                    {{'required' | translate}} </div>
+                <div *ngIf="jobDetailsForm.get('zipCode').errors.maxlength">
+                    {{'zip.code.should.be.less.than.6' | translate}} </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-2 form-group">
+            <label for="state">{{'state' |translate}}*</label>&nbsp; <a (click)="onEditState()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <p-autoComplete formControlName="state" minLength="3" delay="1000" [suggestions]="filteredState"
+                (completeMethod)="filterState($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                [inputStyle]="{'width':'100%'}" [disabled]="!this.editableState && this.reviewForm"
+                [forceSelection]="true" placeholder="{{'select.state' |translate}}">
+
+            </p-autoComplete>
+
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('state').valid) || (!jobDetailsForm.get('state').valid && jobDetailsForm.get('state').touched) ">
+                <div *ngIf="(jobDetailsForm.get('state').errors.required) ">
+                    {{'required' | translate}} </div>
+
+            </div>
+
+        </div>
+        <div class="col-md-6 col-lg-3 form-group">
+            <label for="region">{{'region' |translate}}*</label>&nbsp; <a (click)="onEditRegion()"
+                *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+            <p-autoComplete formControlName="region" minLength="3" [suggestions]="filteredRegion"
+                (completeMethod)="filterRegion($event)" [dropdown]="true" [style]="{'width':'100%'}"
+                [inputStyle]="{'width':'100%'}" [disabled]="!this.editableRegion && this.reviewForm"
+                [forceSelection]="true" placeholder="{{'select.region' |translate}}" delay="1000">
+            </p-autoComplete>
+
+            <div class="p-invalid"
+                *ngIf="(submitted && !jobDetailsForm.get('region').valid) || (!jobDetailsForm.get('region').valid && jobDetailsForm.get('region').touched) ">
+                <div *ngIf="(jobDetailsForm.get('region').errors.required) ">
+                    {{'required' | translate}} </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <span class="p-fluid form-group">
+        <label for="certificates">{{'certificate.requirements' |translate}}*</label>&nbsp; <a
+            (click)="onEditCertificates()" *ngIf="this.reviewForm"><i class="fa fa-pencil"></i></a>
+        <p-autoComplete formControlName="certificates" [suggestions]="filteredCertificates"
+            (completeMethod)="filterCertificate($event)" field="name" [multiple]="true" [dropdown]="true"
+            [disabled]="!this.editableCertificates && this.reviewForm" [forceSelection]="true"
+            placeholder="{{'select.certificate' |translate}}" (onSelect)="onSelectCerti($event)" minLength="3"
+            delay="1000">
+            <ng-template let-certificate pTemplate="item">
+                <div>
+                    <div *ngIf="certificate.id!='buttonId'">{{certificate.name}}</div>
+                    <div *ngIf="certificate.id==='buttonId'">
+                        <p-button class="add-certi" label="{{'add.new.certificate' | translate}}"
+                            (click)="openCertificateDialog()"></p-button>
+                    </div>
+                </div>
+            </ng-template>
+        </p-autoComplete>
+    </span>
+    <div class="p-invalid" *ngIf="(submitted && !jobDetailsForm.get('certificates').valid) || 
+                        (!jobDetailsForm.get('certificates').valid && jobDetailsForm.get('certificates').touched) ">
+        <div *ngIf=" ( jobDetailsForm.get('certificates').errors.required) ">
+            {{'required' | translate}}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="w-100 mt-3" formArrayName="screeningQuestions">
+            <label class="mb-0" for="screening-questions">{{'screening.questions' |translate}}</label>
+            <p class="text-muted">
+                <small>{{'screening.questions.caption' | translate}}</small>
+            </p>
+
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 5%">{{'no' | translate}}</th>
+                        <th>{{'questions' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody style="background-color:whitesmoke;">
+
+                    <tr *ngFor="let question of jobDetailsForm.get('screeningQuestions')['controls'];let i=index"
+                        [formGroupName]="i">
+                        <td>{{i+1}}</td>
+                        <td>
+                            <div class="form-group d-flex mb-0">
+                                <input type="text" placeholder="Enter Screening Question" class="form-control"
+                                    formControlName="question" [readonly]="this.reviewForm" pInputText maxLength="100">
+
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-dark" *ngIf="i===0 && !this.reviewForm"
+                                        (click)="addScreeningQuestion()">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-dark" *ngIf="i!==0 && !this.reviewForm"
+                                        (click)="removeScreeningQuestion(i)">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </span>
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    <tr *ngIf="this.reviewForm && screeningFieldEmpty">
+                        <td colspan="2">
+                            {{'no.questions.added' | translate}}
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="footer-action" *ngIf="!this.reviewForm ">
+
+
+
+        <button type="button" class="btn btn-primary mx-2" (click)="saveDraft()" *ngIf="!noSaveButton"> {{'save' |
+            translate}}</button>
+        <button type="submit" class="btn btn-primary"> {{'pay.details' | translate}}
+            <i class="pi pi-chevron-right"></i>
+        </button>
+
+
+    </div>
+</form>
+
+<p-dialog [(visible)]="certificateDialog" [style]="{width: '450px'}" header="Add New Certificate" [modal]="true"
+    styleClass="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="myForm">
+            <div class="p-field">
+                <label for="name">Name*</label>
+                <input type="text" pInputText id="name" formControlName="name" required autofocus />
+                <div class="p-invalid" *ngIf="myForm.controls['name'].touched &&
+                (myForm.controls['name'].hasError('required') && 
+                !myForm.controls['name'].valid)
+               || (submittedCompany && 
+               (myForm.controls['name'].hasError('required') &&
+                !myForm.controls['name'].valid))">
+                    {{ 'required' | translate}}
+                </div>
+                <div class="p-invalid" *ngIf="myForm.controls['name'].touched && 
+           (myForm.controls['name'].hasError('maxlength') && 
+           !myForm.controls['name'].valid)">
+                    {{'company.name.maxLength' | translate}}
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' |translate}}" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-text"
+            (click)="onSubmit()"></button>
+    </ng-template>
+</p-dialog>
+
+<ng-template #MsgRef>
+    <span class="ql-formats">
+        <select class="ql-header" tabindex="-1">
+            <option value="1">hxbchxb</option>
+            <option value="2">Subheading</option>
+            <option selected>Normal</option>
+        </select>
+        <select class="ql-font" tabindex="-1">
+            <option selected>Sans Serif</option>
+            <option value="serif">Serif</option>
+            <option value="monospace">Monospace</option>
+        </select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-bold" aria-label="Bold" tabindex="-1"></button>
+        <button class="ql-italic" aria-label="Italic" tabindex="-1"></button>
+        <button class="ql-underline" aria-label="Underline" tabindex="-1"></button>
+    </span>
+    <span class="ql-formats">
+        <select class="ql-color" tabindex="-1"></select>
+        <select class="ql-background" tabindex="-1"></select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-list" value="ordered" aria-label="Ordered List" tabindex="-1"></button>
+        <button class="ql-list" value="bullet" aria-label="Unordered List" tabindex="-1"></button>
+        <select class="ql-align" tabindex="-1">
+            <option selected tabindex="-1"></option>
+            <option value="center" tabindex="-1"></option>
+            <option value="right" tabindex="-1"></option>
+            <option value="justify" tabindex="-1"></option>
+        </select>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-link" aria-label="Insert Link" tabindex="-1"></button>
+        <button class="ql-code-block" aria-label="Insert Code Block" tabindex="-1"></button>
+    </span>
+    <span class="ql-formats">
+        <button class="ql-clean" aria-label="Remove Styles" tabindex="-1"></button>
+    </span>
+</ng-template>
+
+
+<p-dialog [(visible)]="jobTitleDialog" [style]="{width: '450px'}" header="Add New Job Title" [modal]="true"
+    styleClass="p-fluid" (onHide)="hideJobTitleDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="myJobTitleForm" (ngSubmit)="onSubmit()">
+            <div class="p-field">
+                <label for="name">Name*</label>
+                <input type="text" pInputText id="name" placeholder="Enter Name" formControlName="title" required
+                    autofocus [pKeyFilter]="blockSpecial" />
+                <div class="p-invalid"
+                    *ngIf="(submittedJobTitle && !myJobTitleForm.get('title').valid) || (!myJobTitleForm.get('title').valid && myJobTitleForm.get('title').dirty) ">
+                    <div *ngIf=" ( myJobTitleForm.get('title').errors.required) ">
+                        {{'required' | translate}}
+                    </div>
+                    <div *ngIf=" myJobTitleForm.get('title').errors.maxlength">
+                        {{'five.maxlength' | translate}} </div>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="{{'cancel' |translate}}" icon="pi pi-times" class="p-button-text"
+            (click)="hideJobTitleDialog()"></button>
+        <button pButton pRipple label="{{'save' | translate}}" icon="pi pi-check" class="p-button-text"
+            (click)="onSubmitJobTitle()"></button>
+    </ng-template>
+</p-dialog>

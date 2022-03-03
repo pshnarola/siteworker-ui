@@ -1,0 +1,46 @@
+p-card {
+    width: 100%;
+}
+
+.viewMoreButton {
+    margin-left: 400px;
+}
+
+:host ::ng-deep .job-listing-card .p-component {
+    margin-top: 20px !important;
+    margin-left: 25px !important;
+    margin-right: 20px !important;
+    padding-left: 20px;
+}
+
+a {
+    cursor: pointer;
+}
+
+.more-show-hide {
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+}
+
+.more-show-hide.ng-hide {
+    opacity: 0;
+}
+
+.toggle-dots-grey {
+    color: darkgrey;
+}
+
+.toggle-dots-yellow {
+    color: yellow;
+}
+
+.toggle-link-yellow {
+    color: yellow;
+}
+
+.toggle-link-grey {
+    color: darkgrey;
+}
+.card-header{
+    background-color: #f3f4f6;
+}

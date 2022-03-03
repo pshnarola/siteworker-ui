@@ -1,0 +1,193 @@
+<div class="container-fluid" *ngIf="jobDetail">
+    <div class="row">
+        <div class="col-12 p-2 bg-success text-white d-flex justify-content-between">
+            <h3 class="float-left" *ngIf="jobDetail">{{jobDetail.jobDetail.title}} | {{'posted.by'| translate}}: {{jobDetail.jobDetail.user.firstName}}</h3>
+            <div class="d-flex align-items-center">
+                <button (click)="markAsFavourite()" class="btn btn-light text-success" *ngIf="!isFavourite"><i class="fa fa-heart"></i></button>
+                <button (click)="markAsFavourite()" class="btn btn-danger ml-1" *ngIf="isFavourite"><i class="fa fa-heart"></i></button>
+                <button pButton type="button" label="{{'lets.get.started' | translate}}" class="p-button-success text-nowrap p-button-outlined ml-1" (click)="checkIfjobDetailsChanged(jobDetail.jobDetail.id, jobDetail.jobDetail.updatedDate)"></button>
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <p *ngIf="jobDetail"><strong>{{'job.title' | translate}} : </strong> {{jobDetail.jobDetail.title}}</p>
+
+            <div class="d-flex flex-wrap">
+                <div class="d-flex align-items-center flex-fill mb-2">
+                    <div class="mr-2">
+                        <img src="assets/images/worker_employ_type.svg">
+                    </div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'employement.type' | translate}}:</p>
+                        <p class="text-muted mb-0" *ngIf="jobDetail">{{jobDetail.jobDetail.employmentType==='WORKER_1099'? 'Temporary Worker - 1099': jobDetail.jobDetail.employmentType==='WORKER_W2'? 'Temporary Worker - W2': 'Full-time Employee'}}</p>
+
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center flex-fill mb-2">
+                    <div class="mr-2">
+                        <img src="assets/images/worker_estimate_start_date.svg">
+                    </div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'estimated.start.date' | translate}}:</p>
+                        <p class="text-muted mb-0" *ngIf="jobDetail">{{jobDetail.jobDetail.estimatedStartDate | date:'longDate'}}</p>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center flex-fill mb-2">
+                    <div class="mr-2">
+                        <img src="assets/images/worker_location.svg">
+                    </div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'location' | translate}}:</p>
+                        <p class="text-muted mb-0" *ngIf="jobDetail">{{jobDetail.jobDetail.city}},{{jobDetail.jobDetail.state}}</p>
+
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center flex-fill mb-2">
+                    <div class="mr-2">
+                        <img src="assets/images/worker_region.svg">
+                    </div>
+                    <div>
+                        <p class="font-weight-bold mb-0">{{'region' | translate}}:</p>
+                        <p class="text-muted mb-0" *ngIf="jobDetail">{{jobDetail.jobDetail.region}}</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="w-100 mt-2">
+                <label style="font-weight: bold;">{{'job.description' | translate}} :</label>
+            </div>
+            <div *ngIf="jobDetail.jobDetail.description; else noDescription">
+                <a href="javascript:;" (click)="openDialogReadMore(jobDetail.jobDetail.description)">View</a>
+            </div>
+            <ng-template #noDescription>
+                {{'n.a' | translate}}
+            </ng-template>
+            <br>
+
+
+            <div class="w-100">
+                <label style="font-weight: bold;">{{'special.qualification' | translate}} :</label>
+            </div>
+            <div class="w-100" *ngIf="jobDetail && jobDetail.jobDetail.specialQualification ; else none">
+                {{jobDetail.jobDetail.specialQualification}}
+            </div>
+            <ng-template #none>
+                <p class="w-100"> {{'n.a' | translate }} </p>
+            </ng-template>
+
+
+            <div class="w-100 d-flex flex-wrap mt-3">
+
+                <h5 class="font-weight-bold" *ngIf="jobDetail"> {{'no.ofjob.openings' | translate}}: {{jobDetail.jobDetail.noOfOpeningJob}}</h5>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <h5 class="font-weight-bold" *ngIf="jobDetail"> {{'experience.required' | translate}}: {{jobDetail.jobDetail.experience.level}}</h5>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <h5 class="font-weight-bold" *ngIf="jobDetail && jobDetail.jobDetail.employmentType === 'WORKER_1099'|| jobDetail.jobDetail.employmentType === 'WORKER_W2'">{{'hourly.rate.range'| translate}}: <span>{{jobDetail.jobDetail.hourlyRateFrom | currency : 'USD' : 'symbol' : '1.0-0'}} - {{jobDetail.jobDetail.hourlyRateTo| currency : 'USD' : 'symbol' : '1.0-0'}}</span></h5>
+
+
+                <h5 class="font-weight-bold" *ngIf="jobDetail && jobDetail.jobDetail.employmentType==='FULL_TIME'">{{'annual.salary.range'| translate}}: <span>{{jobDetail.jobDetail.annualSalaryFrom| currency : 'USD' : 'symbol' : '1.0-0'}} - {{jobDetail.jobDetail.annualSalaryTo| currency : 'USD' : 'symbol' : '1.0-0'}}</span></h5>
+
+            </div>
+
+
+        </div>
+
+        <div class="card-footer" *ngIf="jobDetail && jobDetail.jobDetail.employmentType === 'WORKER_1099'|| jobDetail.jobDetail.employmentType === 'WORKER_W2'">
+            <div class="d-flex flex-wrap justify-content-start">
+
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail">{{'per.diem' | translate}}: <span class="badge badge-success ml-2">{{jobDetail.jobDetail.isPerDiem=== true ? 'Yes': 'No'}}</span></p>
+
+                <span *ngIf="perDiem" class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <p class="font-weight-bold mb-0" *ngIf="perDiem">{{'rate' | translate}}: <span class="badge badge-success ml-2"> ${{jobDetail.jobDetail.perDiemRate}}</span></p>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail">{{'mileage.reimbursement' | translate}}: <span class="badge badge-success ml-2">{{jobDetail.jobDetail.isPayForMilage=== true ? 'Yes': 'No'}}</span></p>
+
+                <span class="mr-2 ml-2 font-weight-bold" *ngIf="mileage">|</span>
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail.jobDetail.isPayForMilage"><span>Min Mileage:</span> <span class="ml-2 badge badge-success">{{jobDetail.jobDetail.minimumMile}}</span></p>
+                &nbsp;<span class="mr-2 ml-2 font-weight-bold" *ngIf="mileage">|</span>&nbsp;
+                <p class="font-weight-bold mb-0" *ngIf="mileage">{{'mileage.rate' | translate}}: <span class="badge badge-success ml-2">${{jobDetail.jobDetail.milageRate}}</span></p>
+
+            </div>
+        </div>
+
+        <div class="card-footer" *ngIf="jobDetail && jobDetail.jobDetail.employmentType === 'FULL_TIME'">
+            <div class="d-flex flex-wrap justify-content-start">
+
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail">{{'yearly.bonus' | translate}}:&nbsp;<span class="ml-2 badge badge-success">{{jobDetail.jobDetail.isYearlyBonus === true ? 'Yes': 'No'}}</span></p>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail">{{'health.benefits' | translate}}:&nbsp; <span class="ml-2 badge badge-success">{{jobDetail.jobDetail.isHealthBenifit=== true ? 'Yes': 'No'}}</span></p>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <p class="font-weight-bold mb-0" *ngIf="jobDetail">{{'401k.requirement' | translate}}:<span class="ml-2 badge badge-success">{{jobDetail.jobDetail.is401KRetirement=== true ? 'Yes': 'No'}}</span></p>
+
+                <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+                <p class="font-weight-bold mb-0">{{'relocation.benefits' | translate}}:
+                    <span class="ml-2 badge badge-success" *ngIf="jobDetail">{{jobDetail.jobDetail.isRelocationBenifit === true ? 'Yes': 'No'}}</span>
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-md-6 col-lg-8">
+            <div class="row">
+                <div class="col-12">
+                    <label style="font-weight: bold;">{{'certificates.required' | translate}}</label><br>
+                    <div class="card">
+                        <div class="card-body">
+                            <div *ngIf="jobDetail.certificates">
+                                <p class="text-success font-weight-bold" *ngFor="let certificateData of certificates"> {{certificateData.certificate.name}} </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3 mb-3">
+                    <label style="font-weight: bold;">{{'screening.questions' | translate}}</label><br>
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="pl-0" *ngFor="let screeningQuestion of jobDetail.screeningQuestions">
+                                <li class="list-inline-item" style="font-weight: bold;">{{screeningQuestion.question}}</li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <label style="font-weight: bold;">{{'location' | translate}}</label><br>
+            <agm-map [latitude]="lat" [longitude]="lng">
+                <agm-marker [latitude]="lat" [longitude]="lng">
+                    <agm-info-window [isOpen]="true">
+                        <h6>{{jobDetail.jobDetail.location}}</h6>
+                    </agm-info-window>
+                </agm-marker>
+            </agm-map>
+        </div>
+    </div>
+
+    <p-dialog header="Job Description" [style]="{width: '600px'}" [(visible)]="readMoreDialog" (onHide)="closeReadMoreDialog()">
+        <div [innerHtml]="jobDetail.jobDetail.description">
+        </div>
+    </p-dialog>
+</div>

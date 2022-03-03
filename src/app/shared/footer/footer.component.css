@@ -1,0 +1,14 @@
+:host .custom-text {
+    font-weight: 700;
+    text-decoration-color: black;
+}
+
+:host .custom-text-lft {
+    text-align: center;
+    font-weight: 700;
+    text-decoration-color: black;
+}
+
+:host .custom-bg {
+    /* background-color: lightblue; */
+}

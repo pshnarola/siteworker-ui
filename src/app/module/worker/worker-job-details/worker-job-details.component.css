@@ -1,0 +1,20 @@
+agm-map {
+    height: 200px;
+    width: 100%;
+}
+
+.agm-map-container-inner {
+    border-radius: 10px;
+}
+
+.scroll {
+    max-height: 100px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}

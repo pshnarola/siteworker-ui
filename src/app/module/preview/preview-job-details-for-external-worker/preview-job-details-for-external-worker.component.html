@@ -1,0 +1,41 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo" style="cursor: pointer;" (click)="redirectToDashboard()">
+    </div>
+    <div class="d-flex align-self-center main-nav mr-2">
+        <div class="py-2 mx-1">
+            <button class="btn bg-success text-white mr-2" type="submit" (click)="redirectToSignIn()" id="login_submit">
+                Sign In
+            </button>
+            <button class="btn bg-success text-white" type="submit" (click)="redirectToSignUp()" id="signup_submit">
+                Sign Up
+            </button>
+        </div>
+    </div>
+</mat-toolbar>
+<div class="container-fluid mb-5 h-100" *ngIf="selectedJob ; else noJobsSelected">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-success text-white">
+            <h4 class="font-weight-bold">{{'job.description' | translate}} - {{selectedJob.title}}</h4>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-12">
+            <div class="card bg-grey2">
+                <div class="card-body" [innerHtml]="selectedJob.description">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #noJobsSelected>
+    <h5 class="text-muted text-center mt-3">{{'no.record.found' | translate}}</h5>
+</ng-template>
+
+<mat-toolbar appendTo="body" class="fixed-bottom d-flex justify-content-between px-2 text-small mt-3">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

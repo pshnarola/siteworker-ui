@@ -1,0 +1,30 @@
+/* form {
+    margin: 20px;
+} */
+
+/* button {
+    margin: 0 5px 0 5px;
+} */
+
+.steps {
+    margin: 10px;
+}
+
+ngb-accordion {
+    padding: 20px;
+}
+
+
+/* input,
+select,
+option,
+textarea {
+    border-radius: 15px;
+} */
+
+ngx-dropzone,
+img {
+    margin: 10px;
+    height: 100px;
+}
+

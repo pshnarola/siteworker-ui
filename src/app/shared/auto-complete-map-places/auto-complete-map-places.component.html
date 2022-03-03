@@ -1,0 +1,21 @@
+<input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search pInputText [(ngModel)]="address1" (change)="placesModelChanged($event)">
+<!-- <div *ngIf="address.invalid && (address.dirty || address.touched)" class="alert alert-danger">
+
+    <div *ngIf="address.errors.required">
+        {{'required' | translate}}
+    </div>
+</div> -->
+<!-- <div class="p-invalid" *ngIf="(submitted && !jobDetailForm.get('location').valid) || (!jobDetailForm.get('location').valid && jobDetailForm.get('location').touched) ">
+    <div *ngIf="(jobDetailForm.get('location').errors.required) ">
+        {{'required' | translate}} </div>
+</div> -->
+
+<agm-map [latitude]="latitude" [longitude]="longitude" [zoom]="zoom">
+    <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"></agm-marker>
+</agm-map>
+
+<!-- City:<input type="text" style="border-radius: 15px;" placeholder="Enter Screening Question" [(ngModel)]="city" class="form-control"> State:
+    <input type="text" style="border-radius: 15px;" [(ngModel)]="state" class="form-control"> Country:
+    <input type="text" style="border-radius: 15px;" [(ngModel)]="country" class="form-control"> Latitude:
+    <input type="text" style="border-radius: 15px;" [(ngModel)]="latitude" class="form-control"> Longitude:
+    <input type="text" style="border-radius: 15px;" [(ngModel)]="longitude" class="form-control"> {{address}} {{region}} -->

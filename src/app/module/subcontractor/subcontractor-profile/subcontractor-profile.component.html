@@ -1,0 +1,64 @@
+<div class="container-fluid">
+    <div class="row">
+        <div id="subcontrator-profile-stepper" class="bs-stepper w-100">
+            <div class="bs-stepper-header">
+                <div class="step col" data-target="#basic-information">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">1</span><br>
+                        <span class="bs-stepper-label">{{'basic.information' | translate}}</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#company-detail">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">{{'company.detail' | translate}}</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#certificates">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Certificates</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#active-licenses">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">4</span>
+                        <span class="bs-stepper-label">{{'active.license' | translate}}</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#compliance">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">5</span>
+                        <span class="bs-stepper-label">{{'compliance' | translate}}</span>
+                    </button>
+                </div>
+                <div class="step col" data-target="#refrences">
+                    <button class="step-trigger">
+                        <span class="bs-stepper-circle">6</span>
+                        <span class="bs-stepper-label">{{'reference' | translate}}</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bs-stepper-content">
+                <div id="basic-information" class="content" role="tabpanel">
+                    <app-basic-information (goToCompanyDetail)="goToNext($event)"></app-basic-information>
+                </div>
+                <div id="company-detail" class="content" role="tabpanel">
+                    <app-company-detail (goToCertificate)="goToNext($event)" (goToBasicInformation)="goToPrevious($event)"></app-company-detail>
+                </div>
+                <div id="certificates" class="content" role="tabpanel">
+                    <app-certificates (goToActiveLicense)="goToNext($event)" (goToCompanyDetails)="goToPrevious($event)"></app-certificates>
+                </div>
+                <div id="active-licenses" class="content" role="tabpanel">
+                    <app-active-licenses (goToCompliance)="goToNext($event)" (goToCertificates)="goToPrevious($event)"></app-active-licenses>
+                </div>
+                <div id="compliance" class="content" role="tabpanel">
+                    <app-compliance (goToReference)="goToNext($event)" (goToLicense)="goToPrevious($event)"></app-compliance>
+                </div>
+                <div id="refrences" class="content" role="tabpanel">
+                    <app-references (goToCompliances)="goToPrevious($event)"></app-references>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

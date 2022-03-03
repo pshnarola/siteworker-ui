@@ -1,0 +1,181 @@
+<app-signup-login-header>
+</app-signup-login-header>
+<div class="container-fluid min-h-70">
+    <div class="container">
+        <div class="row mt-4 worker_signup">
+            <div class="col-md-5 col-lg-6 order-2 order-md-1">
+                <div class="text-left">
+                    <small class="bg-success worker_reg_btn text-white"> {{'register.as.worker'| translate}}</small>
+                    <h2 class="font-weight-bold mt-4">{{'more.oppurtinities'| translate}}</h2>
+                    <h5 class="mb-4">Be the first to see the newest jobs near you</h5>
+                </div>
+
+                <div class="d-flex align-items-center my-5">
+                    <div class="p-3 border rounded-circle mr-2">
+                        <img src="assets/images/signup/icn_sub_01.svg" alt="">
+                    </div>
+                    <div>
+                        <h5 class="mb-1 font-weight-bold">{{'find.job' | translate}}</h5>
+                        <p class="mb-0">{{'find.job.description' | translate}}</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center my-5">
+                    <div class="p-3 border rounded-circle mr-2">
+                        <img src="assets/images/signup/icn_sub_02.svg" alt="">
+                    </div>
+                    <div>
+                        <h5 class="mb-1 font-weight-bold">{{'make.money' | translate}}</h5>
+                        <p class="mb-0">{{'track.income' | translate}}</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center my-5">
+                    <div class="p-3 border rounded-circle mr-2">
+                        <img src="assets/images/signup/icn_sub_03.svg" alt="">
+                    </div>
+                    <div>
+                        <h5 class="mb-1 font-weight-bold">{{'real.work' | translate}}</h5>
+                        <p class="mb-0">{{'handle' | translate}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 col-lg-6 order-1 order-md-2">
+                <p-card>
+
+                    <p-header>
+                        <h5 class="bg-success p-4 text-center mb-0 text-white radius-top-10 font-weight-bold">{{ 'signup' | translate}}
+                        </h5>
+                    </p-header>
+                    <div>
+                        <form [formGroup]="myForm">
+                            <div class="">
+                                <div class="p-fluid p-formgrid p-grid">
+                                    <div class="p-field p-col">
+                                        <label for="firstname1">{{'first.name' | translate}}*</label>
+                                        <input placeholder="Enter First Name" maxlength="50" formControlName="firstName" id="firstname1" type="text" pInputText pKeyFilter="alphanum">
+                                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('firstName').valid) || (!myForm.get('firstName').valid && myForm.get('firstName').touched) ">
+                                            <div *ngIf=" ( myForm.get('firstName').errors.required) ">
+                                                {{'required' | translate}} </div>
+                                            <div *ngIf=" myForm.get('firstName').errors.maxlength">
+                                                {{'fifty.maxlength' | translate}} </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="p-field p-col">
+                                        <label for="lastname1">{{'last.name' | translate}}*</label>
+                                        <input placeholder="Enter Last Name" maxlength="50" formControlName="lastName" id="lastname1" type="text" pInputText pKeyFilter="alphanum">
+                                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('lastName').valid) || (!myForm.get('lastName').valid && myForm.get('lastName').touched) ">
+                                            <div *ngIf=" ( myForm.get('lastName').errors.required) ">
+                                                {{'required' | translate}} </div>
+                                            <div *ngIf=" myForm.get('lastName').errors.maxlength">
+                                                {{'fifty.maxlength' | translate}} </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-field p-fluid" *ngIf="!selectedValue">
+                                    <label for="b">{{'personal.email' | translate}}*</label>
+                                    <input placeholder="Enter Email" maxlength="100" formControlName="email" id="b" type="email" pInputText>
+                                    <div class="p-invalid" *ngIf="(submitted && !myForm.get('email').valid) || (!myForm.get('email').valid && myForm.get('email').touched)">
+                                        <div *ngIf=" ( myForm.get('email').errors.required) ">
+                                            {{'required' | translate}} </div>
+                                        <div *ngIf=" myForm.get('email').errors.maxlength">
+                                            {{'hundred.maxlength' | translate}} </div>
+                                        <div class="p-invalid" *ngIf=" (!myForm.get('email').valid) ">
+                                            <div *ngIf="myForm.get('email').dirty &&
+                                                (myForm.get('email').errors.incorrectEmailFormat &&
+                                                !myForm.get('email').errors.required)">
+                                                {{'invalid.email' | translate}} </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-fluid p-formgrid p-grid">
+
+                                    <div class="p-field p-col">
+                                        <label for="mobilePhone">{{'mobile.phone' | translate}}*</label>
+                                        <p-inputMask id="mobilePhone" mask="(999) 999-9999" required formControlName="mobilePhone" placeholder="Enter Mobile Phone"></p-inputMask>
+                                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('mobilePhone').valid) || (!myForm.get('mobilePhone').valid && myForm.get('mobilePhone').touched) ">
+                                            <div *ngIf=" ( myForm.get('mobilePhone').errors.required) ">
+                                                {{'required' | translate}} </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="p-fluid p-formgrid p-grid">
+                                    <div class="p-field p-col">
+                                        <label for="password">{{'password' | translate}}*</label>
+                                        <input pInputText placeholder="Enter Password" maxlength="20" class="form-control" formControlName="password" type="password" id="password" (focus)="onFocus()" (focusout)="onFocusOut()">
+                                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('password').valid) || (!myForm.get('password').valid && myForm.get('password').touched) ">
+                                            <div *ngIf=" ( myForm.get('password').errors.required)">
+                                                {{'required' | translate}} </div>
+                                            <div *ngIf=" (myForm.get('password').errors.pattern || myForm.get('password').errors.maxlength)&& ( !myForm.get('password').errors.required)">
+                                                {{'invalid.password' | translate}} </div>
+                                        </div>
+                                        <div *ngIf="passwordSuggestion">
+                                            <small>
+                                                  {{'password.formate' |translate}}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-col">
+                                        <label for="confirmPassword">{{'confirm.password' | translate}}*</label>
+                                        <input pInputText placeholder="Enter Confirm Password" maxlength="20" class="form-control" formControlName="confirmPassword" type="password" id="confirmPassword">
+                                        <div class="p-invalid" *ngIf="(submitted && !myForm.get('confirmPassword').valid) || (!myForm.get('confirmPassword').valid && myForm.get('confirmPassword').touched) ">
+                                            <div *ngIf=" ( myForm.get('confirmPassword').errors.required) ">
+                                                {{'required' | translate}} </div>
+                                            <div *ngIf=" myForm.get('confirmPassword').errors.maxlength && !( myForm.get('confirmPassword').errors.required)">
+                                                {{'twenty.maxlength' | translate}} </div>
+                                            <div *ngIf=" myForm.get('confirmPassword').errors.pattern && !( myForm.get('confirmPassword').errors.required) && !myForm.get('confirmPassword').errors.maxlength">
+                                                {{'invalid.password' | translate}} </div>
+                                            <div *ngIf=" myForm.get('confirmPassword').errors.mustMatch && !( myForm.get('confirmPassword').errors.required) && !myForm.get('confirmPassword').errors.maxlength && !myForm.get('confirmPassword').errors.pattern">
+                                                {{'is.not.password.matched' | translate}} </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <small>{{'form.footer' | translate}}</small>
+                                <p-button (click)="onTermsOfUseClick()" styleClass="p-button-link Common_Terms px-2">
+                                    {{'form.footer.terms' | translate}}
+                                </p-button>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button pButton type="submit" label="Sign Up" class="p-button-success p-button-rounded font-weight-bold" (click)="onSubmit()"></button>
+                                    <small class="d-flex align-self-center">{{'form.already.registered' | translate}} <a href="#" class="ml-1 text-black">{{ 'signin' | translate}}</a></small>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="d-flex justify-content-between mt-3">
+                            <small class="d-flex align-self-center">Not a Worker? <a [routerLink]="['/signup']" class="mx-1 text-black">Click here</a> to sign up with the correct account type</small>
+                        </div>
+                    </div>
+
+
+                </p-card>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid bg-grey mt-5">
+    <div class="container py-2 text-center">
+        <h3 class="my-2 py-1 font-weight-bold">Trusted By</h3>
+        <div class="trusted_client d-flex justify-content-center">
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client3.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client2.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client1.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client5.png" alt="">
+            </div>
+            <div class="p-2 mx-2"><img class="img-fluid" src="assets/images/signup/trusted_client4.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+<mat-toolbar class="d-flex justify-content-between px-2 text-small">
+    <span>© 2021 Site Worker. All Rights Reserved.</span>
+    <div>
+        <a (click)="onTermsOfUseClick()" class="text-dark cursor-pointer">Terms of Use</a> | <a (click)="onPrivacyPolicyClick()" class="text-dark cursor-pointer">Privacy Policy</a> | <a (click)="onCookiePolicyClick()" class="text-dark cursor-pointer">Cookies Policy</a>
+    </div>
+</mat-toolbar>

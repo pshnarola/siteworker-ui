@@ -1,0 +1,276 @@
+<div class="container-fluid" *ngIf="selectedProject">
+    <div class="row d-flex align-items-center">
+        <div class="col-xl-1 mt-2">
+            <span>
+                {{"jobsite" | translate}}
+            </span>
+           
+        </div>
+        <div class="col-xl-4 mt-2 Set_Star">
+            <p-autoComplete forceSelection="true" field="title" [(ngModel)]="selectedJobsite" [dropdown]="true" (onSelect)="onSelectJobsite($event)" [suggestions]="filteredJobsite" (completeMethod)="filterJobsite($event)" [style]="{'width':'100%'}" [ngClass]="{'filled-star': !hasSortlistedSubcontractor(),
+                           'unfilled-star': hasSortlistedSubcontractor()}" [inputStyle]="{'width':'100%'}">
+
+                <ng-template let-jobsite pTemplate="item">
+                    <span *ngIf="!hasSortlistedSubcontractorDropdown(jobsite.id)">
+
+                        <input  style="display: none;" type="checkbox" id={{jobsite.id}} checked disabled>
+                        <label class="star d-flex mt-2 float-left align-items-center" for={{jobsite.id}}></label>
+                        
+                        <div class="d-flex align-items-center ml-4 justify-content-between">{{jobsite.title}}</div>
+                    </span>
+                    <span *ngIf="hasSortlistedSubcontractorDropdown(jobsite.id)">
+
+                        <input  style="display: none;" type="checkbox" id={{jobsite.id}} disabled>
+                        <label class="star d-flex mt-2 float-left align-items-center" for={{jobsite.id}}></label>
+
+                        <div class="d-flex align-items-center ml-4 justify-content-between">{{jobsite.title}}</div>
+                    </span>
+                </ng-template>
+
+            </p-autoComplete>
+        </div>
+        <div class="col-xl-7 mt-2">
+            <p-button styleClass="p-button-sm"> {{"client.suggested.jobsite.cost" | translate}} :
+
+                <div *ngIf="selectedJobsite">{{selectedJobsite.cost | currency}}</div>
+            </p-button>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="p-field col-xl-8">
+            <p-table #dt [columns]="subcontractorColumns" [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [value]="subcontractors" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true"
+                [rowsPerPageOptions]="rowsPerPageOptions" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="400px">
+
+                <ng-template pTemplate="colgroup" let-columns>
+                    <colgroup>
+                        <col style="width:80px">
+                        <col style="width:100px">
+                        <col style="width:100px">
+                        <col style="width:100px">
+                        <col style="width:100px">
+                    </colgroup>
+                </ng-template>
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th pResizableColumn colspan="1">
+                            {{'sortlist'|translate}}
+                        </th>
+                        <th pResizableColumn [pSortableColumn]="'SUB_CONTRACTOR_NAME'" colspan="3">
+                            {{'subcontractor'|translate}}
+                            <p-sortIcon field="'SUB_CONTRACTOR_NAME'"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn [pSortableColumn]="'SUB_CONTRACTOR_COST'" colspan="1">
+                            {{'bid.amount'|translate}}
+                            <p-sortIcon field="'SUB_CONTRACTOR_COST'"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-i="rowIndex" let-subcontractor>
+                    <tr>
+                        <td class="text-center" *ngIf="!isSubcontractorSelected(subcontractor.jobsiteBidDetailDTO.subContractor.id)" rowspan="2">
+                            <input style="display: none;" type="checkbox" (change)="onSortListSubcontractor(subcontractor)" checked id={{subcontractor.jobsiteBidDetailDTO.subContractor.id}}>
+                            <label class="star" for={{subcontractor.jobsiteBidDetailDTO.subContractor.id}}></label>
+
+                        </td>
+                        <td class="text-center" *ngIf="isSubcontractorSelected(subcontractor.jobsiteBidDetailDTO.subContractor.id)" rowspan="2">
+                            <input style="display: none;" type="checkbox" (change)="removeSubcontractorForSingleJobsite(subcontractor,subcontractor.jobsiteBidDetailDTO.jobSiteDetail)" id={{subcontractor.jobsiteBidDetailDTO.subContractor.id}}>
+                            <label class="star" for={{subcontractor.jobsiteBidDetailDTO.subContractor.id}}></label>
+
+                        </td>
+                        <td colspan="3">
+                            <center>
+                                <p-button (click)="redirectToSubcontractor(subcontractor.jobsiteBidDetailDTO.subContractor.id)" styleClass="p-button-link">
+                                    {{subcontractor.jobsiteBidDetailDTO.subContractor.firstName}} {{subcontractor.jobsiteBidDetailDTO.subContractor.lastName}}
+                                </p-button>
+                            </center>
+                        </td>
+                        <td rowspan="2">{{subcontractor.jobsiteBidDetailDTO.subContractorCost | currency}}</td>
+                    </tr>
+
+                    <tr>
+                        <td *ngIf="subcontractor.subContractorAvgRating" class="text-wrap"><i class="fa fa-star"></i> {{subcontractor.subContractorAvgRating}}
+                        </td>
+                        <td *ngIf="!subcontractor.subContractorAvgRating" class="text-wrap"><i class="fa fa-star"></i> New Subcontractor
+                        </td>
+                        <td *ngIf="subcontractor.subContractorTotalExperience" class="text-wrap"><i class="fa fa-user"></i> {{subcontractor.subContractorTotalExperience}}
+                        </td>
+                        <td *ngIf="!subcontractor.subContractorTotalExperience" class="text-wrap"><i class="fa fa-user"></i> New Subcontractor
+                        </td>
+                        <td *ngIf="subcontractor.subContractorSuccessRatio" class="text-wrap"><i class="fa fa-line-chart"></i> {{subcontractor.subContractorSuccessRatio}}
+                        </td>
+                        <td *ngIf="!subcontractor.subContractorSuccessRatio" class="text-wrap"><i class="fa fa-line-chart"></i> New Subcontractor
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td class="text-center" [attr.colspan]="6">
+                            {{'no.record.found' | translate}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="datatable-card">
+                <p-table #dt [rows]="size" [value]="selectedSubcontractor" [totalRecords]="totalRecords" [resizableColumns]="true" [loading]="loading" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" styleClass="p-datatable-gridlines" [scrollable]="true"
+                    scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 50px;">
+                            <col style="width: 50px;">
+                            <col style="width: 50px;">
+                        </colgroup>
+                    </ng-template>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pResizableColumn style="white-space: break-spaces;">Shortlisted Subcontractor</th>
+                            <th pResizableColumn>Jobsite</th>
+                            <th pResizableColumn>Action</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                        <ng-container>
+                            <tr>
+                                <td class="text-wrap">
+                                    {{data.jobsiteBidDetailDTO.subContractor.firstName}} {{data.jobsiteBidDetailDTO.subContractor.lastName}}
+                                </td>
+                                <td>
+                                    <p-button styleClass="p-button-link" (click)="openJobsiteDialog(data)">{{ getNumberOfJobsite(data.jobsiteBidDetailDTO.subContractor.id)}}
+                                    </p-button>
+                                </td>
+                                <td class="BtnPadd">
+
+                                    <button class="btn" (click)="redirectToAwardJobsite(data.jobsiteBidDetailDTO.subContractor.id)">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+
+                                    <a style="color:red;" class="btn" (click)="removeFromSelectedSubcontractor(data)">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+
+                                    <button class="btn" (click)="showMessageDialog(data.jobsiteBidDetailDTO.subContractor)">
+                                        <i class="fa fa-envelope"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td class="text-center" [attr.colspan]="3">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+                {{'maximum.10.selection.allowed' | translate}}
+            </div>
+        </div>
+
+        <div class="Dilog_job_bid">
+            <p-dialog [(visible)]="jobsiteDialog" [style]="{width: '60%'}" [modal]="true" styleClass="p-fluid">
+
+                <ng-template pTemplate="header">
+                    {{'shortlisted.jobsites.for' | translate}} {{dialogSubcontractor.jobsiteBidDetailDTO.subContractor.firstName}} {{dialogSubcontractor.jobsiteBidDetailDTO.subContractor.lastName}}
+                </ng-template>
+                <p-table #dt [value]="subcontractorJobsite" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [resizableColumns]="true" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,15,25]" styleClass="p-datatable-striped" styleClass="p-datatable-responsive-demo"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" styleClass="p-datatable-gridlines" [scrollable]="true" [style]="{width:'100%'}" scrollHeight="400px">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width:200px">
+                            <col style="width:200px">
+                            <col style="width:150px">
+                            <col style="width:150px">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th id="{{col.value}}" *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null" pResizableColumn>
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}">
+
+                                </p-sortIcon>
+                            </th>
+                            <th pResizableColumn>{{ "action" | translate }}</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-jobsite>
+                        <tr>
+                            <td>{{jobsite.title}}</td>
+                            <td class="text-wrap">{{jobsite.description}}</td>
+                            <td>{{jobsite.subContractorCost}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" (click)="removeJobsiteFromDropDown(jobsite.fullDetail.subContractor.id,jobsite.fullDetail.jobSiteDetail)">
+                                    <i aria-hidden="true" class="fa fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="4" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-dialog>
+        </div>
+
+        <div class="Dilog_job_bid">
+            <p-dialog [(visible)]="dialog" [style]="{width: '500px'}" header="{{dialogHeader}}" [modal]="true" (onHide)="hideDialog()" styleClass="p-fluid">
+
+
+                <ng-template pTemplate="content">
+                    <form [formGroup]="myChatForm" (ngSubmit)="sendMessage()">
+
+                        <div class="p-field">
+                            <label>{{'message' | translate}}*</label>
+                            <textarea pInputText formControlName="message" placeholder="{{'enter.message' | translate}}" maxLength="1000"></textarea>
+                            <div class="p-invalid" *ngIf="(submitted && !myChatForm.get('message').valid) || (!myChatForm.get('message').valid && myChatForm.get('message').touched)">
+                                <div *ngIf="(myChatForm.get('message').errors.required) ">
+                                    {{'required' | translate}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-field">
+                            <label>{{ 'upload.documents' | translate }}</label>
+                            <div class="custom-file">
+                                <ngx-dropzone [accept]="'application/pdf,image/*'" (change)="onSelect($event)" [maxFileSize]="10000000">
+                                    <ngx-dropzone-label>{{'drag.and.drop.pdf.document.image.here.to.click.to.upload' | translate}}
+                                    </ngx-dropzone-label>
+                                </ngx-dropzone>
+                            </div>
+                        </div>
+                    </form>
+                    <div *ngIf="files">
+                        <div class="card upload-attachment-div uploaded-files p-chip" *ngFor="let file of files; let i = index">
+                            <p>
+                                {{file.name}}
+                            </p>
+                            <button pButton pRipple icon="pi pi-times" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete" (click)="openDeleteDialogForTemp(i,file.name)"></button>
+                        </div>
+                    </div>
+
+                </ng-template>
+
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="{{'cancel' | translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton pRipple label="{{'send' | translate}}" icon="pi pi-check" class="p-button-text" (click)="uploadFile()"></button>
+                </ng-template>
+
+            </p-dialog>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+img {
+    height: 50px;
+    width: 50px;
+}
+
+.accordion_add_btn{
+    position: absolute;
+    right: 15px; 
+    top:7px;
+}
+
+
+/* .content {
+    padding: 20px;
+} */
+

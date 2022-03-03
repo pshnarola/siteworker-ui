@@ -1,0 +1,89 @@
+<mat-toolbar color="primary" class="d-flex justify-content-between">
+    <div class="d-flex align-items-center">
+        <img src="assets/images/logo_white.png" alt="" class="brand-logo">        
+    </div>
+    <div style="margin-right: 10px;" class="d-flex align-self-center main-nav">
+        <div class="py-2">
+            <ng-container *ngIf="displayAvatar">
+                <p-avatar label={{usernameLabel}} styleClass="p-mr-2" size="large"
+                    [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle"></p-avatar>
+            </ng-container>
+            <ng-container *ngIf="!displayAvatar">
+                
+                    <img style="float:left;" [src]="singleImageView" class="rounded-circle mr-2" width="35" height="35" alt="">
+                
+            </ng-container>            
+
+                {{loggedInUserName}}
+
+        </div>
+    </div>
+</mat-toolbar>
+
+<div class="container-fluid mb-3 Common_Profile_Border_Bottom">
+    <div class=" mx-auto mt-1 bg">
+        <div class="row View_Profile_bg">
+            <div class="col-md-12 tile2">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="">{{'jobs' | translate}}</h4>
+                    </div>
+                    <ng-container *ngIf="jobData.length !== 0; else noJobFound">
+
+                        <ng-container *ngIf="type === 'client'">
+                            <ul class="list-group-wrapper" *ngFor="let job of jobData">
+                                <li>
+                                    <h5 class="mb-0">{{job.title}}</h5>
+                                    <p class="text-muted mb-2">
+                                        <span *ngIf="job.jobCompletedDate;else jobOngoing">
+                                            {{ job.jobPostedDate | date : 'mediumDate' }} to
+                                            {{job.jobCompletedDate | date : 'mediumDate' }}
+                                        </span>
+                                        <ng-template #jobOngoing>
+                                            {{'ongoing' | translate}} {{ job.jobPostedDate | date :
+                                            'mediumDate' }}
+                                        </ng-template>
+                                    </p>
+                                    <p class="text-primary mb-2"><i class="fa fa-map-marker"></i> {{
+                                        job.location}}
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+
+                        <ng-container *ngIf="type === 'worker'">
+                            <ul class="list-group-wrapper" *ngFor="let job of jobData">
+                                <li>
+                                    <h5 class="mb-0">{{job.jobDetail.title}}</h5>
+                                    <p class="text-muted mb-2">
+                                        <span *ngIf="job.jobDetail.jobCompletedDate;else jobOngoing">
+                                            {{ job.jobDetail.jobPostedDate | date : 'mediumDate' }} to
+                                            {{job.jobDetail.jobCompletedDate | date : 'mediumDate' }}
+                                        </span>
+                                        <ng-template #jobOngoing>
+                                            {{'ongoing' | translate}} {{ job.jobDetail.jobPostedDate | date :
+                                            'mediumDate' }}
+                                        </ng-template>
+                                    </p>
+                                    <p class="text-primary mb-2"><i class="fa fa-map-marker"></i> {{
+                                        job.jobDetail.location}}
+                                    </p>
+                                </li>
+                            </ul>
+                        </ng-container>
+                        
+                    </ng-container>
+                    <ng-template #noJobFound>
+                        <div class="w-100">
+                            <p class="mt-5 text-center">{{'no.jobs.found' | translate}}</p>
+                        </div>
+                        
+                    </ng-template>
+                    <p-paginator [rows]="size" [totalRecords]="totalRecords" [rowsPerPageOptions]="rowsPerPageOptions"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                    [showCurrentPageReport]="true" (onPageChange)="paginate($event)"></p-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+:host ::ng-deep .p-listbox-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+:host ::ng-deep .p-listbox {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+}

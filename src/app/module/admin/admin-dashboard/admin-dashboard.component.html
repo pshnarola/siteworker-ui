@@ -1,0 +1,301 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="mr-auto">
+            <b>Date: {{currentDate | date:'mediumDate'}}, {{currentDate | date:'shortTime'}}</b>
+        </div>
+        <div class="ml-auto" *ngIf="lastLoginDate;else noneDate">
+            <b>Last Login: {{lastLoginDate | date:'mediumDate'}}, {{lastLoginDate | date:'shortTime'}}</b>
+        </div>
+        <ng-template #noneDate>
+            <b>Last Login: N/A</b>
+        </ng-template>
+    </div>
+    <div class="row">
+        <div class="col-xl-6 col-sm-12 mt-3">
+            <div class="card h-100">
+                <div class="card-header text-center">
+                    <h5 class="font-weight-bold mb-0">{{'projects' | translate}}</h5>
+                </div>
+                <div class="card-body p-1">
+                    <div class="row">
+                        <div class="col-xl-6 card_border_right">
+                            <div class="card_scroll">
+                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
+                                    <h5 class="float-left font-weight-bold">{{'total.projects' | translate}}</h5>
+                                    <h5 class="float-right font-weight-bold admin_text_color">{{totalProject}}</h5>
+                                </div>
+                                <div *ngIf="validateProjectChart();else none">
+                                    <canvas baseChart [data]="pieChartDataForProject" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+                                    </canvas>
+                                </div>
+
+                                <ng-template #none>
+                                    <div class="w-100">
+                                        <p class="mt-5 text-center">No Data Found</p>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card_scroll">
+                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
+                                    <h5 class="float-left font-weight-bold">{{'total.jobsites' | translate}}</h5>
+                                    <h5 class="float-right font-weight-bold admin_text_color">{{totalJobsite}}</h5>
+                                </div>
+                                <div *ngIf="validateJobsiteChart();else none">
+                                    <canvas baseChart [data]="pieChartDataForJobsite" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+                                    </canvas>
+                                </div>
+                                <ng-template #none>
+                                    <div class="w-100">
+                                        <p class="mt-5 text-center">No Data Found</p>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 mt-3">
+            <div class="card h-100">
+                <div class="card-header text-center">
+                    <h5 class="font-weight-bold mb-0">{{'jobs' | translate}}</h5>
+                </div>
+                <div class="card-body p-1">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card_scroll">
+                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
+                                    <h6 class="float-left font-weight-bold">{{'total.jobs' | translate}}</h6>
+                                    <h6 class="float-right font-weight-bold admin_text_color">{{totalJob}}</h6>
+                                </div>
+                                <div *ngIf="validateJobChart();else none">
+                                    <canvas baseChart [data]="pieChartDataForJob" [labels]="pieChartLabels" [chartType]="pieChartType" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+                                    </canvas>
+                                </div>
+                                <ng-template #none>
+                                    <div class="w-100">
+                                        <p class="mt-5 text-center">No Data Found</p>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 mt-3">
+            <div class="card h-100">
+                <div class="card-header p-2 bg-lightBlue border-bottom-0">
+                    <div class="d-inline">
+                        <h5 class="float-left mt-2 font-weight-bold mb-0">{{'to.do' | translate}}</h5>
+                        <div class="float-right">
+                            <p-selectButton [options]="toDoButtonOptions" [(ngModel)]="selectedToDoOption" optionLabel="label">
+                            </p-selectButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body bg-lightBlue px-3 pb-0 pt-0">
+                    <div class="row rounded_card_body bg-white">
+                        <div class="col-xl-12">
+                            <div class="card_scroll">
+                                <div *ngIf="selectedToDoOption.value === 'project'">
+                                    <div class="col-xl-12">
+                                        <div>
+                                            <ul class="list-unstyled text-left font-weight-bold">
+                                                <li class="my-1">
+                                                    <a *ngIf="!projectBtnDisabled" style="cursor: pointer;" (click)="openProjectInvoices()">Pending
+                                                        Invoices</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!subcontractorBtnDisabled" style="cursor: pointer;" (click)="openManageSubcontractorCertificates()">Pending
+                                                        Certificate Review for Subcontractor</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!projectBtnDisabled" style="cursor: pointer;" (click)="openProjectRatingReview()">Pending Ratings &
+                                                        Reviews</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!clientBtnDisabled" style="cursor: pointer;" (click)="openClientList()">Pending
+                                                        Clients</a>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+
+                                    </div>
+                                    <div *ngIf="userAccess && projectBtnDisabled && subcontractorBtnDisabled && clientBtnDisabled">
+                                        You don't have access
+                                    </div>
+                                </div>
+
+                                <div *ngIf="selectedToDoOption.value === 'job'">
+                                    <div class="col-xl-12">
+                                        <div>
+                                            <ul class="list-unstyled text-left font-weight-bold">
+                                                <li class="my-1">
+                                                    <a *ngIf="!jobBtnDisabled" style="cursor: pointer;" (click)="openJobInvoices()">Pending
+                                                        Invoices</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!workerBtnDisabled" style="cursor: pointer;" (click)="openManageWorkerCertificates()">Pending Certificate
+                                                        Review for Worker</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!jobBtnDisabled" style="cursor: pointer;" (click)="openJobRatingReview()">Pending
+                                                        Ratings & Reviews</a>
+                                                </li>
+                                                <li class="my-1">
+                                                    <a *ngIf="!clientBtnDisabled" style="cursor: pointer;" (click)="openClientListForJob()">Pending
+                                                        Clients</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div *ngIf="userAccess && jobBtnDisabled && workerBtnDisabled && clientBtnDisabled">
+                                        You don't have access
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-3 mt-3">
+            <div class="card h-100">
+                <div class="card-header text-center">
+                    <h5 class="font-weight-bold mb-0">{{'users' | translate}}</h5>
+                </div>
+                <div class="card-body p-1">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card_scroll">
+                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
+                                    <h6 class="float-left font-weight-bold">{{'total.users' | translate}}</h6>
+                                    <h6 class="float-right font-weight-bold admin_text_color">{{totalUsers}}</h6>
+                                </div>
+                                <div *ngIf="validateUserChart();else none">
+                                    <canvas baseChart [data]="pieChartDataForUser" [labels]="pieChartLabelsForUser" [chartType]="pieChartType" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+                                    </canvas>
+                                </div>
+                                <ng-template #none>
+                                    <div class="w-100">
+                                        <p class="mt-5 text-center">No Data Found</p>
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 mt-3">
+            <div class="card h-100">
+                <div class="card-header text-center">
+                    <h5 class="font-weight-bold mb-0">{{'total.revenue' | translate}}</h5>
+                </div>
+                <div class="card-body p-1">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="card_scroll">
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" value="month"
+                                            [(ngModel)]="selectedTypeForChart"
+                                            (change)="onChangeTypeOfRevenue($event)">This Month
+                                    </label>
+                                </div>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" value="year"
+                                            [(ngModel)]="selectedTypeForChart"
+                                            (change)="onChangeTypeOfRevenue($event)">This Year
+                                    </label>
+                                </div>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" value="tillNow"
+                                            [(ngModel)]="selectedTypeForChart"
+                                            (change)="onChangeTypeOfRevenue($event)">Till Now
+                                    </label>
+                                </div>
+
+                                <div class="mt-2">
+                                    <canvas baseChart [datasets]="barChartDataForRevenue" [labels]="barChartLabelsForRevenue" [chartType]="barChartTypeForRevenue" [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+                                    </canvas>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 mt-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="font-weight-bold"> {{'locations' | translate}}</h5>
+
+                    <div class="clie_da float-right">
+
+                        {{ 'type' | translate }} :
+
+                        <p-dropdown [options]="typesForLocationDropdown" [(ngModel)]="selectedType" (onChange)="onTypeSelect($event)" optionLabel="type">
+                        </p-dropdown>
+
+                        {{ 'state' | translate }} :
+
+                        <p-dropdown [options]="state" (onChange)="onStateSelect($event)" [(ngModel)]="selectedState">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="block  location ">
+                    <agm-map [latitude]="lat" [longitude]="lng">
+                        <div *ngIf="selectedType">
+                            <div *ngIf="selectedType.value === 'project'">
+                                <agm-marker *ngFor="let project of dataOfAwardedProject; let i = index" [latitude]="project.latitude" [longitude]="project.longitude"></agm-marker>
+                                <agm-marker *ngFor="let project of dataOfUnawardedProject; let i = index" [latitude]="project.latitude" [longitude]="project.longitude"></agm-marker>
+                            </div>
+
+                            <div *ngIf="selectedType.value === 'jobsite'">
+                                <agm-marker *ngFor="let jobsite of dataOfAwardedJobsite; let i = index" [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"></agm-marker>
+                                <agm-marker *ngFor="let jobsite of dataOfUnawardedJobsite; let i = index" [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"></agm-marker>
+                            </div>
+
+                            <div *ngIf="selectedType.value === 'job'">
+                                <agm-marker *ngFor="let job of dataOfAwardedJob; let i = index" [latitude]="job.latitude" [longitude]="job.longitude"></agm-marker>
+                                <agm-marker *ngFor="let job of dataOfUnawardedJob; let i = index" [latitude]="job.latitude" [longitude]="job.longitude"></agm-marker>
+                            </div>
+
+                        </div>
+
+                        <div *ngIf="selectedType.value === 'all'">
+                            <div>
+                                <agm-marker *ngFor="let project of dataOfAwardedProject; let i = index" [latitude]="project.latitude" [longitude]="project.longitude"></agm-marker>
+                                <agm-marker *ngFor="let project of dataOfUnawardedProject; let i = index" [latitude]="project.latitude" [longitude]="project.longitude"></agm-marker>
+                            </div>
+
+                            <div>
+                                <agm-marker *ngFor="let jobsite of dataOfAwardedJobsite; let i = index" [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"></agm-marker>
+                                <agm-marker *ngFor="let jobsite of dataOfUnawardedJobsite; let i = index" [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"></agm-marker>
+                            </div>
+
+                            <div>
+                                <agm-marker *ngFor="let job of dataOfAwardedJob; let i = index" [latitude]="job.latitude" [longitude]="job.longitude"></agm-marker>
+                                <agm-marker *ngFor="let job of dataOfUnawardedJob; let i = index" [latitude]="job.latitude" [longitude]="job.longitude"></agm-marker>
+                            </div>
+                        </div>
+                    </agm-map>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

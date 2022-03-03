@@ -1,0 +1,33 @@
+agm-map {
+    height: 200px;
+    width: 100%;
+}
+
+.scroll {
+    max-height: 100px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* .admin-theme .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link, .admin-theme a {
+    color: #28a745 !important;
+} */
+/* .admin-theme .p-rating:not(.p-disabled):not(.p-readonly) .p-rating-icon:hover, .admin-theme .p-rating .p-rating-icon, .admin-theme .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link, .admin-theme .p-button.p-button-link, .admin-theme a {
+    color: #28a745 !important;
+} */
+/* a {
+    color: #28a745 !important;
+} */
+
+.footer-part {
+    /* position: relative; */
+    position: absolute !important;
+    width: 100%;
+    bottom: 0;
+}

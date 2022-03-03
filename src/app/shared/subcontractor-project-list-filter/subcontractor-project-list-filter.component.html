@@ -1,0 +1,76 @@
+<div class="d-flex flex-wrap w-100 p-3">
+    <h4>Filter By</h4>
+    <div class="p-fluid">
+        <form *ngIf="projectFilterFormGroup" [formGroup]="projectFilterFormGroup">
+            <div class="p-field">
+                <label for="projectTitle">{{'project.name' | translate}}</label>
+                <p-autoComplete minLength="3" formControlName="projectTitle" id="projectTitle" [multiple]="true" delay="2000" placeholder="{{'project.name' | translate}}" [suggestions]="filteredProjectTitles" (completeMethod)="getProjectTitle($event)">
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="industryType">{{'industry.type' | translate}}</label>
+                <p-autoComplete minLength="3" delay="2000" formControlName="industryType" id="industryType" [multiple]="true" placeholder="{{'industry.type' | translate}}" [dropdown]="true" (completeMethod)="getFilteredIndustryForProject($event)" [suggestions]="filteredIndustryForProject">
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="companyAndClient">{{'company.client' | translate}}</label>
+                <p-autoComplete minLength="3" class="text_overflow" delay="2000" formControlName="clientName" id="companyAndClient" [multiple]="true" placeholder="{{'company.client' | translate}}" [dropdown]="true" (completeMethod)="getFilteredClientForProject($event)" [suggestions]="filteredClientForProject">
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="isBidnegotiable">{{'bid.negotiable' | translate}}</label>
+                <p-autoComplete formControlName="isBidNegotiable" field="label" id="isBidNegotiable" [multiple]="false" placeholder="{{'bid.negotiable' | translate}}" [dropdown]="true" [suggestions]="filteredIsNegotiable" (completeMethod)="filterIsNegotiable($event)">
+                </p-autoComplete>
+            </div>
+            
+            <div class="p-field">
+                <label for="state">{{'state' | translate}}</label>
+                <p-autoComplete formControlName="state" id="state" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" placeholder="State" (completeMethod)="getFilteredStateForProject($event)" [suggestions]="filteredStateForProject">
+                </p-autoComplete>
+            </div>
+            <div class="p-field">
+                <label for="region">{{'region' | translate}}</label>
+                <p-autoComplete formControlName="region" id="region" [multiple]="true" [dropdown]="true" forceSelection="true" minLength="3" delay="2000" placeholder="Region" (completeMethod)="getFilteredRegionForProject($event)" [suggestions]="filteredRegionForProject">
+                </p-autoComplete>
+            </div>
+           
+            <div class="p-field">
+                <label for="range1">Posted Date</label>
+                <p-calendar formControlName="postDate" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range1" [showIcon]="true">
+                </p-calendar>
+            </div>
+            <div class="p-field">
+                <label for="range2">Due Date</label>
+                <p-calendar formControlName="dueDate" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range2" [showIcon]="true">
+                </p-calendar>
+            </div>
+            <div class="p-field">
+                <label for="range3">Start Date</label>
+                <p-calendar formControlName="startDate" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range3" [showIcon]="true">
+                </p-calendar>
+            </div>
+            <div class="p-field">
+                <label for="range4">Estimated End Date</label>
+                <p-calendar formControlName="estimatedDate" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range4" [showIcon]="true">
+                </p-calendar>
+            </div>
+            <label for="state">{{'budget' | translate}}</label>
+            <div class="p-formgroup-inline">
+                <br>
+                <div class="p-field p-0 p-col">
+                    <label for="state">{{'min' | translate}}</label>
+                    <p-inputNumber mode="currency" currency="USD" formControlName="min" placeholder="Min" maxlength="17" locale="en-US"></p-inputNumber>
+                </div>
+                <div class="p-field p-0 p-col">
+                    <label for="region">{{'max' | translate}}</label>
+                    <p-inputNumber mode="currency" currency="USD" formControlName="max" placeholder="Max" maxlength="17" locale="en-US"></p-inputNumber>
+                </div>
+            </div>
+        </form>
+
+        <div class="d-flex">
+            <button pButton pRipple type="button" label="Apply" class="p-button-warning mt-3 mr-2" (click)="filterProjectList()"></button>
+            <button pButton pRipple type="button" label="Clear" class="p-button-danger mt-3" (click)="clear($event)"></button>
+        </div>
+    </div>
+</div>

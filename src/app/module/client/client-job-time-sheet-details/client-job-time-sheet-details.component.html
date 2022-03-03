@@ -1,0 +1,304 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 p-2 bg-primary text-white">
+            <h4 class="font-weight-bold">
+                {{'timesheets' | translate}}
+                <span *ngIf="timesheetData">/ {{timesheetData.jobBidDetail.jobDetail.title}}</span> <span *ngIf="timesheetData"> / {{timesheetData.worker.firstName}} {{timesheetData.worker.lastName}}</span>
+            </h4>
+        </div>
+    </div>
+    <div class="row my-3">
+
+        <div class="col-xl-6">
+            <div *ngIf="!approvedRejectedFlag">
+                <button pButton type="button" class="p-button mr-2" (click)="approveTimesheet(timesheetList, reimbursementList, amountReimbursement, totalAmount)" label="{{ 'approve.all' | translate}}" *ngIf="!approvedRejectedFlag"></button>
+                <button pButton type="button" class="p-button-danger" (click)="openRejectDialog()" label="{{ 'reject.all' | translate}}" *ngIf="!approvedRejectedFlag"></button>
+            </div>
+        </div>
+        <div class="col-xl-6 text-right">
+            <button pButton pRipple type="button" (click)="onFilterOpen()" label="{{'filter' | translate}}" class="p-button" icon="fa fa-filter"></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
+            <p-card *ngIf="isFilterOpened" styleClass="bg-grey2 ">
+                <form [formGroup]="myForm">
+                    <label>{{'select.week' | translate}}</label>
+                    <div class="row">
+                        <div class="col-xl-5">
+                            <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" firstDayOfWeek="1"></p-calendar>
+                        </div>
+                        <div class="col-xl-5">
+                            <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [disabled]="true"></p-calendar>
+                        </div>
+                        <div class="col-xl-2 d-flex align-items-center mt-1">
+                            <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>
+                            <button pButton type="button" class="p-button-danger" (click)="clear()" label="{{ 'clear' | translate}}"></button>
+                        </div>
+                    </div>
+                    <br>
+                </form>
+            </p-card>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card datatable-card">
+                <p-table #dt [columns]="selectedDayWiseColumns" [value]="timesheetList" [rows]="size" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions" [totalRecords]="totalRecords">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="dayWiseColumns" [(ngModel)]="selectedDayWiseColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 240px;" *ngFor="let col of columns">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                                <div *ngSwitchCase="'workDate'">
+                                    {{data.workDate | date: "shortDate"}}
+                                </div>
+                                <div *ngSwitchCase="'workHour'">
+                                    {{data.workHour | number}}
+                                </div>
+                                <div *ngSwitchCase="'workDescription'" class="text-wrap text-break">
+                                    <span class="text-wrap text-break" *ngIf="data.workDescription; else noDescription">
+                                        {{data.workDescription}}
+                                    </span>
+                                    <ng-template #noDescription>
+                                        {{'n.a' | translate}}
+                                    </ng-template>
+
+                                </div>
+                                <div *ngSwitchCase="'totalMilesTravelled'">
+                                    {{data.totalMilesTravelled}}
+                                </div>
+                                <div *ngSwitchCase="'nonBillableMiles'">
+                                    {{data.nonBillableMiles}}
+                                </div>
+                                <div *ngSwitchCase="'billableMiles'">
+                                    {{data.billableMiles| number: '2.0'}}
+                                </div>
+                                <div *ngSwitchCase="'milageDescription'" class="text-wrap text-break">
+                                    <span class="text-wrap text-break" *ngIf="data.mileageDescription; else noMilesDescription">
+                                        {{data.mileageDescription}}
+                                    </span>
+                                    <ng-template #noMilesDescription>
+                                        {{'n.a' | translate}}
+                                    </ng-template>
+                                </div>
+                                <div *ngSwitchCase="'attachment'">
+                                    {{'n.a' | translate}}
+                                </div>
+                                <div *ngSwitchCase="'status'">
+                                    {{data.status === 'APPROVED'? 'Approved': data.status === 'REJECTED'? 'Rejected': data.status === 'REQUESTED'? 'Requested': 'Not Submitted'}}
+                                </div>
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <td *ngFor="let col of selectedDayWiseColumns" [ngSwitch]="col.value">
+                                <div *ngSwitchCase="'workDate'">
+                                    {{'total' | translate}}
+                                </div>
+                                <div *ngSwitchCase="'workHour'">
+                                    {{totalWorkHours}}
+                                </div>
+                                <div *ngSwitchCase="'workDescription'">
+
+                                </div>
+                                <div *ngSwitchCase="'totalMilesTravelled'">
+
+                                </div>
+                                <div *ngSwitchCase="'nonBillableMiles'">
+
+                                </div>
+                                <div *ngSwitchCase="'billableMiles'">
+                                    {{totalBillableMiles}}
+                                </div>
+                                <div *ngSwitchCase="'milageDescription'">
+
+                                </div>
+                                <div *ngSwitchCase="'attachment'">
+
+                                </div>
+                                <div *ngSwitchCase="'status'">
+
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+
+        <div class="col-12 mt-3">
+            <div class="card datatable-card">
+                <p-table #dt [columns]="selectedReimbursementColumns" [value]="reimbursementList" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                    [totalRecords]="totalRecords">
+                    <ng-template pTemplate="caption">
+                        <p-multiSelect [options]="reimbursementColumns" [(ngModel)]="selectedReimbursementColumns" optionLabel="label" selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+                    </ng-template>
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                            <col style="width: 150px;" *ngFor="let col of columns">
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                {{col.label}}
+                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns" [ngSwitch]="col.value">
+                                <div *ngSwitchCase="'CREATED_DATE'">
+                                    {{data.createdDate | date: 'shortDate'}}
+                                </div>
+                                <div *ngSwitchCase="'title'">
+                                    {{data.title}}
+                                </div>
+                                <div *ngSwitchCase="'description'">
+                                    <span class="text-wrap">
+                                        {{data.description}}
+                                    </span>
+                                </div>
+                                <div *ngSwitchCase="'amount'">
+                                    {{data.amount | currency:'USD'}}
+                                </div>
+                                <div *ngSwitchCase="'offCycle'">
+                                    {{data.isOffCycle=== true ? 'Yes': 'No'}}
+                                </div>
+                                <div *ngSwitchCase="'attachment'">
+                                    <p-button label="{{'download' | translate}}" styleClass="p-button-link p-1" (click)="downloadDocuments(data.id)"></p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td [attr.colspan]="9" class="text-center">
+                                {{'no.record.found' | translate}}
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+
+        <div class="col-12 mt-3">
+            <p-accordion>
+                <p-accordionTab>
+                    <ng-template pTemplate="header">
+                        {{'pay.summary' | translate}}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <div class="row">
+                            <div class="card datatable-card">
+                                <p-table #dt [columns]="paySummaryColumns" [value]="timesheetPaySummaryList" [rows]="size" [scrollable]="true" scrollHeight="400px" [resizableColumns]="true" styleClass="p-datatable-gridlines" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+                                    [totalRecords]="totalRecords">
+
+                                    <ng-template pTemplate="colgroup" let-columns>
+                                        <colgroup>
+                                            <col style="width: 150px;" *ngFor="let col of columns">
+                                        </colgroup>
+                                    </ng-template>
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr>
+                                            <th id="column_{{col.value}}" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable?col.value:null">
+                                                {{col.label}}
+                                                <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-data let-i="rowIndex" let-columns="columns">
+                                        <tr>
+                                            <td>{{data.specifications}}</td>
+                                            <td>{{data.quantity}}</td>
+                                            <td>
+                                                <span *ngIf="data.rate>0; else none">
+                                                    {{data.rate | currency}}
+                                            </span>
+                                                <ng-template #none>
+                                                    {{data.rate}}
+                                                </ng-template>
+
+                                            </td>
+                                            <td>{{data.amount | currency}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="footer">
+                                        <tr *ngFor="let reimbursement of reimbursementList">
+                                            <td colspan="3" class="p-text-center">{{reimbursement.title}}</td>
+                                            <td>{{reimbursement.amount | currency}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="p-text-center">{{'total' | translate}}</td>
+
+                                            <td>{{calculateTotalAmount(amountReimbursement, amountDiem, amountMilage, amountWorkHours, amountOverTimeHours) | currency}}</td>
+
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td [attr.colspan]="9" class="text-center">
+                                                {{'no.record.found' | translate}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                </p-table>
+                            </div>
+                        </div>
+                        <br>
+                    </ng-template>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div>
+
+    <p-dialog [(visible)]="rejectDialog" [style]="{width: '50%'}" header="{{'rejection.reason' | translate}}" [modal]="true" styleClass="p-fluid" (onHide)="hideRejectDialog()">
+
+        <ng-template pTemplate="content">
+            <form [formGroup]="myRejectForm">
+
+                <div class="p-field">
+                    <label for="title">{{ "reason" | translate }}*</label>
+                    <input class="form-control" type="text" pInputText formControlName="rejectionReason" placeholder="Enter Reason" required />
+                </div>
+            </form>
+        </ng-template>
+        <ng-template pTemplate="footer">
+            <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}" class="p-button-outlined p-button-danger" style="margin-left: 16px;" (click)="hideRejectDialog()"></button>
+            <p-button label="{{ 'save' | translate }}" type="button" (click)="rejectTimesheet(timesheetList, reimbursementList, amountReimbursement,totalAmount)" icon="pi pi-check-circle"></p-button>
+        </ng-template>
+    </p-dialog>
+
+
+</div>

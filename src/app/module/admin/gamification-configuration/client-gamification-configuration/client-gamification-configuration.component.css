@@ -1,0 +1,45 @@
+.points-field-m {
+    width: 150px;
+}
+
+.points-field-l {
+    width: 200px;
+}
+
+.label-info {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+/* .tp-width {
+    width: 400px;
+    max-width: 400px;
+    min-width: 400px;
+}
+
+.ng- {
+    width: 400px;
+}
+
+.p-tooltip .p-component .p-tooltip-right {
+    max-width: 400px;
+    min-width: 400px;
+} */
+
+/* :host ::ng-deep .p-tooltip>.p-tooltip-text {
+    width: 550px !important;
+} */
+
+/* ::ng-deep .p-tooltip {
+    max-width: fit-content;
+} */
+
+::ng-deep .p-tooltip {
+    max-width: 300px;
+}
+
+/* ::ng-deep .my-tooltip {
+    max-width: unset !important;
+    white-space: pre-wrap;
+    font-size: 8px;
+} */
