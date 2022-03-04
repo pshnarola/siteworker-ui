@@ -21,6 +21,7 @@ import { LineItem } from '../Vos/lineItemModel';
 })
 export class LineItemTemplateComponent implements OnInit {
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   data: LineItem[] = [];
   lineItemDialog = false;
   loggedInUserId: string;
@@ -308,13 +309,13 @@ export class LineItemTemplateComponent implements OnInit {
 
 
   validateLengthForSingleWorkType(description, inclusion, exclusion) {
-    if (this.returnLengthOfDescription(description) > 5000) {
+    if (this.returnLengthOfDescription(description) > 10000) {
       return false;
     }
-    else if (this.returnLengthOfInclusion(inclusion) > 5000) {
+    else if (this.returnLengthOfInclusion(inclusion) > 10000) {
       return false;
     }
-    else if (this.returnLengthOfExclusion(exclusion) > 5000) {
+    else if (this.returnLengthOfExclusion(exclusion) > 10000) {
       return false;
     }
 

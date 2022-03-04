@@ -6,7 +6,7 @@
                         class="fa fa-pencil"></i></a> </label>
             <input type="text" placeholder="{{'enter.job.name' | translate}}" class="form-control"
                 formControlName="title" [readonly]="!this.editableName && this.reviewForm" pInputText maxLength="50"
-                [pKeyFilter]="blockSpecial">
+                [pKeyFilter]="blockSomeSpecial">
             <div class="p-invalid" *ngIf="jobDetailsForm.controls['title'].touched && 
             (jobDetailsForm.controls['title'].hasError('required') &&
              !jobDetailsForm.controls['title'].valid)

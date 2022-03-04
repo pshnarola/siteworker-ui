@@ -33,6 +33,7 @@ export class AddLineItemComponent implements OnInit {
     'description': 'Define your own template'
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   responsiveOptions;
   lineItemForm: FormGroup;
   loggedInUserId: string;
@@ -532,13 +533,13 @@ export class AddLineItemComponent implements OnInit {
   }
 
   validateLengthForSingleWorkType(description,inclusion,exclusion){
-    if(this.returnLengthOfDescription(description) > 5000){
+    if(this.returnLengthOfDescription(description) > 10000){
       return false;
     }
-    else if(this.returnLengthOfInclusion(inclusion) > 5000){
+    else if(this.returnLengthOfInclusion(inclusion) > 10000){
       return false;
     }
-    else if(this.returnLengthOfExclusion(exclusion) > 5000){
+    else if(this.returnLengthOfExclusion(exclusion) > 10000){
       return false;
     }
 

@@ -62,6 +62,7 @@ export class AddNewProjectComponent implements OnInit {
     searchText: null
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   region: Region[];
   industryType: IndustryType[];
   state: State[];
@@ -281,8 +282,10 @@ export class AddNewProjectComponent implements OnInit {
     if (this._localStorageService.getItem('addNewProjectFormValue')) {
       this.subscription = this.postProjectService.addNewProject.subscribe(
         data => {
-          console.log(data);
+          console.log("285 vik=>", data);
           this.initializeAddNewProjectForm();
+          console.log(' 287 vik=>', this._localStorageService.getItem('addNewProjectFormValue'));
+          
           this.addNewProjectForm.setValue(this._localStorageService.getItem('addNewProjectFormValue'));
           console.log(this.addNewProjectForm);
           let project = this._localStorageService.getItem('addProjectDetail');
@@ -588,12 +591,40 @@ export class AddNewProjectComponent implements OnInit {
       region: [null, Validators.required],
       state: [null, Validators.required],
       industry: [null, Validators.required],
+      // attachmentLink: [''],
       bidDueDate: [null, Validators.required],
       completionDate: [null, Validators.required],
       startDate: [null, Validators.required],
       isNegotiable: [true, Validators.required],
       type: ['OPEN_MARKET_REQUEST', Validators.required]
+    }, {
+      validators: [
+        // this.URLValidator('attachmentLink')
+      ]
     });
+  }
+
+  URLValidator(controlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+      
+      if (control.errors && !control.errors.invalidLink) {
+        // return if another validator has already found an error on the control
+        return;
+      }
+  
+      // set error on control if validation fails
+      try {
+        const url = new URL(control.value);
+        control.setErrors(null);
+      } catch (_) {
+        if(control.value) {
+          control.setErrors({ invalidLink: true });
+        } else {
+          control.setErrors(null);
+        }
+      }
+    }
   }
 
   onSaveAddNewProjectForm() {
@@ -606,6 +637,8 @@ export class AddNewProjectComponent implements OnInit {
       if (this.setAddNewProjectObject()) {
         this.addProjectDetail.status = 'DRAFT';
         this.addProjectDetail.isSaveAsDraft = true;
+        console.log('640 vik =>', this.addNewProjectForm.value);
+
         this._localStorageService.setItem('addNewProjectFormValue', this.addNewProjectForm.value, false);
         this._localStorageService.setItem('addProjectDetail', this.addProjectDetail, false);
 
@@ -654,6 +687,8 @@ export class AddNewProjectComponent implements OnInit {
           message = '';
           this.addProjectDetail.status = 'DRAFT';
           this.addProjectDetail.isSaveAsDraft = true;
+          console.log('688 vik =>', this.addNewProjectForm.value);
+          
           this._localStorageService.setItem('addNewProjectFormValue', this.addNewProjectForm.value, false);
           this._localStorageService.setItem('addProjectDetail', this.addProjectDetail, false);
 

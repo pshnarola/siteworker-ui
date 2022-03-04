@@ -75,7 +75,8 @@
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label for="title">{{'project.title' |translate}}*</label>
-                    <input type="text" pInputText class="form-control" formControlName="title" maxlength="50" placeholder="{{'project.title.placeholder' |translate}}" [pKeyFilter]="blockSpecial" />
+                    <!-- [pKeyFilter]="blockSpecial" -->
+                    <input type="text" pInputText class="form-control" formControlName="title" maxlength="50" placeholder="{{'project.title.placeholder' |translate}}" [pKeyFilter]="blockSomeSpecial"/>
                     <div class="p-invalid" *ngIf="addNewProjectForm.controls['title'].touched && 
                     (addNewProjectForm.controls['title'].hasError('required') &&
                     !addNewProjectForm.controls['title'].valid)
@@ -255,6 +256,17 @@
                         </button> -->
                     </div>
                 </div>
+                <!-- <div class="col-lg-6 form-group">
+                    <div>
+                        <label for="file">{{'attachment.link'| translate}}</label>
+                        <input type="text" pInputText class="form-control" formControlName="attachmentLink" placeholder="{{'attachment.link.placeholder' |translate}}"/>
+                    </div>
+                    <div class="p-invalid" *ngIf="addNewProjectForm.controls['attachmentLink'].touched && 
+                    (addNewProjectForm.controls['attachmentLink'].hasError('invalidLink') && 
+                    !addNewProjectForm.controls['attachmentLink'].valid)">
+                        Enter valid link
+                    </div>
+                </div> -->
             </div>
             <div class="row">
                 <div class="col-lg-3 form-group">
