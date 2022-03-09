@@ -47,6 +47,8 @@ export class ProjectDetail extends BaseModel {
 
     latitude: any;
 
-	longitude: any;
+    longitude: any;
+
+    attachmentLink: any;
 
 }
