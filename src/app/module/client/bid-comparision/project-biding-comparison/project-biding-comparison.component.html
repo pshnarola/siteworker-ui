@@ -44,12 +44,12 @@
                             <div class="col-md-6 p-field">
                                 <label>{{"bid.submitted.from.date" | translate }} : </label>
                                 <p-calendar [style]="{'height':'35px'}" [readonlyInput]="true" [showIcon]="true" [maxDate]="bidSubmittedToDate" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedFromDate"
-                                    placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy"></p-calendar>
+                                    placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="col-md-6 p-field">
                                 <label>{{"bid.submitted.to.date" | translate }} : </label>
                                 <p-calendar [style]="{'height':'35px'}" [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY"
-                                    dateFormat="dd/mm/yy"></p-calendar>
+                                    dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                         </div>
                         <div class="row">

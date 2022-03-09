@@ -55,7 +55,7 @@
             <label class="font-weight-bold">{{'start.date' | translate}}</label>
             <div class="p-field">
                 <label for="range">Range</label>
-                <p-calendar formControlName="dateRange" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range4" [showIcon]="true">
+                <p-calendar formControlName="dateRange" appendTo="body" selectionMode="range" [readonlyInput]="true" placeholder="MM/DD/YYYY" inputId="range4" [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                 </p-calendar>
             </div>
 

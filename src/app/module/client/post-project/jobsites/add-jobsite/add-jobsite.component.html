@@ -157,8 +157,9 @@
             <div class="col-lg-6 form-group">
                 <div>
                     <label for="file">{{'work.scope'|translate}}</label>
-                    <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" [accept]="'application/pdf,application/msword,
-                    application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
+                    <!-- [accept]="'application/pdf,application/msword,
+                    application/vnd.openxmlformats-officedocument.wordprocessingml.document'" -->
+                    <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" >
                         <ngx-dropzone-label> {{ 'drag.and.drop.placeholder' | translate }} </ngx-dropzone-label>
                         <ngx-dropzone-preview *ngFor="let f of files" [removable]="true">
                             <ngx-dropzone-label style="margin:5px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>

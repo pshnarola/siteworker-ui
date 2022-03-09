@@ -989,7 +989,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   setValueOfEditProject(projectDetail): void {
-    // this.selectedFilteredJobsite = null;
+    // this.selectedFilteredJobsite = null;    
     this.localStorageService.setItem('addProjectDetail', projectDetail);
     const form = {
       bidDueDate: projectDetail.bidDueDate,

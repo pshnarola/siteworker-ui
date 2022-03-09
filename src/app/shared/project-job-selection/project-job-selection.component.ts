@@ -301,7 +301,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
     this.subscribedBehaviourSubject();
 
     this.doNotLoadProjectOrJobDataForURL = ['/client/Invitee-configuration',
-    '/client/leader-board'];
+      '/client/leader-board'];
 
     this.hideAllLabelUrl = APPCONSTANTS.HIDE_ALL_URL_FOR_PROJECT_JOB_SELECTION;
 
@@ -2267,7 +2267,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
       const currentUrl = this.router.url;
       if (currentUrl === '/client/post-project') {
         this.localStorageService.setItem('editMode', true);
-        this.setValueOfEditProject(projectDetail);
+        this.setValueOfEditProject(projectDetail, 2270);
         this.postProjectService.editProject.next(projectDetail);
         this.localStorageService.setItem('jobsiteScreen', 'jobsiteListing');
         this.postProjectService.jobsiteScreenChange.next('jobsiteListing');
@@ -2280,7 +2280,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
         }
       }
       else {
-        this.setValueOfEditProject(projectDetail);
+        this.setValueOfEditProject(projectDetail, 2283);
         this.postProjectService.currentPostProjectStep.next(1);
         if (this.router.url !== '/client/post-project') {
           this.router.navigate(['/client/post-project']);
@@ -2424,7 +2424,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
         this.localStorageService.removeItem('addJobsiteScreen');
         this.localStorageService.removeItem('addLineItemScreen');
         this.localStorageService.setItem('editMode', true);
-        this.setValueOfEditProject(project);
+        this.setValueOfEditProject(project, 2427);
         this.postProjectService.editProject.next(project);
         this.localStorageService.setItem('jobsiteScreen', 'jobsiteListing');
         this.postProjectService.jobsiteScreenChange.next('jobsiteListing');
@@ -2438,11 +2438,12 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
   }
 
 
-  setValueOfEditProject(projectDetail) {
+  setValueOfEditProject(projectDetail, line) {
     this.selectedFilteredJobsite = null;
     this.localStorageService.setItem('addProjectDetail', projectDetail);
     const form = {
       bidDueDate: projectDetail.bidDueDate,
+      attachmentLink: projectDetail.attachmentLink,
       company: projectDetail.company,
       completionDate: projectDetail.completionDate,
       createdBy: projectDetail.createdBy,

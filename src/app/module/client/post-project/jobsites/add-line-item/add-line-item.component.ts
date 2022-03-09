@@ -33,6 +33,7 @@ export class AddLineItemComponent implements OnInit {
     'description': 'Define your own template'
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   responsiveOptions;
   lineItemForm: FormGroup;
   loggedInUserId: string;
@@ -179,7 +180,7 @@ export class AddLineItemComponent implements OnInit {
       'inclusions': [lineitem.inclusions],
       'lineItemId': [lineitem.lineItemId,[Validators.required,Validators.maxLength(20)]],
       'lineItemName': [lineitem.lineItemName,[Validators.required,Validators.maxLength(100)]],
-      'cost': [lineitem.cost, [Validators.required,Validators.min(0.01)]],
+      'cost': [lineitem.cost, [Validators.required,Validators.min(0.00)]],
       'quantity': [lineitem.quantity,[Validators.required,Validators.min(1)]],
       'unit': [lineitem.unit,[Validators.required,Validators.maxLength(10)]],
       'jobsite': lineitem.jobsite,
@@ -208,7 +209,7 @@ export class AddLineItemComponent implements OnInit {
       'inclusions': [''],
       'lineItemId': ['',[Validators.required,Validators.maxLength(20)]],
       'lineItemName': ['',[Validators.required,Validators.maxLength(100)]],
-      'cost': [null, [Validators.required,Validators.min(0.01)]],
+      'cost': [null, [Validators.required,Validators.min(0.00)]],
       'quantity': [null,[Validators.required,Validators.min(1)]],
       'unit': ['',[Validators.required,Validators.maxLength(10)]],
       'jobsite': this.selectedJobsite,
@@ -237,7 +238,7 @@ export class AddLineItemComponent implements OnInit {
       'inclusions': [''],
       'lineItemId': ['',[Validators.required,Validators.maxLength(20)]],
       'lineItemName': ['',[Validators.required,Validators.maxLength(100)]],
-      'cost': [null, [Validators.required,Validators.min(0.01)]],
+      'cost': [null, [Validators.required,Validators.min(0.00)]],
       'quantity': [null,[Validators.required,Validators.min(1)]],
       'unit': ['',[Validators.required,Validators.maxLength(10)]],
       'jobsite': this.selectedJobsite,
@@ -532,13 +533,13 @@ export class AddLineItemComponent implements OnInit {
   }
 
   validateLengthForSingleWorkType(description,inclusion,exclusion){
-    if(this.returnLengthOfDescription(description) > 1000){
+    if(this.returnLengthOfDescription(description) > 10000){
       return false;
     }
-    else if(this.returnLengthOfInclusion(inclusion) > 200){
+    else if(this.returnLengthOfInclusion(inclusion) > 10000){
       return false;
     }
-    else if(this.returnLengthOfExclusion(exclusion) > 200){
+    else if(this.returnLengthOfExclusion(exclusion) > 10000){
       return false;
     }
 

@@ -62,6 +62,7 @@ export class AddNewProjectComponent implements OnInit {
     searchText: null
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   region: Region[];
   industryType: IndustryType[];
   state: State[];
@@ -106,7 +107,7 @@ export class AddNewProjectComponent implements OnInit {
   selectedExcel: any;
   importFromExcelProjectValidationMessage: any;
 
-  stateParams:{name:any;};
+  stateParams: { name: any; };
 
   constructor(private datePipe: DatePipe,
     private _formBuilder: FormBuilder,
@@ -124,7 +125,7 @@ export class AddNewProjectComponent implements OnInit {
     private _industryTypeService: IndustryTypeService,
     private jobsiteService: JobsiteService,
     private _fileService: FileDownloadService,
-    private filterLeftPanelService:FilterLeftPanelDataService
+    private filterLeftPanelService: FilterLeftPanelDataService
   ) {
     this.dateTime.setDate(this.dateTime.getDate());
 
@@ -281,14 +282,11 @@ export class AddNewProjectComponent implements OnInit {
     if (this._localStorageService.getItem('addNewProjectFormValue')) {
       this.subscription = this.postProjectService.addNewProject.subscribe(
         data => {
-          console.log(data);
           this.initializeAddNewProjectForm();
           this.addNewProjectForm.setValue(this._localStorageService.getItem('addNewProjectFormValue'));
-          console.log(this.addNewProjectForm);
           let project = this._localStorageService.getItem('addProjectDetail');
           // this.uploadedFile.length = 0;
           this.uploadedFile = project.attachment;
-          console.log(this.uploadedFile);
           if (this._localStorageService.getItem('addNewProjectFormValue').bidDueDate) {
             this.addNewProjectForm.controls.bidDueDate.setValue(new Date(this._localStorageService.getItem('addNewProjectFormValue').bidDueDate));
           }
@@ -588,12 +586,40 @@ export class AddNewProjectComponent implements OnInit {
       region: [null, Validators.required],
       state: [null, Validators.required],
       industry: [null, Validators.required],
+      attachmentLink: [''],
       bidDueDate: [null, Validators.required],
       completionDate: [null, Validators.required],
       startDate: [null, Validators.required],
       isNegotiable: [true, Validators.required],
       type: ['OPEN_MARKET_REQUEST', Validators.required]
+    }, {
+      validators: [
+        this.URLValidator('attachmentLink')
+      ]
     });
+  }
+
+  URLValidator(controlName: string) {
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+
+      if (control.errors && !control.errors.invalidLink) {
+        // return if another validator has already found an error on the control
+        return;
+      }
+
+      // set error on control if validation fails
+      try {
+        const url = new URL(control.value);
+        control.setErrors(null);
+      } catch (_) {
+        if (control.value) {
+          control.setErrors({ invalidLink: true });
+        } else {
+          control.setErrors(null);
+        }
+      }
+    }
   }
 
   onSaveAddNewProjectForm() {
@@ -760,6 +786,7 @@ export class AddNewProjectComponent implements OnInit {
             if (message !== '') {
               this.notificationService.success(message, '');
             }
+
             this._localStorageService.setItem('addProjectDetail', data.data, false);
             this.selectedFile.length = 0;
             this.uploadableFile.length = 0;
@@ -795,6 +822,7 @@ export class AddNewProjectComponent implements OnInit {
             if (message !== '') {
               this.notificationService.success(message, '');
             }
+
             this._localStorageService.setItem('addProjectDetail', data.data, false);
             this.selectedFile.length = 0;
             this.uploadableFile.length = 0;
@@ -878,6 +906,7 @@ export class AddNewProjectComponent implements OnInit {
       this.addProjectDetail.completionDate = this.completionDate;
       this.addProjectDetail.isNegotiable = this.addNewProjectForm.get('isNegotiable').value;
       this.addProjectDetail.type = this.addNewProjectForm.get('type').value;
+      this.addProjectDetail.attachmentLink = this.addNewProjectForm.get('attachmentLink').value;
       this.addProjectDetail.isSaveAsDraft = true;
 
       let loggedInUserObject = this._localStorageService.getLoginUserObject();

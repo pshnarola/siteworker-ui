@@ -169,7 +169,7 @@
                                 <p-calendar formControlName="startDate" appendTo="body" [showIcon]="true"
                                     [(ngModel)]="startedDate" [maxDate]="endedDate" [style]="{'width':'100%'}"
                                     [inputStyle]="{'width':'100%'}" placeholder="MM/YYYY" view="month"
-                                    dateFormat="mm/yy" hourFormat="12" [inDate] inputId="icon">
+                                    dateFormat="mm/yy" hourFormat="12" [inDate] inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid"
                                     *ngIf="(submitted && !WorkExpForm.get('startDate').valid) || (!WorkExpForm.get('startDate').valid && WorkExpForm.get('startDate').dirty) ">
@@ -186,7 +186,7 @@
                                 <p-calendar formControlName="endDate" appendTo="body" view="month" dateFormat="mm/yy"
                                     [showIcon]="true" [(ngModel)]="endedDate" [style]="{'width':'100%'}"
                                     [inputStyle]="{'width':'100%'}" hourFormat="12" [inDate] inputId="icon"
-                                    placeholder="MM/YYYY" [minDate]="startedDate"></p-calendar>
+                                    placeholder="MM/YYYY" [minDate]="startedDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 <div class="p-invalid"
                                     *ngIf="(submitted && !WorkExpForm.get('endDate').valid) || (!WorkExpForm.get('endDate').valid && WorkExpForm.get('endDate').dirty) ">
                                     <div *ngIf=" ( WorkExpForm.get('endDate').errors.required) ">
@@ -277,7 +277,7 @@
                                 <p-calendar formControlName="startDate" appendTo="body" [showIcon]="true"
                                     [(ngModel)]="startedDateOfEducatin" [maxDate]="endedDateOfEducatin"
                                     [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" view="month"
-                                    dateFormat="mm/yy" hourFormat="12" placeholder="MM/YYYY" [inDate] inputId="icon">
+                                    dateFormat="mm/yy" hourFormat="12" placeholder="MM/YYYY" [inDate] inputId="icon" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid"
                                     *ngIf="(submittedWorkerEducation && !workerEducationForm.get('startDate').valid) || (!workerEducationForm.get('startDate').valid && workerEducationForm.get('startDate').dirty) ">
@@ -294,7 +294,7 @@
                                 <p-calendar formControlName="endDate" appendTo="body" [showIcon]="true"
                                     [(ngModel)]="endedDateOfEducatin" [style]="{'width':'100%'}"
                                     [inputStyle]="{'width':'100%'}" view="month" dateFormat="mm/yy" hourFormat="12"
-                                    placeholder="MM/YYYY" [inDate] inputId="icon" [minDate]="startedDateOfEducatin">
+                                    placeholder="MM/YYYY" [inDate] inputId="icon" [minDate]="startedDateOfEducatin" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid"
                                     *ngIf="(submittedWorkerEducation && !workerEducationForm.get('endDate').valid) || (!workerEducationForm.get('endDate').valid && workerEducationForm.get('endDate').dirty) ">

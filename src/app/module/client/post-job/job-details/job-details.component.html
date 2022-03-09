@@ -6,7 +6,7 @@
                         class="fa fa-pencil"></i></a> </label>
             <input type="text" placeholder="{{'enter.job.name' | translate}}" class="form-control"
                 formControlName="title" [readonly]="!this.editableName && this.reviewForm" pInputText maxLength="50"
-                [pKeyFilter]="blockSpecial">
+                [pKeyFilter]="blockSomeSpecial">
             <div class="p-invalid" *ngIf="jobDetailsForm.controls['title'].touched && 
             (jobDetailsForm.controls['title'].hasError('required') &&
              !jobDetailsForm.controls['title'].valid)
@@ -122,7 +122,7 @@
                 <p-calendar formControlName="estimatedStartDate" appendTo="body" [minDate]="dateTime"
                     [readonlyInput]="true" [showIcon]="true" inputId="icon"
                     [disabled]="!this.editableEstimatedStartDate && this.reviewForm"
-                    placeholder="{{'enter.estimated.start.date' | translate}}"></p-calendar>
+                    placeholder="{{'enter.estimated.start.date' | translate}}" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
             </div>
             <div class="p-invalid"
                 *ngIf="(submitted && !jobDetailsForm.get('estimatedStartDate').valid) || (!jobDetailsForm.get('estimatedStartDate').valid && jobDetailsForm.get('estimatedStartDate').touched) ">

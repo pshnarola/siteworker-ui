@@ -134,7 +134,7 @@
                         <div class="col-xl-6 p-field">
                             <label for="start-date">{{'expiration.date' |translate}}*</label>&nbsp;
                             <div class="input-group">
-                                <p-calendar placeholder="MM/DD/YYYY" formControlName="expirayDate" appendTo="body" [showIcon]="true" [(ngModel)]="date" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [minDate]="dateTime">
+                                <p-calendar placeholder="MM/DD/YYYY" formControlName="expirayDate" appendTo="body" [showIcon]="true" [(ngModel)]="date" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [inDate] inputId="icon" [minDate]="dateTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                 </p-calendar>
                                 <div class="p-invalid" *ngIf="(submitted && !licenseForm.get('expirayDate').valid) || (!licenseForm.get('expirayDate').valid && licenseForm.get('expirayDate').dirty) ">
                                     <div *ngIf=" ( licenseForm.get('expirayDate').errors.required) ">

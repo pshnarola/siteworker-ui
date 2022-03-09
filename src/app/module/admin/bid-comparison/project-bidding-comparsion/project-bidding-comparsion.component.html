@@ -43,11 +43,11 @@
                         <div class="row">
                             <div class="p-field col-xl-3">
                                 <label>{{"bid.submitted.from.date" | translate }} : </label>
-                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy"></p-calendar>
+                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [(ngModel)]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="p-field col-xl-3">
                                 <label>{{"bid.submitted.to.date" | translate }} : </label>
-                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy"></p-calendar>
+                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" (onSelect)="onFormChanged(myForm)" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="p-field col-xl-3">
                                 <label>{{'average.ratings' |translate}}</label>

@@ -95,11 +95,11 @@
                             </div>
                             <div class="p-field col-lg-3">
                                 <label>{{"bid.submitted.from.date" | translate }} : </label>
-                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [maxDate]="bidSubmittedToDate" [(ngModel)]="bidSubmittedFromDate" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY"></p-calendar>
+                                <p-calendar [readonlyInput]="true" [showIcon]="true" inputId="icon" appendTo="body" [maxDate]="bidSubmittedToDate" [(ngModel)]="bidSubmittedFromDate" formControlName="bidSubmittedFromDate" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="p-field col-lg-3">
                                 <label>{{"bid.submitted.to.date" | translate }} : </label>
-                                <p-calendar [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY"></p-calendar>
+                                <p-calendar [readonlyInput]="true" [(ngModel)]="bidSubmittedToDate" [showIcon]="true" inputId="icon" appendTo="body" [minDate]="bidSubmittedFromDate" formControlName="bidSubmittedToDate" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                         </div>
                         <div class="row">

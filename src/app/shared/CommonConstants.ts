@@ -15,6 +15,8 @@ export const COMMON_CONSTANTS = {
 
     COMMON_PASSWORD_FOR_ADMIN_ADD_FUNCTIONALITY: 'jKii@3456',
     blockSpecial: /^[^<>*!&^@#$%()_{}'":;?~`.,<>=+[\]]+$/,
+    blockSomeSpecial: /^[^<>*^#$%()_{}'":;?~`<>=+[\]]+$/, 
+    // blockSomeSpecial: /^[^<>*^#$%()/\\\-|_{}'":;?~`<>=+[\]]+$/,
     blockSpecialForExperience: /^[A-Z@~`!@#$%^&*()_=+\\\\';:\"\\/?>.<,-]*$/i
 
 };

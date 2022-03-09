@@ -173,7 +173,7 @@
 <p-autoComplete [(ngModel)]="selectedCountry" [suggestions]="filteredCountries" (completeMethod)="filterCountry($event)" field="name" [minLength]="3" delay="1000"></p-autoComplete>
 
 
-<p-calendar utc="true" [(ngModel)]="dateData" [readonlyInput]="true" [showIcon]="true" inputId="icon" hourFormat="12"></p-calendar>
+<p-calendar utc="true" [(ngModel)]="dateData" [readonlyInput]="true" [showIcon]="true" inputId="icon" hourFormat="12" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
 <p-button (click)="OnClickDate()">Show date</p-button>
 
 

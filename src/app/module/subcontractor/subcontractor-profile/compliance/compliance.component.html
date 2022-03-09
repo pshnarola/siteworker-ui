@@ -64,7 +64,7 @@
                                     <div class="input-group">
                                         <p-calendar formControlName="autoInsuranceExpiryDate" appendTo="body"
                                             [showIcon]="true" [(ngModel)]="date" [inDate] inputId="icon"
-                                            placeHolder="MM/DD/YYYY" [minDate]="dateTime">
+                                            placeHolder="MM/DD/YYYY" [minDate]="dateTime" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
                                         </p-calendar>
                                         <div class="p-invalid"
                                             *ngIf="(submitted && !complianceForm.get('autoInsuranceExpiryDate').valid) || (!complianceForm.get('autoInsuranceExpiryDate').valid && complianceForm.get('autoInsuranceExpiryDate').dirty) ">

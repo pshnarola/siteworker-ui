@@ -39,6 +39,7 @@ export class JobDetailsComponent implements OnInit {
   @author Vinita Jagwani
   */
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
+  blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
   jobDetailsForm: FormGroup;
   dateTime = new Date();
   datatableParam: DataTableParam;

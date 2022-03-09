@@ -38,7 +38,7 @@
                                     <label>{{ 'from' | translate }} : </label>
                                     <p-calendar formControlName="createdFrom" [maxDate]="createdToDate" appendTo="body"
                                         [(ngModel)]="createdFromDate" [readonlyInput]="true" [showIcon]="true"
-                                        inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="p-col-6">
@@ -46,7 +46,7 @@
                                     <label>{{ 'to' | translate }} : </label>
                                     <p-calendar formControlName="createdTo" appendTo="body" [(ngModel)]="createdToDate"
                                         [minDate]="createdFromDate" [readonlyInput]="true" [showIcon]="true"
-                                        inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                        inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="p-col-6 Close_SubCon">

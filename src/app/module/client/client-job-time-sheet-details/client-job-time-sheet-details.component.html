@@ -27,10 +27,10 @@
                     <label>{{'select.week' | translate}}</label>
                     <div class="row">
                         <div class="col-xl-5">
-                            <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" firstDayOfWeek="1"></p-calendar>
+                            <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" firstDayOfWeek="1" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                         </div>
                         <div class="col-xl-5">
-                            <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [disabled]="true"></p-calendar>
+                            <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [disabled]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                         </div>
                         <div class="col-xl-2 d-flex align-items-center mt-1">
                             <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()" label="{{ 'apply' | translate}}"></button>

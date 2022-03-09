@@ -10,10 +10,10 @@
             <label>{{'select.week' | translate}}</label>
             <div class="row">
                 <div class="col-5">
-                    <p-calendar formControlName="workerWeekStart" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" firstDayOfWeek="1"></p-calendar>
+                    <p-calendar formControlName="workerWeekStart" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" firstDayOfWeek="1" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                 </div>
                 <div class="col-5">
-                    <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekStartDate" [maxDate]="workWeekEndDate"></p-calendar>
+                    <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekStartDate" [maxDate]="workWeekEndDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                 </div>
                 <div style="display: inline;">
                     <button pButton type="button" class="p-button-success-outlined" style="margin-left: 15px;" (click)="filter()" label="{{ 'apply' | translate}}"></button>

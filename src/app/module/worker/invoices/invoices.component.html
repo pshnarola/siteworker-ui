@@ -22,13 +22,13 @@
                             <div class="col-xl-4">
                                 <div class="p-field">
                                     <label>{{ 'invoice.date.from' | translate }}: </label>
-                                    <p-calendar formControlName="invoiceDateFrom" [(ngModel)]="invoicedateFrom" [maxDate]="invoiceDateTo" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                    <p-calendar formControlName="invoiceDateFrom" [(ngModel)]="invoicedateFrom" [maxDate]="invoiceDateTo" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="col-xl-4">
                                 <div class="p-field">
                                     <label>{{ 'invoice.date.to' | translate }}: </label>
-                                    <p-calendar formControlName="invoiceDateTo" [(ngModel)]="invoiceDateTo" appendTo="body" [minDate]="invoicedateFrom" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                    <p-calendar formControlName="invoiceDateTo" [(ngModel)]="invoiceDateTo" appendTo="body" [minDate]="invoicedateFrom" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                             <div class="col-xl-4">
@@ -42,14 +42,14 @@
                             <div class="col-xl-4">
                                 <div class="p-field">
                                     <label>{{ 'start.work.week' | translate }}: </label>
-                                    <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                    <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
 
                             </div>
                             <div class="col-xl-4">
                                 <div class="p-field">
                                     <label> {{ 'end.work.week' | translate }}: </label>
-                                    <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true"></p-calendar>
+                                    <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                                 </div>
                             </div>
                         </div>

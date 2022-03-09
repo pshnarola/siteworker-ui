@@ -43,11 +43,11 @@
 
                             <div class="form-group col-md-4">
                                 <label for="workerWeekStartDate">{{ 'from' | translate }} : </label>
-                                <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"></p-calendar>
+                                <p-calendar formControlName="workerWeekStart" [disabledDays]="[0,2,3,4,5,6]" appendTo="body" [(ngModel)]="workWeekStartDate" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="workerWeekEndDate">{{ 'to' | translate }} : </label>
-                                <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true"></p-calendar>
+                                <p-calendar formControlName="workerWeekEnd" appendTo="body" [readonlyInput]="true" [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [minDate]="workWeekEndDate" [maxDate]="workWeekEndDate" [disabled]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
                             </div>
                         </div>
                         <div class="d-inline">

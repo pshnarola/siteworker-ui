@@ -54,7 +54,7 @@
                     <div class="row">
                         <div class="form-group col-lg">
                             <label for="id">{{'line.item.id' |translate}}*</label>
-                            <input type="text" formControlName="lineItemId" pInputText maxlength="20" placeholder="{{'line.item.id.placeholder' |translate}}" class="form-control" id="id" [pKeyFilter]="blockSpecial">
+                            <input type="text" formControlName="lineItemId" pInputText maxlength="20" placeholder="{{'line.item.id.placeholder' |translate}}" class="form-control" id="id" [pKeyFilter]="blockSomeSpecial">
                             <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemId').touched && 
                     (lineItemGroup.get('lineItemId').hasError('required') &&
                     !lineItemGroup.get('lineItemId').valid)
@@ -71,7 +71,7 @@
                         </div>
                         <div class="form-group col-lg">
                             <label for="name">{{'line.item.name' |translate}}*</label>
-                            <input type="text" formControlName="lineItemName" pInputText maxlength="100" placeholder="{{'line.item.name.placeholder' |translate}}" class="form-control" id="name" [pKeyFilter]="blockSpecial">
+                            <input type="text" formControlName="lineItemName" pInputText maxlength="100" placeholder="{{'line.item.name.placeholder' |translate}}" class="form-control" id="name" [pKeyFilter]="blockSomeSpecial">
                             <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemName').touched && 
                     (lineItemGroup.get('lineItemName').hasError('required') &&
                     !lineItemGroup.get('lineItemName').valid)
@@ -158,7 +158,7 @@
                         !lineItemGroup.get('description').valid))">
                                 {{'required' | translate}}
                             </div>
-                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemGroup.get('description').value) > 1000)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemGroup.get('description').value) > 10000)">
                                 {{'lineItem.description.maxLength' | translate}}
                             </div>
                         </div>
@@ -170,7 +170,7 @@
                                     </ng-template>
                                 </p-header>
                             </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemGroup.get('inclusions').value) > 200)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemGroup.get('inclusions').value) > 10000)">
                                 {{'inclusion.maxLength' | translate}}
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                                     </ng-template>
                                 </p-header>
                             </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemGroup.get('exclusions').value) > 200)">
+                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemGroup.get('exclusions').value) > 10000)">
                                 {{'exclusion.maxLength' | translate}}
                             </div>
                         </div>
