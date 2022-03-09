@@ -787,4 +787,14 @@ export class WorkerDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/worker/apply-for-job']);
   }
 
+  redirectFromDashboardCard(card) {
+    if (card === 'job') {
+      this.router.navigate(['/worker/job-list']);
+    } else if (card === 'timesheet') {
+      this.router.navigate(['/worker/timesheet']);
+    } else {
+      this.router.navigate(['/worker/invoices']);
+    }
+  }
+
 }
