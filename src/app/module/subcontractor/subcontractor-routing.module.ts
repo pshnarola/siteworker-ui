@@ -6,6 +6,7 @@ import { LeaderboardComponent } from 'src/app/shared/shared-leaderboard/leaderbo
 import { AcceptProjectComponent } from './accept-project/accept-project.component';
 import { ChangeRequestComponent } from './change-request/change-request.component';
 import { CloseoutPackgeRequestsComponent } from './closeout-packge-requests/closeout-packge-requests.component';
+import { GroupedProjectStatusListComponent } from './grouped-project-status-list/grouped-project-status-list.component';
 import { JobsiteDetailComponent } from './jobsite-detail/jobsite-detail.component';
 import { PaymentMilestoneComponent } from './payment-milestone/payment-milestone.component';
 import { BidQuotationComponent } from './project-biding-flow/bid-quotation/bid-quotation.component';
@@ -58,6 +59,10 @@ export const SUBCONTRACTOR_ROUTING: Routes = [
             {
                 path: 'project-list',
                 component: ProjectListComponent
+            },
+            {
+                path: 'grouped-project-list',
+                component: GroupedProjectStatusListComponent
             },
             {
                 path: 'view-more-project-information',
