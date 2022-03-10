@@ -1,0 +1,272 @@
+<div class="container-fluid" *ngIf="projectDetailList?.length">
+  <br />
+  <div *ngFor="let projectData of projectDetailList">
+    <br />
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-lg-10 col-md-12 d-flex align-self-center">
+            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+              <div class="mr-2"><img src="assets/images/posted_by.svg" /></div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "client.name" | translate }}
+                </p>
+                <p class="mb-0" *ngIf="projectData.company; else none">
+                  {{ projectData.projectDetail.company.name }}
+                </p>
+                <ng-template #none>
+                  <p class="mb-0">{{ "n.a" | translate }}</p>
+                </ng-template>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+              <div class="mr-2">
+                <img src="assets/images/project_name_icon.svg" />
+              </div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "project.name" | translate }}
+                </p>
+                <p class="mb-0">
+                  {{ projectData.projectDetail.title }}
+                </p>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-4 d-flex align-items-center">
+              <div class="mr-2"><img src="assets/images/posted_by.svg" /></div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "posted.by" | translate }}
+                </p>
+                <p class="mb-0" *ngIf="projectData.projectDetail.user">
+                  {{ projectData.projectDetail.user.firstName }}
+                  {{ projectData.projectDetail.user.lastName }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-12 align-self-center">
+            <p class="mb-0" style="font-weight: bold">
+              <span
+                *ngIf="
+                  calculateDiffInDays(
+                    projectData.projectDetail.projectPostedDate
+                  ) !== 0
+                "
+              >
+                {{ "posted" | translate }}
+                &nbsp;
+                {{
+                  calculateDiffInDays(
+                    projectData.projectDetail.projectPostedDate
+                  )
+                }}
+                <span
+                  *ngIf="
+                    calculateDiffInDays(
+                      projectData.projectDetail.projectPostedDate
+                    ) === 1;
+                    else daysAgo
+                  "
+                >
+                  {{ "day.ago" | translate }}
+                </span>
+                <ng-template #daysAgo>
+                  {{ "days.ago" | translate }}
+                </ng-template>
+              </span>
+              <span
+                *ngIf="
+                  calculateDiffInDays(
+                    projectData.projectDetail.projectPostedDate
+                  ) == 0
+                "
+              >
+                {{ "posted" | translate }}
+                &nbsp;
+                <span
+                  *ngIf="
+                    calculateDiffInHours(
+                      projectData.projectDetail.projectPostedDate
+                    ) !== 0
+                  "
+                >
+                  {{
+                    calculateDiffInHours(
+                      projectData.projectDetail.projectPostedDate
+                    )
+                  }}
+                  <span
+                    *ngIf="
+                      calculateDiffInHours(
+                        projectData.projectDetail.projectPostedDate
+                      ) === 1;
+                      else hoursAgo
+                    "
+                  >
+                    {{ "hour" | translate }}
+                  </span>
+                  <ng-template #hoursAgo>
+                    {{ "hours" | translate }}
+                  </ng-template>
+                </span>
+                {{
+                  calculateDiffInMinutes(
+                    projectData.projectDetail.projectPostedDate
+                  )
+                }}
+                <span
+                  *ngIf="
+                    calculateDiffInMinutes(
+                      projectData.projectDetail.projectPostedDate
+                    ) === 1;
+                    else minutesAgo
+                  "
+                >
+                  {{ "minute.ago" | translate }}
+                </span>
+                <ng-template #minutesAgo>
+                  {{ "minutes.ago" | translate }}
+                </ng-template>
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-9 align-self-center">
+            <div class="d-flex flex-wrap">
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2"><img src="assets/images/category.svg" /></div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "category" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{ projectData.projectDetail.industry.name }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2">
+                  <img src="assets/images/negotiation.svg" />
+                </div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "bid.negotiable" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{
+                      projectData.projectDetail.isNegotiable === true
+                        ? "Yes"
+                        : "No"
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2"><img src="assets/images/location.svg" /></div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "location" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{ projectData.projectDetail.region }} ,
+                    {{ projectData.projectDetail.state }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2"><img src="assets/images/due_date.svg" /></div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "bid.due.date" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{
+                      projectData.projectDetail.bidDueDate | date: "mediumDate"
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2">
+                  <img src="assets/images/start_date.svg" />
+                </div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "start.date" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{
+                      projectData.projectDetail.startDate | date: "mediumDate"
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center col-md-6 col-lg-4 mb-4">
+                <div class="mr-2">
+                  <img src="assets/images/estimate_date.svg" />
+                </div>
+                <div>
+                  <p class="font-weight-bold mb-0">
+                    {{ "estimated.end.date" | translate }} :
+                  </p>
+                  <p class="text-muted mb-0">
+                    {{
+                      projectData.projectDetail.completionDate
+                        | date: "mediumDate"
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 text-center Sub_list_button">
+            <p-card
+              styleClass="bg-lightYellow"
+              [style]="{ 'box-shadow': 'none' }"
+            >
+              <span style="color: #000" class="font-weight-bold">{{
+                projectData.projectDetail.cost | currency
+              }}</span>
+              <p class="text-muted mb-0">Total Project Value</p>
+              <p class="mb-1" style="font-weight: bold">
+                <span
+                  *ngIf="
+                    projectData.projectDetail.jobsite.length !== 0;
+                    else noData
+                  "
+                >
+                  {{ "jobsites" | translate }} -
+                  {{ projectData.projectDetail.jobsite.length }}
+                </span>
+                <ng-template #noData>
+                  {{ "no.jobsite.found" | translate }}
+                </ng-template>
+              </p>
+              <p-button
+                label="{{ 'view.more' | translate }}"
+                (click)="redirectToViewMore(projectData.projectDetail.id)"
+                styleClass="p-mr-2"
+              ></p-button>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="!projectDetailList?.length">
+  <h5 class="text-muted text-center mt-3">
+    {{ "no.projects.found" | translate }}
+  </h5>
+</div>

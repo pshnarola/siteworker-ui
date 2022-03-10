@@ -56,6 +56,8 @@ export class CaptionConstants {
 
     public static readonly DASHBOARD = 'Dashboard';
 
+    public static readonly PROJECTSTATUSLIST = 'Project Status Listing';
+
     public static readonly JOBS_LISTING = 'Jobs Listing';
 
     public static readonly JOBS_LISTING_CONFIGURATION = 'Jobs Listing Configuration';
@@ -131,7 +133,7 @@ export class CaptionConstants {
     public static readonly INVITEE_CONFIGURATION = 'Invitee Configuration';
 
     public static readonly WORKER_GAMIFICATION = 'Worker Gamification';
-  
+
     public static readonly LEADERBOARD = 'Leaderboard';
 
 }

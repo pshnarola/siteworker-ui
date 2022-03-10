@@ -34,6 +34,7 @@ import { AcceptProjectComponent } from './accept-project/accept-project.componen
 import { CloseoutPackgeRequestsComponent } from './closeout-packge-requests/closeout-packge-requests.component';
 import { SubcontractorProfileDetailComponent } from './subcontractor-profile-detail/subcontractor-profile-detail.component';
 import { ProjectListingConfigurationComponent } from './project-listing-configuration/project-listing-configuration.component';
+import { GroupedProjectStatusListComponent } from './grouped-project-status-list/grouped-project-status-list.component';
 const components = [
   SubcontractorComponent,
   QuestionAnswerComponent,
@@ -67,6 +68,7 @@ const components = [
     CloseoutPackgeRequestsComponent,
     SubcontractorProfileDetailComponent,
     ProjectListingConfigurationComponent,
+    GroupedProjectStatusListComponent,
   ],
 
   imports: [

@@ -1,319 +1,491 @@
 <div class="container-fluid">
-    <div class="row">
-    
-        <div class="col-xl-4 mt-3">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center AutoCompl">
-                    <p-autoComplete forceSelection="true" field="type" [(ngModel)]="selectedTypeForChart"
-                        [dropdown]="true" minLength="3" [suggestions]="filteredType"
-                        (completeMethod)="filterType($event)" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
-                        [readonly]="true">
-                    </p-autoComplete>
-                    <div class="float-right">
-                        <h6 class="text-warning" *ngIf="selectedTypeForChart.value === 'project'">{{totalProject}}</h6>
-                        <h6 class="text-warning" *ngIf="selectedTypeForChart.value === 'jobsite'">{{totalJobsite}}</h6>
-                    </div>
-                </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div class="row align-items-center d-flex"
-                                    *ngIf="selectedTypeForChart.value === 'project'">
-                                    <div class="col-xl-12" *ngIf="validateProjectChart();else none">
-                                        <canvas baseChart [data]="pieChartDataForProject"
-                                            [labels]="pieChartLabelsForProject" [colors]="pieChartColorsForProject"
-                                            [chartType]="pieChartType" [options]="pieChartOptions"
-                                            [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-                                        </canvas>
-                                    </div>
-                                    <ng-template #none>
-                                        <div class="w-100">
-                                            <p class="mt-5 text-center">No Data Found</p>
-                                        </div>
-                                    </ng-template>
-                                </div>
-                                <div *ngIf="selectedTypeForChart.value === 'jobsite'">
-                                    <div *ngIf="validateJobsiteChart();else none">
-                                        <canvas baseChart [data]="pieChartDataForJobsite"
-                                            [labels]="pieChartLabelsForJobsite" [colors]="pieChartColorsForJobsite"
-                                            [chartType]="pieChartType" [options]="pieChartOptions"
-                                            [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-                                        </canvas>
-                                    </div>
-                                    <ng-template #none>
-                                        <div class="w-100">
-                                            <p class="mt-5 text-center">No Data Found</p>
-                                        </div>
-                                    </ng-template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-xl-4 mt-3">
+      <div class="card h-100">
+        <div
+          class="card-header d-flex justify-content-between align-items-center AutoCompl"
+        >
+          <p-autoComplete
+            forceSelection="true"
+            field="type"
+            [(ngModel)]="selectedTypeForChart"
+            [dropdown]="true"
+            minLength="3"
+            [suggestions]="filteredType"
+            (completeMethod)="filterType($event)"
+            [style]="{ width: '100%' }"
+            [inputStyle]="{ width: '100%' }"
+            [readonly]="true"
+          >
+          </p-autoComplete>
+          <div class="float-right">
+            <h6
+              class="text-warning"
+              *ngIf="selectedTypeForChart.value === 'project'"
+              (click)="getProjectsList()"
+            >
+              {{ totalProject }}
+            </h6>
+            <h6
+              class="text-warning"
+              *ngIf="selectedTypeForChart.value === 'jobsite'"
+            >
+              {{ totalJobsite }}
+            </h6>
+          </div>
         </div>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div
+                  class="row align-items-center d-flex"
+                  *ngIf="selectedTypeForChart.value === 'project'"
+                >
+                  <div
+                    class="col-xl-12"
+                    *ngIf="validateProjectChart(); else none"
+                  >
+                    <canvas
+                      baseChart
+                      [data]="pieChartDataForProject"
+                      [labels]="pieChartLabelsForProject"
+                      [colors]="pieChartColorsForProject"
+                      [chartType]="pieChartType"
+                      [options]="pieChartOptions"
+                      [plugins]="pieChartPlugins"
+                      [legend]="pieChartLegend"
+                    >
+                    </canvas>
+                  </div>
+                  <ng-template #none>
+                    <div class="w-100">
+                      <p class="mt-5 text-center">No Data Found</p>
+                    </div>
+                  </ng-template>
+                </div>
+                <div *ngIf="selectedTypeForChart.value === 'jobsite'">
+                  <div *ngIf="validateJobsiteChart(); else none">
+                    <canvas
+                      baseChart
+                      [data]="pieChartDataForJobsite"
+                      [labels]="pieChartLabelsForJobsite"
+                      [colors]="pieChartColorsForJobsite"
+                      [chartType]="pieChartType"
+                      [options]="pieChartOptions"
+                      [plugins]="pieChartPlugins"
+                      [legend]="pieChartLegend"
+                    >
+                    </canvas>
+                  </div>
+                  <ng-template #none>
+                    <div class="w-100">
+                      <p class="mt-5 text-center">No Data Found</p>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="col-xl-4 mt-3">
-            <div class="card h-100">
-                <div class="card-header text-center">
-                    <h5 class="float-left font-weight-bold mb-0">{{'invoices' | translate}}</h5>
-                    <h6 class="float-right font-weight-bold text-right">
-                        <p class="mb-0">Total Due: <span class="text-warning"> {{totalDueInvoice | currency}}</span></p>
-                        <p class="mb-0">Total Paid: <span class="text-warning"> {{totalPaidInvoice | currency}}</span>
-                        </p>
+    <div class="col-xl-4 mt-3">
+      <div class="card h-100">
+        <div class="card-header text-center">
+          <h5
+            class="float-left font-weight-bold mb-0 cursor-pointer"
+            (click)="redirectFromDashboardCard('invoices')"
+          >
+            {{ "invoices" | translate }}
+          </h5>
+          <h6 class="float-right font-weight-bold text-right">
+            <p class="mb-0">
+              Total Due:
+              <span class="text-warning">
+                {{ totalDueInvoice | currency }}</span
+              >
+            </p>
+            <p class="mb-0">
+              Total Paid:
+              <span class="text-warning">
+                {{ totalPaidInvoice | currency }}</span
+              >
+            </p>
+          </h6>
+        </div>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div *ngIf="validateInvoiceChart(); else none">
+                  <canvas
+                    baseChart
+                    [data]="pieChartDataForInvoice"
+                    [labels]="pieChartLabelsForInvoice"
+                    [colors]="pieChartColorsForInvoice"
+                    [chartType]="pieChartTypeForInvoice"
+                    [options]="pieChartOptions"
+                    [plugins]="pieChartPlugins"
+                    [legend]="pieChartLegend"
+                  >
+                  </canvas>
+                </div>
+                <ng-template #none>
+                  <div class="w-100">
+                    <p class="mt-5 text-center">No Data Found</p>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4 mt-3 SubCon_Dash_ToDo">
+      <div class="card h-100">
+        <div class="card-header text-center">
+          <h5 class="font-weight-bold mb-0">{{ "to.do" | translate }}</h5>
+        </div>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <p-accordion>
+                  <p-accordionTab>
+                    <ng-template pTemplate="header"
+                      >{{ "pending.invitations" | translate }}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                      <div *ngIf="pendingInvitation.length !== 0; else none">
+                        <div *ngFor="let invitation of pendingInvitation">
+                          <a
+                            style="cursor: pointer"
+                            (click)="
+                              reditectToBidAndApply(invitation.projectDetail)
+                            "
+                          >
+                            <div class="media mb-4">
+                              <p-avatar class="mr-2" shape="circle">
+                                {{
+                                  returnFirstCharacterFromString(
+                                    invitation.projectDetail.user.firstName
+                                  )
+                                }}
+                              </p-avatar>
+                              <div class="media-body">
+                                <h6 class="mb-0 font-weight-bold">
+                                  {{ invitation.projectDetail.user.email }}
+                                </h6>
+                                <span class="text-muted"
+                                  >{{ "project" | translate }} :
+                                  {{ invitation.projectDetail.title }}</span
+                                >
+                              </div>
+                              <i class="fa fa-chevron-right mt-2"></i>
+                            </div>
+                          </a>
+                        </div>
+                      </div>
+                      <ng-template #none>
+                        <div class="w-100">
+                          <p class="mt-5 text-center">No Data Found</p>
+                        </div>
+                      </ng-template>
+                    </ng-template>
+                  </p-accordionTab>
+                </p-accordion>
+                <p-accordion>
+                  <p-accordionTab>
+                    <ng-template pTemplate="header"
+                      >{{ "favorite.projects" | translate }}
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                      <div *ngIf="favoriteProject.length !== 0; else none">
+                        <div *ngFor="let project of favoriteProject">
+                          <a
+                            style="cursor: pointer"
+                            routerLink=""
+                            (click)="
+                              reditectToBidAndApply(project.projectDetail)
+                            "
+                          >
+                            {{ project.projectDetail.title }}
+                          </a>
+                          <hr />
+                        </div>
+                      </div>
+                      <ng-template #none>
+                        <div class="w-100">
+                          <p class="mt-5 text-center">No Data Found</p>
+                        </div>
+                      </ng-template>
+                    </ng-template>
+                  </p-accordionTab>
+                </p-accordion>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 mt-3">
+      <div class="card h-100">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="font-weight-bold mb-0 float-left">
+            {{ "closeout.packages" | translate }}
+          </h5>
+        </div>
+        <div
+          class="card-body p-1"
+          *ngIf="closeOutPackages.length !== 0; else none"
+        >
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div
+                  class="Sub_Close_PackData d-flex justify-content-between"
+                  *ngFor="let closeout of closeOutPackages"
+                >
+                  <div class="media mb-3">
+                    <div class="media-body">
+                      <h6
+                        class="mb-0 font-weight-bold"
+                        *ngIf="closeout.jobSiteDetail"
+                      >
+                        {{ closeout.jobSiteDetail.title }}
+                      </h6>
+                      <span class="text-muted" *ngIf="closeout.projectDetail">{{
+                        closeout.projectDetail.title
+                      }}</span>
+                    </div>
+                  </div>
+                  <div class="media mb-3">
+                    <div class="media-body">
+                      <h6
+                        class="mb-0 font-weight-bold"
+                        *ngIf="closeout.paymentMileStone.name"
+                      >
+                        {{ closeout.paymentMileStone.name }}
+                      </h6>
+                      <span class="text-muted" *ngIf="closeout.requestedDate">{{
+                        closeout.requestedDate | date: "shortDate"
+                      }}</span>
+                      <span class="text-muted" *ngIf="closeout.status">
+                        {{
+                          closeout.status === "NOT_SUBMITTED"
+                            ? "Not Submitted"
+                            : closeout.status === "REQUESTED"
+                            ? "Requested"
+                            : closeout.status === "APPROVED"
+                            ? "Approved"
+                            : "Rejected"
+                        }}
+                      </span>
+                    </div>
+                    <img
+                      style="height: 30px"
+                      class="ml-2"
+                      src="assets/images/sub_dash_closeout.svg"
+                    />
+                    <i class="fa fa-chevron-right mt-2 ml-2"></i>
+                  </div>
+                </div>
+                <ng-template #none>
+                  <div class="w-100">
+                    <p class="mt-5 text-center">No Data Found</p>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-6 mt-3">
+      <div class="card h-100">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="font-weight-bold mb-0 float-left">
+            {{ "licenses.requiring.attention" | translate }}
+          </h5>
+        </div>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div *ngIf="requiredCertificates.length !== 0; else none1">
+                  <div
+                    class="SubCon_Dash_Certi d-flex justify-content-between"
+                    *ngFor="let certificates of requiredCertificates"
+                  >
+                    <h6 class="font-weight-bold mb-0">
+                      {{ certificates.name }}
                     </h6>
+                    <button
+                      class="button subCon_rounded_btn btn-warning"
+                      *ngIf="
+                        getGapBetweenTwoDates(
+                          certificates.expiryDate,
+                          todayDate
+                        ) > 0 &&
+                        getGapBetweenTwoDates(
+                          certificates.expiryDate,
+                          todayDate
+                        ) <= 30
+                      "
+                    >
+                      Due
+                    </button>
+                    <p-tag
+                      *ngIf="
+                        getGapBetweenTwoDates(
+                          certificates.expiryDate,
+                          todayDate
+                        ) < 0 ||
+                        getGapBetweenTwoDates(
+                          certificates.expiryDate,
+                          todayDate
+                        ) === 0
+                      "
+                      severity="danger"
+                      value="Expired"
+                      [rounded]="true"
+                    ></p-tag>
+                  </div>
                 </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div *ngIf="validateInvoiceChart();else none">
-                                    <canvas baseChart [data]="pieChartDataForInvoice"
-                                        [labels]="pieChartLabelsForInvoice" [colors]="pieChartColorsForInvoice"
-                                        [chartType]="pieChartTypeForInvoice" [options]="pieChartOptions"
-                                        [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-                                    </canvas>
-                                </div>
-                                <ng-template #none>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center">No Data Found</p>
-                                    </div>
-                                </ng-template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ng-template #none1>
+                  <div class="w-100">
+                    <p
+                      class="mt-5 text-center"
+                      *ngIf="upToDateCertificates.length !== 0"
+                    >
+                      Licenses are up to date
+                    </p>
+                    <p
+                      class="mt-5 text-center"
+                      *ngIf="
+                        upToDateCertificates.length === 0 &&
+                        requiredCertificates.length === 0
+                      "
+                    >
+                      No Data Found
+                    </p>
+                  </div>
+                </ng-template>
+              </div>
             </div>
+          </div>
         </div>
-
-        <div class="col-xl-4 mt-3 SubCon_Dash_ToDo">
-            <div class="card h-100">
-                <div class="card-header text-center">
-                    <h5 class="font-weight-bold mb-0">{{'to.do' | translate}}</h5>
-                </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <p-accordion>
-                                    <p-accordionTab>
-                                        <ng-template pTemplate="header">{{'pending.invitations' | translate}}
-                                        </ng-template>
-                                        <ng-template pTemplate="content">
-                                            <div *ngIf="pendingInvitation.length !== 0;else none">
-                                                <div *ngFor="let invitation of pendingInvitation">
-                                                    <a style="cursor:pointer;"
-                                                        (click)="reditectToBidAndApply(invitation.projectDetail)">
-                                                        <div class="media mb-4">
-                                                            <p-avatar class="mr-2" shape="circle">
-                                                                {{returnFirstCharacterFromString(invitation.projectDetail.user.firstName)}}
-                                                            </p-avatar>
-                                                            <div class="media-body">
-                                                                <h6 class="mb-0 font-weight-bold">
-                                                                    {{invitation.projectDetail.user.email}}</h6>
-                                                                <span class="text-muted">{{'project' |translate}} :
-                                                                    {{invitation.projectDetail.title}}</span>
-                                                            </div><i class="fa fa-chevron-right mt-2"></i>
-                                                        </div>
-                                                    </a>
-
-                                                </div>
-
-                                            </div>
-                                            <ng-template #none>
-                                                <div class="w-100">
-                                                    <p class="mt-5 text-center">No Data Found</p>
-                                                </div>
-                                            </ng-template>
-                                        </ng-template>
-                                    </p-accordionTab>
-                                </p-accordion>
-                                <p-accordion>
-                                    <p-accordionTab>
-                                        <ng-template pTemplate="header">{{'favorite.projects' | translate}}
-                                        </ng-template>
-                                        <ng-template pTemplate="content">
-                                            <div *ngIf="favoriteProject.length !== 0;else none">
-                                                <div *ngFor="let project of favoriteProject">
-                                                    <a style="cursor:pointer;" routerLink=""
-                                                        (click)="reditectToBidAndApply(project.projectDetail)">
-                                                        {{project.projectDetail.title}}
-                                                    </a>
-                                                    <hr>
-                                                </div>
-                                            </div>
-                                            <ng-template #none>
-                                                <div class="w-100">
-                                                    <p class="mt-5 text-center">No Data Found</p>
-                                                </div>
-                                            </ng-template>
-                                        </ng-template>
-                                    </p-accordionTab>
-                                </p-accordion>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+      </div>
     </div>
+  </div>
 
-    <div class="row">
-        
-        <div class="col-xl-6 mt-3">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="font-weight-bold mb-0 float-left">{{'closeout.packages' | translate}}</h5>
-                </div>
-                <div class="card-body p-1" *ngIf="closeOutPackages.length !== 0;else none">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div class="Sub_Close_PackData d-flex justify-content-between"
-                                    *ngFor="let closeout of closeOutPackages">
-                                    <div class="media mb-3">
-                                        <div class="media-body">
-                                            <h6 class="mb-0 font-weight-bold" *ngIf="closeout.jobSiteDetail">
-                                                {{closeout.jobSiteDetail.title}}</h6>
-                                            <span class="text-muted"
-                                                *ngIf="closeout.projectDetail">{{closeout.projectDetail.title}}</span>
-                                        </div>
-                                    </div>
-                                    <div class="media mb-3">
-                                        <div class="media-body">
-                                            <h6 class="mb-0 font-weight-bold" *ngIf="closeout.paymentMileStone.name">
-                                                {{closeout.paymentMileStone.name}}</h6>
-                                            <span class="text-muted"
-                                                *ngIf="closeout.requestedDate">{{closeout.requestedDate | date:
-                                                "shortDate"}}</span>
-                                            <span class="text-muted" *ngIf="closeout.status">
-                                                {{ closeout.status ==='NOT_SUBMITTED' ? 'Not Submitted' :
-                                                closeout.status ==='REQUESTED' ? 'Requested' :
-                                                closeout.status ==='APPROVED' ? 'Approved' :
-                                                'Rejected'}}
-                                            </span>
-                                        </div>
-                                        <img style="height: 30px;" class="ml-2"
-                                            src="assets/images/sub_dash_closeout.svg">
-                                        <i class="fa fa-chevron-right mt-2 ml-2"></i>
-                                    </div>
+  <div class="row">
+    <div class="col-xl-12 mt-3">
+      <div class="card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="font-weight-bold float-left">
+            {{ "locations" | translate }}
+          </h5>
 
+          <div class="SubCon_loca d-flex flex-wrap align-items-center">
+            {{ "state" | translate }} :
 
-                                </div>
-                                <ng-template #none>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center">No Data Found</p>
-                                    </div>
-                                </ng-template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p-dropdown
+              [options]="state"
+              (onChange)="onStateSelect($event)"
+              [(ngModel)]="selectedState"
+              optionLabel="name"
+              class="ml-2"
+            ></p-dropdown>
+          </div>
+        </div>
+        <div class="text-center" style="display: inline">
+          <p-radioButton
+            value="project"
+            [(ngModel)]="selectedType"
+          ></p-radioButton>
+          <label
+            class="mb-0"
+            style="margin-left: 1%; margin-top: 1%; margin-right: 1%"
+          >
+            Projects
+          </label>
+          <p-radioButton
+            value="jobsite"
+            [(ngModel)]="selectedType"
+          ></p-radioButton>
+          <label class="mb-0" style="margin-left: 1%; margin-top: 1%">
+            Jobsites
+          </label>
         </div>
 
-        <div class="col-xl-6 mt-3">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="font-weight-bold mb-0 float-left">{{'licenses.requiring.attention' | translate}}</h5>
-                </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div *ngIf="requiredCertificates.length !== 0;else none1">
-                                    <div class="SubCon_Dash_Certi d-flex justify-content-between"
-                                        *ngFor="let certificates of requiredCertificates">
-                
-                                        <h6 class="font-weight-bold mb-0">{{certificates.name}}</h6>
-                                        <button class="button subCon_rounded_btn btn-warning"
-                                            *ngIf="(getGapBetweenTwoDates(certificates.expiryDate,todayDate) > 0 && getGapBetweenTwoDates(certificates.expiryDate,todayDate) <= 30)">Due</button>
-                                        <p-tag
-                                            *ngIf="getGapBetweenTwoDates(certificates.expiryDate,todayDate) < 0  || getGapBetweenTwoDates(certificates.expiryDate,todayDate) === 0"
-                                            severity="danger" value="Expired" [rounded]="true"></p-tag>
-                
-                                    </div>
-                                </div>
-                                <ng-template #none1>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center" *ngIf="upToDateCertificates.length !== 0">
-                                            Licenses are up to date</p>
-                                        <p class="mt-5 text-center" *ngIf="upToDateCertificates.length === 0 && requiredCertificates.length === 0">
-                                            No Data Found
-                                        </p>
-                                    </div>
-                                </ng-template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="block location">
+          <agm-map [latitude]="lat" [longitude]="lng">
+            <div *ngIf="selectedType === 'project'">
+              <agm-marker
+                *ngFor="let project of acceptedProjects; let i = index"
+                [latitude]="project.projectDetail.latitude"
+                [longitude]="project.projectDetail.longitude"
+                [iconUrl]="{
+                  url: 'assets/images/map-marker/subcontractor_InProgress.svg'
+                }"
+              ></agm-marker>
+              <agm-marker
+                *ngFor="let project of completedProjects; let i = index"
+                [latitude]="project.projectDetail.latitude"
+                [longitude]="project.projectDetail.longitude"
+                [iconUrl]="{
+                  url: 'assets/images/map-marker/subcontractor_completed.svg'
+                }"
+              ></agm-marker>
             </div>
-        </div>
 
+            <div *ngIf="selectedType === 'jobsite'">
+              <agm-marker
+                *ngFor="let jobsite of acceptedJobsites; let i = index"
+                [latitude]="jobsite.jobSiteDetail.latitude"
+                [longitude]="jobsite.jobSiteDetail.longitude"
+                [iconUrl]="{
+                  url: 'assets/images/map-marker/subcontractor_InProgress.svg'
+                }"
+              ></agm-marker>
+              <agm-marker
+                *ngFor="let jobsite of completedJobsites; let i = index"
+                [latitude]="jobsite.jobSiteDetail.latitude"
+                [longitude]="jobsite.jobSiteDetail.longitude"
+                [iconUrl]="{
+                  url: 'assets/images/map-marker/subcontractor_completed.svg'
+                }"
+              ></agm-marker>
+            </div>
+          </agm-map>
+        </div>
+        <div
+          class="card-footer d-flex justify-content-center align-items-center"
+        >
+          <span style="color: #afc9f0" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            Ongoing
+          </span>
+          <span style="color: #5bcb70" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            Completed
+          </span>
+        </div>
+      </div>
     </div>
-
-    <div class="row">
-        <div class="col-xl-12 mt-3">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="font-weight-bold float-left"> {{'locations' | translate}}</h5>
-
-                    <div class="SubCon_loca d-flex flex-wrap align-items-center">
-                        {{ 'state' | translate }} :
-                        
-                        <p-dropdown [options]="state" (onChange)="onStateSelect($event)" [(ngModel)]="selectedState"
-                            optionLabel="name" class="ml-2"></p-dropdown>
-                    </div>
-                </div>
-                <div class="text-center" style="display: inline;">
-                    <p-radioButton value="project" [(ngModel)]="selectedType"></p-radioButton>
-                    <label class="mb-0" style="margin-left: 1%;margin-top: 1%;margin-right: 1%;">
-                        Projects
-                    </label>
-                    <p-radioButton value="jobsite" [(ngModel)]="selectedType"></p-radioButton>
-                    <label class="mb-0" style="margin-left: 1%;margin-top: 1%;">
-                        Jobsites
-                    </label>
-                </div>
-
-                <div class="block  location ">
-                    <agm-map [latitude]="lat" [longitude]="lng">
-                        <div *ngIf="selectedType === 'project'">
-                            <agm-marker *ngFor="let project of acceptedProjects; let i = index"
-                                [latitude]="project.projectDetail.latitude"
-                                [longitude]="project.projectDetail.longitude"
-                                [iconUrl]="{url:'assets/images/map-marker/subcontractor_InProgress.svg'}"></agm-marker>
-                            <agm-marker *ngFor="let project of completedProjects; let i = index"
-                                [latitude]="project.projectDetail.latitude"
-                                [longitude]="project.projectDetail.longitude"
-                                [iconUrl]="{url:'assets/images/map-marker/subcontractor_completed.svg'}"></agm-marker>
-                        </div>
-
-                        <div *ngIf="selectedType === 'jobsite'">
-                            <agm-marker *ngFor="let jobsite of acceptedJobsites; let i = index"
-                                [latitude]="jobsite.jobSiteDetail.latitude"
-                                [longitude]="jobsite.jobSiteDetail.longitude"
-                                [iconUrl]="{url:'assets/images/map-marker/subcontractor_InProgress.svg'}"></agm-marker>
-                            <agm-marker *ngFor="let jobsite of completedJobsites; let i = index"
-                                [latitude]="jobsite.jobSiteDetail.latitude"
-                                [longitude]="jobsite.jobSiteDetail.longitude"
-                                [iconUrl]="{url:'assets/images/map-marker/subcontractor_completed.svg'}"></agm-marker>
-                        </div>
-                    </agm-map>
-                </div>
-                <div class="card-footer d-flex justify-content-center align-items-center">
-                    <span style="color: #AFC9F0;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        Ongoing
-                    </span>
-                    <span style="color: #5BCB70;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        Completed
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>

@@ -163,6 +163,8 @@ export class SubcontractorDashboardComponent implements OnInit, OnDestroy {
   numberOfPaidInvoices: number = 0;
   upToDateCertificates = [];
 
+  projectStatusList: any = [];
+
   constructor(
     private captionChangeService: HeaderManagementService,
     private projectJobSelectionService: ProjectJobSelectionService,
@@ -286,12 +288,26 @@ export class SubcontractorDashboardComponent implements OnInit, OnDestroy {
     const userId = this.localStrorageService.getLoginUserId();
     this.dashboardService.getDashboardDetailOfSubcontractor(userId).subscribe(data => {
       if (data.statusCode === '200' && data.message === 'OK') {
-
-
         //set data for project chart
         this.groupByStatusProjectMethod(data.data.lstProjectBidDetail);
         this.numberOfFavoriteProject = data.data.lstFavouriteProject.length;
         this.numberOfInvitedProject = data.data.lstProjectInvitee.length;
+
+        // ...data.data.lstProjectInvitee, ...data.data.lstProjectBidDetail
+
+        const uniqueProject = [...data.data.lstProjectInvitee, ...data.data.lstProjectInvitee, ...data.data.lstProjectBidDetail]
+
+        const filteredArr = uniqueProject.reduce((acc, current) => {
+          const x = acc.find(item => item.id === current.id);
+          if (!x) {
+            return acc.concat([current]);
+          } else {
+            return acc;
+          }
+        }, []);
+
+        this.projectStatusList.push(...data.data.lstFavouriteProject, ...filteredArr);
+
         this.totalProject = this.numberOfFavoriteProject + data.data.lstProjectInvitee.length + data.data.lstProjectBidDetail.length - this.countInvitedProjectinBidProject(data.data.lstProjectBidDetail, data.data.lstProjectInvitee);
 
         this.setProjectChartData();
@@ -528,6 +544,8 @@ export class SubcontractorDashboardComponent implements OnInit, OnDestroy {
       )
     );
 
+    console.log('result  =>', result);
+
     result.subscribe(x => {
       this.groupByStatusProject.push(x);
     });
@@ -535,6 +553,11 @@ export class SubcontractorDashboardComponent implements OnInit, OnDestroy {
     records.forEach(x => pipedRecords.next(x));
     pipedRecords.complete();
 
+  }
+
+  getProjectsList() {
+    this.localStrorageService.setItem('projectStatusList', this.projectStatusList, false);
+    this.router.navigate(['/subcontractor/grouped-project-list'])
   }
 
   setProjectChartData() {
@@ -776,6 +799,14 @@ export class SubcontractorDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
+  }
+
+  redirectFromDashboardCard(card) {
+    if (card === 'invoices') {
+      this.router.navigate(['/subcontractor/invoices']);
+    } else {
+      this.router.navigate(['/subcontractor/invoices']);
+    }
   }
 
 
