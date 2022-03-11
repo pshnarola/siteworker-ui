@@ -134,10 +134,10 @@
             *ngIf="
               (addNewProjectForm.controls['title'].touched &&
                 addNewProjectForm.controls['title'].hasError('required') &&
-                  !addNewProjectForm.controls['title'].valid) ||
+                !addNewProjectForm.controls['title'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['title'].hasError('required') &&
-                  !addNewProjectForm.controls['title'].valid)
+                !addNewProjectForm.controls['title'].valid)
             "
           >
             {{ "required" | translate }}
@@ -147,7 +147,7 @@
             *ngIf="
               addNewProjectForm.controls['title'].touched &&
               addNewProjectForm.controls['title'].hasError('maxlength') &&
-                !addNewProjectForm.controls['title'].valid
+              !addNewProjectForm.controls['title'].valid
             "
           >
             {{ "project.title.maxLength" | translate }}
@@ -211,10 +211,10 @@
             *ngIf="
               (addNewProjectForm.controls['region'].touched &&
                 addNewProjectForm.controls['region'].hasError('required') &&
-                  !addNewProjectForm.controls['region'].valid) ||
+                !addNewProjectForm.controls['region'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['region'].hasError('required') &&
-                  !addNewProjectForm.controls['region'].valid)
+                !addNewProjectForm.controls['region'].valid)
             "
           >
             {{ "required" | translate }}
@@ -245,10 +245,10 @@
             *ngIf="
               (addNewProjectForm.controls['state'].touched &&
                 addNewProjectForm.controls['state'].hasError('required') &&
-                  !addNewProjectForm.controls['state'].valid) ||
+                !addNewProjectForm.controls['state'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['state'].hasError('required') &&
-                  !addNewProjectForm.controls['state'].valid)
+                !addNewProjectForm.controls['state'].valid)
             "
           >
             {{ "required" | translate }}
@@ -279,10 +279,10 @@
             *ngIf="
               (addNewProjectForm.controls['industry'].touched &&
                 addNewProjectForm.controls['industry'].hasError('required') &&
-                  !addNewProjectForm.controls['industry'].valid) ||
+                !addNewProjectForm.controls['industry'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['industry'].hasError('required') &&
-                  !addNewProjectForm.controls['industry'].valid)
+                !addNewProjectForm.controls['industry'].valid)
             "
           >
             {{ "required" | translate }}
@@ -312,10 +312,10 @@
             *ngIf="
               (addNewProjectForm.controls['bidDueDate'].touched &&
                 addNewProjectForm.controls['bidDueDate'].hasError('required') &&
-                  !addNewProjectForm.controls['bidDueDate'].valid) ||
+                !addNewProjectForm.controls['bidDueDate'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['bidDueDate'].hasError('required') &&
-                  !addNewProjectForm.controls['bidDueDate'].valid)
+                !addNewProjectForm.controls['bidDueDate'].valid)
             "
           >
             {{ "required" | translate }}
@@ -354,10 +354,10 @@
             *ngIf="
               (addNewProjectForm.controls['startDate'].touched &&
                 addNewProjectForm.controls['startDate'].hasError('required') &&
-                  !addNewProjectForm.controls['startDate'].valid) ||
+                !addNewProjectForm.controls['startDate'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['startDate'].hasError('required') &&
-                  !addNewProjectForm.controls['startDate'].valid)
+                !addNewProjectForm.controls['startDate'].valid)
             "
           >
             {{ "required" | translate }}
@@ -400,12 +400,12 @@
                 addNewProjectForm.controls['completionDate'].hasError(
                   'required'
                 ) &&
-                  !addNewProjectForm.controls['completionDate'].valid) ||
+                !addNewProjectForm.controls['completionDate'].valid) ||
               (submitted &&
                 addNewProjectForm.controls['completionDate'].hasError(
                   'required'
                 ) &&
-                  !addNewProjectForm.controls['completionDate'].valid)
+                !addNewProjectForm.controls['completionDate'].valid)
             "
           >
             {{ "required" | translate }}
@@ -488,9 +488,9 @@
             *ngIf="
               addNewProjectForm.controls['attachmentLink'].touched &&
               addNewProjectForm.controls['attachmentLink'].hasError(
-                'invalidLink'
+                'pattern'
               ) &&
-                !addNewProjectForm.controls['attachmentLink'].valid
+              !addNewProjectForm.controls['attachmentLink'].valid
             "
           >
             Enter valid link
@@ -606,10 +606,10 @@
             *ngIf="
               (myCompanyForm.controls['name'].touched &&
                 myCompanyForm.controls['name'].hasError('required') &&
-                  !myCompanyForm.controls['name'].valid) ||
+                !myCompanyForm.controls['name'].valid) ||
               (submittedCompany &&
                 myCompanyForm.controls['name'].hasError('required') &&
-                  !myCompanyForm.controls['name'].valid)
+                !myCompanyForm.controls['name'].valid)
             "
           >
             {{ "required" | translate }}
@@ -619,7 +619,7 @@
             *ngIf="
               myCompanyForm.controls['name'].touched &&
               myCompanyForm.controls['name'].hasError('maxlength') &&
-                !myCompanyForm.controls['name'].valid
+              !myCompanyForm.controls['name'].valid
             "
           >
             {{ "company.name.maxLength" | translate }}
