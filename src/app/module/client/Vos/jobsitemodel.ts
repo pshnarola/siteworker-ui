@@ -44,5 +44,7 @@ export class JobsiteDetail extends BaseModel {
 
     attachment: JobSiteAttachment[];
 
+    attachmentLink: string;
+
     isBidCompleted: boolean;
 }

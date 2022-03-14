@@ -153,6 +153,7 @@ export class AddJobsiteComponent implements OnInit {
     this.addJobsiteForm.controls.state.setValue(state);
     this.addJobsiteForm.controls.latitude.setValue(jobsite.latitude);
     this.addJobsiteForm.controls.longitude.setValue(jobsite.longitude);
+    this.addJobsiteForm.controls.attachmentLink.setValue(jobsite.attachmentLink);
   }
 
   selectFile(event) {
@@ -442,6 +443,7 @@ export class AddJobsiteComponent implements OnInit {
     this.jobsiteData.state = this.addJobsiteForm.value.state.name;
     this.jobsiteData.latitude = this.addJobsiteForm.value.latitude;
     this.jobsiteData.longitude = this.addJobsiteForm.value.longitude;
+    this.jobsiteData.attachmentLink = this.addJobsiteForm.value.attachmentLink;
     this.jobsiteData.status = JobsiteStatus.DRAFT;
     if (this.project.id !== 'pid') {
       this.project.attachment = [];
@@ -475,6 +477,9 @@ export class AddJobsiteComponent implements OnInit {
     this.editedJobsite.state = this.addJobsiteForm.value.state.name;
     this.editedJobsite.latitude = this.addJobsiteForm.value.latitude;
     this.editedJobsite.longitude = this.addJobsiteForm.value.longitude;
+    this.editedJobsite.attachmentLink = this.addJobsiteForm.value.attachmentLink;
+    console.log('this.addJobsiteForm.value.attachmentLink =>', this.addJobsiteForm.value.attachmentLink);
+
     this.editedJobsite.project.attachment = [];
   }
 
@@ -499,7 +504,8 @@ export class AddJobsiteComponent implements OnInit {
       longitude: [],
       state: [null, [Validators.required, Validators.maxLength(30)]],
       city: [null, [Validators.required, Validators.maxLength(30)]],
-      zipCode: ['', [Validators.required, Validators.maxLength(5)]]
+      zipCode: ['', [Validators.required, Validators.maxLength(5)]],
+      attachmentLink: ['', Validators.pattern(COMMON_CONSTANTS.ATTECHMENT_LINK)]
     });
   }
 
@@ -557,10 +563,9 @@ export class AddJobsiteComponent implements OnInit {
   }
 
   onFileSelect(event) {
-
     if (event.rejectedFiles.length > 0) {
       if (event.rejectedFiles[0].reason === 'size') {
-        this.notificationService1.error(this.translator.instant('max.file.size.10.mb'), '');
+        this.notificationService1.error(this.translator.instant('Max file size is 100 MB'), '');
       } else {
         this.notificationService1.error(this.translator.instant('image.pdf.doc.upload'), '');
       }
@@ -570,10 +575,11 @@ export class AddJobsiteComponent implements OnInit {
     let validFiles: File[] = [];
     this.files.push(...event.addedFiles);
     let chekcLength = this.uploadedFile.length + this.files.length + this.selectedFile.length;
+
     if (chekcLength <= 10) {
       this.files.forEach((file) => {
-        if (file.size > 10000000) {
-          this.notificationService1.error('Size of ' + file.name + ' cannot be more than 10MB.', '');
+        if (file.size > 100000000) {
+          this.notificationService1.error('Size of ' + file.name + ' cannot be more than 100MB.', '');
         }
         else {
           validFiles.push(file);
