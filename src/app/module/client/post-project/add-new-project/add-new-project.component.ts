@@ -990,7 +990,7 @@ export class AddNewProjectComponent implements OnInit {
 
     if (event.rejectedFiles.length > 0) {
       if (event.rejectedFiles[0].reason === 'size') {
-        this.notificationService.error(this.translator.instant('max.file.size.10.mb'), '');
+        this.notificationService.error(this.translator.instant('Max file size is 100 MB'), '');
       } else {
         this.notificationService.error(this.translator.instant('image.pdf.doc.upload'), '');
       }
@@ -1002,7 +1002,7 @@ export class AddNewProjectComponent implements OnInit {
     let chekcLength = this.uploadedFile.length + this.files.length + this.selectedFile.length;
     if (chekcLength <= 10) {
       this.files.forEach((file, index) => {
-        if (file.size > 10000000) {
+        if (file.size > 100000000) {
           if (event.rejectedFiles[0].reason === 'size') {
             this.notificationService.error(this.translator.instant('max.file.size.10.mb'), '');
           } else {
