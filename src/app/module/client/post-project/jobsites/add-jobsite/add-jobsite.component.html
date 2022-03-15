@@ -1,204 +1,408 @@
 <div class="container-fluid">
-    <div class="row" *ngIf="!editJobsite">
-        <div class="col-md-12">
-            <div class="float-left">
-                <h5><b>{{'add.jobsite.details' |translate}}</b></h5>
-            </div>
-        </div>
+  <div class="row" *ngIf="!editJobsite">
+    <div class="col-md-12">
+      <div class="float-left">
+        <h5>
+          <b>{{ "add.jobsite.details" | translate }}</b>
+        </h5>
+      </div>
     </div>
-    <br>
-    <form [formGroup]="addJobsiteForm">
+  </div>
+  <br />
+  <form [formGroup]="addJobsiteForm">
+    <div class="row">
+      <div class="col-md-6">
         <div class="row">
-            <div class="col-md-6">
-                <div class="row">
-                    <div class="col-md-12 form-group">
-                        <label for="title">{{'jobsite.title' |translate}}*</label>
-                        <input type="text" pInputText class="form-control" formControlName="title" maxlength="50" placeholder="{{'jobsite.title.placeholder' |translate}}" [pKeyFilter]="blockSpecial" />
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['title'].touched && 
-                        (addJobsiteForm.controls['title'].hasError('required') &&
-                        !addJobsiteForm.controls['title'].valid)
-                        || (submitted &&
-                        (addJobsiteForm.controls['title'].hasError('required') && 
-                        !addJobsiteForm.controls['title'].valid))">
-                            {{'required' | translate}}
-                        </div>
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['title'].touched && 
-                        (addJobsiteForm.controls['title'].hasError('maxlength') && 
-                        !addJobsiteForm.controls['title'].valid)">
-                            {{'jobsite.title.maxLength' | translate}}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6  form-group">
-                        <label for="title">{{'job.code' |translate}}*</label>
-                        <input type="text" pInputText class="form-control" formControlName="jobCode" maxlength="30" placeholder="{{'job.code.placeholder' |translate}}" [pKeyFilter]="blockSpecial" />
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['jobCode'].touched && 
-                            (addJobsiteForm.controls['jobCode'].hasError('required') &&
-                            !addJobsiteForm.controls['jobCode'].valid)
-                            || (submitted &&
-                            (addJobsiteForm.controls['jobCode'].hasError('required') && 
-                            !addJobsiteForm.controls['jobCode'].valid))">
-                            {{'required' | translate}}
-                        </div>
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['jobCode'].touched && 
-                            (addJobsiteForm.controls['jobCode'].hasError('maxlength') && 
-                            !addJobsiteForm.controls['jobCode'].valid)">
-                            {{'jobsite.jobCode.maxLength' | translate}}
-                        </div>
-                    </div>
-                    <div class="col-lg-6  form-group">
-                        <label for="title">{{'location' |translate}}*</label>
-                        <!-- <app-auto-complete-map-places
+          <div class="col-md-12 form-group">
+            <label for="title">{{ "jobsite.title" | translate }}*</label>
+            <input
+              type="text"
+              pInputText
+              class="form-control"
+              formControlName="title"
+              maxlength="50"
+              placeholder="{{ 'jobsite.title.placeholder' | translate }}"
+              [pKeyFilter]="blockSpecial"
+            />
+            <div
+              class="p-invalid"
+              *ngIf="
+                (addJobsiteForm.controls['title'].touched &&
+                  addJobsiteForm.controls['title'].hasError('required') &&
+                  !addJobsiteForm.controls['title'].valid) ||
+                (submitted &&
+                  addJobsiteForm.controls['title'].hasError('required') &&
+                  !addJobsiteForm.controls['title'].valid)
+              "
+            >
+              {{ "required" | translate }}
+            </div>
+            <div
+              class="p-invalid"
+              *ngIf="
+                addJobsiteForm.controls['title'].touched &&
+                addJobsiteForm.controls['title'].hasError('maxlength') &&
+                !addJobsiteForm.controls['title'].valid
+              "
+            >
+              {{ "jobsite.title.maxLength" | translate }}
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 form-group">
+            <label for="title">{{ "job.code" | translate }}*</label>
+            <input
+              type="text"
+              pInputText
+              class="form-control"
+              formControlName="jobCode"
+              maxlength="30"
+              placeholder="{{ 'job.code.placeholder' | translate }}"
+              [pKeyFilter]="blockSpecial"
+            />
+            <div
+              class="p-invalid"
+              *ngIf="
+                (addJobsiteForm.controls['jobCode'].touched &&
+                  addJobsiteForm.controls['jobCode'].hasError('required') &&
+                  !addJobsiteForm.controls['jobCode'].valid) ||
+                (submitted &&
+                  addJobsiteForm.controls['jobCode'].hasError('required') &&
+                  !addJobsiteForm.controls['jobCode'].valid)
+              "
+            >
+              {{ "required" | translate }}
+            </div>
+            <div
+              class="p-invalid"
+              *ngIf="
+                addJobsiteForm.controls['jobCode'].touched &&
+                addJobsiteForm.controls['jobCode'].hasError('maxlength') &&
+                !addJobsiteForm.controls['jobCode'].valid
+              "
+            >
+              {{ "jobsite.jobCode.maxLength" | translate }}
+            </div>
+          </div>
+          <div class="col-lg-6 form-group">
+            <label for="title">{{ "location" | translate }}*</label>
+            <!-- <app-auto-complete-map-places
                     (pickAddress)="getAddressFromAutocompleteMapsApi($event)">
                     </app-auto-complete-map-places> -->
-                        <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()" placeholder="Search Location" maxlength="100" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" #search pInputText required formControlName="location">
+            <input
+              type="text"
+              class="form-control"
+              (keydown.enter)="$event.preventDefault()"
+              placeholder="Search Location"
+              maxlength="100"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="off"
+              type="text"
+              #search
+              pInputText
+              required
+              formControlName="location"
+            />
 
-
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['location'].touched && 
-                        (addJobsiteForm.controls['location'].hasError('required') &&
-                        !addJobsiteForm.controls['location'].valid)
-                        || (submitted &&
-                        (addJobsiteForm.controls['location'].hasError('required') && 
-                        !addJobsiteForm.controls['location'].valid))">
-                            {{'required' | translate}}
-                        </div>
-                        <div class="p-invalid" *ngIf="addJobsiteForm.controls['location'].touched && 
-                        (addJobsiteForm.controls['location'].hasError('maxlength') && 
-                        !addJobsiteForm.controls['location'].valid)">
-                            {{'jobsite.location.maxLength' | translate}}
-                        </div>
-                    </div>
-                </div>
+            <div
+              class="p-invalid"
+              *ngIf="
+                (addJobsiteForm.controls['location'].touched &&
+                  addJobsiteForm.controls['location'].hasError('required') &&
+                  !addJobsiteForm.controls['location'].valid) ||
+                (submitted &&
+                  addJobsiteForm.controls['location'].hasError('required') &&
+                  !addJobsiteForm.controls['location'].valid)
+              "
+            >
+              {{ "required" | translate }}
             </div>
-            <div class="col-md-6 form-group">
-                <label for="description">{{'jobsite.description' |translate}}*</label>
-                <textarea cols="10" rows="5" formControlName="description" placeholder="{{'jobsite.description.placeholder' |translate}}" class="form-control" maxlength="200" pInputText></textarea>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['description'].touched && 
-            (addJobsiteForm.controls['description'].hasError('required') &&
-            !addJobsiteForm.controls['description'].valid)
-            || (submitted &&
-            (addJobsiteForm.controls['description'].hasError('required') && 
-            !addJobsiteForm.controls['description'].valid))">
-                    {{'required' | translate}}
-                </div>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['description'].touched && 
-            (addJobsiteForm.controls['description'].hasError('maxlength') && 
-            !addJobsiteForm.controls['description'].valid)">
-                    {{'jobsite.description.maxLength' | translate}}
-                </div>
+            <div
+              class="p-invalid"
+              *ngIf="
+                addJobsiteForm.controls['location'].touched &&
+                addJobsiteForm.controls['location'].hasError('maxlength') &&
+                !addJobsiteForm.controls['location'].valid
+              "
+            >
+              {{ "jobsite.location.maxLength" | translate }}
             </div>
+          </div>
         </div>
-        <div class="row">
-            <div class="col-lg-4 form-group">
-                <label for="state">{{'city' |translate}}*</label>
-                <p-autoComplete virtualScroll="true" itemSize="10" formControlName="city" [suggestions]="filteredCity" (completeMethod)="filterCity($event)" field="name" [dropdown]="true" forceSelection="true" minLength="3" placeholder="{{'select.city' |translate}}"
-                    [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
-                    <!-- <ng-template let-city pTemplate="item">
+      </div>
+      <div class="col-md-6 form-group">
+        <label for="description"
+          >{{ "jobsite.description" | translate }}*</label
+        >
+        <textarea
+          cols="10"
+          rows="5"
+          formControlName="description"
+          placeholder="{{ 'jobsite.description.placeholder' | translate }}"
+          class="form-control"
+          maxlength="200"
+          pInputText
+        ></textarea>
+        <div
+          class="p-invalid"
+          *ngIf="
+            (addJobsiteForm.controls['description'].touched &&
+              addJobsiteForm.controls['description'].hasError('required') &&
+              !addJobsiteForm.controls['description'].valid) ||
+            (submitted &&
+              addJobsiteForm.controls['description'].hasError('required') &&
+              !addJobsiteForm.controls['description'].valid)
+          "
+        >
+          {{ "required" | translate }}
+        </div>
+        <div
+          class="p-invalid"
+          *ngIf="
+            addJobsiteForm.controls['description'].touched &&
+            addJobsiteForm.controls['description'].hasError('maxlength') &&
+            !addJobsiteForm.controls['description'].valid
+          "
+        >
+          {{ "jobsite.description.maxLength" | translate }}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 form-group">
+        <label for="state">{{ "city" | translate }}*</label>
+        <p-autoComplete
+          virtualScroll="true"
+          itemSize="10"
+          formControlName="city"
+          [suggestions]="filteredCity"
+          (completeMethod)="filterCity($event)"
+          field="name"
+          [dropdown]="true"
+          forceSelection="true"
+          minLength="3"
+          placeholder="{{ 'select.city' | translate }}"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
+        >
+          <!-- <ng-template let-city pTemplate="item">
                         <div>
                             <div>{{city.name}}</div>
                         </div>
                     </ng-template> -->
-                </p-autoComplete>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['city'].touched && 
-                    (addJobsiteForm.controls['city'].hasError('required') &&
-                    !addJobsiteForm.controls['city'].valid)
-                    || (submitted &&
-                    (addJobsiteForm.controls['city'].hasError('required') && 
-                    !addJobsiteForm.controls['city'].valid))">
-                    {{'required' | translate}}
-                </div>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['city'].touched && 
-                    (addJobsiteForm.controls['city'].hasError('maxlength') && 
-                    !addJobsiteForm.controls['city'].valid)">
-                    {{'jobsite.city.maxLength' | translate}}
-                </div>
-            </div>
-            <div class="col-lg-4 form-group">
-                <label for="state">{{'state' |translate}}*</label>
-                <p-autoComplete formControlName="state" [suggestions]="filteredState" (completeMethod)="filterState($event)" field="name" [dropdown]="true" forceSelection="true" minLength="3" placeholder="{{'select.state' |translate}}" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
-                    <!-- <ng-template let-state pTemplate="item">
+        </p-autoComplete>
+        <div
+          class="p-invalid"
+          *ngIf="
+            (addJobsiteForm.controls['city'].touched &&
+              addJobsiteForm.controls['city'].hasError('required') &&
+              !addJobsiteForm.controls['city'].valid) ||
+            (submitted &&
+              addJobsiteForm.controls['city'].hasError('required') &&
+              !addJobsiteForm.controls['city'].valid)
+          "
+        >
+          {{ "required" | translate }}
+        </div>
+        <div
+          class="p-invalid"
+          *ngIf="
+            addJobsiteForm.controls['city'].touched &&
+            addJobsiteForm.controls['city'].hasError('maxlength') &&
+            !addJobsiteForm.controls['city'].valid
+          "
+        >
+          {{ "jobsite.city.maxLength" | translate }}
+        </div>
+      </div>
+      <div class="col-lg-4 form-group">
+        <label for="state">{{ "state" | translate }}*</label>
+        <p-autoComplete
+          formControlName="state"
+          [suggestions]="filteredState"
+          (completeMethod)="filterState($event)"
+          field="name"
+          [dropdown]="true"
+          forceSelection="true"
+          minLength="3"
+          placeholder="{{ 'select.state' | translate }}"
+          [style]="{ width: '100%' }"
+          [inputStyle]="{ width: '100%' }"
+        >
+          <!-- <ng-template let-state pTemplate="item">
                         <div>
                             <div>{{state.name}}</div>
                         </div>
                     </ng-template> -->
-                </p-autoComplete>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['state'].touched && 
-                    (addJobsiteForm.controls['state'].hasError('required') &&
-                    !addJobsiteForm.controls['state'].valid)
-                    || (submitted &&
-                    (addJobsiteForm.controls['state'].hasError('required') && 
-                    !addJobsiteForm.controls['state'].valid))">
-                    {{'required' | translate}}
-                </div>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['state'].touched && 
-                    (addJobsiteForm.controls['state'].hasError('maxlength') && 
-                    !addJobsiteForm.controls['state'].valid)">
-                    {{'jobsite.state.maxLength' | translate}}
-                </div>
-            </div>
-            <div class="col-lg-4 form-group">
-                <label for="title">{{'zipcode' |translate}}*</label>
-                <input type="text" pInputText class="form-control" formControlName="zipCode" maxlength="5" placeholder="{{'zipcode.placeholder' |translate}}" [pKeyFilter]="blockSpecial" />
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['zipCode'].touched && 
-                        (addJobsiteForm.controls['zipCode'].hasError('required') &&
-                        !addJobsiteForm.controls['zipCode'].valid)
-                        || (submitted &&
-                        (addJobsiteForm.controls['zipCode'].hasError('required') && 
-                        !addJobsiteForm.controls['zipCode'].valid))">
-                    {{'required' | translate}}
-                </div>
-                <div class="p-invalid" *ngIf="addJobsiteForm.controls['zipCode'].touched && 
-                        (addJobsiteForm.controls['zipCode'].hasError('maxlength') && 
-                        !addJobsiteForm.controls['zipCode'].valid)">
-                    {{'jobsite.zipcode.maxLength' | translate}}
-                </div>
-            </div>
-            <div class="col-lg-6 form-group">
-                <div>
-                    <label for="file">{{'work.scope'|translate}}</label>
-                    <!-- [accept]="'application/pdf,application/msword,
-                    application/vnd.openxmlformats-officedocument.wordprocessingml.document'" -->
-                    <ngx-dropzone (change)="onFileSelect($event)" [maxFileSize]="10000000" >
-                        <ngx-dropzone-label> {{ 'drag.and.drop.placeholder' | translate }} </ngx-dropzone-label>
-                        <ngx-dropzone-preview *ngFor="let f of files" [removable]="true">
-                            <ngx-dropzone-label style="margin:5px;">{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
-                        </ngx-dropzone-preview>
-                    </ngx-dropzone>
-                </div>
-                <div class="card uploaded-files p-chip" *ngFor="let file of uploadedFile;let i = index">
-                    <p>{{file.filename}}</p>
-                    <button pButton pRipple icon="pi pi-times" (click)="openWarnigDialogForUploaded(file.filename,file.id)" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete">
-                </button>
-                </div>
-                <div class="card uploaded-files p-chip" *ngFor="let file of selectedFile;let i = index">
-                    <p>{{file.name}}</p>
-                    <button pButton pRipple icon="pi pi-times" (click)="openWarnigDialog(file.name,i,file)" class="p-button-rounded p-button-danger p-mr-2" pTooltip="Delete">
-                </button>
-                </div>
-            </div>
+        </p-autoComplete>
+        <div
+          class="p-invalid"
+          *ngIf="
+            (addJobsiteForm.controls['state'].touched &&
+              addJobsiteForm.controls['state'].hasError('required') &&
+              !addJobsiteForm.controls['state'].valid) ||
+            (submitted &&
+              addJobsiteForm.controls['state'].hasError('required') &&
+              !addJobsiteForm.controls['state'].valid)
+          "
+        >
+          {{ "required" | translate }}
         </div>
-    </form>
-    <br>
-    <div style="text-align: right;" *ngIf="!editJobsite">
-        <button type="button" class=" btn btn-outline-danger" (click)="cancelAddJobsiteForm()">
-                <i class="fa fa-times-circle"></i>
-                {{'cancel' | translate}}</button>
-        <button type="button" class="btn btn-primary" (click)="onSaveAndAddJobsite()">
-                {{'save.and.add.jobsite' | translate}}</button>
-        <button type="button" class="btn btn-primary " (click)="onSaveAndNext()">
-                {{'save.and.next' | translate}}
-                <i class="pi pi-chevron-right"></i>
-        </button>
+        <div
+          class="p-invalid"
+          *ngIf="
+            addJobsiteForm.controls['state'].touched &&
+            addJobsiteForm.controls['state'].hasError('maxlength') &&
+            !addJobsiteForm.controls['state'].valid
+          "
+        >
+          {{ "jobsite.state.maxLength" | translate }}
+        </div>
+      </div>
+      <div class="col-lg-4 form-group">
+        <label for="title">{{ "zipcode" | translate }}*</label>
+        <input
+          type="text"
+          pInputText
+          class="form-control"
+          formControlName="zipCode"
+          maxlength="5"
+          placeholder="{{ 'zipcode.placeholder' | translate }}"
+          [pKeyFilter]="blockSpecial"
+        />
+        <div
+          class="p-invalid"
+          *ngIf="
+            (addJobsiteForm.controls['zipCode'].touched &&
+              addJobsiteForm.controls['zipCode'].hasError('required') &&
+              !addJobsiteForm.controls['zipCode'].valid) ||
+            (submitted &&
+              addJobsiteForm.controls['zipCode'].hasError('required') &&
+              !addJobsiteForm.controls['zipCode'].valid)
+          "
+        >
+          {{ "required" | translate }}
+        </div>
+        <div
+          class="p-invalid"
+          *ngIf="
+            addJobsiteForm.controls['zipCode'].touched &&
+            addJobsiteForm.controls['zipCode'].hasError('maxlength') &&
+            !addJobsiteForm.controls['zipCode'].valid
+          "
+        >
+          {{ "jobsite.zipcode.maxLength" | translate }}
+        </div>
+      </div>
+      <div class="col-lg-6 form-group">
+        <div>
+          <label for="file">{{ "work.scope" | translate }}</label>
+          <!-- [accept]="'application/pdf,application/msword,
+                    application/vnd.openxmlformats-officedocument.wordprocessingml.document'" -->
+          <ngx-dropzone
+            (change)="onFileSelect($event)"
+            [maxFileSize]="100000000"
+          >
+            <ngx-dropzone-label>
+              {{ "drag.and.drop.placeholder" | translate }}
+            </ngx-dropzone-label>
+            <ngx-dropzone-preview *ngFor="let f of files" [removable]="true">
+              <ngx-dropzone-label style="margin: 5px"
+                >{{ f.name }} ({{ f.type }})</ngx-dropzone-label
+              >
+            </ngx-dropzone-preview>
+          </ngx-dropzone>
+        </div>
+        <div
+          class="card uploaded-files p-chip"
+          *ngFor="let file of uploadedFile; let i = index"
+        >
+          <p>{{ file.filename }}</p>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-times"
+            (click)="openWarnigDialogForUploaded(file.filename, file.id)"
+            class="p-button-rounded p-button-danger p-mr-2"
+            pTooltip="Delete"
+          ></button>
+        </div>
+        <div
+          class="card uploaded-files p-chip"
+          *ngFor="let file of selectedFile; let i = index"
+        >
+          <p>{{ file.name }}</p>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-times"
+            (click)="openWarnigDialog(file.name, i, file)"
+            class="p-button-rounded p-button-danger p-mr-2"
+            pTooltip="Delete"
+          ></button>
+        </div>
+      </div>
+      <div class="col-lg-6 form-group">
+        <div>
+          <label for="file">{{ "attachment.link" | translate }}</label>
+          <input
+            type="text"
+            pInputText
+            class="form-control"
+            formControlName="attachmentLink"
+            placeholder="{{ 'attachment.link.placeholder' | translate }}"
+          />
+        </div>
+        <div
+          class="p-invalid"
+          *ngIf="
+            addJobsiteForm.controls['attachmentLink'].touched &&
+            addJobsiteForm.controls['attachmentLink'].hasError('pattern') &&
+            !addJobsiteForm.controls['attachmentLink'].valid
+          "
+        >
+          Enter valid link
+        </div>
+      </div>
     </div>
+  </form>
+  <br />
+  <div style="text-align: right" *ngIf="!editJobsite">
+    <button
+      type="button"
+      class="btn btn-outline-danger"
+      (click)="cancelAddJobsiteForm()"
+    >
+      <i class="fa fa-times-circle"></i>
+      {{ "cancel" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onSaveAndAddJobsite()"
+    >
+      {{ "save.and.add.jobsite" | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="onSaveAndNext()">
+      {{ "save.and.next" | translate }}
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
 
-    <div style="text-align: right;" *ngIf="editJobsite">
-        <button type="button" class="btn btn-outline-danger" (click)=" onCancelDialog()">
-                <i class="fa fa-times-circle"></i>
-                {{'cancel' | translate}}</button>
-        <button type="button" class="btn btn-primary " (click)="onUpdateJobsite()">
-                {{'update' | translate}}
-                <i class="pi pi-chevron-right"></i>
-        </button>
-    </div>
+  <div style="text-align: right" *ngIf="editJobsite">
+    <button
+      type="button"
+      class="btn btn-outline-danger"
+      (click)="onCancelDialog()"
+    >
+      <i class="fa fa-times-circle"></i>
+      {{ "cancel" | translate }}
+    </button>
+    <button type="button" class="btn btn-primary" (click)="onUpdateJobsite()">
+      {{ "update" | translate }}
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
 </div>

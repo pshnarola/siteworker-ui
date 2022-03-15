@@ -586,40 +586,13 @@ export class AddNewProjectComponent implements OnInit {
       region: [null, Validators.required],
       state: [null, Validators.required],
       industry: [null, Validators.required],
-      attachmentLink: [''],
+      attachmentLink: ['', Validators.pattern(COMMON_CONSTANTS.ATTECHMENT_LINK)],
       bidDueDate: [null, Validators.required],
       completionDate: [null, Validators.required],
       startDate: [null, Validators.required],
       isNegotiable: [true, Validators.required],
       type: ['OPEN_MARKET_REQUEST', Validators.required]
-    }, {
-      validators: [
-        this.URLValidator('attachmentLink')
-      ]
     });
-  }
-
-  URLValidator(controlName: string) {
-    return (formGroup: FormGroup) => {
-      const control = formGroup.controls[controlName];
-
-      if (control.errors && !control.errors.invalidLink) {
-        // return if another validator has already found an error on the control
-        return;
-      }
-
-      // set error on control if validation fails
-      try {
-        const url = new URL(control.value);
-        control.setErrors(null);
-      } catch (_) {
-        if (control.value) {
-          control.setErrors({ invalidLink: true });
-        } else {
-          control.setErrors(null);
-        }
-      }
-    }
   }
 
   onSaveAddNewProjectForm() {
@@ -1017,7 +990,7 @@ export class AddNewProjectComponent implements OnInit {
 
     if (event.rejectedFiles.length > 0) {
       if (event.rejectedFiles[0].reason === 'size') {
-        this.notificationService.error(this.translator.instant('max.file.size.10.mb'), '');
+        this.notificationService.error(this.translator.instant('Max file size is 100 MB'), '');
       } else {
         this.notificationService.error(this.translator.instant('image.pdf.doc.upload'), '');
       }
@@ -1029,7 +1002,7 @@ export class AddNewProjectComponent implements OnInit {
     let chekcLength = this.uploadedFile.length + this.files.length + this.selectedFile.length;
     if (chekcLength <= 10) {
       this.files.forEach((file, index) => {
-        if (file.size > 10000000) {
+        if (file.size > 100000000) {
           if (event.rejectedFiles[0].reason === 'size') {
             this.notificationService.error(this.translator.instant('max.file.size.10.mb'), '');
           } else {
