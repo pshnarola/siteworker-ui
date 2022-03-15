@@ -1,294 +1,522 @@
-<div class="container-fluid CliDash" *ngIf="this.hasJobAccess || this.hasProjectAccess;else none">
-    <div class="row">
-        <div class="col-xl-6 mt-3">
-            <div class="card h-100" *ngIf="hasProjectAccess;else noneProject">
-                <div class="card-header text-center">
-                    <h5 class="font-weight-bold mb-0">{{'projects' | translate}}</h5>
-                </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-6 card_border_right">
-                            <div class="card_scroll">
-                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
-                                    <h6 class="float-left font-weight-bold">{{'total.projects' | translate}}</h6>
-                                    <h6 class="float-right font-weight-bold text-primary">{{totalProject}}</h6>
-                                </div>
-                                <div *ngIf="validateChart();else none">
-                                    <canvas baseChart [data]="pieChartDataForProject"
-                                        [colors]="pieChartColorsForProject" [labels]="pieChartLabelsForProject"
-                                        [chartType]="pieChartType" [options]="pieChartOptions"
-                                        [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-                                    </canvas>
-                                </div>
-                                <ng-template #none>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center">No Data Found</p>
-                                    </div>
-                                </ng-template>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <div class="card_scroll">
-                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
-                                    <h6 class="float-left font-weight-bold">{{'total.jobsites' | translate}}</h6>
-                                    <h6 class="float-right font-weight-bold text-primary">{{totalJobsite}}</h6>
-                                </div>
-                                <div *ngIf="validateChartJobsite();else none">
-                                    <canvas baseChart [data]="pieChartDataForJobsite"
-                                        [colors]="pieChartColorsForJobsite" [labels]="pieChartLabelsForJobsite"
-                                        [chartType]="pieChartType" [options]="pieChartOptions"
-                                        [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-                                    </canvas>
-                                </div>
-                                <ng-template #none>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center">No Data Found</p>
-                                    </div>
-                                </ng-template>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ng-template #noneProject>
-                <h5 class="text-muted text-center py-3">You don't have Project access.</h5>
-            </ng-template>
+<div
+  class="container-fluid CliDash"
+  *ngIf="this.hasJobAccess || this.hasProjectAccess; else none"
+>
+  <div class="row">
+    <div class="col-xl-6 mt-3">
+      <div class="card h-100" *ngIf="hasProjectAccess; else noneProject">
+        <div class="card-header text-center">
+          <h5
+            class="font-weight-bold mb-0 cursor-pointer"
+            (click)="redirectTo('project')"
+          >
+            {{ "projects" | translate }}
+          </h5>
         </div>
-        <div class="col-xl-3 mt-3">
-            <div class="card h-100" *ngIf="hasJobAccess;else none">
-                <div class="card-header text-center">
-                    <h5 class="font-weight-bold mb-0">{{'jobs' | translate}}</h5>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-6 card_border_right">
+              <div class="card_scroll">
+                <div
+                  class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2"
+                >
+                  <h6 class="float-left font-weight-bold">
+                    {{ "total.projects" | translate }}
+                  </h6>
+                  <h6 class="float-right font-weight-bold text-primary">
+                    {{ totalProject }}
+                  </h6>
                 </div>
-                <div class="card-body p-1">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2">
-                                    <h6 class="float-left font-weight-bold">{{'total.jobs' | translate}}</h6>
-                                    <h6 class="float-right font-weight-bold text-primary">{{totalJob}}</h6>
-                                </div>
-                                <div *ngIf="validateChartJob();else none">
-                                    <canvas baseChart [data]="pieChartDataForJob" [labels]="pieChartLabelsForJob"
-                                        [colors]="pieChartColorsForJob" [chartType]="pieChartType"
-                                        [options]="pieChartOptions" [plugins]="pieChartPlugins"
-                                        [legend]="pieChartLegend">
-                                    </canvas>
-                                </div>
-                                <ng-template #none>
-                                    <div class="w-100">
-                                        <p class="mt-5 text-center">No Data Found</p>
-                                    </div>
-                                </ng-template>
-                            </div>
-                        </div>
-                    </div>
+                <div *ngIf="validateChart(); else none">
+                  <canvas
+                    baseChart
+                    [data]="pieChartDataForProject"
+                    [colors]="pieChartColorsForProject"
+                    [labels]="pieChartLabelsForProject"
+                    [chartType]="pieChartType"
+                    [options]="pieChartOptions"
+                    [plugins]="pieChartPlugins"
+                    [legend]="pieChartLegend"
+                  >
+                  </canvas>
                 </div>
+                <ng-template #none>
+                  <div class="w-100">
+                    <p class="mt-5 text-center">No Data Found</p>
+                  </div>
+                </ng-template>
+              </div>
             </div>
-        </div>
-        <ng-template #none>
-            <h5 class="text-muted text-center py-3">You don't have Job access.</h5>
-        </ng-template>
-        <div class="col-xl-3 mt-3">
-            <div class="card h-100">
-                <div class="card-header p-2 bg-lightBlue border-bottom-0">
-                    <div class="d-inline">
-                        <h5 class="float-left mt-2 font-weight-bold mb-0">{{'to.do' | translate}}</h5>
-                        <div class="float-right">
-                            <p-selectButton *ngIf="hasJobAccess && hasProjectAccess;" [options]="toDoButtonOptions"
-                                [(ngModel)]="selectedToDoOption" optionLabel="label"></p-selectButton>
-                            <h5 style="background-color: #3A7CEC;color: #fff;padding: 5px;border-radius: 5px;"
-                                class="mt-1" *ngIf="hasProjectAccess && !(hasJobAccess && hasProjectAccess)">Project
-                            </h5>
-                            <h5 style="background-color: #3A7CEC;color: #fff;padding: 5px;border-radius: 5px;"
-                                class="mt-1" *ngIf="hasJobAccess && !(hasJobAccess && hasProjectAccess)">Job</h5>
-                        </div>
-                    </div>
+            <div class="col-xl-6">
+              <div class="card_scroll">
+                <div
+                  class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2"
+                >
+                  <h6 class="float-left font-weight-bold">
+                    {{ "total.jobsites" | translate }}
+                  </h6>
+                  <h6 class="float-right font-weight-bold text-primary">
+                    {{ totalJobsite }}
+                  </h6>
                 </div>
-                <div class="card-body bg-lightBlue px-3 pb-0 pt-0">
-                    <div class="row rounded_card_body bg-white">
-                        <div class="col-xl-12">
-                            <div class="card_scroll">
-                                <div *ngIf="selectedToDoOption.value === 'project'">
-                                    <h6 class="font-weight-bold">{{'pending.closeout.package.request' | translate}}</h6>
-                                    <div *ngIf="pendingCloseOutPackageRequest.length !== 0;else none">
-                                        <div *ngFor="let package of pendingCloseOutPackageRequest" class="mb-1">
-                                            <a routerLink="" (click)="redirectToCloseOut(package.projectDetail)">
-                                                {{package.projectDetail.title}} | {{package.jobSiteDetail.title}} |
-                                                {{package.paymentMileStone.name}}
-                                            </a>
-
-                                        </div>
-                                    </div>
-                                    <ng-template #none>
-                                        <div class="w-100">
-                                            <p class="mt-5 text-center">No Data Found</p>
-                                        </div>
-                                    </ng-template>
-                                </div>
-                                <div *ngIf="selectedToDoOption.value === 'job'">
-                                    <h6 class="font-weight-bold">{{'pending.timesheet' | translate}}</h6>
-                                    <div *ngIf="pendingTimesheet.length !== 0;else none">
-                                        <div *ngFor="let timesheet of pendingTimesheet">
-                                            <a routerLink=""
-                                                (click)="redirectToTimesheet(timesheet.jobBidDetail.jobDetail)">
-                                                {{timesheet.jobBidDetail.jobDetail.title}} |
-                                                {{timesheet.worker.firstName}} ({{timesheet.numberOfTimeshhet}})
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <ng-template #none>
-                                        <div class="w-100">
-                                            <p class="mt-5 text-center">No Data Found</p>
-                                        </div>
-                                    </ng-template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div *ngIf="validateChartJobsite(); else none">
+                  <canvas
+                    baseChart
+                    [data]="pieChartDataForJobsite"
+                    [colors]="pieChartColorsForJobsite"
+                    [labels]="pieChartLabelsForJobsite"
+                    [chartType]="pieChartType"
+                    [options]="pieChartOptions"
+                    [plugins]="pieChartPlugins"
+                    [legend]="pieChartLegend"
+                  >
+                  </canvas>
                 </div>
+                <ng-template #none>
+                  <div class="w-100">
+                    <p class="mt-5 text-center">No Data Found</p>
+                  </div>
+                </ng-template>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+      <ng-template #noneProject>
+        <h5 class="text-muted text-center py-3">
+          You don't have Project access.
+        </h5>
+      </ng-template>
     </div>
-    <div class="row">
-        <div class="col-md-12 mt-3">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="font-weight-bold"> {{'locations' | translate}}</h5>
-
-                    <div class="clie_da float-right">
-
-                        {{ 'type' | translate }} :
-
-                        <p-dropdown [options]="typesForLocationDropdown" (onChange)="onTypeSelect($event)" [(ngModel)]="selectedType" optionLabel="type">
-                        </p-dropdown>
-
-                        {{ 'state' | translate }} :
-                        <p-dropdown [options]="state" (onChange)="onStateSelect($event)" [(ngModel)]="selectedState">
-                        </p-dropdown>
-                    </div>
-                </div>
-                <div class="block location ">
-                    <agm-map [latitude]="lat" [longitude]="lng">
-                        <div *ngIf="selectedType">
-                            <div *ngIf="selectedType.value === 'project'">
-                                <agm-marker *ngFor="let project of dataOfDraftedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfPostedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfInProcessProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfCompletedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-
-                            <div *ngIf="selectedType.value === 'jobsite'">
-                                <agm-marker *ngFor="let jobsite of dataOfDraftedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfPostedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfInProcessJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfCompletedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-
-                            <div *ngIf="selectedType.value === 'job'">
-                                <agm-marker *ngFor="let job of dataOfDraftedJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfPostedJob; let i = index" [latitude]="job.latitude"
-                                    [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfInProcessJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfCompletedJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-
-                        </div>
-
-                        <div *ngIf="selectedType.value === 'all'">
-                            <div *ngIf="hasProjectAccess">
-                                <agm-marker *ngFor="let project of dataOfDraftedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfPostedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfInProcessProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let project of dataOfCompletedProject; let i = index"
-                                    [latitude]="project.latitude" [longitude]="project.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-
-                            <div *ngIf="hasProjectAccess">
-                                <agm-marker *ngFor="let jobsite of dataOfDraftedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfPostedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfInProcessJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let jobsite of dataOfCompletedJobsite; let i = index"
-                                    [latitude]="jobsite.latitude" [longitude]="jobsite.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-
-                            <div *ngIf="hasJobAccess">
-                                <agm-marker *ngFor="let job of dataOfDraftedJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_draft.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfPostedJob; let i = index" [latitude]="job.latitude"
-                                    [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_posted.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfInProcessJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_InProgress.svg'}"></agm-marker>
-                                <agm-marker *ngFor="let job of dataOfCompletedJob; let i = index"
-                                    [latitude]="job.latitude" [longitude]="job.longitude"
-                                    [iconUrl]="{url:'assets/images/map-marker/client_completed.svg'}"></agm-marker>
-                            </div>
-                        </div>
-                    </agm-map>
-                </div>
-                <div class="card-footer d-flex justify-content-center align-items-center">
-                    <span style="color: #5BCB70;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        In Progress
-                    </span>
-                    <span style="color: #FF9496;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        Draft
-                    </span>
-                    <span style="color: #F6D652;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        Posted
-                    </span>
-                    <span style="color: #8891A0;" class="custom-margin">
-                        <i class="fa fa-square" aria-hidden="true"></i>
-                        Completed
-                    </span>
-                </div>
-            </div>
+    <div class="col-xl-3 mt-3">
+      <div class="card h-100" *ngIf="hasJobAccess; else none">
+        <div class="card-header text-center">
+          <h5
+            class="font-weight-bold mb-0 cursor-pointer"
+            (click)="redirectTo('job')"
+          >
+            {{ "jobs" | translate }}
+          </h5>
         </div>
+        <div class="card-body p-1">
+          <div class="row">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div
+                  class="align-items-center d-flex flex-wrap justify-content-between mt-1 px-2"
+                >
+                  <h6 class="float-left font-weight-bold">
+                    {{ "total.jobs" | translate }}
+                  </h6>
+                  <h6 class="float-right font-weight-bold text-primary">
+                    {{ totalJob }}
+                  </h6>
+                </div>
+                <div *ngIf="validateChartJob(); else none">
+                  <canvas
+                    baseChart
+                    [data]="pieChartDataForJob"
+                    [labels]="pieChartLabelsForJob"
+                    [colors]="pieChartColorsForJob"
+                    [chartType]="pieChartType"
+                    [options]="pieChartOptions"
+                    [plugins]="pieChartPlugins"
+                    [legend]="pieChartLegend"
+                  >
+                  </canvas>
+                </div>
+                <ng-template #none>
+                  <div class="w-100">
+                    <p class="mt-5 text-center">No Data Found</p>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <ng-template #none>
+      <h5 class="text-muted text-center py-3">You don't have Job access.</h5>
+    </ng-template>
+    <div class="col-xl-3 mt-3">
+      <div class="card h-100">
+        <div class="card-header p-2 bg-lightBlue border-bottom-0">
+          <div class="d-inline">
+            <h5 class="float-left mt-2 font-weight-bold mb-0">
+              {{ "to.do" | translate }}
+            </h5>
+            <div class="float-right">
+              <p-selectButton
+                *ngIf="hasJobAccess && hasProjectAccess"
+                [options]="toDoButtonOptions"
+                [(ngModel)]="selectedToDoOption"
+                optionLabel="label"
+              ></p-selectButton>
+              <h5
+                style="
+                  background-color: #3a7cec;
+                  color: #fff;
+                  padding: 5px;
+                  border-radius: 5px;
+                "
+                class="mt-1"
+                *ngIf="hasProjectAccess && !(hasJobAccess && hasProjectAccess)"
+              >
+                Project
+              </h5>
+              <h5
+                style="
+                  background-color: #3a7cec;
+                  color: #fff;
+                  padding: 5px;
+                  border-radius: 5px;
+                "
+                class="mt-1"
+                *ngIf="hasJobAccess && !(hasJobAccess && hasProjectAccess)"
+              >
+                Job
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body bg-lightBlue px-3 pb-0 pt-0">
+          <div class="row rounded_card_body bg-white">
+            <div class="col-xl-12">
+              <div class="card_scroll">
+                <div *ngIf="selectedToDoOption.value === 'project'">
+                  <h6 class="font-weight-bold">
+                    {{ "pending.closeout.package.request" | translate }}
+                  </h6>
+                  <div
+                    *ngIf="
+                      pendingCloseOutPackageRequest.length !== 0;
+                      else none
+                    "
+                  >
+                    <div
+                      *ngFor="let package of pendingCloseOutPackageRequest"
+                      class="mb-1"
+                    >
+                      <a
+                        routerLink=""
+                        (click)="redirectToCloseOut(package.projectDetail)"
+                      >
+                        {{ package.projectDetail.title }} |
+                        {{ package.jobSiteDetail.title }} |
+                        {{ package.paymentMileStone.name }}
+                      </a>
+                    </div>
+                  </div>
+                  <ng-template #none>
+                    <div class="w-100">
+                      <p class="mt-5 text-center">No Data Found</p>
+                    </div>
+                  </ng-template>
+                </div>
+                <div *ngIf="selectedToDoOption.value === 'job'">
+                  <h6 class="font-weight-bold">
+                    {{ "pending.timesheet" | translate }}
+                  </h6>
+                  <div *ngIf="pendingTimesheet.length !== 0; else none">
+                    <div *ngFor="let timesheet of pendingTimesheet">
+                      <a
+                        routerLink=""
+                        (click)="
+                          redirectToTimesheet(timesheet.jobBidDetail.jobDetail)
+                        "
+                      >
+                        {{ timesheet.jobBidDetail.jobDetail.title }} |
+                        {{ timesheet.worker.firstName }} ({{
+                          timesheet.numberOfTimeshhet
+                        }})
+                      </a>
+                    </div>
+                  </div>
+                  <ng-template #none>
+                    <div class="w-100">
+                      <p class="mt-5 text-center">No Data Found</p>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mt-3">
+      <div class="card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="font-weight-bold">{{ "locations" | translate }}</h5>
+
+          <div class="clie_da float-right">
+            {{ "type" | translate }} :
+
+            <p-dropdown
+              [options]="typesForLocationDropdown"
+              (onChange)="onTypeSelect($event)"
+              [(ngModel)]="selectedType"
+              optionLabel="type"
+            >
+            </p-dropdown>
+
+            {{ "state" | translate }} :
+            <p-dropdown
+              [options]="state"
+              (onChange)="onStateSelect($event)"
+              [(ngModel)]="selectedState"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="block location">
+          <agm-map [latitude]="lat" [longitude]="lng">
+            <div *ngIf="selectedType">
+              <div *ngIf="selectedType.value === 'project'">
+                <agm-marker
+                  *ngFor="let project of dataOfDraftedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfPostedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfInProcessProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfCompletedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+
+              <div *ngIf="selectedType.value === 'jobsite'">
+                <agm-marker
+                  *ngFor="let jobsite of dataOfDraftedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfPostedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfInProcessJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfCompletedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+
+              <div *ngIf="selectedType.value === 'job'">
+                <agm-marker
+                  *ngFor="let job of dataOfDraftedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfPostedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfInProcessJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfCompletedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+            </div>
+
+            <div *ngIf="selectedType.value === 'all'">
+              <div *ngIf="hasProjectAccess">
+                <agm-marker
+                  *ngFor="let project of dataOfDraftedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfPostedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfInProcessProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let project of dataOfCompletedProject; let i = index"
+                  [latitude]="project.latitude"
+                  [longitude]="project.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+
+              <div *ngIf="hasProjectAccess">
+                <agm-marker
+                  *ngFor="let jobsite of dataOfDraftedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfPostedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfInProcessJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let jobsite of dataOfCompletedJobsite; let i = index"
+                  [latitude]="jobsite.latitude"
+                  [longitude]="jobsite.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+
+              <div *ngIf="hasJobAccess">
+                <agm-marker
+                  *ngFor="let job of dataOfDraftedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_draft.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfPostedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_posted.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfInProcessJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_InProgress.svg'
+                  }"
+                ></agm-marker>
+                <agm-marker
+                  *ngFor="let job of dataOfCompletedJob; let i = index"
+                  [latitude]="job.latitude"
+                  [longitude]="job.longitude"
+                  [iconUrl]="{
+                    url: 'assets/images/map-marker/client_completed.svg'
+                  }"
+                ></agm-marker>
+              </div>
+            </div>
+          </agm-map>
+        </div>
+        <div
+          class="card-footer d-flex justify-content-center align-items-center"
+        >
+          <span style="color: #5bcb70" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            In Progress
+          </span>
+          <span style="color: #ff9496" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            Draft
+          </span>
+          <span style="color: #f6d652" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            Posted
+          </span>
+          <span style="color: #8891a0" class="custom-margin">
+            <i class="fa fa-square" aria-hidden="true"></i>
+            Completed
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <ng-template #none>
-    <h5 class="text-muted text-center py-3">You don't have Project and Job access.</h5>
-
+  <h5 class="text-muted text-center py-3">
+    You don't have Project and Job access.
+  </h5>
 </ng-template>

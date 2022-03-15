@@ -66,6 +66,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { ClientJobTimeSheetDetailsComponent } from './client-job-time-sheet-details/client-job-time-sheet-details.component';
 import { ProjectRatingReviewComponent } from './project-rating-review/project-rating-review.component';
 import { InviteeConfigurationComponent } from './invitee-configuration/invitee-configuration.component';
+import { JobListComponent } from './job-list/job-list.component';
+import { ProjectListComponent } from './project-list/project-list.component';
 
 
 
@@ -112,6 +114,8 @@ const components = [
     ClientJobTimeSheetDetailsComponent,
     ProjectRatingReviewComponent,
     InviteeConfigurationComponent,
+    JobListComponent,
+    ProjectListComponent,
   ],
 
   imports: [

@@ -33,6 +33,8 @@ import { AuthGaurdClientGuard } from 'src/app/shared/auth-gaurd-client.guard';
 import { ProjectRatingReviewComponent } from './project-rating-review/project-rating-review.component';
 import { InviteeConfigurationComponent } from './invitee-configuration/invitee-configuration.component';
 import { LeaderboardComponent } from 'src/app/shared/shared-leaderboard/leaderboard/leaderboard.component';
+import { JobListComponent } from './job-list/job-list.component';
+import { ProjectListComponent } from './project-list/project-list.component';
 
 
 
@@ -75,6 +77,16 @@ export const CLIENT_ROUTING: Routes = [
             {
                 path: 'edit-worker-profile',
                 component: WorkerProfileComponent,
+                canActivate: [AuthGaurdClientGuard]
+            },
+            {
+                path: 'project-list',
+                component: ProjectListComponent,
+                canActivate: [AuthGaurdClientGuard]
+            },
+            {
+                path: 'job-list',
+                component: JobListComponent,
                 canActivate: [AuthGaurdClientGuard]
             },
             {

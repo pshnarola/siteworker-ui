@@ -1,0 +1,182 @@
+<div class="container-fluid" *ngIf="lengthOfJobs !== 0">
+  <div *ngIf="jobDetail" class="pt-3">
+    <div class="" *ngFor="let jobDetailData of jobDetail">
+      <div class="card mb-2">
+        <div class="card-body">
+          <h5 class="font-weight-bold">
+            {{ jobDetailData.title }} | {{ "posted.by" | translate }}:
+            {{ jobDetailData.user.firstName }} {{ jobDetailData.user.lastName }}
+          </h5>
+          <div *ngIf="jobDetailData.description; else noDescription">
+            <a
+              href="javascript:;"
+              (click)="openDialogReadMore(jobDetailData.description)"
+              >View Job Description</a
+            >
+          </div>
+          <ng-template #noDescription>
+            {{ "n.a" | translate }}
+          </ng-template>
+
+          <div class="w-100 d-flex flex-wrap mt-3">
+            <h5 class="font-weight-bold mr-1">
+              {{ "no.ofjob.openings" | translate }}:
+              {{ jobDetailData.noOfOpeningJob }}
+            </h5>
+            <span class="mr-2 ml-2 font-weight-bold">|</span>
+            <h5 class="font-weight-bold mr-1">
+              {{ "experience.required" | translate }}:
+              {{ jobDetailData.experience.level }}
+            </h5>
+          </div>
+          <br />
+          <div class="d-flex flex-wrap">
+            <div class="d-flex align-items-center flex-fill mb-2">
+              <div class="mr-2">
+                <img src="assets/images/client_employ_type.svg" />
+              </div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "employement.type" | translate }}:
+                </p>
+                <p class="text-muted mb-0">
+                  {{
+                    jobDetailData.employmentType === "WORKER_1099"
+                      ? "Temporary Worker - 1099"
+                      : jobDetailData.employmentType === "WORKER_W2"
+                      ? "Temporary Worker - W2"
+                      : "Full-time Employee"
+                  }}
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center flex-fill mb-2">
+              <div class="mr-2">
+                <img src="assets/images/client_estimate_start_date.svg" />
+              </div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "estimated.start.date" | translate }}:
+                </p>
+                <p class="text-muted mb-0">
+                  {{ jobDetailData.estimatedStartDate | date: "longDate" }}
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center flex-fill mb-2">
+              <div class="mr-2">
+                <img src="assets/images/client_location.svg" />
+              </div>
+              <div>
+                <p class="font-weight-bold mb-0">
+                  {{ "location" | translate }}:
+                </p>
+                <p class="text-muted mb-0">
+                  {{ jobDetailData.city }},{{ jobDetailData.state }}
+                </p>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center flex-fill mb-2">
+              <div class="mr-2">
+                <img src="assets/images/client_region.svg" />
+              </div>
+              <div>
+                <p class="font-weight-bold mb-0">{{ "region" | translate }}:</p>
+                <p class="text-muted mb-0">{{ jobDetailData.region }}</p>
+              </div>
+            </div>
+          </div>
+          <h5
+            class="font-weight-bold"
+            *ngIf="jobDetailData.employmentType === 'FULL_TIME'"
+          >
+            {{ "annual.salary.range" | translate }}:
+            <span
+              >{{
+                jobDetailData.annualSalaryFrom
+                  | currency: "USD":"symbol":"1.0-0"
+              }}
+              -
+              {{
+                jobDetailData.annualSalaryTo | currency: "USD":"symbol":"1.0-0"
+              }}</span
+            >
+          </h5>
+        </div>
+
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-lg-9 align-self-center d-flex">
+              <p class="font-weight-bold mb-0">
+                <span>{{ "yearly.bonus" | translate }}:</span
+                ><span class="ml-2 badge badge-primary">{{
+                  jobDetailData.isYearlyBonus === true ? "Yes" : "No"
+                }}</span>
+              </p>
+
+              <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+              <p class="font-weight-bold mb-0">
+                <span>{{ "health.benefits" | translate }}:</span
+                ><span class="ml-2 badge badge-primary">{{
+                  jobDetailData.isHealthBenifit === true ? "Yes" : "No"
+                }}</span>
+              </p>
+
+              <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+              <p class="font-weight-bold mb-0">
+                <span>{{ "401k.requirement" | translate }}:</span
+                ><span class="ml-2 badge badge-primary">{{
+                  jobDetailData.is401KRetirement === true ? "Yes" : "No"
+                }}</span>
+              </p>
+
+              <span class="mr-2 ml-2 font-weight-bold">|</span>
+
+              <p class="font-weight-bold mb-0">
+                <span>{{ "relocation.benefits" | translate }}:</span>
+                <span class="ml-2 badge badge-primary">{{
+                  jobDetailData.isRelocationBenifit === true ? "Yes" : "No"
+                }}</span>
+              </p>
+            </div>
+
+            <div class="col-lg-3 align-self-center">
+              <button
+                class="float-right button viewMoreButton btn btn-primary"
+                (click)="onViewMore(jobDetailData)"
+              >
+                {{ "view.more" | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="float-right">
+    <p-paginator
+      [rows]="size"
+      [totalRecords]="totalRecords"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} jobs"
+      [rowsPerPageOptions]="rowsPerPageOptions"
+      [showCurrentPageReport]="true"
+      (onPageChange)="paginate($event)"
+    ></p-paginator>
+  </div>
+</div>
+<div *ngIf="lengthOfJobs === 0">
+  <h5 class="text-muted text-center mt-3">No jobs to show</h5>
+</div>
+<p-dialog
+  header="Job Description"
+  [style]="{ width: '600px' }"
+  [(visible)]="readMoreDialog"
+  (onHide)="closeReadMoreDialog()"
+>
+  <div *ngIf="lengthOfJobs !== 0" [innerHtml]="descriptionData"></div>
+</p-dialog>
