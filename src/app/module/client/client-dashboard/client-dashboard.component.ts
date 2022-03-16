@@ -617,6 +617,16 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/client/clientJobTimeSheet']);
   }
 
+  redirectTo(route: string) {
+    if (route === 'job') {
+      this.localStrorageService.setItem('Post_Type', 'JOB', false);
+      this.router.navigate(['/client/job-list']);
+    } else {
+      this.localStrorageService.setItem('Post_Type', 'PROJECT', false);
+      this.router.navigate(['/client/project-list']);
+    }
+  }
+
   getClientDetailByUserId(): void {
     const userId = this.localStrorageService.getLoginUserId();
     this._clientProfile.getClientProfileDetailById(userId).subscribe(
