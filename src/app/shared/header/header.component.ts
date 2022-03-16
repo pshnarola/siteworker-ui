@@ -194,6 +194,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       let queryparam = this.prepareQueryParam(userParams);
       setTimeout(() => {
+        console.log('this.loginAsForm.value.userName.email =>', this.loginAsForm.value.userName.email);
+
         this.loginAsService.generateTokenForLoginAs(queryparam, this.loginAsForm.value.userName.email);
       }, 3000);
     }
