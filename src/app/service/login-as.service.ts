@@ -17,22 +17,22 @@ export class LoginAsService {
   returnUrl: string;
 
   constructor(private _customHttpService: CustomHttpService,
-     private localStorageService: LocalStorageService, 
-     private notificationService: UINotificationService,
-     private loginService: LoginService, private themeService: ThemeService, private _router: Router) { }
+    private localStorageService: LocalStorageService,
+    private notificationService: UINotificationService,
+    private loginService: LoginService, private themeService: ThemeService, private _router: Router) { }
 
 
-  generateTokenForLoginAs(dataTableParam: URLSearchParams,userEmail): void {
+  generateTokenForLoginAs(dataTableParam: URLSearchParams, userEmail): void {
     const url = API_CONSTANTS.SIGN_IN + '?' + dataTableParam;
     this._customHttpService.postWithoutAuthorization(url, '').subscribe(e => {
       console.log(e);
-      if(e.statusCode === '200' && e.message === 'OK'){
+      if (e.statusCode === '200' && e.message === 'OK') {
         this.localStorageService.logoutForNewRoleLogin();
         this.localStorageService.setItem('Authorization', 'Bearer ' + e.data.access_token);
         this.getUserInfo(userEmail);
       }
-      else{
-        this.notificationService.error(e.message,'');
+      else {
+        this.notificationService.error(e.message, '');
       }
     });
   }
