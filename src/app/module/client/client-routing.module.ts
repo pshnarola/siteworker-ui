@@ -35,6 +35,8 @@ import { InviteeConfigurationComponent } from './invitee-configuration/invitee-c
 import { LeaderboardComponent } from 'src/app/shared/shared-leaderboard/leaderboard/leaderboard.component';
 import { JobListComponent } from './job-list/job-list.component';
 import { ProjectListComponent } from './project-list/project-list.component';
+import { SubcontractorSelectionComponent } from './post-project/subcontractor-selection/subcontractor-selection.component';
+import { WorkerSelectionComponent } from './post-job/worker-selection/worker-selection.component';
 
 
 
@@ -137,6 +139,16 @@ export const CLIENT_ROUTING: Routes = [
             {
                 path: 'jobsiteDetails',
                 component: ClientJobsiteDetailsComponent,
+                canActivate: [AuthGaurdClientGuard]
+            },
+            {
+                path: 'inviteSubContractor',
+                component: SubcontractorSelectionComponent,
+                canActivate: [AuthGaurdClientGuard]
+            },
+            {
+                path: 'inviteWorker',
+                component: WorkerSelectionComponent,
                 canActivate: [AuthGaurdClientGuard]
             },
             {

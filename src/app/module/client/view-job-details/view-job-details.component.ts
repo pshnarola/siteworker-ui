@@ -356,4 +356,12 @@ export class ViewJobDetailsComponent implements OnInit, OnDestroy {
     this.clipboardService.copyFromContent(this.externalLink);
     this.notificationService.success('Copied to clipboard', '');
   }
+
+  inviteWorker() {
+    this.localStorageService.setItem('jobId', this.selectedJob.id);
+    this.localStorageService.setItem('jobDetail', { jobDetail: this.selectedJob });
+    this.localStorageService.setItem('isWorkerInvite', true);
+    this.projectJobSelectionService.workerSelectionSubject.next('dummy');
+    this.router.navigate(['/client/inviteWorker']);
+  }
 }

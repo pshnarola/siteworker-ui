@@ -610,6 +610,8 @@
     "selected.subcontractor": "Selected Subcontractor",
     "invite.subcontractor": "Invite Subcontractor",
     "post.new.project": "Post New Project",
+    "go.to.project.details": "Go to Project Detail",
+    "go.to.job.details": "Go to Job Detail",
     "vendor.name": "Vendor Name",
     "update.job.successMessage": "Job Updated",
     "email.already.exists": "Email already exists",

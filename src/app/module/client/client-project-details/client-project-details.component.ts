@@ -441,6 +441,13 @@ export class ClientProjectDetailsComponent implements OnInit {
     }
   }
 
+  inviteSubContractor() {
+    this.localStorageService.setItem("addProjectDetail", this.projectDetail);
+    this.localStorageService.setItem("currentProjectStep", 4);
+    this.localStorageService.setItem('inviteSubcontractor', true);
+    this.router.navigate(['/client/inviteSubContractor']);
+  }
+
   copyExternalLink() {
     this.clipboardService.copyFromContent(this.externalLink);
     this.notificationService.success('Copied to clipboard', '');
