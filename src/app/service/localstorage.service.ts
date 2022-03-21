@@ -48,6 +48,16 @@ export class LocalStorageService {
         const user = this.getItem('user');
         return user;
     }
+
+    getIsSubcontractorInvite(): any {
+        const invite = this.getItem('inviteSubcontractor');
+        return invite;
+    }
+
+    getIsWorkerInvite(): any {
+        const invite = this.getItem('isWorkerInvite');
+        return invite;
+    }
     getSelectedProjectObject(): any {
         const project = this.getItem('selectedProject');
         return project;

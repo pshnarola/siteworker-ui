@@ -1,296 +1,511 @@
 <div class="container-fluid" *ngIf="selectedJob">
-    <div class="row p-1 d-flex justify-content-between align-items-center flex-wrap bg-primary text-white">
-        <div class="flex-fill pl-1">
-            <h4 class="text-capitalize font-weight-bold">{{'job.details' | translate}} - {{selectedJob.title}}</h4>
+  <div
+    class="row p-1 d-flex justify-content-between align-items-center flex-wrap bg-primary text-white"
+  >
+    <div class="flex-fill pl-1">
+      <!-- {{'job.details' | translate}}  -->
+      <h4 class="text-capitalize font-weight-bold">{{ selectedJob.title }}</h4>
+    </div>
+    <div class="d-flex">
+      <div class="form-group mr-2">
+        <br />
+        <button class="btn btn-secondary btn-invite" (click)="inviteWorker()">
+          <i class="fa fa-plane"></i> Invite Worker
+        </button>
+      </div>
+      <div class="form-group mr-2">
+        <label for="status">{{ "change.status" | translate }}</label
+        ><br />
+        <p-autoComplete
+          id="status"
+          [suggestions]="filteredStatus"
+          [ngModelOptions]="{ standalone: true }"
+          minLength="3"
+          field="label"
+          [dropdown]="true"
+          [(ngModel)]="selectedJob.status"
+          (onSelect)="openDialog($event)"
+          (completeMethod)="filterStatus($event)"
+          [(ngModel)]="selectedJob.status"
+          [disabled]="disableStatusFlag || disableStatusFlag1"
+          placeholder="{{
+            selectedJob.status === 'IN_PROGRESS'
+              ? 'In Progress'
+              : selectedJob.status === 'DRAFT'
+              ? 'Draft'
+              : selectedJob.status === 'CANCELLED'
+              ? 'Cancelled'
+              : selectedJob.status === 'COMPLETED'
+              ? 'Completed'
+              : 'Posted'
+          }}"
+        >
+        </p-autoComplete>
+      </div>
+
+      <div class="form-group mr-2" *ngIf="roleName === 'CLIENT'">
+        <label for="status">{{ "assign.supervisor" | translate }}</label
+        ><br />
+        <p-autoComplete
+          [suggestions]="filteredSupervisor"
+          [field]="getFullName"
+          minLength="3"
+          [dropdown]="true"
+          (completeMethod)="filterSupervisor($event)"
+          (onSelect)="openSupervisorDialog(selectedJob.id, $event)"
+          [(ngModel)]="selectedJob.supervisor"
+          placeholder="{{ 'select' | translate }}"
+        >
+        </p-autoComplete>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <p>
+        <strong>{{ "job.title" | translate }} :</strong> {{ selectedJob.title }}
+      </p>
+      <div class="d-flex flex-wrap">
+        <div class="d-flex align-items-center flex-fill mb-2">
+          <div class="mr-2">
+            <img src="assets/images/employment_type.svg" />
+          </div>
+          <div>
+            <p class="font-weight-bold mb-0">
+              {{ "employement.type" | translate }}:
+            </p>
+            <p
+              class="text-muted mb-0"
+              *ngIf="selectedJob.employmentType; else noEmployment"
+            >
+              {{
+                selectedJob.employmentType === "WORKER_1099"
+                  ? "Temporary Worker - 1099"
+                  : selectedJob.employmentType === "WORKER_W2"
+                  ? "Temporary Worker - W2"
+                  : "Full-time Employee"
+              }}
+            </p>
+            <ng-template #noEmployment>
+              {{ "n.a" | translate }}
+            </ng-template>
+          </div>
         </div>
-        <div class="d-flex">
-            <div class="form-group mr-2">
-                <label for="status">{{'change.status' |translate}}</label><br>
-                <p-autoComplete id="status" [suggestions]="filteredStatus" [ngModelOptions]="{standalone: true}" minLength="3" field="label" [dropdown]="true" [(ngModel)]="selectedJob.status" (onSelect)="openDialog($event)" (completeMethod)="filterStatus($event)" [(ngModel)]="selectedJob.status"
-                    [disabled]="disableStatusFlag || disableStatusFlag1" placeholder="{{
-                        selectedJob.status ==='IN_PROGRESS' ? 'In Progress' :
-                        selectedJob.status ==='DRAFT' ? 'Draft' :
-                        selectedJob.status ==='CANCELLED' ? 'Cancelled' :
-                        selectedJob.status ==='COMPLETED' ? 'Completed' : 
-                        'Posted' 
-                    }}">
-                </p-autoComplete>
-            </div>
 
-            <div class="form-group mr-2" *ngIf="roleName === 'CLIENT'">
-                <label for="status">{{'assign.supervisor' |translate}}</label><br>
-                <p-autoComplete [suggestions]="filteredSupervisor" [field]="getFullName" minLength="3" [dropdown]="true" (completeMethod)="filterSupervisor($event)" (onSelect)="openSupervisorDialog(selectedJob.id,$event)" [(ngModel)]="selectedJob.supervisor" placeholder="{{'select' | translate}}">
-                </p-autoComplete>
-            </div>
+        <div class="d-flex align-items-center flex-fill mb-2">
+          <div class="mr-2">
+            <img src="assets/images/estimate_date_blue.svg" />
+          </div>
+          <div>
+            <p class="font-weight-bold mb-0">
+              {{ "estimated.start.date" | translate }}:
+            </p>
+            <p
+              class="text-muted mb-0"
+              *ngIf="selectedJob.estimatedStartDate; else emptyDate"
+            >
+              {{ selectedJob.estimatedStartDate | date: "longDate" }}
+            </p>
+            <ng-template #emptyDate>
+              {{ "n.a" | translate }}
+            </ng-template>
+          </div>
         </div>
 
+        <div class="d-flex align-items-center flex-fill mb-2">
+          <div class="mr-2">
+            <img src="assets/images/location_blue.svg" />
+          </div>
+          <div>
+            <p class="font-weight-bold mb-0">{{ "location" | translate }}:</p>
+            <p
+              class="text-muted mb-0"
+              *ngIf="selectedJob.city && selectedJob.state; else none"
+            >
+              {{ selectedJob.city }},{{ selectedJob.state }}
+            </p>
+            <ng-template #none>
+              {{ "n.a" | translate }}
+            </ng-template>
+          </div>
+        </div>
 
+        <div class="d-flex align-items-center flex-fill mb-2">
+          <div class="mr-2">
+            <img src="assets/images/region.svg" />
+          </div>
+          <div>
+            <p class="font-weight-bold mb-0">{{ "region" | translate }}:</p>
+            <p
+              class="text-muted mb-0"
+              *ngIf="selectedJob.region; else noRegion"
+            >
+              {{ selectedJob.region }}
+            </p>
+            <ng-template #noRegion>
+              {{ "n.a" | translate }}
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-100 mt-3">
+        <span class="font-weight-bold"
+          >{{ "job.description" | translate }} :</span
+        >
+      </div>
+      <div *ngIf="selectedJob.description; else noDescription">
+        <a
+          href="javascript:;"
+          (click)="openDialogReadMore(selectedJob.description)"
+          >View</a
+        >
+      </div>
+      <ng-template #noDescription>
+        {{ "n.a" | translate }}
+      </ng-template>
+
+      <div class="w-100 d-flex flex-wrap mt-3">
+        <h5 class="font-weight-bold mr-1">
+          {{ "no.ofjob.openings" | translate }}:
+          {{ selectedJob.noOfOpeningJob ? selectedJob.noOfOpeningJob : "N/A" }}
+        </h5>
+        <h5
+          class="font-weight-bold mr-1"
+          *ngIf="selectedJob.experience; else noExperience"
+        >
+          | {{ "experience.required" | translate }}:
+          {{ selectedJob.experience.level }}
+        </h5>
+
+        <h5
+          class="font-weight-bold mr-1"
+          *ngIf="
+            selectedJob.employmentType === 'WORKER_1099' ||
+            selectedJob.employmentType === 'WORKER_W2'
+          "
+        >
+          | {{ "hourly.rate.range" | translate }}:
+          <span
+            *ngIf="
+              selectedJob.hourlyRateFrom && selectedJob.hourlyRateTo;
+              else noHourlySalary
+            "
+            >{{ selectedJob.hourlyRateFrom | currency: "USD":"symbol":"1.0-0" }}
+            -
+            {{
+              selectedJob.hourlyRateTo | currency: "USD":"symbol":"1.0-0"
+            }}</span
+          >
+          <ng-template #noHourlySalary>
+            {{ "n.a" | translate }}
+          </ng-template>
+        </h5>
+        <h5
+          class="font-weight-bold mr-1"
+          *ngIf="selectedJob.employmentType === 'FULL_TIME'"
+        >
+          | {{ "annual.salary.range" | translate }}:
+          <span
+            *ngIf="
+              selectedJob.annualSalaryFrom && selectedJob.annualSalaryTo;
+              else noAnnualSalary
+            "
+            >{{
+              selectedJob.annualSalaryFrom | currency: "USD":"symbol":"1.0-0"
+            }}
+            -
+            {{
+              selectedJob.annualSalaryTo | currency: "USD":"symbol":"1.0-0"
+            }}</span
+          >
+          <ng-template #noAnnualSalary>
+            {{ "n.a" | translate }}
+          </ng-template>
+        </h5>
+      </div>
+      <div>
+        <label class="font-weight-bold" for="externalLink">
+          External URL:</label
+        >
+        <span
+          *ngIf="
+            selectedJob.jobType === 'OPEN_MARKET_REQUEST';
+            else privateRequest
+          "
+        >
+          <button
+            pButton
+            pRipple
+            type="button"
+            (click)="copyExternalLink()"
+            pTooltip="Copy to clipboard"
+            class="p-button-rounded p-button-text"
+          >
+            <span style="font-size: 25px !important" class="pi pi-copy px-0">
+            </span>
+          </button>
+        </span>
+        <ng-template #privateRequest>
+          {{
+            "link.not.available.as.job.is.of.private.request.type" | translate
+          }}
+        </ng-template>
+      </div>
+    </div>
+    <div
+      class="card-footer"
+      *ngIf="
+        selectedJob.employmentType === 'WORKER_1099' ||
+        selectedJob.employmentType === 'WORKER_W2'
+      "
+    >
+      <div class="d-flex flex-wrap justify-content-start">
+        <p class="font-weight-bold mr-2 mb-0">
+          <span>{{ "per.diem" | translate }}:</span>
+          <span class="badge badge-primary ml-2">{{
+            selectedJob.isPerDiem === true ? "Yes" : "No"
+          }}</span>
+        </p>
+        <p class="font-weight-bold mr-2 mb-0" *ngIf="selectedJob.isPerDiem">
+          <span>{{ "rate" | translate }}:</span>
+          <span class="ml-2 badge badge-primary">
+            ${{ selectedJob.perDiemRate }}</span
+          >
+          |
+        </p>
+        <p class="font-weight-bold mr-2 mb-0">
+          <span>{{ "mileage.reimbursement" | translate }}:</span>
+          <span class="ml-2 badge badge-primary">{{
+            selectedJob.isPayForMilage === true ? "Yes" : "No"
+          }}</span>
+        </p>
+        <p
+          class="font-weight-bold mr-2 mb-0"
+          *ngIf="selectedJob.isPayForMilage"
+        >
+          <span>Min Mileage:</span>
+          <span class="ml-2 badge badge-primary">{{
+            selectedJob.minimumMile
+          }}</span>
+        </p>
+
+        <p
+          class="font-weight-bold mr-2 mb-0"
+          *ngIf="selectedJob.isPayForMilage"
+        >
+          <span>{{ "mileage.rate" | translate }}:</span>
+          <span class="ml-2 badge badge-primary"
+            >${{ selectedJob.milageRate }}</span
+          >
+        </p>
+      </div>
     </div>
 
-    <div class="card mt-4">
+    <div class="card-footer" *ngIf="selectedJob.employmentType === 'FULL_TIME'">
+      <div class="d-flex flex-wrap justify-content-start">
+        <p class="font-weight-bold mr-2 mb-0">
+          {{ "yearly.bonus" | translate }}:&nbsp;<span
+            class="badge badge-primary"
+            >{{ selectedJob.isYearlyBonus === true ? "Yes" : "No" }}</span
+          >
+        </p>
+        <p class="font-weight-bold mr-2 mb-0">|</p>
+        <p class="font-weight-bold mr-2 mb-0">
+          {{ "health.benefits" | translate }}:&nbsp;
+          <span class="badge badge-primary">{{
+            selectedJob.isHealthBenifit === true ? "Yes" : "No"
+          }}</span>
+        </p>
+        <p class="font-weight-bold mr-2 mb-0">|</p>
+        <p class="font-weight-bold mr-2 mb-0">
+          {{ "401k.requirement" | translate }}:&nbsp;<span
+            class="badge badge-primary"
+            >{{ selectedJob.is401KRetirement === true ? "Yes" : "No" }}</span
+          >
+        </p>
+        <p class="font-weight-bold mr-2 mb-0">|</p>
+        <p class="font-weight-bold mr-2 mb-0">
+          {{ "relocation.benefits" | translate }}:
+          <span class="badge badge-primary">{{
+            selectedJob.isRelocationBenifit === true ? "Yes" : "No"
+          }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <h5 class="font-weight-bold my-3">{{ "worker" | translate }}</h5>
+    </div>
+    <div class="col-6">
+      <div class="card alert-primary">
         <div class="card-body">
-            <p><strong>{{'job.title' | translate}} :</strong> {{selectedJob.title}}</p>
-            <div class="d-flex flex-wrap">
-                <div class="d-flex align-items-center flex-fill mb-2">
-                    <div class="mr-2">
-                        <img src="assets/images/employment_type.svg">
-                    </div>
-                    <div>
-                        <p class="font-weight-bold mb-0">{{'employement.type' | translate}}:</p>
-                        <p class="text-muted mb-0" *ngIf="selectedJob.employmentType; else noEmployment">{{selectedJob.employmentType==='WORKER_1099'? 'Temporary Worker - 1099': selectedJob.employmentType==='WORKER_W2'? 'Temporary Worker - W2': 'Full-time Employee'}}</p>
-                        <ng-template #noEmployment>
-                            {{'n.a' | translate}}
-                        </ng-template>
+          <label class="font-weight-bold text-dark"
+            >{{ "accepted.invitations" | translate }}
+            <span *ngIf="acceptedInvitations.length !== 0">
+              ({{ acceptedInvitations.length }})
+            </span>
+          </label>
 
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center flex-fill mb-2">
-                    <div class="mr-2">
-                        <img src="assets/images/estimate_date_blue.svg">
-                    </div>
-                    <div>
-                        <p class="font-weight-bold mb-0">{{'estimated.start.date' | translate}}:</p>
-                        <p class="text-muted mb-0" *ngIf="selectedJob.estimatedStartDate; else emptyDate">{{selectedJob.estimatedStartDate | date:'longDate'}}</p>
-                        <ng-template #emptyDate>
-                            {{'n.a' | translate}}
-                        </ng-template>
-
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center flex-fill mb-2">
-                    <div class="mr-2">
-                        <img src="assets/images/location_blue.svg">
-                    </div>
-                    <div>
-                        <p class="font-weight-bold mb-0">{{'location' | translate}}:</p>
-                        <p class="text-muted mb-0" *ngIf="selectedJob.city && selectedJob.state; else none">{{selectedJob.city}},{{selectedJob.state}}</p>
-                        <ng-template #none>
-                            {{'n.a' | translate}}
-                        </ng-template>
-
-                    </div>
-                </div>
-
-                <div class="d-flex align-items-center flex-fill mb-2">
-                    <div class="mr-2">
-                        <img src="assets/images/region.svg">
-                    </div>
-                    <div>
-                        <p class="font-weight-bold mb-0">{{'region' | translate}}:</p>
-                        <p class="text-muted mb-0" *ngIf="selectedJob.region; else noRegion">{{selectedJob.region}}</p>
-                        <ng-template #noRegion>
-                            {{'n.a' | translate}}
-                        </ng-template>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-100 mt-3">
-                <span class="font-weight-bold">{{'job.description' | translate}} :</span>
-            </div>
-            <div *ngIf="selectedJob.description; else noDescription">
-                <a href="javascript:;" (click)="openDialogReadMore(selectedJob.description)">View</a>
-            </div>
-            <ng-template #noDescription>
-                {{'n.a' | translate}}
-            </ng-template>
-
-            <div class="w-100 d-flex flex-wrap mt-3">
-
-                <h5 class="font-weight-bold mr-1"> {{'no.ofjob.openings' | translate}}: {{selectedJob.noOfOpeningJob ? selectedJob.noOfOpeningJob: 'N/A'}}</h5>
-                <h5 class="font-weight-bold mr-1" *ngIf="selectedJob.experience; else noExperience"> | {{'experience.required' | translate}}: {{selectedJob.experience.level}}</h5>
-            
-
-                <h5 class="font-weight-bold mr-1" *ngIf="selectedJob.employmentType === 'WORKER_1099'|| selectedJob.employmentType === 'WORKER_W2'"> | {{'hourly.rate.range'| translate}}: <span *ngIf="selectedJob.hourlyRateFrom && selectedJob.hourlyRateTo; else noHourlySalary">{{selectedJob.hourlyRateFrom | currency : 'USD' : 'symbol' : '1.0-0'}} - {{selectedJob.hourlyRateTo| currency : 'USD' : 'symbol' : '1.0-0'}}</span>
-                    <ng-template #noHourlySalary>
-                        {{'n.a' | translate}}
-                    </ng-template>
-                </h5>
-                <h5 class="font-weight-bold mr-1" *ngIf="selectedJob.employmentType==='FULL_TIME'"> | {{'annual.salary.range'| translate}}: <span *ngIf="selectedJob.annualSalaryFrom && selectedJob.annualSalaryTo; else noAnnualSalary">{{selectedJob.annualSalaryFrom | currency : 'USD' : 'symbol' : '1.0-0'}} - {{selectedJob.annualSalaryTo | currency : 'USD' : 'symbol' : '1.0-0'}}</span>
-                    <ng-template #noAnnualSalary>
-                        {{'n.a' | translate}}
-                    </ng-template>
-                </h5>
-
-            </div>
-            <div>
-                <label class="font-weight-bold" for="externalLink"> External URL:</label>
-                <span *ngIf="selectedJob.jobType==='OPEN_MARKET_REQUEST'; else privateRequest">
-                    <button pButton pRipple type="button" (click)="copyExternalLink()"
-                        pTooltip="Copy to clipboard" class="p-button-rounded p-button-text"> 
-                        <span style="font-size: 25px !important;" class="pi pi-copy px-0">
-                        </span>
-                </button>
-                </span>
-                <ng-template #privateRequest>
-                    {{'link.not.available.as.job.is.of.private.request.type' | translate}}
-                </ng-template>
-            </div>
+          <ul class="pl-0 scroll">
+            <li *ngFor="let invitee of acceptedInvitations">
+              <p-button
+                (click)="redirectToWorker(invitee.user.id)"
+                styleClass="p-button-link"
+              >
+                {{ invitee.user.firstName }} {{ invitee.user.lastName }}
+                <span *ngIf="invitee.status === 'ACCEPTED'">(Submitted)</span>
+                <span *ngIf="invitee.status === 'ACCEPTED_PENDING'"
+                  >(Submission pending)</span
+                >
+              </p-button>
+            </li>
+          </ul>
         </div>
-        <div class="card-footer" *ngIf="selectedJob.employmentType === 'WORKER_1099'|| selectedJob.employmentType === 'WORKER_W2'">
-            <div class="d-flex flex-wrap justify-content-start">
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card alert-primary">
+        <div class="card-body">
+          <label class="font-weight-bold text-dark"
+            >{{ "pending.response" | translate }}
+            <span *ngIf="pendingResponseData.length !== 0"
+              >({{ pendingResponseData.length }})</span
+            >
+          </label>
 
-                <p class="font-weight-bold mr-2 mb-0"><span>{{'per.diem' | translate}}:</span> <span class="badge badge-primary ml-2">{{selectedJob.isPerDiem=== true ? 'Yes': 'No'}}</span></p>
-                <p class="font-weight-bold mr-2 mb-0" *ngIf="selectedJob.isPerDiem"><span>{{'rate' | translate}}:</span> <span class="ml-2 badge badge-primary"> ${{selectedJob.perDiemRate}}</span> | </p>
-                <p class="font-weight-bold mr-2 mb-0"><span>{{'mileage.reimbursement' | translate}}:</span> <span class="ml-2 badge badge-primary">{{selectedJob.isPayForMilage=== true ? 'Yes': 'No'}}</span></p>
-                <p class="font-weight-bold mr-2 mb-0" *ngIf="selectedJob.isPayForMilage"><span>Min Mileage:</span> <span class="ml-2 badge badge-primary">{{selectedJob.minimumMile}}</span></p>
-
-                <p class="font-weight-bold mr-2 mb-0" *ngIf="selectedJob.isPayForMilage"><span>{{'mileage.rate' | translate}}:</span> <span class="ml-2 badge badge-primary">${{selectedJob.milageRate}}</span></p>
-
-            </div>
+          <ul class="pl-0 scroll">
+            <li *ngFor="let invitee of pendingResponseData">
+              <p-button
+                (click)="redirectToWorker(invitee.user.id)"
+                styleClass="p-button-link"
+                >{{ invitee.user.firstName }}
+                {{ invitee.user.lastName }}</p-button
+              >
+            </li>
+          </ul>
         </div>
-
-        <div class="card-footer" *ngIf="selectedJob.employmentType === 'FULL_TIME'">
-            <div class="d-flex flex-wrap justify-content-start">
-                    <p class="font-weight-bold mr-2 mb-0">{{'yearly.bonus' | translate}}:&nbsp;<span class="badge badge-primary">{{selectedJob.isYearlyBonus === true ? 'Yes': 'No'}}</span></p>
-                <p class="font-weight-bold mr-2 mb-0">|</p>
-                    <p class="font-weight-bold mr-2 mb-0">{{'health.benefits' | translate}}:&nbsp; <span class="badge badge-primary">{{selectedJob.isHealthBenifit=== true ? 'Yes': 'No'}}</span></p>
-                <p class="font-weight-bold mr-2 mb-0">|</p>
-                    <p class="font-weight-bold mr-2 mb-0">{{'401k.requirement' | translate}}:&nbsp;<span class="badge badge-primary">{{selectedJob.is401KRetirement=== true ? 'Yes': 'No'}}</span></p>
-                <p class="font-weight-bold mr-2 mb-0">|</p>
-                    <p class="font-weight-bold mr-2 mb-0">{{'relocation.benefits' | translate}}:
-                        <span class="badge badge-primary">{{selectedJob.isRelocationBenifit === true ? 'Yes': 'No'}}</span>
-                    </p>
-            </div>
-        </div>
-
+      </div>
     </div>
 
-
-    <div class="row">
-        <div class="col-xl-12">
-            <h5 class="font-weight-bold my-3">{{'worker'|translate}}</h5>
+    <div class="col-md-6">
+      <h5 class="font-weight-bold my-3">{{ "offered.workers" | translate }}</h5>
+      <div class="card">
+        <div class="card-body">
+          <div class="scroll">
+            <ul *ngFor="let offered of offeredWorkers">
+              <li class="card-body">
+                <p-button
+                  (click)="redirectToWorker(offered.id)"
+                  styleClass="p-button-link"
+                >
+                  <p *ngIf="offered">
+                    {{ offered.firstName }} {{ offered.lastName }}
+                  </p>
+                </p-button>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="col-6">
-            <div class="card alert-primary">
-                <div class="card-body">
-                    <label class="font-weight-bold text-dark">{{'accepted.invitations' | translate}}
-                    <span *ngIf="acceptedInvitations.length!==0">
-                        ({{acceptedInvitations.length}})
-                    </span>
-                </label>
-
-                    <ul class="pl-0 scroll">
-                        <li *ngFor="let invitee of acceptedInvitations">
-                            <p-button (click)="redirectToWorker(invitee.user.id)" styleClass="p-button-link">
-                                {{invitee.user.firstName}} {{invitee.user.lastName}}
-                                <span *ngIf="invitee.status === 'ACCEPTED'">(Submitted)</span>
-                                <span *ngIf="invitee.status === 'ACCEPTED_PENDING'">(Submission pending)</span>
-                            </p-button>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card alert-primary">
-                <div class="card-body">
-                    <label class="font-weight-bold text-dark">{{'pending.response' | translate}}
-                        <span *ngIf="pendingResponseData.length!==0">({{pendingResponseData.length}})</span>
-                    </label>
-
-                    <ul class="pl-0 scroll">
-                        <li *ngFor="let invitee of pendingResponseData">
-                            <p-button (click)="redirectToWorker(invitee.user.id)" styleClass="p-button-link">{{invitee.user.firstName}} {{invitee.user.lastName}}</p-button>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <h5 class="font-weight-bold my-3">{{'offered.workers' | translate}}</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="scroll">
-                        <ul *ngFor="let offered of offeredWorkers">
-                            <li class="card-body">
-                                <p-button (click)="redirectToWorker(offered.id)" styleClass="p-button-link">
-                                    <p *ngIf="offered"> {{offered.firstName}} {{offered.lastName}}</p>
-                                </p-button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <h5 class="font-weight-bold my-3">{{'hired.workers' | translate}}</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="scroll">
-                        <ul *ngFor="let hired of hiredWorkers">
-                            <li class="card-body" *ngIf="hiredWorkers">
-                                <p-button (click)="redirectToWorker(hired.id)" styleClass="p-button-link">
-                                    <p *ngIf="hired"> {{hired.firstName}} {{hired.lastName}}</p>
-                                </p-button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-8">
-            <h5 class="font-weight-bold  my-3">{{'certificates.required' | translate}} :</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="scroll">
-                        <div *ngIf="certificates.length > 0; else noCertificates">
-                            <p *ngFor="let certificateData of certificates" style="color: rgb(40, 85, 233); font-weight: bold;"> {{certificateData.certificate.name}} </p>
-                        </div>
-                        <ng-template #noCertificates>
-                            {{'no.certificates' | translate}}
-                        </ng-template>
-                    </div>
-                </div>
-            </div>
-
-            <h5 class="font-weight-bold my-3">{{'screening.questions' | translate}} :</h5>
-            <div class="card">
-                <div class="card-body">
-                    <div class="scroll">
-                        <ul class="pl-0" *ngIf="screeningQuestions; else nosq">
-                            <li *ngFor="let screeningQuestion of screeningQuestions">
-                                {{screeningQuestion.question}}
-                            </li>
-                        </ul>
-                        <ng-template #nosq>
-                            {{'no.screening.questions' | translate}}
-                        </ng-template>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-        <div class="col-md-6 col-lg-4">
-            <h5 class="font-weight-bold my-3">{{'location' | translate}}</h5>
-            <div class="block location" *ngIf=" (lat !== 0 && lng !== 0) ;else noLocation1">
-                <agm-map [latitude]="lat" [longitude]="lng">
-                    <agm-marker [latitude]="lat" [longitude]="lng">
-                        <agm-marker [latitude]="lat" [longitude]="lng">
-                            <agm-info-window [isOpen]="true">
-                                <h6>{{selectedJob.location}}</h6>
-                            </agm-info-window>
-                        </agm-marker>
-                    </agm-marker>
-                </agm-map>
-            </div>
-            <ng-template #noLocation1>
-                <span class="text-center font-weight-bold mt-3"> {{'no.location.found' | translate}}</span>
-            </ng-template>
-        </div>
-
+      </div>
     </div>
+    <div class="col-md-6">
+      <h5 class="font-weight-bold my-3">{{ "hired.workers" | translate }}</h5>
+      <div class="card">
+        <div class="card-body">
+          <div class="scroll">
+            <ul *ngFor="let hired of hiredWorkers">
+              <li class="card-body" *ngIf="hiredWorkers">
+                <p-button
+                  (click)="redirectToWorker(hired.id)"
+                  styleClass="p-button-link"
+                >
+                  <p *ngIf="hired">
+                    {{ hired.firstName }} {{ hired.lastName }}
+                  </p>
+                </p-button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-8">
+      <h5 class="font-weight-bold my-3">
+        {{ "certificates.required" | translate }} :
+      </h5>
+      <div class="card">
+        <div class="card-body">
+          <div class="scroll">
+            <div *ngIf="certificates.length > 0; else noCertificates">
+              <p
+                *ngFor="let certificateData of certificates"
+                style="color: rgb(40, 85, 233); font-weight: bold"
+              >
+                {{ certificateData.certificate.name }}
+              </p>
+            </div>
+            <ng-template #noCertificates>
+              {{ "no.certificates" | translate }}
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="font-weight-bold my-3">
+        {{ "screening.questions" | translate }} :
+      </h5>
+      <div class="card">
+        <div class="card-body">
+          <div class="scroll">
+            <ul class="pl-0" *ngIf="screeningQuestions; else nosq">
+              <li *ngFor="let screeningQuestion of screeningQuestions">
+                {{ screeningQuestion.question }}
+              </li>
+            </ul>
+            <ng-template #nosq>
+              {{ "no.screening.questions" | translate }}
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <h5 class="font-weight-bold my-3">{{ "location" | translate }}</h5>
+      <div
+        class="block location"
+        *ngIf="lat !== 0 && lng !== 0; else noLocation1"
+      >
+        <agm-map [latitude]="lat" [longitude]="lng">
+          <agm-marker [latitude]="lat" [longitude]="lng">
+            <agm-marker [latitude]="lat" [longitude]="lng">
+              <agm-info-window [isOpen]="true">
+                <h6>{{ selectedJob.location }}</h6>
+              </agm-info-window>
+            </agm-marker>
+          </agm-marker>
+        </agm-map>
+      </div>
+      <ng-template #noLocation1>
+        <span class="text-center font-weight-bold mt-3">
+          {{ "no.location.found" | translate }}</span
+        >
+      </ng-template>
+    </div>
+  </div>
 </div>
-<h5 class="text-muted text-center mt-3" *ngIf="!selectedJob">{{'no.record.found' | translate}}</h5>
-<p-dialog header="Job Description" [style]="{width: '600px'}" [(visible)]="readMoreDialog" (onHide)="closeReadMoreDialog()">
-    <div *ngIf="selectedJob" [innerHtml]="selectedJob.description">
-    </div>
+<h5 class="text-muted text-center mt-3" *ngIf="!selectedJob">
+  {{ "no.record.found" | translate }}
+</h5>
+<p-dialog
+  header="Job Description"
+  [style]="{ width: '600px' }"
+  [(visible)]="readMoreDialog"
+  (onHide)="closeReadMoreDialog()"
+>
+  <div *ngIf="selectedJob" [innerHtml]="selectedJob.description"></div>
 </p-dialog>

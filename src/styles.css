@@ -2095,6 +2095,19 @@ app-header .mat-toolbar-single-row {
   bottom: 38px;
 }
 
+.btn-invite {
+  background-color: transparent;
+  border-color: #ffffff;
+  margin-top: 8px;
+  color: #ffffff;
+}
+
+.btn-invite:hover {
+  background-color: white;
+  border-color: #122035;
+  color: #122035;
+}
+
 @media screen and (max-width: 768px) {
   .filter-data-popup .p-overlaypanel-content {
     overflow: visible;

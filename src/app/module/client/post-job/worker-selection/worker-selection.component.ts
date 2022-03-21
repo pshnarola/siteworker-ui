@@ -91,6 +91,7 @@ export class WorkerSelectionComponent implements OnInit {
   filterWorkers: any;
   latitude: any;
   longitude: any;
+  isWorkerInvite: boolean = false;
   constructor(
     private postJobService: PostJobServiceService,
     private formBuilder: FormBuilder,
@@ -106,6 +107,8 @@ export class WorkerSelectionComponent implements OnInit {
     private ngZone: NgZone,
     private jobTitleService: JobTitleService,
     private filterLeftPanelService: FilterLeftPanelDataService) {
+
+    this.isWorkerInvite = this.localStorageService.getIsWorkerInvite();
 
     this.dataTableParam = new DataTableParam();
     this.dataTableParam = {
@@ -128,6 +131,11 @@ export class WorkerSelectionComponent implements OnInit {
       this.getLocation();
     }
     ));
+
+    if (this.isWorkerInvite === true) {
+      this.setDefaultCriteriaCustom();
+      this.getLocation();
+    }
   }
   setDefaultCriteria() {
     let filterMap = new Map();
@@ -146,11 +154,15 @@ export class WorkerSelectionComponent implements OnInit {
       sortOrder: 1,
       searchText: this.globalFilter
     };
+    console.log('149 =>', 149);
+
     this.getWorkerProfileDetail();
   }
   getWorkerProfileDetail() {
     this.queryParam = this.prepareQueryParam(this.dataTableParam);
     this.userService.userSelection(this.queryParam).subscribe(data => {
+      console.log('156 =>', 156);
+
       this.workerDetail = data.data.result;
       if (this.workerDetail.length === 0) {
         this.emptyFlag = true;
@@ -165,6 +177,7 @@ export class WorkerSelectionComponent implements OnInit {
 
   }
   setDefaultCriteriaCustom() {
+
     let filterMap = new Map();
     filterMap.set('CLIENT_INVITEE_ID', this.localStorageService.getLoginUserId());
     filterMap.set('ROLE_NAME', 'WORKER');
@@ -186,6 +199,8 @@ export class WorkerSelectionComponent implements OnInit {
   getWorkerProfileDetailCustom() {
     this.queryParam = this.prepareQueryParam(this.dataTableParam);
     this.userService.userSelectionCustom(this.queryParam).subscribe(data => {
+      console.log('194, data =>', 194, data);
+
       this.workerDetail = data.data.result;
       if (this.workerDetail.length === 0) {
         this.emptyFlag = true;
@@ -396,6 +411,13 @@ export class WorkerSelectionComponent implements OnInit {
     else {
       this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
     }
+  }
+
+  goToJobDetail() {
+    this.localStorageService.removeItem('jobId');
+    this.localStorageService.removeItem('jobDetail');
+    this.localStorageService.removeItem('isWorkerInvite');
+    this.router.navigate([PATH_CONSTANTS.VIEW_JOB_DETAILS])
   }
 
   postNewJob(): void {

@@ -91,6 +91,7 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
   latitude: any;
   longitude: any;
   first: any;
+  isInvited: boolean = false;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -110,6 +111,11 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
   ) {
     this.loginUserId = this.localStorageService.getLoginUserId();
     this.role = this.localStorageService.getLoginUserObject().roles[0].roleName;
+
+    this.isInvited = this.localStorageService.getIsSubcontractorInvite();
+    // this.localStorageService.setItem("addProjectDetail", this.projectDetail);
+    // this.localStorageService.setItem("currentProjectStep", 4);
+    // this.localStorageService.setItem('inviteSubcontractor', true);
 
     this.dataTableParam = new DataTableParam();
   }
@@ -167,6 +173,7 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.localStorageService.removeItem('InvitedSubcontracor');
+    this.localStorageService.removeItem('inviteSubcontractor');
     this.localStorageService.removeItem('inviteSubcontractorFlage');
     this.subscription.unsubscribe();
   }
@@ -332,7 +339,7 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
           if (this.subcontractors.length === 0) {
             this.emptyFlag = true;
           }
-          else{
+          else {
             this.emptyFlag = false;
           }
           this.totalRecords = data.data.totalRecords;
@@ -365,8 +372,8 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
           if (this.subcontractors.length === 0) {
             this.emptyFlag = true;
           }
-          else{
-            this.emptyFlag =  false;
+          else {
+            this.emptyFlag = false;
           }
           this.totalRecords = data.data.totalRecords;
           this.imageUrl = environment.baseURL + '/file/getById?fileId=';
@@ -507,6 +514,12 @@ export class SubcontractorSelectionComponent implements OnInit, OnDestroy {
       this.onRemoveLocalStorage();
       this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
     }
+  }
+
+  gotoProjectDetail() {
+    this.localStorageService.removeItem('currentProjectStep');
+    this.localStorageService.removeItem('addProjectDetail');
+    this.router.navigate([PATH_CONSTANTS.CLIENT_PROJECT_DETAILS]);
   }
 
   onRemoveLocalStorage() {

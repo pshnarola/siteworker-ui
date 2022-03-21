@@ -1,242 +1,357 @@
-<div class="row" style="padding-bottom: 15px;">
-    <div class="col-xl-12">
-
-
-        
-    </div>
+<div class="row" style="padding-bottom: 15px">
+  <div class="col-xl-12"></div>
 </div>
-<h5 style="display: inline-block;" class="my-3"><b>{{'filter' | translate}}:</b></h5>
+<h5 style="display: inline-block" class="my-3">
+  <b>{{ "filter" | translate }}:</b>
+</h5>
 
 <div class="row">
-    <div class="col-xl-12">
-        <div class="card bg-grey2">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-6 form-group">
-                        <div class="p-field">
-                            <label for="jobTitle">{{'job.title' |translate}}</label>
-                            <span class="p-fluid">
-                                <p-autoComplete [(ngModel)]="jobTitleFilter" [suggestions]="filteredJobTitle"
-                                    [multiple]="true" (completeMethod)="filterJobTitle($event)" field="title"
-                                    [dropdown]="true" [forceSelection]="true"
-                                    placeholder="{{'select.jobtitle' |translate}}">
-                                </p-autoComplete>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 form-group">
-                        <div class="p-field">
-                            <label for="workerName">{{ "worker.name" | translate }} : </label>
-                            <span class="p-fluid">
-                                <p-autoComplete [field]="getFullName" virtualScroll="true" itemSize="10"
-                                    [(ngModel)]="filterWorkerName" forceSelection="true" [suggestions]="filterWorkers"
-                                    minLength="3" [multiple]="true" (completeMethod)="getWorkerByName($event)"
-                                    placeholder="{{'enter' | translate}}" [dropdown]="true">
-                                </p-autoComplete>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 form-group">
-                        <div class="p-field">
-                            <label for="location">{{ "location" | translate }} : </label>
-                            <input type="text" class="form-control" (keydown.enter)="$event.preventDefault()"
-                                placeholder="Search Location" autocorrect="off" autocapitalize="off" spellcheck="off"
-                                type="text" #search pInputText [(ngModel)]="location">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 form-group">
-                        <div class="p-field">
-                            <label for="certificate">{{'certificate' |translate}}</label>
-                            <span class="p-fluid">
-                                <p-autoComplete [(ngModel)]="filterCertificateValue"
-                                    [suggestions]="filteredCertificates" [multiple]="true"
-                                    (completeMethod)="filterCertificate($event)" field="name" [dropdown]="true"
-                                    forceSelection="true" placeholder="{{'select.certificate' |translate}}"
-                                    [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}">
-                                </p-autoComplete>
-                            </span>
-                        </div>
-                    </div>
-
-
-                </div>
-                <div class="d-inline-block w-100">
-                    <button pButton type="button" class="p-button-outlined mr-2" (click)="filter()"
-                        label="{{ 'apply' | translate}}"></button>
-                    <button pButton pRipple type="button" label="{{'clear' |translate}}" (click)="onFilterClear()"
-                        class="p-button-danger mr-2"></button>
-                </div>
+  <div class="col-xl-12">
+    <div class="card bg-grey2">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-6 form-group">
+            <div class="p-field">
+              <label for="jobTitle">{{ "job.title" | translate }}</label>
+              <span class="p-fluid">
+                <p-autoComplete
+                  [(ngModel)]="jobTitleFilter"
+                  [suggestions]="filteredJobTitle"
+                  [multiple]="true"
+                  (completeMethod)="filterJobTitle($event)"
+                  field="title"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  placeholder="{{ 'select.jobtitle' | translate }}"
+                >
+                </p-autoComplete>
+              </span>
             </div>
+          </div>
+          <div class="col-lg-6 form-group">
+            <div class="p-field">
+              <label for="workerName">{{ "worker.name" | translate }} : </label>
+              <span class="p-fluid">
+                <p-autoComplete
+                  [field]="getFullName"
+                  virtualScroll="true"
+                  itemSize="10"
+                  [(ngModel)]="filterWorkerName"
+                  forceSelection="true"
+                  [suggestions]="filterWorkers"
+                  minLength="3"
+                  [multiple]="true"
+                  (completeMethod)="getWorkerByName($event)"
+                  placeholder="{{ 'enter' | translate }}"
+                  [dropdown]="true"
+                >
+                </p-autoComplete>
+              </span>
+            </div>
+          </div>
+          <div class="col-lg-6 form-group">
+            <div class="p-field">
+              <label for="location">{{ "location" | translate }} : </label>
+              <input
+                type="text"
+                class="form-control"
+                (keydown.enter)="$event.preventDefault()"
+                placeholder="Search Location"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="off"
+                type="text"
+                #search
+                pInputText
+                [(ngModel)]="location"
+              />
+            </div>
+          </div>
+          <div class="col-lg-6 form-group">
+            <div class="p-field">
+              <label for="certificate">{{ "certificate" | translate }}</label>
+              <span class="p-fluid">
+                <p-autoComplete
+                  [(ngModel)]="filterCertificateValue"
+                  [suggestions]="filteredCertificates"
+                  [multiple]="true"
+                  (completeMethod)="filterCertificate($event)"
+                  field="name"
+                  [dropdown]="true"
+                  forceSelection="true"
+                  placeholder="{{ 'select.certificate' | translate }}"
+                  [style]="{ width: '100%' }"
+                  [inputStyle]="{ width: '100%' }"
+                >
+                </p-autoComplete>
+              </span>
+            </div>
+          </div>
         </div>
+        <div class="d-inline-block w-100">
+          <button
+            pButton
+            type="button"
+            class="p-button-outlined mr-2"
+            (click)="filter()"
+            label="{{ 'apply' | translate }}"
+          ></button>
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ 'clear' | translate }}"
+            (click)="onFilterClear()"
+            class="p-button-danger mr-2"
+          ></button>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
-
-
-<h5 style="display: inline-block;" class="my-3"><b>{{'showing.workers' | translate}}:</b></h5>
+<h5 style="display: inline-block" class="my-3">
+  <b>{{ "showing.workers" | translate }}:</b>
+</h5>
 <div *ngIf="emptyFlag" class="text-center">
-    {{'no.record.found' | translate}}
+  {{ "no.record.found" | translate }}
 </div>
 <div class="row">
-    <div class="col-xl-9">
-        <div *ngFor="let worker of workerDetail">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-xl-2 align-self-center text-center">
-                            <ng-container *ngIf="!worker.workerProfile.basicProfile.photo">
-                                <p-avatar
-                                    label={{worker.user.firstName.substring(0,1)+worker.user.lastName.substring(0,1)}}
-                                    styleClass="p-mr-2" size="xlarge"
-                                    [style]="{'background-color':'#2196F3', 'color': '#ffffff'}" shape="circle">
-                                </p-avatar>
-                            </ng-container>
-                            <ng-container *ngIf="worker.workerProfile.basicProfile.photo">
-                                <img src="{{imageUrl + worker.workerProfile.basicProfile.photo}}" alt="profilePhoto"
-                                    class="profileImage">
-                            </ng-container>
-
-                        </div>
-                        <div class="col-xl-5">
-                            <h5>
-                                <p-button (click)="redirectToWorker(worker.user.id)" styleClass="p-button-link">
-                                    {{worker.user.firstName}} {{worker.user.lastName}}</p-button>
-                                <span *ngIf="worker.workerProfile.totalExperience; else noExperience;">
-                                    ({{worker.workerProfile.totalExperience}})
-                                </span>
-                                <ng-template #noExperience>
-                                    {{'n.a' | translate}}
-                                </ng-template>
-
-                            </h5>
-                            <div style="overflow: hidden;">
-                                <p style="float: left;padding-right: 15px;">
-                                    {{'location' | translate}}:
-                                    <span style="color: #737373;"
-                                        *ngIf="worker.workerProfile.basicProfile.state; else noLocation;">{{worker.workerProfile.basicProfile.city}},
-                                        {{worker.workerProfile.basicProfile.state}}</span>
-                                    <ng-template #noLocation>
-                                        {{'n.a' | translate}}
-                                    </ng-template>
-
-                                </p>
-
-                            </div>
-                            <p *ngIf="worker.workerProfile.basicProfile.jobTitle; else noTitle">
-                                {{worker.workerProfile.basicProfile.jobTitle.title}}</p>
-                            <ng-template #noTitle>
-                                {{'n.a' | translate}}
-                            </ng-template>
-
-                            <span *ngIf="worker.workerProfile.workerCertificates; else noCertificates;">
-                                <p *ngFor="let certificate of worker.workerProfile.workerCertificates"
-                                    style="color: #737373;">
-                                    {{certificate.certificate.name}}
-                                </p>
-                            </span>
-                            <ng-template #noCertificates>
-                                {{'n.a' | translate}}
-                            </ng-template>
-
-                            <div *ngIf="isWorkerInvited(worker.user.id)">
-                                <p-button *ngIf="!isWorkerSelected(worker.user.id)" (click)="onSelectWorker(worker)"
-                                    styleClass="p-button-sm">
-                                    {{'add' | translate}}</p-button>
-                                <p-button *ngIf="isWorkerSelected(worker.user.id)" [disabled]="true"
-                                    styleClass="p-button-sm">{{'added' | translate}}
-                                </p-button>
-                            </div>
-                            <div *ngIf="!isWorkerInvited(worker.user.id)">
-                                <p-button [disabled]="true" styleClass="p-button-sm">{{'added' | translate}}</p-button>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-md-6 text-center m-auto">
-                            <i class="fa fa-line-chart fa-3x" style="color: #3385ff;"></i>
-                            <p *ngIf="worker.workerProfile.jobSuccessRatio !== 'New Worker';else noSucessRatio">
-                                {{worker.workerProfile.jobSuccessRatio}}%</p>
-                            <br>
-                            <ng-template #noSucessRatio>
-                                <p style="font-size: 12px;"> New Worker</p>
-                            </ng-template>
-
-                            <p *ngIf="!worker.workerProfile.jobSuccessRatio" style="font-size: 12px;"> New Worker</p>
-                            <p style="color: #737373;">{{'success.ratio' | translate}}</p>
-                        </div>
-                        <div class="vertical-line"></div>
-                        <div class="col-xl-2 col-md-6 text-center m-auto">
-                            <p *ngIf="worker.workerProfile.averageRating !== 'New Worker'; else noAverageRating">
-                                <i class="fa fa-star fa-2x mr-1" style="color: #3385ff;"></i>
-                                <span style="font-size: 30px;">{{worker.workerProfile.averageRating}}</span>
-                            </p>
-                            <ng-template #noAverageRating>
-                                <span style="font-size: 16px;">New Worker</span>
-                            </ng-template>
-
-                            <p style="color: #737373;">{{'average.rating' | translate}}</p>
-                        </div>
-                    </div>
-                </div>
+  <div class="col-xl-9">
+    <div *ngFor="let worker of workerDetail">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-xl-2 align-self-center text-center">
+              <ng-container *ngIf="!worker.workerProfile.basicProfile.photo">
+                <p-avatar
+                  label="{{
+                    worker.user.firstName.substring(0, 1) +
+                      worker.user.lastName.substring(0, 1)
+                  }}"
+                  styleClass="p-mr-2"
+                  size="xlarge"
+                  [style]="{ 'background-color': '#2196F3', color: '#ffffff' }"
+                  shape="circle"
+                >
+                </p-avatar>
+              </ng-container>
+              <ng-container *ngIf="worker.workerProfile.basicProfile.photo">
+                <img
+                  src="{{ imageUrl + worker.workerProfile.basicProfile.photo }}"
+                  alt="profilePhoto"
+                  class="profileImage"
+                />
+              </ng-container>
             </div>
-            <br>
-        </div>
-        <div class="float-right">
-            <p-paginator [rows]="size" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} workers"
-                [totalRecords]="totalRecords" [showCurrentPageReport]="true" [rowsPerPageOptions]="rowsPerPageOptions"
-                (onPageChange)="paginate($event)"></p-paginator>
-        </div>
-    </div>
+            <div class="col-xl-5">
+              <h5>
+                <p-button
+                  (click)="redirectToWorker(worker.user.id)"
+                  styleClass="p-button-link"
+                >
+                  {{ worker.user.firstName }}
+                  {{ worker.user.lastName }}</p-button
+                >
+                <span
+                  *ngIf="
+                    worker.workerProfile.totalExperience;
+                    else noExperience
+                  "
+                >
+                  ({{ worker.workerProfile.totalExperience }})
+                </span>
+                <ng-template #noExperience>
+                  {{ "n.a" | translate }}
+                </ng-template>
+              </h5>
+              <div style="overflow: hidden">
+                <p style="float: left; padding-right: 15px">
+                  {{ "location" | translate }}:
+                  <span
+                    style="color: #737373"
+                    *ngIf="
+                      worker.workerProfile.basicProfile.state;
+                      else noLocation
+                    "
+                    >{{ worker.workerProfile.basicProfile.city }},
+                    {{ worker.workerProfile.basicProfile.state }}</span
+                  >
+                  <ng-template #noLocation>
+                    {{ "n.a" | translate }}
+                  </ng-template>
+                </p>
+              </div>
+              <p
+                *ngIf="worker.workerProfile.basicProfile.jobTitle; else noTitle"
+              >
+                {{ worker.workerProfile.basicProfile.jobTitle.title }}
+              </p>
+              <ng-template #noTitle>
+                {{ "n.a" | translate }}
+              </ng-template>
 
-    <div class="col-xl-3">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <h6><b>{{'selected.workers' | translate}}</b></h6>
-                        <p class="text-primary">{{selectedWorkers.length}}/15</p>
-                        <div *ngFor="let selectedWorker of selectedWorkers">
-                            <div class="d-flex justify-content-between">
-                                {{selectedWorker.user.firstName}}
-                                <p-button styleClass="p-button-link" (click)="removeFromSelectedWorker(selectedWorker)">
-                                    <i class="fa fa-remove text-danger"></i>
-                                </p-button>
-                            </div>
-                        </div>
-                        <div class="p-fluid mt-5">
+              <span
+                *ngIf="
+                  worker.workerProfile.workerCertificates;
+                  else noCertificates
+                "
+              >
+                <p
+                  *ngFor="
+                    let certificate of worker.workerProfile.workerCertificates
+                  "
+                  style="color: #737373"
+                >
+                  {{ certificate.certificate.name }}
+                </p>
+              </span>
+              <ng-template #noCertificates>
+                {{ "n.a" | translate }}
+              </ng-template>
 
-                            <label for="invite-worker">{{'invite.worker' | translate}} (Email)</label>
-
-                            <p-chips [(ngModel)]="otherInvitees" separator="," pTooltip="Enter comma seperated emails"
-                                addOnBlur=true (ngModelChange)="validateEmail(otherInvitees)"></p-chips>
-
-
-
-                        </div>
-                        <div class="p-invalid" *ngIf="this.emailFlag">
-                            {{'invalid.email'| translate}}
-                        </div>
-
-                        <div class="text-center mt-2">
-                            <p-button class="invite-button" (click)="onInvite()"
-                                [disabled]="!workerSelectionForm.valid">{{'invite' | translate}}</p-button>
-                        </div>
-                    </div>
-                </div>
-
-
-
-
+              <div *ngIf="isWorkerInvited(worker.user.id)">
+                <p-button
+                  *ngIf="!isWorkerSelected(worker.user.id)"
+                  (click)="onSelectWorker(worker)"
+                  styleClass="p-button-sm"
+                >
+                  {{ "add" | translate }}</p-button
+                >
+                <p-button
+                  *ngIf="isWorkerSelected(worker.user.id)"
+                  [disabled]="true"
+                  styleClass="p-button-sm"
+                  >{{ "added" | translate }}
+                </p-button>
+              </div>
+              <div *ngIf="!isWorkerInvited(worker.user.id)">
+                <p-button [disabled]="true" styleClass="p-button-sm">{{
+                  "added" | translate
+                }}</p-button>
+              </div>
             </div>
+            <div class="col-xl-2 col-md-6 text-center m-auto">
+              <i class="fa fa-line-chart fa-3x" style="color: #3385ff"></i>
+              <p
+                *ngIf="
+                  worker.workerProfile.jobSuccessRatio !== 'New Worker';
+                  else noSucessRatio
+                "
+              >
+                {{ worker.workerProfile.jobSuccessRatio }}%
+              </p>
+              <br />
+              <ng-template #noSucessRatio>
+                <p style="font-size: 12px">New Worker</p>
+              </ng-template>
+
+              <p
+                *ngIf="!worker.workerProfile.jobSuccessRatio"
+                style="font-size: 12px"
+              >
+                New Worker
+              </p>
+              <p style="color: #737373">{{ "success.ratio" | translate }}</p>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="col-xl-2 col-md-6 text-center m-auto">
+              <p
+                *ngIf="
+                  worker.workerProfile.averageRating !== 'New Worker';
+                  else noAverageRating
+                "
+              >
+                <i class="fa fa-star fa-2x mr-1" style="color: #3385ff"></i>
+                <span style="font-size: 30px">{{
+                  worker.workerProfile.averageRating
+                }}</span>
+              </p>
+              <ng-template #noAverageRating>
+                <span style="font-size: 16px">New Worker</span>
+              </ng-template>
+
+              <p style="color: #737373">{{ "average.rating" | translate }}</p>
+            </div>
+          </div>
         </div>
+      </div>
+      <br />
     </div>
+    <div class="float-right">
+      <p-paginator
+        [rows]="size"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} workers"
+        [totalRecords]="totalRecords"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="rowsPerPageOptions"
+        (onPageChange)="paginate($event)"
+      ></p-paginator>
+    </div>
+  </div>
+
+  <div class="col-xl-3">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xl-12">
+            <h6>
+              <b>{{ "selected.workers" | translate }}</b>
+            </h6>
+            <p class="text-primary">{{ selectedWorkers.length }}/15</p>
+            <div *ngFor="let selectedWorker of selectedWorkers">
+              <div class="d-flex justify-content-between">
+                {{ selectedWorker.user.firstName }}
+                <p-button
+                  styleClass="p-button-link"
+                  (click)="removeFromSelectedWorker(selectedWorker)"
+                >
+                  <i class="fa fa-remove text-danger"></i>
+                </p-button>
+              </div>
+            </div>
+            <div class="p-fluid mt-5">
+              <label for="invite-worker"
+                >{{ "invite.worker" | translate }} (Email)</label
+              >
+
+              <p-chips
+                [(ngModel)]="otherInvitees"
+                separator=","
+                pTooltip="Enter comma seperated emails"
+                addOnBlur="true"
+                (ngModelChange)="validateEmail(otherInvitees)"
+              ></p-chips>
+            </div>
+            <div class="p-invalid" *ngIf="this.emailFlag">
+              {{ "invalid.email" | translate }}
+            </div>
+
+            <div class="text-center mt-2">
+              <p-button
+                class="invite-button"
+                (click)="onInvite()"
+                [disabled]="!workerSelectionForm.valid"
+                >{{ "invite" | translate }}</p-button
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<hr>
-<div style="text-align: right;">
-    <p-button class="mx-2" type="button" (click)="postNewJob()">
-        {{'post.new.job' | translate}}
-
-    </p-button>
-    <p-button type="button" (click)="goToDashboard()">
-        {{'go.to.dashboard' | translate}}
-
-    </p-button>
+<hr />
+<div style="text-align: right" *ngIf="!isWorkerInvite">
+  <p-button class="mx-2" type="button" (click)="postNewJob()">
+    {{ "post.new.job" | translate }}
+  </p-button>
+  <p-button type="button" (click)="goToDashboard()">
+    {{ "go.to.dashboard" | translate }}
+  </p-button>
+</div>
+<div style="text-align: right" *ngIf="isWorkerInvite">
+  <p-button type="button" (click)="goToJobDetail()">
+    {{ "go.to.job.details" | translate }}
+  </p-button>
 </div>
