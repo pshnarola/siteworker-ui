@@ -49,12 +49,12 @@
                     lineItemTemplateForm
                       .get('lineItemId')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('lineItemId').valid) ||
+                    !lineItemTemplateForm.get('lineItemId').valid) ||
                   (submitted &&
                     lineItemTemplateForm
                       .get('lineItemId')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('lineItemId').valid)
+                    !lineItemTemplateForm.get('lineItemId').valid)
                 "
               >
                 {{ "required" | translate }}
@@ -66,7 +66,7 @@
                   lineItemTemplateForm
                     .get('lineItemId')
                     .hasError('maxlength') &&
-                    !lineItemTemplateForm.get('lineItemId').valid
+                  !lineItemTemplateForm.get('lineItemId').valid
                 "
               >
                 {{ "lineItemId.maxLength" | translate }}
@@ -91,12 +91,12 @@
                     lineItemTemplateForm
                       .get('lineItemName')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('lineItemName').valid) ||
+                    !lineItemTemplateForm.get('lineItemName').valid) ||
                   (submitted &&
                     lineItemTemplateForm
                       .get('lineItemName')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('lineItemName').valid)
+                    !lineItemTemplateForm.get('lineItemName').valid)
                 "
               >
                 {{ "required" | translate }}
@@ -108,7 +108,7 @@
                   lineItemTemplateForm
                     .get('lineItemName')
                     .hasError('maxlength') &&
-                    !lineItemTemplateForm.get('lineItemName').valid
+                  !lineItemTemplateForm.get('lineItemName').valid
                 "
               >
                 {{ "lineItemName.maxLength" | translate }}
@@ -131,10 +131,10 @@
                 *ngIf="
                   (lineItemTemplateForm.get('quantity').touched &&
                     lineItemTemplateForm.get('quantity').hasError('required') &&
-                      !lineItemTemplateForm.get('quantity').valid) ||
+                    !lineItemTemplateForm.get('quantity').valid) ||
                   (submitted &&
                     lineItemTemplateForm.get('quantity').hasError('required') &&
-                      !lineItemTemplateForm.get('quantity').valid)
+                    !lineItemTemplateForm.get('quantity').valid)
                 "
               >
                 {{ "required" | translate }}
@@ -144,7 +144,7 @@
                 *ngIf="
                   lineItemTemplateForm.get('quantity').touched &&
                   lineItemTemplateForm.get('quantity').hasError('min') &&
-                    !lineItemTemplateForm.get('quantity').valid
+                  !lineItemTemplateForm.get('quantity').valid
                 "
               >
                 {{ "quantity.minValue" | translate }}
@@ -174,16 +174,38 @@
                 *ngIf="
                   (lineItemTemplateForm.get('unit').touched &&
                     lineItemTemplateForm.get('unit').hasError('required') &&
-                      !lineItemTemplateForm.get('unit').valid) ||
+                    !lineItemTemplateForm.get('unit').valid) ||
                   (submitted &&
                     lineItemTemplateForm.get('unit').hasError('required') &&
-                      !lineItemTemplateForm.get('unit').valid)
+                    !lineItemTemplateForm.get('unit').valid)
                 "
               >
                 {{ "required" | translate }}
               </div>
             </div>
-            <div class="form-group col-md">
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label for="costByContractor" class="check-lable">{{
+                "Cost By Contractor" | translate
+              }}</label>
+              <div class="p-field-checkbox">
+                <p-checkbox
+                  binary="true"
+                  inputId="binary"
+                  formControlName="costByContractor"
+                  (onChange)="isCheckCostByContractor($event)"
+                ></p-checkbox>
+                <p for="costByContractor">
+                  {{
+                    lineItemTemplateForm.get("costByContractor").value === false
+                      ? "Unchecked"
+                      : "Checked"
+                  }}
+                </p>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
               <label for="cost">{{ "cost" | translate }}*</label>
               <p-inputNumber
                 mode="currency"
@@ -192,16 +214,18 @@
                 placeholder="{{ 'cost.placeholder' | translate }}"
                 maxlength="17"
                 locale="en-US"
+                [disabled]="costDisabled"
+                (keyup)="changeCost($event)"
               ></p-inputNumber>
               <div
                 class="p-invalid"
                 *ngIf="
                   (lineItemTemplateForm.get('cost').touched &&
                     lineItemTemplateForm.get('cost').hasError('required') &&
-                      !lineItemTemplateForm.get('cost').valid) ||
+                    !lineItemTemplateForm.get('cost').valid) ||
                   (submitted &&
                     lineItemTemplateForm.get('cost').hasError('required') &&
-                      !lineItemTemplateForm.get('cost').valid)
+                    !lineItemTemplateForm.get('cost').valid)
                 "
               >
                 {{ "required" | translate }}
@@ -211,10 +235,21 @@
                 *ngIf="
                   lineItemTemplateForm.get('cost').touched &&
                   lineItemTemplateForm.get('cost').hasError('min') &&
-                    !lineItemTemplateForm.get('cost').valid
+                  !lineItemTemplateForm.get('cost').valid
                 "
               >
                 {{ "cost.minValue" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemTemplateForm.get('cost').touched &&
+                  !lineItemTemplateForm.get('cost').hasError('min') &&
+                  lineItemTemplateForm.get('cost').hasError('incorrect') &&
+                  !lineItemTemplateForm.get('cost').valid
+                "
+              >
+                {{ "cost.incorrect" | translate }}
               </div>
             </div>
           </div>
@@ -238,12 +273,12 @@
                     lineItemTemplateForm
                       .get('description')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('description').valid) ||
+                    !lineItemTemplateForm.get('description').valid) ||
                   (submitted &&
                     lineItemTemplateForm
                       .get('description')
                       .hasError('required') &&
-                      !lineItemTemplateForm.get('description').valid)
+                    !lineItemTemplateForm.get('description').valid)
                 "
               >
                 {{ "required" | translate }}
@@ -321,7 +356,7 @@
                   lineItemTemplateForm
                     .get('dynamicLabel1')
                     .hasError('maxlength') &&
-                    !lineItemTemplateForm.get('dynamicLabel1').valid
+                  !lineItemTemplateForm.get('dynamicLabel1').valid
                 "
               >
                 {{ "lineItem.label1.maxLength" | translate }}
@@ -344,7 +379,7 @@
                   lineItemTemplateForm
                     .get('dynamicLabel2')
                     .hasError('maxlength') &&
-                    !lineItemTemplateForm.get('dynamicLabel2').valid
+                  !lineItemTemplateForm.get('dynamicLabel2').valid
                 "
               >
                 {{ "lineItem.label2.maxLength" | translate }}
@@ -367,7 +402,7 @@
                   lineItemTemplateForm
                     .get('dynamicLabel3')
                     .hasError('maxlength') &&
-                    !lineItemTemplateForm.get('dynamicLabel3').valid
+                  !lineItemTemplateForm.get('dynamicLabel3').valid
                 "
               >
                 {{ "lineItem.label3.maxLength" | translate }}

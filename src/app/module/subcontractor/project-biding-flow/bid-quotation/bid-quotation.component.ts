@@ -190,6 +190,14 @@ export class BidQuotationComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCost(value) {
+    if (value <= 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   getSelectedProjectDetails(): void {
     this.subscription.add(this.projectJobSelectionService.selectedProjectSubject.subscribe(data => {
       const project = this.localStorageService.getSelectedProjectObject();

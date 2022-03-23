@@ -2229,3 +2229,9 @@ app-header .mat-toolbar-single-row {
         margin-right: 0;
     }
 } */
+
+.p-field-checkbox > p {
+  margin-left: 0.5rem;
+  line-height: 2;
+  margin-bottom: 0;
+}
