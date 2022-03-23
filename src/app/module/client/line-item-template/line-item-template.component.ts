@@ -45,6 +45,8 @@ export class LineItemTemplateComponent implements OnInit {
   user: any;
   template: LineItem;
 
+  costDisabled: boolean = false;
+
   @ViewChild('dt') table: Table;
   columns = [
     { label: this.translator.instant('line.item.id'), value: 'ITEM_ID' },
@@ -86,6 +88,7 @@ export class LineItemTemplateComponent implements OnInit {
       inclusions: [''],
       lineItemId: ['', [Validators.required, Validators.maxLength(20)]],
       lineItemName: ['', [Validators.required, Validators.maxLength(100)]],
+      costByContractor: [false],
       cost: [null, [Validators.required, Validators.min(0.00)]],
       quantity: [null, [Validators.required, Validators.min(1)]],
       unit: ['', [Validators.required, Validators.maxLength(10)]],
@@ -201,11 +204,19 @@ export class LineItemTemplateComponent implements OnInit {
   editTemplate(template) {
     this.dialogHeader = this.translator.instant('edit.line.item');
     this.template = { ...template };
+    console.log('this.template =>', this.template);
+
     this.initializeLineItemform();
+    if (this.template.costByContractor) {
+      this.costDisabled = true;
+    } else {
+      this.costDisabled = false;
+    }
     this.lineItemTemplateForm.controls.id.patchValue(this.template.id);
     this.lineItemTemplateForm.controls.lineItemId.patchValue(this.template.lineItemId);
     this.lineItemTemplateForm.controls.updatedBy.patchValue(this.loggedInUserId);
     this.lineItemTemplateForm.controls.lineItemName.patchValue(this.template.lineItemName);
+    this.lineItemTemplateForm.controls.costByContractor.patchValue(this.template.costByContractor);
     this.lineItemTemplateForm.controls.quantity.patchValue(this.template.quantity);
     this.lineItemTemplateForm.controls.cost.patchValue(this.template.cost);
     this.lineItemTemplateForm.controls.unit.patchValue(this.template.unit);
@@ -320,6 +331,26 @@ export class LineItemTemplateComponent implements OnInit {
     }
 
     return true;
+  }
+
+  isCheckCostByContractor(event) {
+    let value = event.checked;
+    if (value === true) {
+      this.costDisabled = true;
+      this.lineItemTemplateForm['controls']['cost'].setErrors(null);
+      this.lineItemTemplateForm['controls']['cost'].setValue(0.00);
+    } else {
+      this.costDisabled = false;
+      this.lineItemTemplateForm['controls']['cost'].setValue(null);
+    }
+  }
+
+  changeCost(event) {
+    let stringValue = event.target.value.split('$');
+    let value = parseInt(stringValue[1]);
+    if (value < 1) {
+      this.lineItemTemplateForm['controls']['cost'].setErrors({ 'incorrect': true });
+    }
   }
 
   returnLengthOfDescription(description) {

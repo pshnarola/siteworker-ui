@@ -26,10 +26,10 @@ import { LineItem } from '../../../Vos/lineItemModel';
 })
 export class AddLineItemComponent implements OnInit {
 
-  products = []; 
-  defaultLineItem = { 
+  products = [];
+  defaultLineItem = {
     'id': 'bankId',
-    'lineItemName' : 'Blank Template',
+    'lineItemName': 'Blank Template',
     'description': 'Define your own template'
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
@@ -38,7 +38,7 @@ export class AddLineItemComponent implements OnInit {
   lineItemForm: FormGroup;
   loggedInUserId: string;
   submitted = false;
-  submittedSingleWorkType= false;
+  submittedSingleWorkType = false;
   uom: Uom[];
   filteredUom: any[];
   editableLineItem: any = null;
@@ -54,7 +54,7 @@ export class AddLineItemComponent implements OnInit {
   selectedTemplate;
   selectedFormIndex = 0;
   selectedJobsite: JobsiteDetail;
-  isEditWorkType: { edit: boolean}[] = [{'edit' : false}];
+  isEditWorkType: { edit: boolean }[] = [{ 'edit': false }];
   @Output()
   screenChange1 = new EventEmitter<string>();
   isCancel = false;
@@ -64,45 +64,45 @@ export class AddLineItemComponent implements OnInit {
 
 
   constructor(private _formBuilder: FormBuilder,
-          private localStorageService: LocalStorageService,
-          private _uomService: UomService,
-          private postProjectService: PostProjectService,
-          private projectJobSelectionService: ProjectJobSelectionService,
-          private lineItemService: LineItemService,
-          private translator: TranslateService,
-          private jobsiteService: JobsiteService,
-          private notificationService: UINotificationService,
-          private lineItemTemplateService: LineItemTemplateService) { 
+    private localStorageService: LocalStorageService,
+    private _uomService: UomService,
+    private postProjectService: PostProjectService,
+    private projectJobSelectionService: ProjectJobSelectionService,
+    private lineItemService: LineItemService,
+    private translator: TranslateService,
+    private jobsiteService: JobsiteService,
+    private notificationService: UINotificationService,
+    private lineItemTemplateService: LineItemTemplateService) {
     this.responsiveOptions = [
       {
-          breakpoint: '1024px',
-          numVisible: 3,
-          numScroll: 3
+        breakpoint: '1024px',
+        numVisible: 3,
+        numScroll: 3
       },
       {
-          breakpoint: '768px',
-          numVisible: 2,
-          numScroll: 2
+        breakpoint: '768px',
+        numVisible: 2,
+        numScroll: 2
       },
       {
-          breakpoint: '560px',
-          numVisible: 1,
-          numScroll: 1
+        breakpoint: '560px',
+        numVisible: 1,
+        numScroll: 1
       }
-  ];
+    ];
   }
 
   ngOnInit(): void {
     this.isCancel = false;
-    this.submitted= false;
+    this.submitted = false;
     this.loggedInUserId = this.localStorageService.getLoginUserId();
     this.loadUomList();
     this.loadLineItemList();
     this.subscription = this.projectJobSelectionService.selectedJobsiteOfDropdown.subscribe(
       data => {
         let jobsite = this.localStorageService.getItem('selectedJobsiteOfDropdown');
-        if(jobsite){
-          if(jobsite.id !== 'jid'){
+        if (jobsite) {
+          if (jobsite.id !== 'jid') {
             this.selectedJobsite = jobsite;
           }
         }
@@ -113,76 +113,78 @@ export class AddLineItemComponent implements OnInit {
     console.log(this.loggedInUserId);
 
     this.subscription1 = this.lineItemService.lineItemIdTransfer.subscribe(data => {
-      if(this.localStorageService.getItem('lineItem')){
-          this.editableLineItem = this.localStorageService.getItem('lineItem');
+      if (this.localStorageService.getItem('lineItem')) {
+        this.editableLineItem = this.localStorageService.getItem('lineItem');
       }
-      else{
+      else {
         this.editableLineItem = null;
       }
     });
 
-    if(this.editableLineItem !== null){
+    if (this.editableLineItem !== null) {
       this.setFormValue(this.editableLineItem)
     }
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
     this.subscription1.unsubscribe();
     console.log('in line item destroy');
-    if((!this.localStorageService.getItem('milestoneScreen')) && 
-        (!this.localStorageService.getItem('addJobsiteScreen')) &&
-        (!this.localStorageService.getItem('addLineItemScreen')) &&
-        (this.localStorageService.getItem('jobsiteScreen'))){
-            this.projectJobSelectionService.addJobsiteSubject.next(null);
+    if ((!this.localStorageService.getItem('milestoneScreen')) &&
+      (!this.localStorageService.getItem('addJobsiteScreen')) &&
+      (!this.localStorageService.getItem('addLineItemScreen')) &&
+      (this.localStorageService.getItem('jobsiteScreen'))) {
+      this.projectJobSelectionService.addJobsiteSubject.next(null);
     }
   }
 
-  onSelectTemplate(item){
+  onSelectTemplate(item) {
     this.selectedTemplate = item;
     this.setTemplateValue();
   }
 
-  onSelectForm(index){
+  onSelectForm(index) {
     this.selectedFormIndex = index;
   }
 
-  setTemplateValue(){
-    if(this.selectedTemplate.id !== 'bankId'){
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('lineItemId').patchValue(this.selectedTemplate.lineItemId);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('lineItemName').patchValue(this.selectedTemplate.lineItemName);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('description').patchValue(this.selectedTemplate.description);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('quantity').patchValue(this.selectedTemplate.quantity);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('unit').patchValue(this.selectedTemplate.unit);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('cost').patchValue(this.selectedTemplate.cost);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('inclusions').patchValue(this.selectedTemplate.inclusions);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('exclusions').patchValue(this.selectedTemplate.exclusions);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel1').patchValue(this.selectedTemplate.dynamicLabel1);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel2').patchValue(this.selectedTemplate.dynamicLabel2);
-    (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel3').patchValue(this.selectedTemplate.dynamicLabel3);
+  setTemplateValue() {
+    if (this.selectedTemplate.id !== 'bankId') {
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('lineItemId').patchValue(this.selectedTemplate.lineItemId);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('costByContractor').patchValue(this.selectedTemplate.costByContractor);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('description').patchValue(this.selectedTemplate.description);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('quantity').patchValue(this.selectedTemplate.quantity);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('unit').patchValue(this.selectedTemplate.unit);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('unit').patchValue(this.selectedTemplate.unit);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('cost').patchValue(this.selectedTemplate.cost);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('inclusions').patchValue(this.selectedTemplate.inclusions);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('exclusions').patchValue(this.selectedTemplate.exclusions);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel1').patchValue(this.selectedTemplate.dynamicLabel1);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel2').patchValue(this.selectedTemplate.dynamicLabel2);
+      (<FormArray>this.lineItemForm.get('lineItem')).controls[this.selectedFormIndex].get('dynamicLabel3').patchValue(this.selectedTemplate.dynamicLabel3);
     }
-    else{
+    else {
       this.resetSingleWorkType(this.selectedFormIndex);
     }
   }
 
-  private setFormValue(lineitem){
+  private setFormValue(lineitem) {
     let lineItemList = new FormArray([]);
     lineItemList.push(this._formBuilder.group({
       'id': lineitem.id,
-      'createdBy':lineitem.createdBy,
-      'updatedBy':lineitem.updatedBy,
-      'description': [lineitem.description,[Validators.required]],
-      'dynamicLabel1': [lineitem.dynamicLabel1,Validators.maxLength(200)],
-      'dynamicLabel2': [lineitem.dynamicLabel2,Validators.maxLength(200)],
-      'dynamicLabel3': [lineitem.dynamicLabel3,Validators.maxLength(200)],
+      'createdBy': lineitem.createdBy,
+      'updatedBy': lineitem.updatedBy,
+      'description': [lineitem.description, [Validators.required]],
+      'dynamicLabel1': [lineitem.dynamicLabel1, Validators.maxLength(200)],
+      'dynamicLabel2': [lineitem.dynamicLabel2, Validators.maxLength(200)],
+      'dynamicLabel3': [lineitem.dynamicLabel3, Validators.maxLength(200)],
       'exclusions': [lineitem.exclusions],
       'inclusions': [lineitem.inclusions],
-      'lineItemId': [lineitem.lineItemId,[Validators.required,Validators.maxLength(20)]],
-      'lineItemName': [lineitem.lineItemName,[Validators.required,Validators.maxLength(100)]],
-      'cost': [lineitem.cost, [Validators.required,Validators.min(0.00)]],
-      'quantity': [lineitem.quantity,[Validators.required,Validators.min(1)]],
-      'unit': [lineitem.unit,[Validators.required,Validators.maxLength(10)]],
+      'lineItemId': [lineitem.lineItemId, [Validators.required, Validators.maxLength(20)]],
+      'lineItemName': [lineitem.lineItemName, [Validators.required, Validators.maxLength(100)]],
+      'costByContractor': [lineitem.costByContractor],
+      'cost': [lineitem.cost, [Validators.required, Validators.min(0.00)]],
+      'quantity': [lineitem.quantity, [Validators.required, Validators.min(1)]],
+      'unit': [lineitem.unit, [Validators.required, Validators.maxLength(10)]],
       'jobsite': lineitem.jobsite,
       'workType': lineitem.workType
     }));
@@ -195,23 +197,43 @@ export class AddLineItemComponent implements OnInit {
   }
 
 
-  private initializeLineItemform(){
+  isCheckCostByContractor(event, index) {
+    let value = event.checked;
+    if (value === true) {
+      this.lineItemForm.get('lineItem')['controls'][index].get('cost').setErrors(null);
+      this.lineItemForm.get('lineItem')['controls'][index].get('cost').setValue(0.00);
+    } else {
+      this.lineItemForm.get('lineItem')['controls'][index].get('cost').setValue(null);
+    }
+  }
+
+  changeCost(event, index) {
+    let stringValue = event.target.value.split('$');
+    let value = parseInt(stringValue[1]);
+    console.log('event cost =>', value);
+    if (value < 1) {
+      this.lineItemForm.get('lineItem')['controls'][index].get('cost').setErrors({ 'incorrect': true });
+    }
+  }
+
+  private initializeLineItemform() {
     let lineItemList = new FormArray([]);
     lineItemList.push(this._formBuilder.group({
       'id': [],
-      'createdBy':this.loggedInUserId,
-      'updatedBy':this.loggedInUserId,
-      'description': ['',[Validators.required]],
-      'dynamicLabel1': ['',Validators.maxLength(200)],
-      'dynamicLabel2': ['',Validators.maxLength(200)],
-      'dynamicLabel3': ['',Validators.maxLength(200)],
+      'createdBy': this.loggedInUserId,
+      'updatedBy': this.loggedInUserId,
+      'description': ['', [Validators.required]],
+      'dynamicLabel1': ['', Validators.maxLength(200)],
+      'dynamicLabel2': ['', Validators.maxLength(200)],
+      'dynamicLabel3': ['', Validators.maxLength(200)],
       'exclusions': [''],
       'inclusions': [''],
-      'lineItemId': ['',[Validators.required,Validators.maxLength(20)]],
-      'lineItemName': ['',[Validators.required,Validators.maxLength(100)]],
-      'cost': [null, [Validators.required,Validators.min(0.00)]],
-      'quantity': [null,[Validators.required,Validators.min(1)]],
-      'unit': ['',[Validators.required,Validators.maxLength(10)]],
+      'lineItemId': ['', [Validators.required, Validators.maxLength(20)]],
+      'lineItemName': ['', [Validators.required, Validators.maxLength(100)]],
+      'costByContractor': [false],
+      'cost': [null, [Validators.required, Validators.min(0.00)]],
+      'quantity': [null, [Validators.required, Validators.min(1)]],
+      'unit': ['', [Validators.required, Validators.maxLength(10)]],
       'jobsite': this.selectedJobsite,
       'workType': 'Work Type 1'
     }));
@@ -221,198 +243,202 @@ export class AddLineItemComponent implements OnInit {
     });
   }
 
-  addWorkType(){
-    this.isEditWorkType.push({'edit': false});
+  addWorkType() {
+    this.isEditWorkType.push({ 'edit': false });
     const lengthOfArray = (<FormArray>this.lineItemForm.get('lineItem')).length;
-    let workTypeIndex = lengthOfArray+1;
-    if(lengthOfArray < 20){
+    let workTypeIndex = lengthOfArray + 1;
+    if (lengthOfArray < 20) {
       (<FormArray>this.lineItemForm.get('lineItem')).push(this._formBuilder.group({
-      'id': [],
-      'createdBy':this.loggedInUserId,
-      'updatedBy':this.loggedInUserId,
-      'description': ['',[Validators.required]],
-      'dynamicLabel1': ['',Validators.maxLength(200)],
-      'dynamicLabel2': ['',Validators.maxLength(200)],
-      'dynamicLabel3': ['',Validators.maxLength(200)],
-      'exclusions': [''],
-      'inclusions': [''],
-      'lineItemId': ['',[Validators.required,Validators.maxLength(20)]],
-      'lineItemName': ['',[Validators.required,Validators.maxLength(100)]],
-      'cost': [null, [Validators.required,Validators.min(0.00)]],
-      'quantity': [null,[Validators.required,Validators.min(1)]],
-      'unit': ['',[Validators.required,Validators.maxLength(10)]],
-      'jobsite': this.selectedJobsite,
-      'workType': 'Work Type '+workTypeIndex
+        'id': [],
+        'createdBy': this.loggedInUserId,
+        'updatedBy': this.loggedInUserId,
+        'description': ['', [Validators.required]],
+        'dynamicLabel1': ['', Validators.maxLength(200)],
+        'dynamicLabel2': ['', Validators.maxLength(200)],
+        'dynamicLabel3': ['', Validators.maxLength(200)],
+        'exclusions': [''],
+        'inclusions': [''],
+        'lineItemId': ['', [Validators.required, Validators.maxLength(20)]],
+        'lineItemName': ['', [Validators.required, Validators.maxLength(100)]],
+        "costByContractor": [false],
+        'cost': [null, [Validators.required, Validators.min(0.00)]],
+        'quantity': [null, [Validators.required, Validators.min(1)]],
+        'unit': ['', [Validators.required, Validators.maxLength(10)]],
+        'jobsite': this.selectedJobsite,
+        'workType': 'Work Type ' + workTypeIndex
       }));
-    }  
+    }
     this.selectedTemplate = this.defaultLineItem;
   }
 
-  removeWorkType(index:number){
+  removeWorkType(index: number) {
     const lengthOfArray = (<FormArray>this.lineItemForm.get('lineItem')).length;
-    if(lengthOfArray > 1){
-      this.isEditWorkType.splice(index,1);
+    if (lengthOfArray > 1) {
+      this.isEditWorkType.splice(index, 1);
       (<FormArray>this.lineItemForm.get('lineItem')).removeAt(index);
     }
   }
 
-  onWorkTypeChange(value,index){
+  onWorkTypeChange(value, index) {
     (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('workType').patchValue(value);
     this.isEditWorkType[index].edit = !this.isEditWorkType[index].edit;
   }
 
-  onEditWorkType(index){
+  onEditWorkType(index) {
     this.isEditWorkType[index].edit = !this.isEditWorkType[index].edit;
   }
 
 
-  onSubmitSingleWorkType(lineItem:FormGroup,index){
+  onSubmitSingleWorkType(lineItem: FormGroup, index) {
     let form = <FormGroup>(<FormArray>this.lineItemForm.get('lineItem')).controls[index];
-    if(!(<FormArray>this.lineItemForm.get('lineItem')).controls[index].valid){
+    if (!(<FormArray>this.lineItemForm.get('lineItem')).controls[index].valid) {
       CustomValidator.markFormGroupTouched(form);
       return false;
     }
-    else{
+    else {
       console.log(lineItem.value);
-      if(this.validateLengthForSingleWorkType(lineItem.value.description,lineItem.value.inclusions,lineItem.value.exclusions)){
-      if(lineItem.value.jobsite.project){
-        lineItem.value.jobsite.project.attachment = [];
-      }
-      this.lineItemService.addNewLineItem(lineItem.value,
-        this.translator.instant('lineItem.added.successfully')).subscribe(
-          data => {
-            if (data.statusCode === '200' && data.message === 'OK') {
-              this.notificationService.success(this.translator.instant('lineItem.added.successfully'), '');
-              this.resetSingleWorkType(index);
-              this.selectedTemplate = this.defaultLineItem;
-              this.localStorageService.setItem('addLineItemScreen','addLineItem',false);
-              this.postProjectService.jobsiteScreenChange.next('addLineItem');
-              this.jobsiteService.updateCostOfJobsite(lineItem.value.jobsite.id).subscribe(
-              data => {
-                if(!this.isCancel){
-                  this.localStorageService.setItem('addLineItemScreen','addLineItem',false);
-                  this.postProjectService.jobsiteScreenChange.next('addLineItem');
-                }
+      if (this.validateLengthForSingleWorkType(lineItem.value.description, lineItem.value.inclusions, lineItem.value.exclusions)) {
+        if (lineItem.value.jobsite.project) {
+          lineItem.value.jobsite.project.attachment = [];
+        }
+        this.lineItemService.addNewLineItem(lineItem.value,
+          this.translator.instant('lineItem.added.successfully')).subscribe(
+            data => {
+              if (data.statusCode === '200' && data.message === 'OK') {
+                this.notificationService.success(this.translator.instant('lineItem.added.successfully'), '');
+                this.resetSingleWorkType(index);
+                this.selectedTemplate = this.defaultLineItem;
+                this.localStorageService.setItem('addLineItemScreen', 'addLineItem', false);
+                this.postProjectService.jobsiteScreenChange.next('addLineItem');
+                this.jobsiteService.updateCostOfJobsite(lineItem.value.jobsite.id).subscribe(
+                  data => {
+                    if (!this.isCancel) {
+                      this.localStorageService.setItem('addLineItemScreen', 'addLineItem', false);
+                      this.postProjectService.jobsiteScreenChange.next('addLineItem');
+                    }
+                  }
+                );
+                this.localStorageService.setItem('addLineItemScreen', 'addLineItem', false);
+                this.postProjectService.jobsiteScreenChange.next('addLineItem');
+                this.projectJobSelectionService.addJobsiteSubject.next(data);
               }
-              );
-            this.localStorageService.setItem('addLineItemScreen','addLineItem',false);
-            this.postProjectService.jobsiteScreenChange.next('addLineItem');
-            this.projectJobSelectionService.addJobsiteSubject.next(data);
+              else {
+                this.notificationService.error(data.message, '');
+              }
+            },
+            error => {
+              this.notificationService.error(this.translator.instant('common.error'), '');
             }
-            else{
-              this.notificationService.error(data.message, '');
-            }
-          },
-          error => {
-            this.notificationService.error(this.translator.instant('common.error'), '');
-          }
-        );
+          );
       }
     }
   }
 
-  onSubmitAllWorkType(){
+  onSubmitAllWorkType() {
     console.log(this.lineItemForm.value);
     this.submitted = true;
-    if(!this.lineItemForm.valid){
+    if (!this.lineItemForm.valid) {
       CustomValidator.markFormGroupTouched(this.lineItemForm);
       this.submitted = false;
       return false;
     }
-    else{
-      if(this.validateLengthForAllWorkType()){
-      if(this.editableLineItem === null){
-        this.lineItemForm.value.lineItem.forEach(lineItem => {
-          if(lineItem.jobsite.project){
-            lineItem.jobsite.project.attachment = [];
-          }
-          this.lineItemService.addNewLineItem(lineItem,
-            this.translator.instant('lineItem.added.successfully')).subscribe(
-              data => {
-                if (data.statusCode === '200' && data.message === 'OK') {
-                  this.notificationService.success(this.translator.instant('lineItem.added.successfully'), '');
-                  this.submitted =false;
-                  this.jobsiteService.updateCostOfJobsite(lineItem.jobsite.id).subscribe(
-                  data => {
-                  });
-                  setTimeout(()=>{
-                    this.localStorageService.removeItem('addLineItemScreen');
-                      this.localStorageService.setItem('jobsiteScreen','jobsiteListing',false);
+    else {
+      if (this.validateLengthForAllWorkType()) {
+        if (this.editableLineItem === null) {
+          this.lineItemForm.value.lineItem.forEach(lineItem => {
+            if (lineItem.jobsite.project) {
+              lineItem.jobsite.project.attachment = [];
+            }
+            this.lineItemService.addNewLineItem(lineItem,
+              this.translator.instant('lineItem.added.successfully')).subscribe(
+                data => {
+                  if (data.statusCode === '200' && data.message === 'OK') {
+                    this.notificationService.success(this.translator.instant('lineItem.added.successfully'), '');
+                    this.submitted = false;
+                    this.jobsiteService.updateCostOfJobsite(lineItem.jobsite.id).subscribe(
+                      data => {
+                      });
+                    setTimeout(() => {
+                      this.localStorageService.removeItem('addLineItemScreen');
+                      this.localStorageService.setItem('jobsiteScreen', 'jobsiteListing', false);
                       this.postProjectService.jobsiteScreenChange.next('jobsiteListing');
-                  },1000);
+                    }, 1000);
+                  }
+                  else {
+                    this.notificationService.error(data.message, '');
+                  }
+                },
+                error => {
+                  this.notificationService.error(this.translator.instant('common.error'), '');
                 }
-                else{
-                  this.notificationService.error(data.message, '');
+              );
+          });
+        }
+        else {
+          this.lineItemForm.value.lineItem.forEach(lineItem => {
+            if (lineItem.jobsite.project) {
+              lineItem.jobsite.project.attachment = [];
+            }
+            this.lineItemService.updateItem(lineItem,
+              this.translator.instant('lineItem.updated.successfully')).subscribe(
+                data => {
+                  if (data.statusCode === '200' && data.message === 'OK') {
+                    this.notificationService.success(this.translator.instant('lineItem.updated.successfully'), '');
+                    this.submitted = false;
+                    setTimeout(() => {
+                      this.localStorageService.removeItem('addLineItemScreen');
+                      this.localStorageService.setItem('jobsiteScreen', 'jobsiteListing', false);
+                      this.postProjectService.jobsiteScreenChange.next('jobsiteListing');
+                      this.localStorageService.removeItem('lineItem');
+                      this.lineItemService.lineItemIdTransfer.next(null);
+                    }, 1000);
+                  }
+                  else {
+                    this.notificationService.error(data.message, '');
+                  }
+                },
+                error => {
+                  this.notificationService.error(this.translator.instant('common.error'), '');
                 }
-              },
-              error => {
-                this.notificationService.error(this.translator.instant('common.error'), '');
-              }
-            );
-        });
+              );
+          });
+        }
       }
-      else{
-        this.lineItemForm.value.lineItem.forEach(lineItem => {
-          if(lineItem.jobsite.project){
-            lineItem.jobsite.project.attachment = [];
-          }
-          this.lineItemService.updateItem(lineItem,
-            this.translator.instant('lineItem.updated.successfully')).subscribe(
-              data => {
-                if (data.statusCode === '200' && data.message === 'OK') {
-                  this.notificationService.success(this.translator.instant('lineItem.updated.successfully'), '');
-                  this.submitted =false;
-                  setTimeout(()=>{
-                  this.localStorageService.removeItem('addLineItemScreen');
-                  this.localStorageService.setItem('jobsiteScreen','jobsiteListing',false);
-                  this.postProjectService.jobsiteScreenChange.next('jobsiteListing');
-                  this.localStorageService.removeItem('lineItem');
-                  this.lineItemService.lineItemIdTransfer.next(null);
-                },1000);
-                }
-                else{
-                  this.notificationService.error(data.message, '');
-                }
-              },
-              error => {
-                this.notificationService.error(this.translator.instant('common.error'), '');
-              }
-            );
-        });
-      }
-    }
     }
   }
 
 
-  private resetSingleWorkType(index:number){
+  private resetSingleWorkType(index: number) {
     (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemId').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemId').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemId').markAsPristine();
 
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemName').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('cost').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('quantity').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('unit').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('inclusions').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('exclusions').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('description').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel1').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel2').markAsUntouched();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel3').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemName').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('cost').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('quantity').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('unit').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('inclusions').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('exclusions').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('description').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel1').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel2').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel3').markAsUntouched();
 
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemName').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('cost').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('quantity').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('unit').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('inclusions').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('exclusions').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('description').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel1').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel2').markAsPristine();
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel3').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('lineItemName').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('cost').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('quantity').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('unit').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('inclusions').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('exclusions').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('description').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel1').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel2').markAsPristine();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('dynamicLabel3').markAsPristine();
 
-   (<FormArray>this.lineItemForm.get('lineItem')).controls[index].patchValue({
-      'lineItemId':'',
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('costByContractor').markAsUntouched();
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].get('costByContractor').markAsPristine();
+
+    (<FormArray>this.lineItemForm.get('lineItem')).controls[index].patchValue({
+      'lineItemId': '',
       'description': '',
       'dynamicLabel1': '',
       'dynamicLabel2': '',
@@ -420,10 +446,11 @@ export class AddLineItemComponent implements OnInit {
       'exclusions': '',
       'inclusions': '',
       'lineItemName': '',
+      'costByContractor': false,
       'cost': null,
       'quantity': null,
       'unit': ''
-    }); 
+    });
   }
 
   prepareQueryParam(paramObject) {
@@ -449,13 +476,13 @@ export class AddLineItemComponent implements OnInit {
   }
 
   loadUomList() {
-    let datatableParam : DataTableParam= {
+    let datatableParam: DataTableParam = {
       offset: 0,
       size: 1000000,
       sortField: '',
       sortOrder: 1,
       searchText: '{"IS_ENABLE" : true}'
-  }
+    }
     this.queryParam = this.prepareQueryParam(datatableParam);
     this._uomService.getUOMList(this.queryParam).subscribe(
       data => {
@@ -472,10 +499,10 @@ export class AddLineItemComponent implements OnInit {
     );
   }
 
-  onCancel(){
+  onCancel() {
     this.isCancel = true;
     this.localStorageService.removeItem('addLineItemScreen');
-    if(this.localStorageService.getItem('lineItem')){
+    if (this.localStorageService.getItem('lineItem')) {
       this.localStorageService.removeItem('lineItem');
       this.lineItemService.lineItemIdTransfer.next(null);
     }
@@ -483,7 +510,7 @@ export class AddLineItemComponent implements OnInit {
 
   }
 
-  setFilterToGetByClient(){
+  setFilterToGetByClient() {
     this.filterMap.clear();
     this.filterMap.set('USER_ID', this.loggedInUserId);
     const jsonObject = {};
@@ -516,62 +543,62 @@ export class AddLineItemComponent implements OnInit {
   }
 
 
-  validateLengthForAllWorkType(){
+  validateLengthForAllWorkType() {
     let count = 0;
     this.lineItemForm.value.lineItem.forEach(element => {
-      if(this.validateLengthForSingleWorkType(element.description,element.inclusions,element.exclusions)){
+      if (this.validateLengthForSingleWorkType(element.description, element.inclusions, element.exclusions)) {
         count++;
       }
     });
 
-    if(this.lineItemForm.value.lineItem.length === count){
+    if (this.lineItemForm.value.lineItem.length === count) {
       return true;
     }
-    else{
+    else {
       false;
     }
   }
 
-  validateLengthForSingleWorkType(description,inclusion,exclusion){
-    if(this.returnLengthOfDescription(description) > 10000){
+  validateLengthForSingleWorkType(description, inclusion, exclusion) {
+    if (this.returnLengthOfDescription(description) > 10000) {
       return false;
     }
-    else if(this.returnLengthOfInclusion(inclusion) > 10000){
+    else if (this.returnLengthOfInclusion(inclusion) > 10000) {
       return false;
     }
-    else if(this.returnLengthOfExclusion(exclusion) > 10000){
+    else if (this.returnLengthOfExclusion(exclusion) > 10000) {
       return false;
     }
 
     return true;
   }
 
-  returnLengthOfDescription(description){
-    if(description){
+  returnLengthOfDescription(description) {
+    if (description) {
       var plainText = description.replace(/<[^>]*>/g, '');
       return plainText.length;
     }
-    else{
+    else {
       return 0;
     }
   }
 
-  returnLengthOfInclusion(inclusion){
-    if(inclusion){
+  returnLengthOfInclusion(inclusion) {
+    if (inclusion) {
       var plainText = inclusion.replace(/<[^>]*>/g, '');
       return plainText.length;
     }
-    else{
+    else {
       return 0;
     }
   }
 
-  returnLengthOfExclusion(exclusion){
-    if(exclusion){
+  returnLengthOfExclusion(exclusion) {
+    if (exclusion) {
       var plainText = exclusion.replace(/<[^>]*>/g, '');
       return plainText.length;
     }
-    else{
+    else {
       return 0;
     }
   }

@@ -1,283 +1,565 @@
 <div class="container-fluid" *ngIf="selectedJobsite || editableLineItem">
-    <div class="row" *ngIf="editableLineItem === null">
-        <div class="col-md-12">
-            <div class="float-left">
-                <h5><b>{{'add.line.item' |translate}}({{selectedJobsite.title}})</b></h5>
-                <p>Select from predefined bid templates or make your own manually.</p>
-            </div>
-        </div>
+  <div class="row" *ngIf="editableLineItem === null">
+    <div class="col-md-12">
+      <div class="float-left">
+        <h5>
+          <b>{{ "add.line.item" | translate }}({{ selectedJobsite.title }})</b>
+        </h5>
+        <p>Select from predefined bid templates or make your own manually.</p>
+      </div>
     </div>
-    <div class="row" *ngIf="editableLineItem !== null">
-        <div class="col-md-12">
-            <div class="float-left">
-                <h5><b>Edit Line Item({{editableLineItem.jobsite.title}})</b></h5>
-            </div>
-        </div>
+  </div>
+  <div class="row" *ngIf="editableLineItem !== null">
+    <div class="col-md-12">
+      <div class="float-left">
+        <h5>
+          <b>Edit Line Item({{ editableLineItem.jobsite.title }})</b>
+        </h5>
+      </div>
     </div>
-    <p-carousel [value]="products" *ngIf="editableLineItem === null" [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
-        <ng-template pTemplate="header">
-            <h5>{{'select.template' |translate}}</h5>
-        </ng-template>
-        <ng-template let-product pTemplate="item" let-rowIndex="item">
-            <div class="product-item" (click)="onSelectTemplate(product)" style="cursor: pointer;min-height:154px;">
-                <div class="product-item-content" [ngStyle]="{'border-color': product.id === selectedTemplate.id ? 'blue' : 'green' }" style="min-height:154px;">
-                    <div class="p-mb-3">
-                    </div>
-                    <div>
-                        <h4 class="p-mb-1">{{product.lineItemName}}</h4>
-                        <div [innerHtml]="product.description"></div>
-                    </div>
-                </div>
+  </div>
+  <p-carousel
+    [value]="products"
+    *ngIf="editableLineItem === null"
+    [numVisible]="3"
+    [numScroll]="3"
+    [circular]="false"
+    [responsiveOptions]="responsiveOptions"
+  >
+    <ng-template pTemplate="header">
+      <h5>{{ "select.template" | translate }}</h5>
+    </ng-template>
+    <ng-template let-product pTemplate="item" let-rowIndex="item">
+      <div
+        class="product-item"
+        (click)="onSelectTemplate(product)"
+        style="cursor: pointer; min-height: 154px"
+      >
+        <div
+          class="product-item-content"
+          [ngStyle]="{
+            'border-color':
+              product.id === selectedTemplate.id ? 'blue' : 'green'
+          }"
+          style="min-height: 154px"
+        >
+          <div class="p-mb-3"></div>
+          <div>
+            <h4 class="p-mb-1">{{ product.lineItemName }}</h4>
+            <div [innerHtml]="product.description"></div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-carousel>
+  <form [formGroup]="lineItemForm">
+    <div formArrayName="lineItem">
+      <div
+        *ngFor="
+          let lineItemGroup of lineItemForm.get('lineItem')['controls'];
+          let i = index
+        "
+        [formGroupName]="i"
+      >
+        <div
+          class="card"
+          style="cursor: pointer"
+          [ngStyle]="{
+            'border-color': i === selectedFormIndex ? 'blue' : 'green'
+          }"
+          (click)="onSelectForm(i)"
+        >
+          <div>
+            <div class="float-left">
+              <h4
+                style="float: left; margin-right: 5px"
+                *ngIf="!isEditWorkType[i].edit"
+              >
+                {{ lineItemGroup.get("workType").value }}
+              </h4>
+              <input
+                type="text"
+                formControlName="workType"
+                *ngIf="isEditWorkType[i].edit"
+                pInputText
+                maxlength="20"
+                class="form-control"
+                [pKeyFilter]="blockSpecial"
+              />
+              <a (click)="onEditWorkType(i)" *ngIf="!isEditWorkType[i].edit">
+                <i class="fa fa-pencil"></i>
+              </a>
+              <a
+                (click)="
+                  onWorkTypeChange(lineItemGroup.get('workType').value, i)
+                "
+                *ngIf="isEditWorkType[i].edit"
+              >
+                <i class="fa fa-check"></i>
+              </a>
             </div>
-        </ng-template>
-    </p-carousel>
-    <form [formGroup]="lineItemForm">
-        <div formArrayName="lineItem">
-            <div *ngFor="let lineItemGroup of lineItemForm.get('lineItem')['controls'];let i=index" [formGroupName]="i">
-                <div class="card" style="cursor: pointer;" [ngStyle]="{'border-color': i === selectedFormIndex ? 'blue' : 'green' }" (click)="onSelectForm(i)">
-                    <div>
-                        <div class="float-left">
-                            <h4 style="float: left;margin-right: 5px;" *ngIf="!isEditWorkType[i].edit">{{lineItemGroup.get('workType').value}}</h4>
-                            <input type="text" formControlName="workType" *ngIf="isEditWorkType[i].edit" pInputText maxlength="20" class="form-control" [pKeyFilter]="blockSpecial">
-                            <a (click)="onEditWorkType(i)" *ngIf="!isEditWorkType[i].edit">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                            <a (click)="onWorkTypeChange(lineItemGroup.get('workType').value,i)" *ngIf="isEditWorkType[i].edit">
-                                <i class="fa fa-check"></i>
-                            </a>
-                        </div>
-                        <div class="float-right" *ngIf="editableLineItem === null">
-                            <p-button styleClass="p-button-link" (click)="addWorkType()" icon="pi pi-plus"></p-button>
-                            <p-button styleClass="p-button-link" icon="pi pi-times" (click)="removeWorkType(i)"></p-button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-lg">
-                            <label for="id">{{'line.item.id' |translate}}*</label>
-                            <input type="text" formControlName="lineItemId" pInputText maxlength="20" placeholder="{{'line.item.id.placeholder' |translate}}" class="form-control" id="id" [pKeyFilter]="blockSomeSpecial">
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemId').touched && 
-                    (lineItemGroup.get('lineItemId').hasError('required') &&
+            <div class="float-right" *ngIf="editableLineItem === null">
+              <p-button
+                styleClass="p-button-link"
+                (click)="addWorkType()"
+                icon="pi pi-plus"
+              ></p-button>
+              <p-button
+                styleClass="p-button-link"
+                icon="pi pi-times"
+                (click)="removeWorkType(i)"
+              ></p-button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-lg">
+              <label for="id">{{ "line.item.id" | translate }}*</label>
+              <input
+                type="text"
+                formControlName="lineItemId"
+                pInputText
+                maxlength="20"
+                placeholder="{{ 'line.item.id.placeholder' | translate }}"
+                class="form-control"
+                id="id"
+                [pKeyFilter]="blockSomeSpecial"
+              />
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('lineItemId').touched &&
+                    lineItemGroup.get('lineItemId').hasError('required') &&
+                    !lineItemGroup.get('lineItemId').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('lineItemId').hasError('required') &&
                     !lineItemGroup.get('lineItemId').valid)
-                    || (submitted &&
-                    (lineItemGroup.get('lineItemId').hasError('required') && 
-                    !lineItemGroup.get('lineItemId').valid))">
-                                {{'required' | translate}}
-                            </div>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemId').touched && 
-                    (lineItemGroup.get('lineItemId').hasError('maxlength') && 
-                    !lineItemGroup.get('lineItemId').valid)">
-                                {{'lineItemId.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-lg">
-                            <label for="name">{{'line.item.name' |translate}}*</label>
-                            <input type="text" formControlName="lineItemName" pInputText maxlength="100" placeholder="{{'line.item.name.placeholder' |translate}}" class="form-control" id="name" [pKeyFilter]="blockSomeSpecial">
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemName').touched && 
-                    (lineItemGroup.get('lineItemName').hasError('required') &&
-                    !lineItemGroup.get('lineItemName').valid)
-                    || (submitted &&
-                    (lineItemGroup.get('lineItemName').hasError('required') && 
-                    !lineItemGroup.get('lineItemName').valid))">
-                                {{'required' | translate}}
-                            </div>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('lineItemName').touched && 
-                    (lineItemGroup.get('lineItemName').hasError('maxlength') && 
-                    !lineItemGroup.get('lineItemName').valid)">
-                                {{'lineItemName.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-lg">
-                            <label for="quantity">{{'quantity' |translate}}*</label>
-                            <p-inputNumber mode="decimal" formControlName="quantity" placeholder="{{'quantity.placeholder' |translate}}" id="quantity" maxlength="8" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" inputId="withoutgrouping" [useGrouping]="false">
-                            </p-inputNumber>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('quantity').touched && 
-                    (lineItemGroup.get('quantity').hasError('required') &&
-                    !lineItemGroup.get('quantity').valid)
-                    || (submitted &&
-                    (lineItemGroup.get('quantity').hasError('required') && 
-                    !lineItemGroup.get('quantity').valid))">
-                                {{'required' | translate}}
-                            </div>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('quantity').touched && 
-                    (lineItemGroup.get('quantity').hasError('min') 
-                    && !lineItemGroup.get('quantity').valid)">
-                                {{'quantity.minValue' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-lg">
-                            <label for="unit">{{'unit' |translate}}*</label>
-                            <p-autoComplete formControlName="unit" [suggestions]="filteredUom" forceSelection="true" (completeMethod)="filterUom($event)" field="name" [dropdown]="true" placeholder="{{'unit.placeholder' |translate}}" [style]="{'width':'100%','height':'35px'}" [inputStyle]="{'width':'100%'}">
-                                <ng-template let-unit pTemplate="item">
-                                    <div>
-                                        <div>{{unit.name}}</div>
-                                    </div>
-                                </ng-template>
-                            </p-autoComplete>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('unit').touched && 
-                    (lineItemGroup.get('unit').hasError('required') &&
-                    !lineItemGroup.get('unit').valid)
-                    || (submitted &&
-                    (lineItemGroup.get('unit').hasError('required') && 
-                    !lineItemGroup.get('unit').valid))">
-                                {{'required' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-lg">
-                            <label for="cost">{{'cost' |translate}}*</label>
-                            <p-inputNumber mode="currency" currency="USD" formControlName="cost" placeholder="{{'cost.placeholder' |translate}}" maxlength="17" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" locale="en-US"></p-inputNumber>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('cost').touched && 
-                    (lineItemGroup.get('cost').hasError('required') &&
-                    !lineItemGroup.get('cost').valid)
-                    || (submitted &&
-                    (lineItemGroup.get('cost').hasError('required') && 
-                    !lineItemGroup.get('cost').valid))">
-                                {{'required' | translate}}
-                            </div>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('cost').touched && 
-                    (lineItemGroup.get('cost').hasError('min') 
-                    && !lineItemGroup.get('cost').valid)">
-                                {{'cost.minValue' | translate}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-xl-4">
-                            <label for="description">{{'line.item.description' |translate}}*</label>
-                            <p-editor formControlName="description" [style]="{'height':'150px'}">
-                                <p-header>
-                                    <ng-template [ngTemplateOutlet]="MsgRef">
-                                    </ng-template>
-                                </p-header>
-                            </p-editor>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('description').touched && 
-                        (lineItemGroup.get('description').hasError('required') &&
-                        !lineItemGroup.get('description').valid)
-                        || (submitted &&
-                        (lineItemGroup.get('description').hasError('required') && 
-                        !lineItemGroup.get('description').valid))">
-                                {{'required' | translate}}
-                            </div>
-                            <div class="p-invalid" *ngIf="(returnLengthOfDescription(lineItemGroup.get('description').value) > 10000)">
-                                {{'lineItem.description.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-xl-4">
-                            <label for="inclusion">{{'inclusion' |translate}}</label>
-                            <p-editor formControlName="inclusions" [style]="{'height':'150px'}">
-                                <p-header>
-                                    <ng-template [ngTemplateOutlet]="MsgRef">
-                                    </ng-template>
-                                </p-header>
-                            </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfInclusion(lineItemGroup.get('inclusions').value) > 10000)">
-                                {{'inclusion.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-xl-4">
-                            <label for="exclusion">{{'exclusion' |translate}}</label>
-                            <p-editor formControlName="exclusions" [style]="{'height':'150px'}">
-                                <p-header>
-                                    <ng-template [ngTemplateOutlet]="MsgRef">
-                                    </ng-template>
-                                </p-header>
-                            </p-editor>
-                            <div class="p-invalid" *ngIf="(returnLengthOfExclusion(lineItemGroup.get('exclusions').value) > 10000)">
-                                {{'exclusion.maxLength' | translate}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="label1">{{'dynamic.label1' |translate}}</label>
-                            <textarea id="label1" rows="4" maxlength="200" formControlName="dynamicLabel1" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('dynamicLabel1').touched && 
-                        (lineItemGroup.get('dynamicLabel1').hasError('maxlength') && 
-                        !lineItemGroup.get('dynamicLabel1').valid)">
-                                {{'lineItem.label1.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="label2">{{'dynamic.label2' |translate}}</label>
-                            <textarea id="label2" rows="4" maxlength="200" formControlName="dynamicLabel2" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('dynamicLabel2').touched && 
-                        (lineItemGroup.get('dynamicLabel2').hasError('maxlength') && 
-                        !lineItemGroup.get('dynamicLabel2').valid)">
-                                {{'lineItem.label2.maxLength' | translate}}
-                            </div>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="label3">{{'dynamic.label3' |translate}}</label>
-                            <textarea id="label3" rows="4" maxlength="200" formControlName="dynamicLabel3" placeholder="{{'dynamic.label.placeholder' |translate}}" class="form-control"></textarea>
-                            <div class="p-invalid" *ngIf="lineItemGroup.get('dynamicLabel3').touched && 
-                        (lineItemGroup.get('dynamicLabel3').hasError('maxlength') && 
-                        !lineItemGroup.get('dynamicLabel3').valid)">
-                                {{'lineItem.label3.maxLength' | translate}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="float-right" *ngIf="editableLineItem === null">
-                        <button class="btn btn-primary float-right" type="button" (click)="onSubmitSingleWorkType(lineItemGroup,i)">
-                    {{'save.and.add.line.item' |translate}}
-                </button>
-                    </div>
-                </div>
-                <br>
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('lineItemId').touched &&
+                  lineItemGroup.get('lineItemId').hasError('maxlength') &&
+                  !lineItemGroup.get('lineItemId').valid
+                "
+              >
+                {{ "lineItemId.maxLength" | translate }}
+              </div>
             </div>
+            <div class="form-group col-lg">
+              <label for="name">{{ "line.item.name" | translate }}*</label>
+              <input
+                type="text"
+                formControlName="lineItemName"
+                pInputText
+                maxlength="100"
+                placeholder="{{ 'line.item.name.placeholder' | translate }}"
+                class="form-control"
+                id="name"
+                [pKeyFilter]="blockSomeSpecial"
+              />
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('lineItemName').touched &&
+                    lineItemGroup.get('lineItemName').hasError('required') &&
+                    !lineItemGroup.get('lineItemName').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('lineItemName').hasError('required') &&
+                    !lineItemGroup.get('lineItemName').valid)
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('lineItemName').touched &&
+                  lineItemGroup.get('lineItemName').hasError('maxlength') &&
+                  !lineItemGroup.get('lineItemName').valid
+                "
+              >
+                {{ "lineItemName.maxLength" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-lg">
+              <label for="quantity">{{ "quantity" | translate }}*</label>
+              <p-inputNumber
+                mode="decimal"
+                formControlName="quantity"
+                placeholder="{{ 'quantity.placeholder' | translate }}"
+                id="quantity"
+                maxlength="8"
+                [style]="{ width: '100%' }"
+                [inputStyle]="{ width: '100%' }"
+                inputId="withoutgrouping"
+                [useGrouping]="false"
+              >
+              </p-inputNumber>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('quantity').touched &&
+                    lineItemGroup.get('quantity').hasError('required') &&
+                    !lineItemGroup.get('quantity').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('quantity').hasError('required') &&
+                    !lineItemGroup.get('quantity').valid)
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('quantity').touched &&
+                  lineItemGroup.get('quantity').hasError('min') &&
+                  !lineItemGroup.get('quantity').valid
+                "
+              >
+                {{ "quantity.minValue" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-lg">
+              <label for="unit">{{ "unit" | translate }}*</label>
+              <p-autoComplete
+                formControlName="unit"
+                [suggestions]="filteredUom"
+                forceSelection="true"
+                (completeMethod)="filterUom($event)"
+                field="name"
+                [dropdown]="true"
+                placeholder="{{ 'unit.placeholder' | translate }}"
+                [style]="{ width: '100%', height: '35px' }"
+                [inputStyle]="{ width: '100%' }"
+              >
+                <ng-template let-unit pTemplate="item">
+                  <div>
+                    <div>{{ unit.name }}</div>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('unit').touched &&
+                    lineItemGroup.get('unit').hasError('required') &&
+                    !lineItemGroup.get('unit').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('unit').hasError('required') &&
+                    !lineItemGroup.get('unit').valid)
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+              <label for="costByContractor" class="check-lable">{{
+                "Cost By Contractor" | translate
+              }}</label>
+              <div class="p-field-checkbox">
+                <p-checkbox
+                  binary="true"
+                  inputId="binary"
+                  formControlName="costByContractor"
+                  (onChange)="isCheckCostByContractor($event, i)"
+                ></p-checkbox>
+                <p for="costByContractor">
+                  {{
+                    lineItemGroup.get("costByContractor").value === false
+                      ? "Unchecked"
+                      : "Checked"
+                  }}
+                </p>
+              </div>
+            </div>
+            <div class="form-group col-md-3">
+              <label for="cost">{{ "cost" | translate }}*</label>
+              <p-inputNumber
+                mode="currency"
+                currency="USD"
+                formControlName="cost"
+                placeholder="{{ 'cost.placeholder' | translate }}"
+                maxlength="17"
+                [style]="{ width: '100%' }"
+                [inputStyle]="{ width: '100%' }"
+                locale="en-US"
+                [disabled]="
+                  lineItemGroup.get('costByContractor').value === false
+                    ? false
+                    : true
+                "
+                (keyup)="changeCost($event, i)"
+              ></p-inputNumber>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('cost').touched &&
+                    lineItemGroup.get('cost').hasError('required') &&
+                    !lineItemGroup.get('cost').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('cost').hasError('required') &&
+                    !lineItemGroup.get('cost').valid)
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('cost').touched &&
+                  lineItemGroup.get('cost').hasError('min') &&
+                  !lineItemGroup.get('cost').valid
+                "
+              >
+                {{ "cost.minValue" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('cost').touched &&
+                  !lineItemGroup.get('cost').hasError('min') &&
+                  lineItemGroup.get('cost').hasError('incorrect') &&
+                  !lineItemGroup.get('cost').valid
+                "
+              >
+                {{ "cost.incorrect" | translate }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-xl-4">
+              <label for="description"
+                >{{ "line.item.description" | translate }}*</label
+              >
+              <p-editor
+                formControlName="description"
+                [style]="{ height: '150px' }"
+              >
+                <p-header>
+                  <ng-template [ngTemplateOutlet]="MsgRef"> </ng-template>
+                </p-header>
+              </p-editor>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  (lineItemGroup.get('description').touched &&
+                    lineItemGroup.get('description').hasError('required') &&
+                    !lineItemGroup.get('description').valid) ||
+                  (submitted &&
+                    lineItemGroup.get('description').hasError('required') &&
+                    !lineItemGroup.get('description').valid)
+                "
+              >
+                {{ "required" | translate }}
+              </div>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  returnLengthOfDescription(
+                    lineItemGroup.get('description').value
+                  ) > 10000
+                "
+              >
+                {{ "lineItem.description.maxLength" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-xl-4">
+              <label for="inclusion">{{ "inclusion" | translate }}</label>
+              <p-editor
+                formControlName="inclusions"
+                [style]="{ height: '150px' }"
+              >
+                <p-header>
+                  <ng-template [ngTemplateOutlet]="MsgRef"> </ng-template>
+                </p-header>
+              </p-editor>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  returnLengthOfInclusion(
+                    lineItemGroup.get('inclusions').value
+                  ) > 10000
+                "
+              >
+                {{ "inclusion.maxLength" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-xl-4">
+              <label for="exclusion">{{ "exclusion" | translate }}</label>
+              <p-editor
+                formControlName="exclusions"
+                [style]="{ height: '150px' }"
+              >
+                <p-header>
+                  <ng-template [ngTemplateOutlet]="MsgRef"> </ng-template>
+                </p-header>
+              </p-editor>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  returnLengthOfExclusion(
+                    lineItemGroup.get('exclusions').value
+                  ) > 10000
+                "
+              >
+                {{ "exclusion.maxLength" | translate }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label for="label1">{{ "dynamic.label1" | translate }}</label>
+              <textarea
+                id="label1"
+                rows="4"
+                maxlength="200"
+                formControlName="dynamicLabel1"
+                placeholder="{{ 'dynamic.label.placeholder' | translate }}"
+                class="form-control"
+              ></textarea>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('dynamicLabel1').touched &&
+                  lineItemGroup.get('dynamicLabel1').hasError('maxlength') &&
+                  !lineItemGroup.get('dynamicLabel1').valid
+                "
+              >
+                {{ "lineItem.label1.maxLength" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="label2">{{ "dynamic.label2" | translate }}</label>
+              <textarea
+                id="label2"
+                rows="4"
+                maxlength="200"
+                formControlName="dynamicLabel2"
+                placeholder="{{ 'dynamic.label.placeholder' | translate }}"
+                class="form-control"
+              ></textarea>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('dynamicLabel2').touched &&
+                  lineItemGroup.get('dynamicLabel2').hasError('maxlength') &&
+                  !lineItemGroup.get('dynamicLabel2').valid
+                "
+              >
+                {{ "lineItem.label2.maxLength" | translate }}
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="label3">{{ "dynamic.label3" | translate }}</label>
+              <textarea
+                id="label3"
+                rows="4"
+                maxlength="200"
+                formControlName="dynamicLabel3"
+                placeholder="{{ 'dynamic.label.placeholder' | translate }}"
+                class="form-control"
+              ></textarea>
+              <div
+                class="p-invalid"
+                *ngIf="
+                  lineItemGroup.get('dynamicLabel3').touched &&
+                  lineItemGroup.get('dynamicLabel3').hasError('maxlength') &&
+                  !lineItemGroup.get('dynamicLabel3').valid
+                "
+              >
+                {{ "lineItem.label3.maxLength" | translate }}
+              </div>
+            </div>
+          </div>
+          <div class="float-right" *ngIf="editableLineItem === null">
+            <button
+              class="btn btn-primary float-right"
+              type="button"
+              (click)="onSubmitSingleWorkType(lineItemGroup, i)"
+            >
+              {{ "save.and.add.line.item" | translate }}
+            </button>
+          </div>
         </div>
-    </form>
-    <br>
-    <div style="text-align: right;">
-        <button type="button" class=" btn btn-outline-danger" (click)="onCancel()">
-                <i class="fa fa-times-circle"></i>
-                {{'cancel' | translate}}</button>
-        <button type="button" class="btn btn-primary " (click)="onSubmitAllWorkType()">
-                {{'save.and.next' | translate}}
-                <i class="pi pi-chevron-right"></i>
-        </button>
+        <br />
+      </div>
     </div>
+  </form>
+  <br />
+  <div style="text-align: right">
+    <button type="button" class="btn btn-outline-danger" (click)="onCancel()">
+      <i class="fa fa-times-circle"></i>
+      {{ "cancel" | translate }}
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="onSubmitAllWorkType()"
+    >
+      {{ "save.and.next" | translate }}
+      <i class="pi pi-chevron-right"></i>
+    </button>
+  </div>
 </div>
 
-
-
 <ng-template #MsgRef>
-    <span class="ql-formats">
-        <select class="ql-header" tabindex="-1">
-          <option value="1" >hxbchxb</option>
-          <option value="2" >Subheading</option>
-          <option selected >Normal</option>
-        </select>
-        <select class="ql-font" tabindex="-1">
-          <option selected>Sans Serif</option>
-          <option value="serif">Serif</option>
-          <option value="monospace">Monospace</option>
-        </select>
-      </span>
-    <span class="ql-formats">
-        <button class="ql-bold" aria-label="Bold" tabindex="-1"></button>
-        <button class="ql-italic" aria-label="Italic" tabindex="-1"></button>
-        <button class="ql-underline" aria-label="Underline" tabindex="-1"></button>
-      </span>
-    <span class="ql-formats">
-        <select class="ql-color" tabindex="-1"></select>
-        <select class="ql-background" tabindex="-1"></select>
-      </span>
-    <span class="ql-formats">
-        <button class="ql-list" value="ordered" aria-label="Ordered List" tabindex="-1"></button>
-        <button class="ql-list" value="bullet" aria-label="Unordered List" tabindex="-1"></button>
-        <select class="ql-align" tabindex="-1">
-          <option selected tabindex="-1"></option>
-          <option value="center" tabindex="-1"></option>
-          <option value="right" tabindex="-1"></option>
-          <option value="justify" tabindex="-1"></option>
-        </select>
-      </span>
-    <span class="ql-formats">
-        <button class="ql-link" aria-label="Insert Link" tabindex="-1"></button>
-        <button class="ql-code-block" aria-label="Insert Code Block" tabindex="-1"></button>
-      </span>
-    <span class="ql-formats">
-        <button class="ql-clean" aria-label="Remove Styles" tabindex="-1"></button>
-      </span>
+  <span class="ql-formats">
+    <select class="ql-header" tabindex="-1">
+      <option value="1">hxbchxb</option>
+      <option value="2">Subheading</option>
+      <option selected>Normal</option>
+    </select>
+    <select class="ql-font" tabindex="-1">
+      <option selected>Sans Serif</option>
+      <option value="serif">Serif</option>
+      <option value="monospace">Monospace</option>
+    </select>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-bold" aria-label="Bold" tabindex="-1"></button>
+    <button class="ql-italic" aria-label="Italic" tabindex="-1"></button>
+    <button class="ql-underline" aria-label="Underline" tabindex="-1"></button>
+  </span>
+  <span class="ql-formats">
+    <select class="ql-color" tabindex="-1"></select>
+    <select class="ql-background" tabindex="-1"></select>
+  </span>
+  <span class="ql-formats">
+    <button
+      class="ql-list"
+      value="ordered"
+      aria-label="Ordered List"
+      tabindex="-1"
+    ></button>
+    <button
+      class="ql-list"
+      value="bullet"
+      aria-label="Unordered List"
+      tabindex="-1"
+    ></button>
+    <select class="ql-align" tabindex="-1">
+      <option selected tabindex="-1"></option>
+      <option value="center" tabindex="-1"></option>
+      <option value="right" tabindex="-1"></option>
+      <option value="justify" tabindex="-1"></option>
+    </select>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-link" aria-label="Insert Link" tabindex="-1"></button>
+    <button
+      class="ql-code-block"
+      aria-label="Insert Code Block"
+      tabindex="-1"
+    ></button>
+  </span>
+  <span class="ql-formats">
+    <button class="ql-clean" aria-label="Remove Styles" tabindex="-1"></button>
+  </span>
 </ng-template>

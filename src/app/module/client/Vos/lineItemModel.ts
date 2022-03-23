@@ -17,6 +17,8 @@ export class LineItem extends BaseModel {
 
      jobsite: JobsiteDetail;
 
+     costByContractor: boolean;
+
      cost: number;
 
      description: string;
