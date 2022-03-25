@@ -32,31 +32,32 @@ export class AcceptJobComponent implements OnInit {
   jobDescription: any;
   readMoreDialog = false;
   constructor(private captionChangeService: HeaderManagementService,
-              private workerSideBarJobListService: WorkerSidebarJobListService,
-              private jobBidService: JobBidService,
-              private localStorageService: LocalStorageService,
-              private notificationService: UINotificationService,
-              private translator: TranslateService,
-              private confirmDialogService: ConfirmDialogueService,
-              private router: Router) { }
+    private workerSideBarJobListService: WorkerSidebarJobListService,
+    private jobBidService: JobBidService,
+    private localStorageService: LocalStorageService,
+    private notificationService: UINotificationService,
+    private translator: TranslateService,
+    private confirmDialogService: ConfirmDialogueService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.captionChangeService.hideHeaderSubject.next(true);
     this.loggedInUserId = this.localStorageService.getLoginUserId();
-    this.subscription.add(this.workerSideBarJobListService.workerSidebarJobChanged.subscribe( data => {
+    this.subscription.add(this.workerSideBarJobListService.workerSidebarJobChanged.subscribe(data => {
       this.showMore = false;
       let job = this.localStorageService.getItem('workerSelectedJob');
-      if(job){
+      if (job) {
         this.getJobBidDetailByJobAndWorker(job.id, this.loggedInUserId);
       }
-      else{
-        this.jobBidDetail =  null;
+      else {
+        this.jobBidDetail = null;
       }
     }));
   }
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.subscription.unsubscribe();
     this.localStorageService.removeItem('workerSelectedJob');
+    this.localStorageService.removeItem('workerSelectedJobFromNotification');
   }
   private prepareQueryParam(paramObject): URLSearchParams {
     const params = new URLSearchParams();
@@ -67,7 +68,7 @@ export class AcceptJobComponent implements OnInit {
     return params;
   }
 
-  getJobBidDetailByJobAndWorker(jobId, workerId): void{
+  getJobBidDetailByJobAndWorker(jobId, workerId): void {
     this.getJobBidDetailParams = {
       jobDetailId: jobId,
       workerId,
@@ -80,55 +81,55 @@ export class AcceptJobComponent implements OnInit {
       this.jobDescription = this.jobBidDetail.jobBidDetail.jobDetail.description.replace(/<[^>]*>/g, '');
       this.getJobBidScreeningQuestions(this.jobBidDetail);
       this.getJobBidCertificates(this.jobBidDetail);
-      if (this.jobBidDetail.jobBidDetail.status === 'ACCEPTED' || this.jobBidDetail.jobBidDetail.status === 'REJECTED'){
+      if (this.jobBidDetail.jobBidDetail.status === 'ACCEPTED' || this.jobBidDetail.jobBidDetail.status === 'REJECTED') {
         this.statusFlag = true;
       }
-      else{
+      else {
         this.statusFlag = false;
       }
     });
   }
-  getJobBidScreeningQuestions(jobBidDetail): void{
+  getJobBidScreeningQuestions(jobBidDetail): void {
     this.jobBidScreeningQuestionAndAnswers.length = 0;
     jobBidDetail.jobBidScreeningQuestion.forEach(element => {
       this.jobBidScreeningQuestionAndAnswers.push(element);
     });
   }
-  getJobBidCertificates(jobBidDetail): void{
+  getJobBidCertificates(jobBidDetail): void {
     this.jobBidCertificates.length = 0;
     this.jobCertificates.length = 0;
-    jobBidDetail.jobBidCertificates.forEach( element => {
+    jobBidDetail.jobBidCertificates.forEach(element => {
       this.jobBidCertificates.push(element.name);
     });
-    jobBidDetail.jobCertificates.forEach( element => {
+    jobBidDetail.jobCertificates.forEach(element => {
       this.jobCertificates.push(element.name);
     });
     this.jobCertificates = this.jobCertificates.filter(val => !this.jobBidCertificates.includes(val));
   }
-  acceptJob(jobId): void{
+  acceptJob(jobId): void {
     this.jobParams = {
       jobDetailId: jobId,
       workerId: this.loggedInUserId
     };
     this.queryParam = this.prepareQueryParam(this.jobParams);
     this.jobBidService.acceptJob(this.queryParam).subscribe(data => {
-      if (data.statusCode === '200' && data.message === 'OK'){
+      if (data.statusCode === '200' && data.message === 'OK') {
         this.notificationService.success(this.translator.instant('job.accepted'), '');
         this.localStorageService.removeItem('workerSelectedJob');
         this.workerSideBarJobListService.workerSidebarJobChanged.next(data.data.jobDetail);
-        
+
         this.workerSideBarJobListService.refreshSidebarAfterAcceptReject.next('');
       }
     });
   }
-  rejectJob(jobId): void{
+  rejectJob(jobId): void {
     this.jobParams = {
       jobDetailId: jobId,
       workerId: this.loggedInUserId
     };
     this.queryParam = this.prepareQueryParam(this.jobParams);
     this.jobBidService.rejectJob(this.queryParam).subscribe(data => {
-      if (data.statusCode === '200' && data.message === 'OK'){
+      if (data.statusCode === '200' && data.message === 'OK') {
         this.notificationService.success(this.translator.instant('job.rejected'), '');
         this.localStorageService.removeItem('workerSelectedJob');
         this.workerSideBarJobListService.workerSidebarJobChanged.next(data.data.jobDetail);
@@ -137,7 +138,7 @@ export class AcceptJobComponent implements OnInit {
       }
     });
   }
-  openAcceptDialog(jobId): void{
+  openAcceptDialog(jobId): void {
     let options = null;
     let message;
     message = this.translator.instant('are.you.sure.you.want.to.accept.the.job?');
@@ -149,19 +150,19 @@ export class AcceptJobComponent implements OnInit {
     };
     this.confirmDialogService.open(options);
     this.confirmDialogService.confirmed().subscribe(confirmed => {
-      if (confirmed){
+      if (confirmed) {
         this.acceptJob(jobId);
       }
-        else{
-          const currentUrl = this.router.url;
-          this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-            this.router.navigate([currentUrl]);
-          });
-        }
+      else {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
+      }
     });
 
   }
-  openRejectDialog(jobId): void{
+  openRejectDialog(jobId): void {
     let options = null;
     let message;
     message = this.translator.instant('are.you.sure.you.want.to.reject.the.job?');
@@ -173,15 +174,15 @@ export class AcceptJobComponent implements OnInit {
     };
     this.confirmDialogService.open(options);
     this.confirmDialogService.confirmed().subscribe(confirmed => {
-      if (confirmed){
+      if (confirmed) {
         this.rejectJob(jobId);
       }
-        else{
-          const currentUrl = this.router.url;
-          this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-            this.router.navigate([currentUrl]);
-          });
-        }
+      else {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
+      }
     });
 
   }
@@ -202,10 +203,10 @@ export class AcceptJobComponent implements OnInit {
       }
     });
   }
-  openDialogReadMore(description){
+  openDialogReadMore(description) {
     this.readMoreDialog = true;
   }
-  closeReadMoreDialog(){
+  closeReadMoreDialog() {
     this.readMoreDialog = false;
   }
 }
