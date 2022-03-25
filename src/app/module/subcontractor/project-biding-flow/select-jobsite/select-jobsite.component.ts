@@ -111,6 +111,8 @@ export class SelectJobsiteComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.localStorageService.removeItem('viewMoreProjectDetail');
+    // this.localStorageService.removeItem('selectedJobsite');
+    this.localStorageService.removeItem('selectedFullProjectDetail');
     this.subscription.unsubscribe();
   }
 

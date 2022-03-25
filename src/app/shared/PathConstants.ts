@@ -226,6 +226,8 @@ export const PATH_CONSTANTS = {
 
     REVENUE_REPORT: 'admin/revenue-report',
 
+    WORKER_TIMESHEET: 'worker/timesheet',
+
     TIMESHEET_DETAILS: 'worker/timesheet-detail',
 
     PAGE_NOT_FOUND: '404',

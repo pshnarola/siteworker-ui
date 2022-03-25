@@ -387,6 +387,8 @@ export class SubcontractorProjectSelectionComponent implements OnInit, OnDestroy
   }
 
   ngOnDestroy(): void {
+    // this.localStorageService.removeItem('selectedJobsite');
+    this.localStorageService.removeItem('selectedFullProjectDetail');
     this.subscription.unsubscribe();
   }
 

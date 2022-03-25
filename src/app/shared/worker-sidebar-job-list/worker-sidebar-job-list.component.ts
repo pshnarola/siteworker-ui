@@ -192,13 +192,11 @@ export class WorkerSidebarJobListComponent implements OnInit {
     const currentUrl = this.router.url;
     if (currentUrl === '/worker/accept-job') {
       this.workerSideBarJobListService.workerSidebarJobList.subscribe(e => {
-
         this.acceptedJobFlag = true;
         this.prepareDefaultCriteriaSetTwo();
       });
     } else if (currentUrl === '/worker/apply-for-job') {
       this.workerSideBarJobListService.workerSidebarJobList.subscribe(e => {
-
         this.prepareDefaultCriteriaSetThree();
       });
     }
@@ -230,8 +228,16 @@ export class WorkerSidebarJobListComponent implements OnInit {
         if (this.jobData?.length) {
           if (currentUrl === '/worker/accept-job' && !this.localStorageService.getItem('workerSelectedJob')) {
             if (!this.localStorageService.getItem('workerSelectedJob')) {
-              this.selectedJobDetail = this.jobData[0];
-              this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+              if (this.localStorageService.getItem('workerSelectedJobFromNotification')) {
+                const job = this.localStorageService.getItem('workerSelectedJobFromNotification');
+                const index = this.jobData.findIndex(x => x.id === job.id);
+                this.selectedJobDetail = this.jobData[index];
+
+                this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+              } else {
+                this.selectedJobDetail = this.jobData[0];
+                this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+              }
             } else {
               const job = this.localStorageService.getItem('workerSelectedJob');
               const index = this.jobData.findIndex(x => x.id === job.id);
@@ -247,8 +253,16 @@ export class WorkerSidebarJobListComponent implements OnInit {
               // this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
             }
             else {
-              this.selectedJobDetail = this.jobData[0];
-              this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+
+              if (this.localStorageService.getItem('workerSelectedJobFromNotification')) {
+                const job = this.localStorageService.getItem('workerSelectedJobFromNotification');
+                const index = this.jobData.findIndex(x => x.id === job.id);
+                this.selectedJobDetail = this.jobData[index];
+                this.localStorageService.setItem('workerSelectedJob', this.localStorageService.getItem('workerSelectedJobFromNotification'));
+              } else {
+                this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+                this.selectedJobDetail = this.jobData[0];
+              }
               // this.selectedJobDetail = job.jobDetail as JobDetails;
             }
 
@@ -284,7 +298,13 @@ export class WorkerSidebarJobListComponent implements OnInit {
             }
           }
           else {
-            this.selectedJobDetail = this.localStorageService.getItem('workerSelectedJob');
+            if (this.localStorageService.getItem('workerSelectedJobFromNotification')) {
+              const job = this.localStorageService.getItem('workerSelectedJobFromNotification');
+              const index = this.jobData.findIndex(x => x.id === job.id);
+              this.selectedJobDetail = this.jobData[index];
+            } else {
+              this.selectedJobDetail = this.localStorageService.getItem('workerSelectedJob');
+            }
             // this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
           }
           if (this.allLabelUrls.includes(this.router.url)) {
@@ -299,7 +319,9 @@ export class WorkerSidebarJobListComponent implements OnInit {
               }
             }
           }
+
           this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+          // this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
           this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
           if (this.acceptedJobFlag) {
             this.selectedJobDetail = this.jobData[0];
@@ -308,9 +330,6 @@ export class WorkerSidebarJobListComponent implements OnInit {
         }
       }
     });
-
-
-
   }
 
   private prepareQueryParam(paramObject): URLSearchParams {
@@ -334,7 +353,7 @@ export class WorkerSidebarJobListComponent implements OnInit {
         this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
       }
     } else {
-      this.selectedJobDetail = event.value;
+      // this.selectedJobDetail = event.value;
       this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
       this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
     }
@@ -486,7 +505,6 @@ export class WorkerSidebarJobListComponent implements OnInit {
   setFilter(): void {
     this.filterMap.clear();
     // setDefaultCriteria based on Local Session Enum
-
     // this.filterMap.set('STATUS', 'POSTED');
     // this.filterMap.set('MARKET_TYPE', 'OPEN_MARKET_REQUEST');
     // this.filterMap.set('WITHOUT_CANCELLED', 'CANCELLED');
@@ -545,10 +563,8 @@ export class WorkerSidebarJobListComponent implements OnInit {
       });
     }
     if (this.jobFilterFormGroup.value.postedBy.length !== 0) {
-
       this.jobFilterFormGroup.value.postedBy.forEach(element => {
         this.postedByList.push(element.id);
-
       });
       this.filterMap.set('USER_ID', this.postedByList.toString());
     }
@@ -598,7 +614,6 @@ export class WorkerSidebarJobListComponent implements OnInit {
     this.queryParam = this.prepareQueryParam(this.datatableParam);
 
     this.jobDetailService.getJobDetailList(this.queryParam).subscribe(data => {
-
       this.jobData = data.data.result;
       if (this.allLabelUrls.includes(this.router.url)) {
         if (!this.jobData.some((item) => item.id === this.defaultJob.id) && this.jobData.length) {

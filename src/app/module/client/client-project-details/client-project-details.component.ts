@@ -281,7 +281,7 @@ export class ClientProjectDetailsComponent implements OnInit {
 
   setJobsiteDetail(projectDetail) {
     const jobsites: any[] = projectDetail.jobsite;
-    const jobsitesBidDetails: any[] = projectDetail.lstJobsiteBidDetail;
+    const jobsitesBidDetails: any[] = projectDetail.lstJobsiteBidDetail ? projectDetail.lstJobsiteBidDetail : [];
 
     jobsitesBidDetails.forEach(
       jbd => {

@@ -149,6 +149,7 @@ export class ApplyJobComponent implements OnInit {
     this.captionChangeService.hideHeaderSubject.next(false);
     this.localStorageService.removeItem('jobData');
     this.localStorageService.removeItem('workerSelectedJob');
+    this.localStorageService.removeItem('workerSelectedJobFromNotification');
     this.subscription.unsubscribe();
   }
   onFormValueChange(): void {

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Paginator } from 'primeng/paginator';
 import { interval, Subscription } from 'rxjs';
 import { BellNotificationService } from 'src/app/service/bell-notification.service';
@@ -7,6 +8,7 @@ import { HeaderManagementService } from 'src/app/service/header-management.servi
 import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { COMMON_CONSTANTS } from 'src/app/shared/CommonConstants';
 import { UINotificationService } from 'src/app/shared/notification/uinotification.service';
+import { PATH_CONSTANTS } from 'src/app/shared/PathConstants';
 import { BellNotification } from 'src/app/shared/vo/bellNotification';
 import { DataTableParam } from 'src/app/shared/vo/DataTableParam';
 import { User } from 'src/app/shared/vo/User';
@@ -62,7 +64,7 @@ export class BellNotificationComponent implements OnInit, OnDestroy {
     private notificationService: UINotificationService,
     private captionChangeService: HeaderManagementService,
     private projectJobSelectionService: ProjectJobSelectionService,
-    private workerSidebarService: WorkerSidebarJobListService) {
+    private workerSidebarService: WorkerSidebarJobListService, private router: Router) {
     this.captionChangeService.hideHeaderSubject.next(true);
     this.user = this.localStorageService.getLoginUserObject();
     this.loggedInUserId = this.user.id;
@@ -372,5 +374,84 @@ export class BellNotificationComponent implements OnInit, OnDestroy {
         this.notificationService.error(notification.message, '');
       }
     });
+  }
+
+  redirectTo(data) {
+    if (this.user.roles[0].roleName === 'CLIENT') {
+      if (data.type === "PROJECT") {
+        this.localStorageService.setItem('Post_Type', 'PROJECT');
+        if (data.name === "Project Accepted" || data.name === "Jobsite Accepted") {
+          this.localStorageService.setItem("selectedProject", data.project);
+          this.router.navigate([PATH_CONSTANTS.CLIENT_PROJECT_DETAILS]);
+        } else if (data.name === "Apply For Project" || data.name === "Apply For Jobsite") {
+          this.localStorageService.setItem('selectedProject', data.project);
+          this.router.navigate([PATH_CONSTANTS.BID_COMPARISION]);
+        }
+      } else if (data.type === "JOB") {
+        this.localStorageService.setItem('Post_Type', 'JOB');
+        if (data.name === "Job Accepted") {
+          this.localStorageService.setItem('selectedJob', data.job);
+          this.router.navigate([PATH_CONSTANTS.VIEW_JOB_DETAILS]);
+        } else if (data.name === "Apply For Job") {
+          this.localStorageService.setItem('selectedJob', data.job);
+          this.router.navigate([PATH_CONSTANTS.CLIENT_WORKER_COMPARISON]);
+        }
+      } else if (data.type === "INVOICE") {
+        if (data.job !== null) {
+          this.localStorageService.setItem('Post_Type', 'JOB');
+          this.router.navigate([PATH_CONSTANTS.JOB_INVOICES]);
+        } else {
+          this.localStorageService.setItem('Post_Type', 'PROJECT');
+          this.router.navigate([PATH_CONSTANTS.INVOICES]);
+        }
+      } else if (data.type === "CLOSE_OUT_PACKAGE_REQUEST") {
+        this.router.navigate([PATH_CONSTANTS.CLOSE_OUT_PACKAGE]);
+      } else if (data.type === "TIME_SHEET") {
+        this.router.navigate([PATH_CONSTANTS.CLIENT_JOB_TIMESHEET]);
+      } else if (data.type === "CHANGE_REQUEST") {
+        this.router.navigate([PATH_CONSTANTS.CHANGE_REQUEST]);
+      } else {
+        console.log(' notification unknown =>', data.name);
+      }
+    } else if (this.user.roles[0].roleName === 'SUBCONTRACTOR') {
+      if (data.type === "PROJECT") {
+        if (data.name === "Invitation For New Project") {
+          this.localStorageService.setItem("selectedProject", data.project);
+          this.router.navigate([PATH_CONSTANTS.SELECT_JOBSITE]);
+        } else if (data.name === "Project Offered" || data.name === "Jobsite Offered") {
+          this.localStorageService.setItem("selectedProject", data.project);
+          this.router.navigate([PATH_CONSTANTS.ACCEPT_REJECT_PROJECT]);
+        } else {
+          console.log(' notification unknown =>', data.name);
+        }
+      } else if (data.type === "INVOICE") {
+        this.router.navigate([PATH_CONSTANTS.SUBCONTRACTOR_INVOICE]);
+      } else if (data.type === "CLOSE_OUT_PACKAGE_REQUEST") {
+        this.router.navigate([PATH_CONSTANTS.SUBCONTRACTOR_CLOSEOUT]);
+      } else if (data.type === "CHANGE_REQUEST") {
+        this.router.navigate([PATH_CONSTANTS.SUBCONTRACTOR_CHANGE_REQUEST]);
+      } else {
+        console.log(' notification unknown =>', data.name);
+      }
+    } else if (this.user.roles[0].roleName === 'WORKER') {
+      if (data.type === "JOB") {
+        if (data.name === "Invitation For New Job") {
+          this.localStorageService.setItem("workerSelectedJobFromNotification", data.job);
+          this.router.navigate([PATH_CONSTANTS.APPLY_JOB]);
+        } else if (data.name === "Job Offered") {
+          this.localStorageService.setItem("workerSelectedJobFromNotification", data.job);
+          this.workerSidebarService.workerSidebarJobChanged.next(data.job);
+          this.router.navigate([PATH_CONSTANTS.ACCEPT_JOBS]);
+        } else {
+          console.log(' notification unknown =>', data.name);
+        }
+      } else if (data.type === "TIME_SHEET") {
+        this.router.navigate([PATH_CONSTANTS.WORKER_TIMESHEET]);
+      } else if (data.type === "INVOICE") {
+        this.router.navigate([PATH_CONSTANTS.WORKER_INVOICE]);
+      } else {
+        console.log(' notification unknown =>', data.name);
+      }
+    }
   }
 }
