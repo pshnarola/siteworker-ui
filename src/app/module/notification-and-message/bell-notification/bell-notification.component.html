@@ -73,7 +73,10 @@
                   ></span>
                 </ng-container>
                 <div class="column">
-                  <h5 class="text-primary mb-0" (click)="redirectTo(notif)">
+                  <h5
+                    class="text-primary mb-0 cursor-pointer"
+                    (click)="redirectTo(notif)"
+                  >
                     {{ notif.name }}
                   </h5>
                   <div *ngIf="notif.type === 'INVOICE'">
