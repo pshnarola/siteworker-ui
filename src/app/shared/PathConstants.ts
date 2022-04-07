@@ -236,11 +236,11 @@ export const PATH_CONSTANTS = {
 
     PROJECT_RATING_REVIEW: 'client/project-rating-review',
 
-    TERMLY_TERMS_OF_USE: 'http://iconicworker.com/terms-and-conditions/',
+    TERMLY_TERMS_OF_USE: 'https://siteworker.com/terms-and-conditions/',
 
-    TERMLY_PRIVACY_POLICY: 'http://iconicworker.com/privacy-policy/',
+    TERMLY_PRIVACY_POLICY: 'https://siteworker.com/privacy-policy/',
 
-    TERMLY_COOKIE_POLICY: 'http://iconicworker.com/cookies-policy/',
+    TERMLY_COOKIE_POLICY: 'https://siteworker.com/cookies-policy/',
 
     WORDPRESS_WEBSITE: 'http://siteworker.com/',
 
