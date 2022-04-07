@@ -111,6 +111,10 @@ export class ClientSignupComponent implements OnInit {
     CommonUtil.openWindowForExternalurl(PATH_CONSTANTS.TERMLY_TERMS_OF_USE);
   }
 
+  onServiceAgreementClick() {
+    CommonUtil.openWindowForExternalurl(PATH_CONSTANTS.SERVICE_AGREEMENT);
+  }
+
   onPrivacyPolicyClick() {
     CommonUtil.openWindowForExternalurl(PATH_CONSTANTS.TERMLY_PRIVACY_POLICY);
   }

@@ -238,6 +238,8 @@ export const PATH_CONSTANTS = {
 
     TERMLY_TERMS_OF_USE: 'https://siteworker.com/terms-and-conditions/',
 
+    SERVICE_AGREEMENT: "https://siteworker.com/service-agreeement",
+
     TERMLY_PRIVACY_POLICY: 'https://siteworker.com/privacy-policy/',
 
     TERMLY_COOKIE_POLICY: 'https://siteworker.com/cookies-policy/',
