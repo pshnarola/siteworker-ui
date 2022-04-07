@@ -129,6 +129,10 @@ export class SubcontractorSignupComponent implements OnInit {
     this.passwordSuggestion = false;
   }
 
+  onServiceAgreementClick() {
+    CommonUtil.openWindowForExternalurl(PATH_CONSTANTS.SERVICE_AGREEMENT);
+  }
+
   onTermsOfUseClick() {
     CommonUtil.openWindowForExternalurl(PATH_CONSTANTS.TERMLY_TERMS_OF_USE);
   }
