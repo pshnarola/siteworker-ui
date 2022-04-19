@@ -120,7 +120,7 @@ export class ProjectListComponent implements OnInit {
     this.filterMap.set('USER_ID', this.loggedInUserId);
     this.filterMap.set('WITHOUT_CANCELLED', 'CANCELLED');
     this.filterMap.set('WITHOUT_COMPLETED', 'COMPLETED');
-    this.filterMap.set('WITHOUT_COPIED', 'COPIED');
+    // this.filterMap.set('WITHOUT_COPIED', 'COPIED');
 
     const jsonObject = {};
     this.filterMap.forEach((value, key) => {
@@ -155,7 +155,7 @@ export class ProjectListComponent implements OnInit {
     this.filterMap.set('USER_ID', this.loggedInUserId);
     this.filterMap.set('WITHOUT_CANCELLED', 'CANCELLED');
     this.filterMap.set('WITHOUT_COMPLETED', 'COMPLETED');
-    this.filterMap.set('WITHOUT_COPIED', 'COPIED');
+    // this.filterMap.set('WITHOUT_COPIED', 'COPIED');
 
     const jsonObject = {};
     this.filterMap.forEach((value, key) => {
@@ -225,7 +225,7 @@ export class ProjectListComponent implements OnInit {
     this.filterMap.set('USER_ID', this.loggedInUserId);
     this.filterMap.set('WITHOUT_CANCELLED', 'CANCELLED');
     this.filterMap.set('WITHOUT_COMPLETED', 'COMPLETED');
-    this.filterMap.set('WITHOUT_COPIED', 'COPIED');
+    // this.filterMap.set('WITHOUT_COPIED', 'COPIED');
 
     if (!this.dateFlag && !this.dateFlag1 && !this.dateFlag2 && !this.dateFlag3) {
 

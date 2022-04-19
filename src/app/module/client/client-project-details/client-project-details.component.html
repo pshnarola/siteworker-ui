@@ -73,7 +73,10 @@
 
   <div class="row">
     <div class="col-xl-12">
-      <h5 class="font-weight-bold my-3">{{ "project.details" | translate }}</h5>
+      <div class="d-flex justify-content-between">
+        <h5 class="font-weight-bold my-3">{{ "project.details" | translate }}</h5>
+        <button type="button" class="btn btn-dark btn-sm my-3" (click)="cloneProject(projectDetail.id)">Clone Project</button>
+      </div>
       <div class="card bg-grey2">
         <div class="card-body">
           <div class="d-flex flex-wrap">

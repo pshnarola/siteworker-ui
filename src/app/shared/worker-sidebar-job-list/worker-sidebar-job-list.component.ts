@@ -269,7 +269,7 @@ export class WorkerSidebarJobListComponent implements OnInit {
             // this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
           }
           else if (currentUrl === '/worker/worker-job-details') {
-            this.selectedJobDetail = this.jobData[0];
+            this.selectedJobDetail = this.localStorageService.getItem('workerSelectedJob') ? this.localStorageService.getItem('workerSelectedJob') : this.jobData[0];
             this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
             this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
           }
@@ -353,11 +353,20 @@ export class WorkerSidebarJobListComponent implements OnInit {
         this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
       }
     } else {
-      // this.selectedJobDetail = event.value;
+      this.localStorageService.removeItem('workerSelectedJob');
+      this.selectedJobDetail = event.value;
       this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
       this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
     }
   }
+
+  viewJob(job){
+    this.selectedJobDetail = job;
+    this.localStorageService.setItem('workerSelectedJob', this.selectedJobDetail);
+    this.workerSideBarJobListService.workerSidebarJobChanged.next(this.selectedJobDetail);
+    this.router.navigate([PATH_CONSTANTS.WORKER_JOB_DETAILS]);
+  }
+
   public initializeJobfilterFormGroup(): void {
     this.jobFilterFormGroup = this.formBuilder.group({
       keyword: [''],

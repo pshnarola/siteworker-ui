@@ -187,6 +187,10 @@
       >
         {{ job.title }}
       </div>
+      <div style="float: right; padding-left: 50px;">
+        <span pTooltip="{{'view' | translate}}" (click)="viewJob(job)" style="margin-right: 3px;"><i
+            class="fa fa-eye"></i></span>
+    </div>
     </ng-template>
   </p-listbox>
 </div>

@@ -241,6 +241,8 @@ export const API_CONSTANTS = {
   GET_PROJECT_BID_DETAIL_BY_ID: CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/getAppliedDetailByProjectAndSubContractor',
   ADD_PROJECT_BID_DETAIL: CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/startApply',
   GET_PROJECT_BID_AMOUNT: CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/getTotalProjectBidAmount/',
+  PROJECTID: CommonUtil.getApiEndPointPath() + 'ProjectDetail/cloneProject/',
+
   // UPDATE_PROJECT_BID_DETAIL: CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/applyOnProject',
 
   // jobsite Bid
@@ -407,6 +409,7 @@ export const API_CONSTANTS = {
   APPLY_JOB: CommonUtil.getApiEndPointPath() + 'jobBidDetail/applyForJob',
   GET_JOBS: CommonUtil.getApiEndPointPath() + 'JobDetail',
   CHECK_IF_JOB_DETAILS_CHANGED: CommonUtil.getApiEndPointPath() + 'JobDetail/checkIfJobDetailsChanged/',
+  JOBID: CommonUtil.getApiEndPointPath() + 'JobDetail/cloneJob/',
 
   // milestone
   ADD_NEW_MILESTONE: CommonUtil.getApiEndPointPath() + 'PaymentMileStone',

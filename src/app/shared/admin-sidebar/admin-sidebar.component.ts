@@ -1547,7 +1547,7 @@ export class AdminSidebarComponent implements OnInit {
         this.filterMap.set('STATUS', 'POSTED');
       }
       else {
-        this.filterMap.set('WITHOUT_COPIED', 'COPIED');
+        // this.filterMap.set('WITHOUT_COPIED', 'COPIED');
       }
       if (!isNullOrUndefined(this.localStorageService.getItem('hideAllLabelsFromProjectJobsiteAndJob'))) {
         this.hideAllLabelsFromProjectJobsiteAndJob = this.localStorageService.getItem('hideAllLabelsFromProjectJobsiteAndJob');

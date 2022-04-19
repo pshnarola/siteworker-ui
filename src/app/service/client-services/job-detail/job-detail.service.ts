@@ -40,6 +40,11 @@ export class JobDetailService {
         return this.customHttpService.get(url);
     }
 
+    cloneJob(id: string): Observable<any> {
+        const url = API_CONSTANTS.JOBID + id;
+        return this.customHttpService.put(url, '');
+    }
+
     checkIfJobDetailsChanged(jobId: string): Observable<any> {
         const url = API_CONSTANTS.CHECK_IF_JOB_DETAILS_CHANGED + jobId;
         return this.customHttpService.get(url);

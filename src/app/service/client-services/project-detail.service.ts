@@ -58,6 +58,11 @@ export class ProjectDetailService {
     return this.customHttpService.get(url);
   }
 
+  cloneProject(id: string): Observable<any> {
+    const url = API_CONSTANTS.PROJECTID + id;
+    return this.customHttpService.put(url, '');
+  }
+
   getProjectById(projectId: string): Observable<any> {
     const url = API_CONSTANTS.GET_PROJECT_BY_ID + projectId;
     return this.customHttpService.get(url);

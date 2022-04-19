@@ -548,6 +548,35 @@
             </div>
           </fieldset>
         </div>
+        <div class="col-lg-3 form-group" *ngIf="displaySingleJobsiteAdded">
+          <fieldset>
+            <div class="some-class">
+              <label for="SingleJobsiteToBeAdded">
+                {{ "SingleJobsiteToBeAdded" | translate }}</label
+              >
+              <div>
+                <input
+                  type="radio"
+                  id="yes"
+                  name="singleJobsiteToBeAdded"
+                  value="yes"
+                  [checked]="singleJobsiteToBeAdded"
+                  (click)="changeValue($event)"
+                />
+                <label class="radio-label"> {{ "yes" | translate }}</label>
+                <input
+                  type="radio"
+                  id="no"
+                  name="singleJobsiteToBeAdded"
+                  value="no"
+                  [checked]="!singleJobsiteToBeAdded"
+                  (click)="changeValue($event)"
+                />
+                <label class="radio-label"> {{ "no" | translate }}</label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
       </div>
 
       <div class="footer-action" *ngIf="!reviewproject">

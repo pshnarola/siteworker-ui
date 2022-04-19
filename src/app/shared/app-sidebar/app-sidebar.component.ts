@@ -11,6 +11,10 @@ import { ProjectJobSelectionService } from 'src/app/service/client-services/proj
 import { NavigationEnd, Router } from '@angular/router';
 import { PATH_CONSTANTS } from '../PathConstants';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { JobDetailService } from 'src/app/service/client-services/job-detail/job-detail.service';
+import { UINotificationService } from '../notification/uinotification.service';
+import { TranslateService } from '@ngx-translate/core';
+import { ProjectDetailService } from 'src/app/service/client-services/project-detail.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -77,7 +81,7 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
   public config: PerfectScrollbarConfigInterface = {};
 
   // tslint:disable-next-line: max-line-length
-  constructor(private breakpointObserver: BreakpointObserver, private captionChangeService: HeaderManagementService, private localStorageService: LocalStorageService, private projectJobSelectionService: ProjectJobSelectionService, private router: Router) {
+  constructor(private breakpointObserver: BreakpointObserver,private _projectDetailService: ProjectDetailService,private jobDetailService: JobDetailService,private notificationService: UINotificationService,private translator: TranslateService, private captionChangeService: HeaderManagementService, private localStorageService: LocalStorageService, private projectJobSelectionService: ProjectJobSelectionService, private router: Router) {
 
     this.user = this.localStorageService.getLoginUserObject();
     if (this.user != null) {
@@ -177,6 +181,45 @@ export class AppSidebarComponent implements OnInit, OnDestroy {
 
   public toggleDrawer(any): void {
     this.sideNav.toggle();
+  }
+
+  clone() {
+    let type = this.localStorageService.getItem('Post_Type');
+    let editMode = this.localStorageService.getItem('isEditMode');
+    if(type == "PROJECT" && editMode == true){
+      let project = this.localStorageService.getItem('selectedProject');
+      this.cloneProject(project.id);
+    } 
+
+    if(type == "JOB" && this.localStorageService.getItem('editJobId')) {
+      let job = this.localStorageService.getItem('selectedJob');
+      this.cloneJob(job.id);
+    }
+  }
+
+  cloneProject(id) {
+    this._projectDetailService.cloneProject(id).subscribe(
+      data => {
+        console.log('data =>', data);
+        this.projectJobSelectionService.addProjectSubject.next(data);
+        this.notificationService.success(this.translator.instant('Project clone successfully'), '');
+      },
+      (error) => {
+        this.notificationService.error(this.translator.instant('common.error'), '');
+      });
+  }
+
+  cloneJob(id) {
+    this.jobDetailService.cloneJob(id).subscribe(
+      data => {
+        console.log('data =>', data);
+        this.projectJobSelectionService.addJobSubject.next(data);
+        this.notificationService.success(this.translator.instant('Job clone successfully'), '');
+      },
+      (error) => {
+        this.notificationService.error(this.translator.instant('common.error'), '');
+      });
+      // addJobSubject
   }
 
 }

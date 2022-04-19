@@ -466,6 +466,7 @@
     "jobsites": "Jobsites",
     "project.type": "Project Type",
     "bid.negotiable": "Is Bid Negotiable?",
+    "SingleJobsiteToBeAdded": "Single Jobsite To Be Add",
     "gamification.configuration": "Gamification Configuration",
     "bid.due.date": "Bid Due Date",
     "start.date": "Start Date",
