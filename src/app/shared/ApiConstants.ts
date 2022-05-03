@@ -61,6 +61,7 @@ export const API_CONSTANTS = {
   COMPANY_ENABLE: CommonUtil.getApiEndPointPath() + 'company/enable/',
   COMPANY_DISABLE: CommonUtil.getApiEndPointPath() + 'company/disable/',
   MERGE_COMPANY: CommonUtil.getApiEndPointPath() + 'company/mergeCompany/',
+  ASSIGNCOMPANY: CommonUtil.getApiEndPointPath() + 'subContractorProfile/updateOwnership',
 
   // Certificate
   GET_CERTIFICATE_LIST: CommonUtil.getApiEndPointPath() + 'certificate',

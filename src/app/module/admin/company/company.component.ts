@@ -158,7 +158,8 @@ export class CompanyComponent implements OnInit, OnDestroy {
   onLazyLoad(event): void {
 
     this.sortOrder = event.sortOrder === -1 ? 0 : 1;
-    this.globalFilter = event.globalFilter ? event.globalFilter : '{"WITHOUT_MERGED":""}';
+    // "WITHOUT_MERGED":""
+    this.globalFilter = event.globalFilter ? event.globalFilter : '{}';
     this.sortField = event.sortField ? event.sortField : 'NAME';
     this.offset = event.first / event.rows;
     this.datatableParam = {
@@ -230,8 +231,9 @@ export class CompanyComponent implements OnInit, OnDestroy {
       size: 100000,
       sortField: 'NAME',
       sortOrder: 1,
-      searchText: '{"WITHOUT_MERGED":""}'
+      searchText: '{}'
     };
+    // searchText: '{"WITHOUT_MERGED":""}'
     this.queryParam = this.prepareQueryParam(this.datatableParamForDialog);
     this.companyService.getCustomCompanyList(this.queryParam).subscribe(
       data => {
@@ -290,7 +292,7 @@ export class CompanyComponent implements OnInit, OnDestroy {
   filter(): void {
 
     this.filterMap.clear();
-    this.filterMap.set('WITHOUT_MERGED', '');
+    // this.filterMap.set('WITHOUT_MERGED', '');
     if (this.nameFilterValue !== '') {
       this.filterMap.set('NAME', this.nameFilterValue);
     }
