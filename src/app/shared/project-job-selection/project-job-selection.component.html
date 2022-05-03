@@ -32,15 +32,17 @@
                         class="p-button-sm bg-black" (click)="projectFilter.toggle($event)"></button>
                 </ng-template>
                 <ng-template *ngIf="roleName==='CLIENT' ||  roleName ==='SUPERVISOR'" pTemplate="header">
-                    {{ 'projects' | translate}}<button pButton type="button" icon="pi pi-filter" class="p-button-sm"
+                    {{ 'projects' | translate}}<button pButton type="button" icon="pi pi-filter" class="p-button-sm"    
                         (click)="projectFilter.toggle($event)"></button>
                 </ng-template>
                 <ng-template let-project pTemplate="item">
                     <div pTooltip="Client Name: {{project.company?.name ? project.company?.name : 'N/A'}}"
                         style="float: left; width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">
                         {{project.title}}</div>
-                    <div *ngIf="project.id!=='pid' && (project.status==='DRAFT' || project.status==='POSTED') && (roleName==='CLIENT' || roleName ==='SUPERVISOR')"
-                        style="float: right; padding-left: 50px;">
+                    <div *ngIf="project.id!=='pid' && (project.status==='DRAFT' || project.status==='POSTED' || project.status==='COPIED') && (roleName==='CLIENT' || roleName ==='SUPERVISOR')"
+                        style="float: right; padding-left: 35px;">
+                        <span pTooltip="{{'view' | translate}}" (click)="viewProject(project)" style="margin-right: 3px;"><i
+                            class="fa fa-eye"></i></span>
                         <span pTooltip="{{'edit' | translate}}" (click)="editProject(project)"><i
                                 class="pi pi-pencil"></i></span>
                     </div>
@@ -418,6 +420,15 @@
                 {{ 'jobsites' | translate}} <button pButton type="button" icon="pi pi-filter" class="p-button-sm"
                     (click)="op.toggle($event)"></button>
             </ng-template>
+
+            <ng-template let-jobsite pTemplate="item">
+                <div style="float: left; width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">
+                    {{jobsite.title}}</div>
+                <div style="float: right; padding-left: 50px;">
+                    <span pTooltip="{{'view' | translate}}" (click)="viewJobSite(jobsite)"><i
+                        class="fa fa-eye"></i></span>
+                </div>
+            </ng-template>
         </p-listbox>
     </div>
 
@@ -476,8 +487,10 @@
 
                 <ng-template let-job pTemplate="item">
                     <div style="float: left; width: 100px">{{job.title}}</div>
-                    <div *ngIf="job.id!=='jobId' && (job.status==='DRAFT' || job.status==='POSTED') && roleName==='CLIENT'"
-                        style="float: right; padding-left: 50px;">
+                    <div *ngIf="job.id!=='jobId' && (job.status==='DRAFT' || job.status==='POSTED' || job.status==='COPIED') && roleName==='CLIENT'"
+                        style="float: right; padding-left: 35px;">
+                        <span pTooltip="{{'view' | translate}}" (click)="viewJob(project)" style="margin-right: 3px;"><i
+                            class="fa fa-eye"></i></span>
                         <span (click)="checkIsJobBided(job)" pTooltip="{{'edit' | translate}}"><i
                                 class="pi pi-pencil"></i></span>
                     </div>

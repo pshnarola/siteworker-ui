@@ -11,3 +11,7 @@
     border: none;
     background-color: transparent;
 }
+
+:host ::ng-deep .p-ink {
+    display: none !important;
+}

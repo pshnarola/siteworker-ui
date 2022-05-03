@@ -40,7 +40,10 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="warn" *ngIf="!isHeaderVisible">
-            <h3>{{headerCaption}}</h3>
+            <div class="d-flex justify-content-between w-100">
+                <h3>{{headerCaption}}</h3>
+                <button *ngIf="headerCaption == 'Edit Job' || headerCaption == 'Edit Project'" type="button" class="btn btn-dark btn-sm my-3" (click)="clone()">{{ headerCaption == 'Edit Project' ? 'Clone Project' : 'Clone Job' }}</button>
+            </div>
         </mat-toolbar>
         <router-outlet></router-outlet>
         <app-footer></app-footer>

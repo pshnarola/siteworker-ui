@@ -95,6 +95,7 @@ export class AddNewProjectComponent implements OnInit {
 
   isProjectPosted = false;
   checkProjectIsPosted;
+  singleJobsiteToBeAdded:boolean = false;
 
 
   @Input() reviewproject;
@@ -108,6 +109,8 @@ export class AddNewProjectComponent implements OnInit {
   importFromExcelProjectValidationMessage: any;
 
   stateParams: { name: any; };
+  singleJobsiteAdded:boolean = true;
+  displaySingleJobsiteAdded:boolean = true;
 
   constructor(private datePipe: DatePipe,
     private _formBuilder: FormBuilder,
@@ -140,6 +143,11 @@ export class AddNewProjectComponent implements OnInit {
       data => {
         const projectDetail = this._localStorageService.getItem('addProjectDetail');
         const isInEditMode = this._localStorageService.getItem('isEditMode');
+        if(isInEditMode) {
+          this.displaySingleJobsiteAdded = false;
+        } else {
+          this.displaySingleJobsiteAdded = true;
+        }
         if (this._localStorageService.getItem('isEditMode') && data?.status === 'POSTED') {
           this.isProjectPosted = true;
         } else if (isInEditMode && projectDetail?.status === 'POSTED') {
@@ -158,6 +166,15 @@ export class AddNewProjectComponent implements OnInit {
     if (this.reviewFormGroup) {
       this.onSetValueOfForm();
       this.uploadedFile = this._localStorageService.getItem('addProjectDetail').attachment;
+    }
+  }
+  changeValue(event){
+    if(event.target.value == 'yes') {
+      this.singleJobsiteToBeAdded = true;
+      this._localStorageService.setItem('singleJobsiteToBeAdded', true);
+    } else {
+      this.singleJobsiteToBeAdded = false;
+      this._localStorageService.setItem('singleJobsiteToBeAdded', false);
     }
   }
 
@@ -280,6 +297,7 @@ export class AddNewProjectComponent implements OnInit {
     this.initializeCompanyForm();
     this.initializeAddNewProjectForm();
     if (this._localStorageService.getItem('addNewProjectFormValue')) {
+      this.singleJobsiteAdded = false;
       this.subscription = this.postProjectService.addNewProject.subscribe(
         data => {
           this.initializeAddNewProjectForm();
@@ -673,7 +691,7 @@ export class AddNewProjectComponent implements OnInit {
     }
   }
 
-  onSaveAsDraft() {
+  onSaveAsDraft() {    
     if (this.uploadableFile.length !== 0) {
       console.log(this.uploadedFile);
       this.addProjectDetail.attachment = this.uploadedFile;
@@ -826,8 +844,23 @@ export class AddNewProjectComponent implements OnInit {
         }
       });
     }
+
+    console.log('this.singleJobsiteToBeAdded =>', this.singleJobsiteToBeAdded);
+    
+    if(!this._localStorageService.getItem('isEditMode') && this.singleJobsiteToBeAdded ) {
+      this.onAddNewJobsite();
+    }
+
   }
 
+  onAddNewJobsite(): void {
+    if (this._localStorageService.getItem('milestoneScreen')) {
+      this._localStorageService.removeItem('milestoneScreen');
+    }
+    this._localStorageService.removeItem('addLineItemScreen');
+    this._localStorageService.setItem('addJobsiteScreen', 'addJobsite', false);
+    this.postProjectService.jobsiteScreenChange.next('addJobsite');
+  }
 
   setAddNewProjectObject() {
     let selectedClient = this.addNewProjectForm.get('company').value;

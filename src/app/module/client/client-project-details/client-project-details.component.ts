@@ -453,4 +453,16 @@ export class ClientProjectDetailsComponent implements OnInit {
     this.notificationService.success('Copied to clipboard', '');
   }
 
+  cloneProject(id) {
+    this._projectDetailService.cloneProject(id).subscribe(
+      data => {
+        console.log('data =>', data);
+        this.projectJobSelectionService.addProjectSubject.next(data);
+        this.notificationService.success(this.translator.instant('Project clone successfully'), '');
+      },
+      (error) => {
+        this.notificationService.error(this.translator.instant('common.error'), '');
+      });
+  }
+
 }

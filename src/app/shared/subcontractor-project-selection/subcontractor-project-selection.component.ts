@@ -17,6 +17,7 @@ import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { isNullOrUndefined } from 'util';
 import { COMMON_CONSTANTS } from '../CommonConstants';
 import { UINotificationService } from '../notification/uinotification.service';
+import { PATH_CONSTANTS } from '../PathConstants';
 import { DataTableParam } from '../vo/DataTableParam';
 import { User } from '../vo/User';
 
@@ -988,6 +989,8 @@ export class SubcontractorProjectSelectionComponent implements OnInit, OnDestroy
   }
 
   projectChanged(event): void {
+    console.log('projectChanged =>', event.value);
+    
     const project = event.value as ProjectFullDetail;
     this.localStorageService.setItem('selectedFullProjectDetail', project);
     this.setJobsites(project.projectDetail);
@@ -1063,6 +1066,21 @@ export class SubcontractorProjectSelectionComponent implements OnInit, OnDestroy
     this.projectJobSelectionService.selectedProjectSubject.next(this.selectedProject);
     // }
     this.projectJobSelectionService.selectedJobsiteSubject.next(this.selectedJobsite);
+  }
+
+  viewProject(projectData) {
+    const project = projectData as ProjectFullDetail;    
+    this.localStorageService.setItem('selectedFullProjectDetail', project.projectDetail);
+    this.localStorageService.setItem('selectedProject', project.projectDetail);
+    this.projectJobSelectionService.selectedProjectSubject.next(project);
+    this.router.navigate([PATH_CONSTANTS.SUBCONTRACTOR_PROJECT_DETAIL])
+  }
+
+  viewJobSite(jobsite) {
+    this.selectedJobsite = jobsite;
+    this.localStorageService.setItem('selectedJobsite', this.selectedJobsite, false);
+    this.projectJobSelectionService.selectedJobsiteSubject.next(this.selectedJobsite);
+    this.router.navigate([PATH_CONSTANTS.SUBCONTRACTOR_JOBSITE_DETAIL])
   }
 
   jobsiteChanged(event): void {

@@ -9,6 +9,9 @@
 
                 <div style="float: left; width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;" pTooltip="Client Name: {{project.projectDetail.company?.name ? project.projectDetail.company?.name : 'N/A'}}">{{project.projectDetail.title}}</div>
                 <div *ngIf="project.projectDetail.id!=='pid'" style="float: right; padding-left: 50px;">
+                    <span pTooltip="{{'view' | translate}}" (click)="viewProject(project)" style="margin-right: 3px;"><i
+                            class="fa fa-eye"></i></span>
+                       
                     <div *ngIf="showIconsOnSidebar" [ngSwitch]="project.bidStatus">
                         <span *ngSwitchCase="'STARTED'" pTooltip="Started"><i class="pi pi-calendar"></i></span>
                         <span *ngSwitchCase="'APPLIED'" pTooltip="Applied"><i class="pi pi-dollar"></i></span>
@@ -234,6 +237,8 @@
             <ng-template let-jobsite pTemplate="item">
                 <div style="float: left; width: 100px">{{jobsite.title}}</div>
                 <div *ngIf="jobsite.id!=='jid'" style="float: right; padding-left: 50px;">
+                    <span pTooltip="{{'view' | translate}}" (click)="viewJobSite(jobsite)" style="margin-right: 3px;"><i
+                        class="fa fa-eye"></i></span>
                     <div *ngIf="showIconsOnSidebar && jobsite.isBidCompleted">
                         <span><i class="pi pi-check" style="color: green; font-weight: 900;"></i></span>
                     </div>

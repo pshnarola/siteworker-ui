@@ -27,6 +27,8 @@ import { User } from 'src/app/shared/vo/User';
 import { environment } from 'src/environments/environment';
 import { SubcontractorStatusChange } from '../subcontractorStatusChange';
 import { SubcontractorFilter } from './SubcontractorFilter';
+import { Company } from '../company/company';
+import { CompanyService } from 'src/app/service/admin-services/company/company.service';
 
 @Component({
   selector: 'app-add-subcontractor',
@@ -51,6 +53,9 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
   loggedInUser: any;
   roleName: any;
+  // vik
+  myCompanyForm: FormGroup;
+
 
   constructor(
     private router: Router,
@@ -68,6 +73,7 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
     private loginAsService: LoginAsService,
     private dateHelperService: DateHelperService,
     private filterLeftPanelService: FilterLeftPanelDataService,
+    private companyService: CompanyService,
   ) {
     this.captionChangeService.hideSidebarSubject.next(true);
     this.captionChangeService.hideHeaderSubject.next(false);
@@ -84,6 +90,14 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
   }
 
   totalStatusCount;
+
+  // vik
+  filteredClients: any[];
+  filteredClientLength;
+  companyName: any;
+  companyDialog = false;
+  submittedCompany = false;
+  clients: Company[];
 
   @ViewChild('dt') table: Table;
   client: Client[] = [];
@@ -119,6 +133,7 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
   filterForm: FormGroup;
   myRipplingForm: FormGroup;
   myMarginForm: FormGroup;
+  addCompanyForm:FormGroup;
   SubcontractorName: string;
   submittedForMargin = false;
   submittedForRiplingId = false;
@@ -152,6 +167,7 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
     { label: this.translator.instant('mobile.phone'), value: 'mobile_phone', selected: false, sortable: true },
     { label: this.translator.instant('created.date'), value: 'created_date', selected: false, sortable: true },
     { label: this.translator.instant('payment.id'), value: 'payment_rails_id', selected: false, sortable: true },
+    { label: this.translator.instant('subcontarctor.ownership'), value: 'ownership', selected: true, sortable: true },
     { label: this.translator.instant('email.verified'), value: 'is_verified', selected: false, sortable: true },
     { label: this.translator.instant('set.margin'), value: 'set_margin', selected: false, sortable: false },
     { label: this.translator.instant('references'), value: 'references', selected: false, sortable: false },
@@ -191,6 +207,7 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
     this.initializeMarginForm();
     this.initializeRiplingIdForm();
     this.initializeFilterForm();
+    this.getClientList();
     this.spinner.hide();
     this.SubcontractorName = '';
 
@@ -198,6 +215,10 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
     if (this.subcontractorAccess) {
       this.menuAccess();
     }
+
+    this.addCompanyForm = this.formBuilder.group({
+      company: [null],
+    });
   }
 
   @Input() get selectedColumns(): any[] {
@@ -206,6 +227,153 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
 
   set selectedColumns(val: any[]) {
     this._selectedColumns = this.columns.filter(col => val.includes(col));
+  }
+
+  // vik
+  private getClientList() {
+    let datatableParam: DataTableParam = {
+      offset: 0,
+      size: 1000000,
+      sortField: '',
+      sortOrder: 1,
+      searchText: '{"IS_ENABLE" : true}'
+    }
+    console.log(datatableParam);
+    this.queryParam = this.prepareQueryParam(datatableParam);
+    this.companyService.getCompanyList(this.queryParam).subscribe(
+      data => {
+
+        console.log(data);
+        if (data.statusCode === '200') {
+          if (data.message == 'OK') {
+            this.clients = data.data.result;
+          }
+        } else {
+        }
+      },
+      error => {
+      }
+    );
+  }
+
+  onSelectCompany(event) {
+    if (event.id === 'buttonId') {
+      this.companyDialog = true;
+    }
+  }
+
+  filterClient(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.clients.length; i++) {
+      let client = this.clients[i];
+      if (client.name.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(client);
+      }
+    }
+    this.filteredClients = filtered;
+    let client = { 'id': 'buttonId' };
+    this.filteredClients.push(client);
+    this.filteredClientLength = this.filteredClients.length;
+
+  }
+
+  openClientDialog() {
+    this.submittedCompany = false;
+    this.companyDialog = true;
+    this.initializeCompanyForm();
+  }
+
+  hideDialogClient() {
+    this.companyDialog = false;
+    this.submittedCompany = false;
+    this.initializeCompanyForm();
+  }
+
+
+  initializeCompanyForm(): void {
+    this.myCompanyForm = this.formBuilder.group({
+      id: [],
+      name: ['', [CustomValidator.required, Validators.maxLength(50)]],
+      createdBy: this.loginUserId,
+      updatedBy: this.loginUserId,
+      isEnable: 1
+    });
+  }
+
+  onSubmitClient() {
+    this.submittedCompany = true;
+    if (!this.myCompanyForm.valid) {
+      let controlName: string;
+      for (controlName in this.myCompanyForm.controls) {
+        this.myCompanyForm.controls[controlName].markAsDirty();
+        this.myCompanyForm.controls[controlName].updateValueAndValidity();
+      }
+      this.submittedCompany = true;
+      return false;
+    }
+    if (this.myCompanyForm.valid) {
+      this.companyService.addCompany(JSON.stringify(this.myCompanyForm.value)).subscribe(
+        data => {
+          if (data.statusCode === '200' && data.message === 'OK') {
+            this.notificationService.success(this.translator.instant('create.company.successMessage'), '');
+            this.companyDialog = false;
+            this.submittedCompany = false;
+            this.getClientList();
+            // this.addNewProjectForm.controls.company.patchValue(data.data);
+          }
+          else {
+            this.notificationService.error(data.message, '');
+            this.companyDialog = false;
+            this.submittedCompany = false;
+          }
+        },
+        error => {
+          this.notificationService.error(this.translator.instant('common.error'), '');
+          this.companyDialog = false;
+          this.submittedCompany = false;
+        }
+      );
+    }
+  }
+
+  addOwnerShip() {
+    if (this.selectedSubcontractors.length !== 0) {
+      if (this.addCompanyForm.value.company) {
+          const idList = [];
+          this.selectedSubcontractors.forEach(e => {
+            idList.push(e.subcontractorProfile.user.id);
+          });
+          this.onAddOwnerShip(idList);
+      } else {
+        this.notificationService.error('Select Company name', '');
+      }
+    }
+    else {
+      this.notificationService.error('Please select at least one subcontractor', '');
+    }
+  }
+
+  onAddOwnerShip(list) {
+    var obj = {
+      "companyId": this.addCompanyForm.value.company.id,
+      "subcontrcatorIds": list
+    }
+    this.companyService.assignCompany(obj).subscribe(
+      data => {
+        console.log('data =>', data);
+        
+        if (data.statusCode === '200' && data.message === 'OK') {
+          this.notificationService.success(this.translator.instant('subcontractor.ownership.added'), '');
+          this.selectedSubcontractors = [];
+          this.selectedStatus = null;
+          this.loadsubContractorList();
+        } else {
+          this.notificationService.error(data.message, '');
+          this.selectedSubcontractors = [];
+          this.loadsubContractorList();
+        }
+      });
   }
 
   showloginAsDialog(subcontractor) {

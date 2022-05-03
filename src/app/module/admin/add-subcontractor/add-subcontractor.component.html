@@ -170,7 +170,7 @@
       <div class="card">
         <div class="card-body">
           <div class="row">
-            <div class="col-xl-6">
+            <div class="col-xl-3">
               <div class="form-group">
                 <label for="status">{{ "change.status" | translate }} :</label>
                 <p-dropdown
@@ -183,7 +183,7 @@
                 </p-dropdown>
               </div>
             </div>
-            <div class="col-xl-6 d-flex align-items-center mt-2">
+            <div class="col-xl-2 d-flex align-items-center mt-2">
               <button
                 [disabled]="btnDisabled"
                 pButton
@@ -191,6 +191,51 @@
                 label="{{ 'apply' | translate }}"
                 class="p-button-outlined"
                 (click)="onChangeStatusOfselected()"
+              ></button>
+            </div>
+            <div class="col-xl-3">
+              <form [formGroup]="addCompanyForm">
+              <div class="form-group">
+                  <label for="status">{{ "subcontarctor.ownership" | translate }} :</label>
+                  <p-autoComplete
+                  formControlName="company"
+                  [suggestions]="filteredClients"
+                  (completeMethod)="filterClient($event)"
+                  (onSelect)="onSelectCompany($event)"
+                  field="name"
+                  [dropdown]="true"
+                  minLength="3"
+                  forceSelection="true"
+                  placeholder="{{ 'client.name.placeholder' | translate }}"
+                  [style]="{ width: '100%' }"
+                  [inputStyle]="{ width: '100%' }"
+                >
+                  <ng-template let-client pTemplate="item">
+                    <div>
+                      <div *ngIf="client.id !== 'buttonId'">{{ client.name }}</div>
+                      <div *ngIf="client.id === 'buttonId'">
+                        <button
+                          pButton
+                          type="button"
+                          style="width: 100%; margin: 0%"
+                          label="Add Company name"
+                          (click)="openClientDialog()"
+                        ></button>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+                </div>
+              </form>
+            </div>
+            <div class="col-xl-2 d-flex align-items-center mt-2">
+              <button
+                [disabled]="btnDisabled"
+                pButton
+                type="button"
+                label="{{ 'add.ownership' | translate }}"
+                class="p-button-outlined"
+                (click)="addOwnerShip()"
               ></button>
             </div>
           </div>
@@ -254,6 +299,7 @@
                 field="{{ col.value }}"
               ></p-sortIcon>
             </th>
+            <th pResizableColumn>{{ "subcontarctor.ownership" | translate }}</th>
             <th pResizableColumn>{{ "action" | translate }}</th>
           </tr>
         </ng-template>
@@ -405,8 +451,13 @@
                   </span>
                 </ng-template>
               </div>
+              <div *ngSwitchCase="'ownership'">
+                <span *ngIf="subcontractor.subcontractorProfile.ownership;else none">
+                  {{ subcontractor.subcontractorProfile.ownership}}
+                </span>
+                <ng-template #none> N/A </ng-template>
+              </div>
             </td>
-
             <td>
               <button
                 class="btn btn-success mr-2 btn-sm"
@@ -990,6 +1041,74 @@
       type="submit"
     ></button>
   </ng-template>
+</p-dialog>
+
+<p-dialog
+[(visible)]="companyDialog"
+[style]="{ width: '450px' }"
+(onHide)="hideDialogClient()"
+header="Add New Company"
+[modal]="true"
+styleClass="p-fluid"
+>
+<ng-template pTemplate="content">
+  <form [formGroup]="myCompanyForm" (ngSubmit)="onSubmit()">
+    <div class="p-field">
+      <label for="name">Company name*</label>
+      <input
+        type="text"
+        pInputText
+        id="name"
+        maxlength="50"
+        formControlName="name"
+        autofocus
+        required
+        [pKeyFilter]="blockSpecial"
+      />
+      <div
+        class="p-invalid"
+        *ngIf="
+          (myCompanyForm.controls['name'].touched &&
+            myCompanyForm.controls['name'].hasError('required') &&
+            !myCompanyForm.controls['name'].valid) ||
+          (submittedCompany &&
+            myCompanyForm.controls['name'].hasError('required') &&
+            !myCompanyForm.controls['name'].valid)
+        "
+      >
+        {{ "required" | translate }}
+      </div>
+      <div
+        class="p-invalid"
+        *ngIf="
+          myCompanyForm.controls['name'].touched &&
+          myCompanyForm.controls['name'].hasError('maxlength') &&
+          !myCompanyForm.controls['name'].valid
+        "
+      >
+        {{ "company.name.maxLength" | translate }}
+      </div>
+    </div>
+  </form>
+</ng-template>
+<ng-template pTemplate="footer">
+  <button
+    pButton
+    pRipple
+    label="{{ 'cancel' | translate }}"
+    icon="pi pi-times"
+    class="p-button-text"
+    (click)="hideDialogClient()"
+  ></button>
+  <button
+    pButton
+    pRipple
+    label="{{ 'save' | translate }}"
+    icon="pi pi-check"
+    class="p-button-text"
+    (click)="onSubmitClient()"
+  ></button>
+</ng-template>
 </p-dialog>
 <ng-template #none>
   {{ "n.a" | translate }}

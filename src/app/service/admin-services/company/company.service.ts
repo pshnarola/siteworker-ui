@@ -32,6 +32,12 @@ export class CompanyService {
      const url = API_CONSTANTS.COMPANY_ENABLE + id;
      return this.customHttpService.put(url, id);
    }
+
+   // assign company
+   assignCompany(data){
+    const url = API_CONSTANTS.ASSIGNCOMPANY;
+    return this.customHttpService.put(url, data);
+   }
     // tslint:disable-next-line: typedef
    disableCompany(id){
     const url = API_CONSTANTS.COMPANY_DISABLE + id;

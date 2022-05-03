@@ -241,6 +241,7 @@ export class ViewJobDetailsComponent implements OnInit, OnDestroy {
       }
     }));
   }
+
   initializeForm(): void {
     this.jobDetailForm = this.formBuilder.group({
       id: [],
@@ -363,5 +364,18 @@ export class ViewJobDetailsComponent implements OnInit, OnDestroy {
     this.localStorageService.setItem('isWorkerInvite', true);
     this.projectJobSelectionService.workerSelectionSubject.next('dummy');
     this.router.navigate(['/client/inviteWorker']);
+  }
+
+  cloneJob(id) {
+    this.jobDetailService.cloneJob(id).subscribe(
+      data => {
+        console.log('data =>', data);
+        this.projectJobSelectionService.addJobSubject.next(data);
+        this.notificationService.success(this.translator.instant('Job clone successfully'), '');
+      },
+      (error) => {
+        this.notificationService.error(this.translator.instant('common.error'), '');
+      });
+      // addJobSubject
   }
 }

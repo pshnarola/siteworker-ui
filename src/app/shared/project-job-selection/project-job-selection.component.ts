@@ -1616,7 +1616,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
           this.filterMap.set('WITHOUT_CANCELLED', 'CANCELLED');
           this.filterMap.set('WITHOUT_COMPLETED', 'COMPLETED');
         }
-        this.filterMap.set('WITHOUT_COPIED', 'COPIED');
+        // this.filterMap.set('WITHOUT_COPIED', 'COPIED');
       }
       if (!isNullOrUndefined(this.localStorageService.getItem('hideAllLabelsFromProjectJobsiteAndJob'))) {
         this.hideAllLabelsFromProjectJobsiteAndJob = this.localStorageService.getItem('hideAllLabelsFromProjectJobsiteAndJob');
@@ -1660,8 +1660,7 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
 
       this.queryParam = this.prepareQueryParam(this.datatableParam);
 
-      this.projectService.getProjectByUserIdForSidebar(this.queryParam).subscribe(e => {
-
+      this.projectService.getProjectByUserIdForSidebar(this.queryParam).subscribe(e => {        
         this.tempProjectData = e.data.result;
         if (this.tempProjectData) {
           this.tempProjectData.forEach(
@@ -2248,6 +2247,23 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  viewProject(project){ 
+    if(project.id !== 'pid'){
+      this.router.navigate([PATH_CONSTANTS.CLIENT_PROJECT_DETAILS]);
+    }
+  }
+
+  viewJobSite(jobsite){
+    this.selectedJobsite = jobsite;
+    this.localStorageService.setItem('selectedJobsite', this.selectedJobsite);
+    this.projectJobSelectionService.selectedJobsiteSubject.next(this.selectedJobsite);
+    this.router.navigate([PATH_CONSTANTS.CLIENT_JOBSITE_DETAILS]);
+  }
+
+  viewJob(job){
+    this.router.navigate([PATH_CONSTANTS.VIEW_JOB_DETAILS]);
   }
 
   projectIsEditable(project) {

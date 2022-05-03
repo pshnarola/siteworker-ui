@@ -106,6 +106,21 @@ export class AddJobsiteComponent implements OnInit {
     }
     this.getLocation();
     this.initializeAddJobsiteForm();
+    if(this._localStorageService.getItem('singleJobsiteToBeAdded') && !this._localStorageService.getItem('isEditMode')) {
+      this.addJobsiteForm.controls.title.setValue(this.project?.title);
+     
+    
+      let state = {
+        name: this.project?.state,
+        id: 'staticStateId'
+      }
+
+      this.addJobsiteForm.controls.state.setValue(state);
+      this.addJobsiteForm.controls.latitude.setValue(this.project?.latitude);
+      this.addJobsiteForm.controls.longitude.setValue(this.project?.longitude);
+      this.uploadedFile = this.project?.attachment;
+      this.addJobsiteForm.controls.attachmentLink.setValue(this.project?.attachmentLink);
+    }
   }
 
   ngOnChanges() {
@@ -445,6 +460,8 @@ export class AddJobsiteComponent implements OnInit {
     this.jobsiteData.longitude = this.addJobsiteForm.value.longitude;
     this.jobsiteData.attachmentLink = this.addJobsiteForm.value.attachmentLink;
     this.jobsiteData.status = JobsiteStatus.DRAFT;
+    console.log('this.project =>', this.project);
+    
     if (this.project.id !== 'pid') {
       this.project.attachment = [];
       this.jobsiteData.project = this.project;
