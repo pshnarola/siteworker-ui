@@ -40,11 +40,13 @@
                         style="float: left; width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">
                         {{project.title}}</div>
                     <div *ngIf="project.id!=='pid' && (project.status==='DRAFT' || project.status==='POSTED' || project.status==='COPIED') && (roleName==='CLIENT' || roleName ==='SUPERVISOR')"
-                        style="float: right; padding-left: 35px;">
+                        style="float: right; padding-left: 20px;">
                         <span pTooltip="{{'view' | translate}}" (click)="viewProject(project)" style="margin-right: 3px;"><i
                             class="fa fa-eye"></i></span>
-                        <span pTooltip="{{'edit' | translate}}" (click)="editProject(project)"><i
+                        <span pTooltip="{{'edit' | translate}}" (click)="editProject(project)" style="margin-right: 3px;"><i
                                 class="pi pi-pencil"></i></span>
+                        <span pTooltip="{{'delete' | translate}}" (click)="deleteData(project, 'project')"><i
+                            class="fa fa-trash"></i></span>
                     </div>
                 </ng-template>
             </p-listbox>
@@ -488,11 +490,13 @@
                 <ng-template let-job pTemplate="item">
                     <div style="float: left; width: 100px">{{job.title}}</div>
                     <div *ngIf="job.id!=='jobId' && (job.status==='DRAFT' || job.status==='POSTED' || job.status==='COPIED') && roleName==='CLIENT'"
-                        style="float: right; padding-left: 35px;">
+                        style="float: right; padding-left: 25px;">
                         <span pTooltip="{{'view' | translate}}" (click)="viewJob(project)" style="margin-right: 3px;"><i
                             class="fa fa-eye"></i></span>
-                        <span (click)="checkIsJobBided(job)" pTooltip="{{'edit' | translate}}"><i
+                        <span (click)="checkIsJobBided(job)" style="margin-right: 3px;" pTooltip="{{'edit' | translate}}"><i
                                 class="pi pi-pencil"></i></span>
+                        <span pTooltip="{{'delete' | translate}}" (click)="deleteData(job, 'job')"><i
+                            class="fa fa-trash"></i></span>
                     </div>
                 </ng-template>
             </p-listbox>

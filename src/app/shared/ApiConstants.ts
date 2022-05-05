@@ -183,6 +183,8 @@ export const API_CONSTANTS = {
   GET_DETAIL_BY_ID_PUBLIC: CommonUtil.getApiEndPointPath() + 'JobDetail/getDetailByIdPublic/',
   CHECK_IS_JOB_BIDED: CommonUtil.getApiEndPointPath() + 'jobBidDetail/checkIsJobBided/',
   GET_JOB_LIST_FOR_SIDE_BAR: CommonUtil.getApiEndPointPath() + 'JobDetail/getJobDetailForSidebar',
+  DELETE_JOB: CommonUtil.getApiEndPointPath() + 'JobDetail/delete/',
+
   // BellNotification
   GET_BELL_NOTIFICATION: CommonUtil.getApiEndPointPath() + 'notification',
   MARK_AS_SEEN: CommonUtil.getApiEndPointPath() + 'notification/markAsSeen/',
@@ -204,7 +206,7 @@ export const API_CONSTANTS = {
   DOWNLOAD_JOBSITE_ATTACHMNET_ZIP_FILE: CommonUtil.getApiEndPointPath() + 'jobSiteAttachment/downloadDocument/',
   DOWNLOAD_PROJECT_ATTACHMNET_ZIP_FILE: CommonUtil.getApiEndPointPath() + 'projectAttachment/downloadProjectDocument/',
   PUBLIC_GET_PROJECT_BY_PROJECT_ID: CommonUtil.getApiEndPointPath() + 'ProjectDetail/getProjectDetailByIdPublic/',
-
+  DELETE_PROJECT: CommonUtil.getApiEndPointPath() + 'ProjectDetail/delete/',
 
 
   // state

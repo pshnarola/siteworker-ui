@@ -17,6 +17,7 @@ import { StateService } from 'src/app/service/admin-services/state/state.service
 import { JobsiteDetailService } from 'src/app/service/client-services/jobsite-details/jobsite-detail.service';
 import { JobsiteService } from 'src/app/service/client-services/post-project/jobsite.service';
 import { PostProjectService } from 'src/app/service/client-services/post-project/post-project.service';
+import { ProjectDetailService } from 'src/app/service/client-services/project-detail.service';
 import { ProjectJobSelectionService } from 'src/app/service/client-services/project-job-selection.service';
 import { FilterLeftPanelDataService } from 'src/app/service/filter-left-panel-data.service';
 import { LocalStorageService } from 'src/app/service/localstorage.service';
@@ -111,6 +112,7 @@ export class AddNewProjectComponent implements OnInit {
   stateParams: { name: any; };
   singleJobsiteAdded:boolean = true;
   displaySingleJobsiteAdded:boolean = true;
+  isEditMode;
 
   constructor(private datePipe: DatePipe,
     private _formBuilder: FormBuilder,
@@ -128,7 +130,8 @@ export class AddNewProjectComponent implements OnInit {
     private _industryTypeService: IndustryTypeService,
     private jobsiteService: JobsiteService,
     private _fileService: FileDownloadService,
-    private filterLeftPanelService: FilterLeftPanelDataService
+    private filterLeftPanelService: FilterLeftPanelDataService,
+    private projectService: ProjectDetailService
   ) {
     this.dateTime.setDate(this.dateTime.getDate());
 
@@ -143,6 +146,8 @@ export class AddNewProjectComponent implements OnInit {
       data => {
         const projectDetail = this._localStorageService.getItem('addProjectDetail');
         const isInEditMode = this._localStorageService.getItem('isEditMode');
+        // Added isEditMode flag to show/hide delete button
+        this.isEditMode = isInEditMode;
         if(isInEditMode) {
           this.displaySingleJobsiteAdded = false;
         } else {
@@ -1323,6 +1328,40 @@ export class AddNewProjectComponent implements OnInit {
         a.click();
         URL.revokeObjectURL(objectUrl);
       });
+  }
+
+  deleteProject() {
+    if(this.addNewProjectForm.value.id) {
+      const projectId = this.addNewProjectForm.value.id;
+      this.projectService.deleteProject(projectId).subscribe(response => {
+        if(response.data) {
+          this.notificationService.success('Project deleted successfully.', '');
+          this.onCancel();
+        } else {
+          this.notificationService.error(response.message ? response.message : 'Somthing went wrong!', '');
+        }
+      }, err => {
+          this.notificationService.error(err.message ? err.message : 'Error while deleting project', '');
+      });
+    } else {
+      this.notificationService.error('Somthing went wrong!', '');
+    }
+  }
+
+  openWarningDialogForDeleteProject() {
+    let options = null;
+    options = {
+      title: 'Warning',
+      message: 'Do you want to delete current project?',
+      cancelText: this.translator.instant('dialog.cancel.text'),
+      confirmText: this.translator.instant('dialog.confirm.text')
+    }
+    this.confirmDialogService.open(options);
+    this.confirmDialogService.confirmed().subscribe(confirmed => {
+      if (confirmed) {
+        this.deleteProject();
+      }
+    });
   }
 
 }
