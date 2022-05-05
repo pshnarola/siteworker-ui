@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { ConfirmDialogueService } from 'src/app/confirm-dialogue.service';
 import { ProjectDetailService } from 'src/app/service/client-services/project-detail.service';
 import { ProjectJobSelectionService } from 'src/app/service/client-services/project-job-selection.service';
+import { FilterLeftPanelDataService } from 'src/app/service/filter-left-panel-data.service';
 import { HeaderManagementService } from 'src/app/service/header-management.service';
 import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { UserService } from 'src/app/service/User.service';
@@ -113,7 +114,8 @@ export class ClientProjectDetailsComponent implements OnInit {
     private projectJobSelectionService: ProjectJobSelectionService,
     private localStorageService: LocalStorageService,
     private confirmDialogService: ConfirmDialogueService,
-    private clipboardService: ClipboardService
+    private clipboardService: ClipboardService,
+    private filterLeftPanelService: FilterLeftPanelDataService
   ) {
     this.loggedInUserId = this.localStorageService.getLoginUserId();
 
@@ -463,6 +465,20 @@ export class ClientProjectDetailsComponent implements OnInit {
       (error) => {
         this.notificationService.error(this.translator.instant('common.error'), '');
       });
+  }
+
+  deleteProject(id) {
+    this._projectDetailService.deleteProject(id).subscribe(async response => {
+      if(response.data) {
+        this.notificationService.success('Project deleted successfully.', '');
+        await this.filterLeftPanelService.updateDeleteSatus('PROJECT_DELETE');
+        this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
+      } else {
+        this.notificationService.error(response.message ? response.message : 'Error occured while deleting!', '');
+      }
+    }, err => {
+      this.notificationService.error('Error occured while deleting Project!', err.message ? err.message : '' );
+    });
   }
 
 }

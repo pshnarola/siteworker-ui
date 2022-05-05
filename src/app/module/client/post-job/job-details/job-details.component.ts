@@ -1374,9 +1374,10 @@ export class JobDetailsComponent implements OnInit {
   deleteJob() {
     if(this.jobDetailsForm.value.id) {
       const jobId = this.jobDetailsForm.value.id;
-      this.jobDetailService.deleteJob(jobId).subscribe(response => {
+      this.jobDetailService.deleteJob(jobId).subscribe(async response => {
         if(response.data) {
           this.notificationService.success('Job deleted successfully.', '');
+          await this.filterLeftPanelService.updateDeleteSatus('JOB_DELETE');
           this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
         } else {
           this.notificationService.error(response.message ? response.message : 'Somthing went wrong!', '');

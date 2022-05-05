@@ -1333,9 +1333,10 @@ export class AddNewProjectComponent implements OnInit {
   deleteProject() {
     if(this.addNewProjectForm.value.id) {
       const projectId = this.addNewProjectForm.value.id;
-      this.projectService.deleteProject(projectId).subscribe(response => {
+      this.projectService.deleteProject(projectId).subscribe(async response => {
         if(response.data) {
           this.notificationService.success('Project deleted successfully.', '');
+          await this.filterLeftPanelService.updateDeleteSatus('PROJECT_DELETE');
           this.onCancel();
         } else {
           this.notificationService.error(response.message ? response.message : 'Somthing went wrong!', '');

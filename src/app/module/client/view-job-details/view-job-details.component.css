@@ -40,3 +40,9 @@ li {
     max-height: 25px !important;
     display: inline-block;
 }
+
+.button-wrapper {
+    right: 15px;
+    float: right!important;
+    position: absolute;
+}

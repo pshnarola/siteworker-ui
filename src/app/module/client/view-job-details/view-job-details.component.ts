@@ -8,6 +8,7 @@ import { ConfirmDialogueService } from 'src/app/confirm-dialogue.service';
 import { PostJobServiceService } from 'src/app/post-job-service.service';
 import { JobDetailService } from 'src/app/service/client-services/job-detail/job-detail.service';
 import { ProjectJobSelectionService } from 'src/app/service/client-services/project-job-selection.service';
+import { FilterLeftPanelDataService } from 'src/app/service/filter-left-panel-data.service';
 import { HeaderManagementService } from 'src/app/service/header-management.service';
 import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { UserService } from 'src/app/service/User.service';
@@ -93,6 +94,7 @@ export class ViewJobDetailsComponent implements OnInit, OnDestroy {
     private localStorageService: LocalStorageService,
     private confirmDialogService: ConfirmDialogueService,
     private clipboardService: ClipboardService,
+    private filterLeftPanelService: FilterLeftPanelDataService
   ) {
     this.dataTableParam = new DataTableParam();
     this.dataTableParam = {
@@ -377,5 +379,19 @@ export class ViewJobDetailsComponent implements OnInit, OnDestroy {
         this.notificationService.error(this.translator.instant('common.error'), '');
       });
       // addJobSubject
+  }
+  
+  deleteJob(id) {
+    this.jobDetailService.deleteJob(id).subscribe(async response => {
+      if(response.data) {
+        this.notificationService.success('Job deleted successfully.', '');
+        await this.filterLeftPanelService.updateDeleteSatus('JOB_DELETE');
+        this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
+      } else {
+        this.notificationService.error(response.message ? response.message : 'Error occured while deleting!', '');
+      }
+    }, err => {
+      this.notificationService.error('Error occured while deleting Job!', err.message ? err.message : '' );
+    });
   }
 }
