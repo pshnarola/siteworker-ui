@@ -360,6 +360,13 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
           this.previousurl = this.router.url;
         }
       });
+      this.filterlLeftPanelService.currentDeleteStatus.subscribe(deleteSatus => {
+        if(deleteSatus.includes('PROJECT_DELETE')) {
+          this.updateProjectListAfterDelete()
+        } else if(deleteSatus.includes('JOB_DELETE')) {
+          this.filterJob();
+        }
+      })
 
 
   }
@@ -2760,5 +2767,16 @@ export class ProjectJobSelectionComponent implements OnInit, OnDestroy {
     return data.firstName + ' ' + data.lastName;
   }
 
+  updateProjectListAfterDelete() {
+    this.queryParam = this.prepareQueryParam(this.datatableParam);
+    this.projectService.getProjectByUserIdForSidebar(this.queryParam).subscribe(e => {        
+      this.tempProjectData = e.data.result;
+      this.projectData = [];
+      if (e.data.result.length > 0) {
+        this.projectData = [...this.tempProjectData];
+        this.localStorageService.setItem('currentProjectStep', 1);
+      }
+    });
+  }
 }
 

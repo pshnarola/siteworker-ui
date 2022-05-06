@@ -161,5 +161,9 @@ export class ProjectDetailService {
     return this.customHttpService.put(url, '');
   }
 
+  deleteProject(projectId: string): Observable<any> {
+    const url = API_CONSTANTS.DELETE_PROJECT + projectId;
+    return this.customHttpService.delete(url);
+  }
 
 }

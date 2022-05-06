@@ -9,3 +9,9 @@ li {
     margin: 0;
     list-style: none;
 }
+
+.button-wrapper {
+    right: 15px;
+    float: right!important;
+    position: absolute;
+}

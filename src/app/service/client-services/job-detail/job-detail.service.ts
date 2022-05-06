@@ -87,4 +87,10 @@ export class JobDetailService {
         const url = API_CONSTANTS.UPDATE_JOB_UPDATED_DATE + '?id=' + id;
         return this.customHttpService.put(url, '');
     }
+
+    deleteJob(jobId: string): Observable<any> {
+        const url = API_CONSTANTS.DELETE_JOB + jobId;
+        return this.customHttpService.delete(url);
+    }
+
 }

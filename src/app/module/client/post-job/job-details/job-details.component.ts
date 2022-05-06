@@ -4,6 +4,7 @@ import { Component, ElementRef, EventEmitter, Input, NgZone, OnInit, Output, Vie
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Params, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfirmDialogueService } from 'src/app/confirm-dialogue.service';
 import { Certificate } from 'src/app/module/admin/certificate/certificate';
 import { PostJobServiceService } from 'src/app/post-job-service.service';
 import { CertificateService } from 'src/app/service/admin-services/certificate/certificate.service';
@@ -18,6 +19,7 @@ import { LocalStorageService } from 'src/app/service/localstorage.service';
 import { COMMON_CONSTANTS } from 'src/app/shared/CommonConstants';
 import { CustomValidator } from 'src/app/shared/CustomValidator';
 import { UINotificationService } from 'src/app/shared/notification/uinotification.service';
+import { PATH_CONSTANTS } from 'src/app/shared/PathConstants';
 import { City } from 'src/app/shared/vo/city/city';
 import { DataTableParam } from 'src/app/shared/vo/DataTableParam';
 import { Region } from 'src/app/shared/vo/region/region';
@@ -148,6 +150,8 @@ export class JobDetailsComponent implements OnInit {
   noSaveButton: boolean;
   cityParams: { name: any; };
   stateParams: { name: any; };
+  isCreateJob = false;
+
   constructor(
     private postJobService: PostJobServiceService,
     private experienceService: ExperienceLevelService,
@@ -164,7 +168,9 @@ export class JobDetailsComponent implements OnInit {
     private jobService: JobDetailService,
     private router: Router,
     private JobTitleService: JobTitleService,
-    private filterLeftPanelService: FilterLeftPanelDataService) {
+    private filterLeftPanelService: FilterLeftPanelDataService,
+    private jobDetailService: JobDetailService,
+    private confirmDialogService: ConfirmDialogueService) {
     this.dateTime.setDate(this.dateTime.getDate());
     this.datatableParam = new DataTableParam();
     this.datatableParam = {
@@ -200,7 +206,7 @@ export class JobDetailsComponent implements OnInit {
         this.patchEditForm(data.id);
       });
     }
-
+    this.isCreateJob = this.router.url.includes('/client/post-job') ? true : false;
 
   }
   ngOnInit(): void {
@@ -1364,4 +1370,38 @@ export class JobDetailsComponent implements OnInit {
       this.filteredState = data.data;
     });
   }
+
+  deleteJob() {
+    if(this.jobDetailsForm.value.id) {
+      const jobId = this.jobDetailsForm.value.id;
+      this.jobDetailService.deleteJob(jobId).subscribe(async response => {
+        if(response.data) {
+          this.notificationService.success('Job deleted successfully.', '');
+          await this.filterLeftPanelService.updateDeleteSatus('JOB_DELETE');
+          this.router.navigate([PATH_CONSTANTS.CLIENT_DASHBOARD]);
+        } else {
+          this.notificationService.error(response.message ? response.message : 'Somthing went wrong!', '');
+        }
+      }, err => {
+          this.notificationService.error(err.message ? err.message : ' Error while deleting job', '');
+      });
+    }
+  }
+
+  openWarningDialogForDeleteJob() {
+    let options = null;
+    options = {
+      title: 'Warning',
+      message: 'Do you want to delete current Job?',
+      cancelText: this.translator.instant('dialog.cancel.text'),
+      confirmText: this.translator.instant('dialog.confirm.text')
+    }
+    this.confirmDialogService.open(options);
+    this.confirmDialogService.confirmed().subscribe(confirmed => {
+      if (confirmed) {
+        this.deleteJob();
+      }
+    });
+  }
+
 }

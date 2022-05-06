@@ -583,6 +583,15 @@
         <button
           type="button"
           class="btn btn-outline-danger"
+          (click)="openWarningDialogForDeleteProject()"
+          *ngIf="isEditMode"
+        >
+          <i class="fa fa-trash-o"></i>
+          {{ "delete" | translate }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-danger ml-3"
           (click)="openWarningDialog()"
         >
           <i class="fa fa-times-circle"></i>

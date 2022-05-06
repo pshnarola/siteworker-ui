@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { API_CONSTANTS } from '../shared/ApiConstants';
 import { CustomHttpService } from './customHttp.service';
 
@@ -14,6 +14,14 @@ export class FilterLeftPanelDataService {
   jobListFilter = new Subject<any>();
   projectListFilter = new Subject<any>();
   jobSiteListFilter = new Subject<any>();
+  // Observable to refresh side panel list for project/Job
+  private deleteJobOrProject = new BehaviorSubject('default message');
+  currentDeleteStatus = this.deleteJobOrProject.asObservable();
+
+  updateDeleteSatus(status: string): any {
+    this.deleteJobOrProject.next(status);
+  }
+
   getWorkerByName(dataTableParam: URLSearchParams): Observable<any>{
     const url = API_CONSTANTS.GET_WORKER + '?' + dataTableParam;
     return this._customHttpService.get(url);
