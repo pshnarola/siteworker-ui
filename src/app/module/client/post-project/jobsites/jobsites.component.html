@@ -56,7 +56,13 @@
                                </span>
                             </div>
                             <div *ngSwitchCase="'COST'">
-                                {{jobsite.cost | currency}}
+                                <div *ngIf="jobsite.cost == 0">
+                                    {{ 'cost.will.be' | translate }}
+                                </div>
+
+                                <div *ngIf="jobsite.cost !== 0">
+                                    {{jobsite.cost | currency}}
+                                </div>
                             </div>
                             <div *ngSwitchCase="'location'" class="text-wrap">
                                 {{jobsite.location}}
