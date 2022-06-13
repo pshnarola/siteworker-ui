@@ -87,17 +87,16 @@ export class ReviewComponent implements OnInit {
     this.isApproved = false;
     let jobsites = this.localStorageService.getItem('jobsiteDetail');
     if (jobsites != null && jobsites.length !== 0) {
-      let hasCost = true;
-      jobsites.forEach((jobsite) => {
-        if (jobsite.cost === 0) {
-          hasCost = false;
-        }
-      });
-      if (hasCost) {
+      // let hasCost = true;
+      // jobsites.forEach((jobsite) => {
+      //   if (jobsite.cost === 0) {
+      //     hasCost = false;
+      //   }
+      // });
+      // if (hasCost) {
         if (this.checkAllLineItemAssigned()) {
           let id = this.localStorageService.getLoginUserId();
           this.postProjectService.checkClientAccess(id).subscribe(data => {
-            console.log(data);
             if (data.data === true) {
               this.postAllJobsite();
               setTimeout(() => {
@@ -112,10 +111,10 @@ export class ReviewComponent implements OnInit {
         else {
           this.openDialogForProjectError('Project will be saved as a draft. In order to post project, please assign all line items to payment milestone. Are you sure you want to continue?');
         }
-      }
-      else {
-        this.openDialogForProjectError('Project will be saved as a draft. In order to post project, please create at least one line item in jobsite. Are you sure you want to continue?');
-      }
+      // }
+      // else {
+      //   this.openDialogForProjectError('Project will be saved as a draft. In order to post project, please create at least one line item in jobsite. Are you sure you want to continue?');
+      // }
     }
     else {
       this.openDialogForProjectError('Project will be saved as a draft. In order to post project, please create atleast one jobsite. Are you sure you want to continue?');
@@ -148,10 +147,8 @@ export class ReviewComponent implements OnInit {
     let jobsites = this.localStorageService.getItem('jobsiteDetail');
     jobsites.forEach(element => {
       element.status = JobsiteStatus.POSTED;
-      console.log(element);
       this.jobsiteService.editJobsiteDetail(element, '').subscribe(data => {
         responseCount++;
-        console.log(data);
         if (data.statusCode === '200' && data.message === 'OK') {
           // this.notificationService.success(this.translator.instant('jobsite.edited.successfully'), '');
           // setTimeout(() => {

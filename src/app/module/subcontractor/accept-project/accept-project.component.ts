@@ -268,6 +268,8 @@ export class AcceptProjectComponent implements OnInit {
       };
       this.confirmDialogService.open(options);
       this.confirmDialogService.confirmed().subscribe(confirmed => {
+        console.log('confirmed =>',confirmed);
+        
         if (confirmed) {
           if (this.jobsiteDetail !== null && this.isByJobsite) {
             this.acceptJobsite(this.jobsiteDetail.id, estimatedStartDate);

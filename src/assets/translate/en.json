@@ -1228,5 +1228,6 @@
     "safety.rating": "Safety Rating",
     "worker.configuration.created": "Worker Configuration Created",
     "worker.configuration.updated": "Worker Configuration Updated",
-    "disable.checkbox.mandatory": "Please check disable work type to proceed bidding on whole project"
+    "disable.checkbox.mandatory": "Please check disable work type to proceed bidding on whole project",
+    "cost.will.be":"Cost will be assigned by subcontractor"
 }
