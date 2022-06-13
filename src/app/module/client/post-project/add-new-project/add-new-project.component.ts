@@ -1,56 +1,56 @@
-import { DatePipe } from '@angular/common';
-import { HttpResponse } from '@angular/common/http';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { ReplaySubject, Subject, Subscription } from 'rxjs';
-import { concatMap, groupBy, map, toArray } from 'rxjs/operators';
-import { ConfirmDialogueService } from 'src/app/confirm-dialogue.service';
-import { Company } from 'src/app/module/admin/company/company';
-import { CompanyService } from 'src/app/service/admin-services/company/company.service';
-import { FileDownloadService } from 'src/app/service/admin-services/fileDownload/file-download.service';
-import { IndustryTypeService } from 'src/app/service/admin-services/industry-type/industry-type.service';
-import { RegionService } from 'src/app/service/admin-services/region/region.service';
-import { StateService } from 'src/app/service/admin-services/state/state.service';
-import { JobsiteDetailService } from 'src/app/service/client-services/jobsite-details/jobsite-detail.service';
-import { JobsiteService } from 'src/app/service/client-services/post-project/jobsite.service';
-import { PostProjectService } from 'src/app/service/client-services/post-project/post-project.service';
-import { ProjectDetailService } from 'src/app/service/client-services/project-detail.service';
-import { ProjectJobSelectionService } from 'src/app/service/client-services/project-job-selection.service';
-import { FilterLeftPanelDataService } from 'src/app/service/filter-left-panel-data.service';
-import { LocalStorageService } from 'src/app/service/localstorage.service';
-import { COMMON_CONSTANTS } from 'src/app/shared/CommonConstants';
-import { CustomValidator } from 'src/app/shared/CustomValidator';
-import { UINotificationService } from 'src/app/shared/notification/uinotification.service';
-import { PATH_CONSTANTS } from 'src/app/shared/PathConstants';
-import { DataTableParam } from 'src/app/shared/vo/DataTableParam';
-import { IndustryType } from 'src/app/shared/vo/IndustryType';
-import { Region } from 'src/app/shared/vo/region/region';
-import { State } from 'src/app/shared/vo/state/state';
-import { JobsiteStatus } from '../../enums/jobsiteStatus';
-import { ProjectStatus } from '../../enums/projectStatusenum';
-import { JobsiteDetail } from '../../Vos/jobsitemodel';
-import { ProjectAttachmentDTO } from '../../Vos/ProjectAttachment';
-import { ProjectDetail } from '../../Vos/projectDetailmodel';
-
+import { DatePipe } from "@angular/common";
+import { HttpResponse } from "@angular/common/http";
+import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
+import { TranslateService } from "@ngx-translate/core";
+import { ReplaySubject, Subject, Subscription } from "rxjs";
+import { concatMap, groupBy, map, toArray } from "rxjs/operators";
+import { ConfirmDialogueService } from "src/app/confirm-dialogue.service";
+import { Company } from "src/app/module/admin/company/company";
+import { CompanyService } from "src/app/service/admin-services/company/company.service";
+import { FileDownloadService } from "src/app/service/admin-services/fileDownload/file-download.service";
+import { IndustryTypeService } from "src/app/service/admin-services/industry-type/industry-type.service";
+import { RegionService } from "src/app/service/admin-services/region/region.service";
+import { StateService } from "src/app/service/admin-services/state/state.service";
+import { JobsiteDetailService } from "src/app/service/client-services/jobsite-details/jobsite-detail.service";
+import { JobsiteService } from "src/app/service/client-services/post-project/jobsite.service";
+import { PostProjectService } from "src/app/service/client-services/post-project/post-project.service";
+import { ProjectDetailService } from "src/app/service/client-services/project-detail.service";
+import { ProjectJobSelectionService } from "src/app/service/client-services/project-job-selection.service";
+import { FilterLeftPanelDataService } from "src/app/service/filter-left-panel-data.service";
+import { LocalStorageService } from "src/app/service/localstorage.service";
+import { COMMON_CONSTANTS } from "src/app/shared/CommonConstants";
+import { CustomValidator } from "src/app/shared/CustomValidator";
+import { UINotificationService } from "src/app/shared/notification/uinotification.service";
+import { PATH_CONSTANTS } from "src/app/shared/PathConstants";
+import { DataTableParam } from "src/app/shared/vo/DataTableParam";
+import { IndustryType } from "src/app/shared/vo/IndustryType";
+import { Region } from "src/app/shared/vo/region/region";
+import { State } from "src/app/shared/vo/state/state";
+import { JobsiteStatus } from "../../enums/jobsiteStatus";
+import { ProjectStatus } from "../../enums/projectStatusenum";
+import { JobsiteDetail } from "../../Vos/jobsitemodel";
+import { ProjectAttachmentDTO } from "../../Vos/ProjectAttachment";
+import { ProjectDetail } from "../../Vos/projectDetailmodel";
+import * as XLSX from "xlsx";
+import { faSleigh } from "@fortawesome/free-solid-svg-icons";
 @Component({
-  selector: 'app-add-new-project',
-  templateUrl: './add-new-project.component.html',
-  styleUrls: ['./add-new-project.component.css'],
-  providers: [DatePipe]
+  selector: "app-add-new-project",
+  templateUrl: "./add-new-project.component.html",
+  styleUrls: ["./add-new-project.component.css"],
+  providers: [DatePipe],
 })
 export class AddNewProjectComponent implements OnInit {
-
-  todayDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+  todayDate = this.datePipe.transform(new Date(), "yyyy-MM-dd");
   dateTime = new Date();
   filteredClients: any[];
   filteredClientLength;
   filteredRegion: any[];
   filteredState: any[];
   filteredIndustryType: any[];
-  fileLabel = this.translator.instant('choose.file');
+  fileLabel = this.translator.instant("choose.file");
   addNewProjectForm: FormGroup;
   submitted = false;
   clients: Company[];
@@ -58,9 +58,9 @@ export class AddNewProjectComponent implements OnInit {
   datatableParam: DataTableParam = {
     offset: 0,
     size: 100000,
-    sortField: '',
+    sortField: "",
     sortOrder: 1,
-    searchText: null
+    searchText: null,
   };
   blockSpecial: RegExp = COMMON_CONSTANTS.blockSpecial;
   blockSomeSpecial: RegExp = COMMON_CONSTANTS.blockSomeSpecial;
@@ -96,8 +96,7 @@ export class AddNewProjectComponent implements OnInit {
 
   isProjectPosted = false;
   checkProjectIsPosted;
-  singleJobsiteToBeAdded:boolean = false;
-
+  singleJobsiteToBeAdded: boolean = false;
 
   @Input() reviewproject;
   @Input() reviewFormGroup;
@@ -105,16 +104,74 @@ export class AddNewProjectComponent implements OnInit {
   excelFiles: File[] = [];
   selectedValue = true;
   uploadExcelDialog = false;
-  fileName = 'project_import_sample_file.xlsx';
+  fileName = "project_import_sample_file.xlsx";
   selectedExcel: any;
   importFromExcelProjectValidationMessage: any;
 
-  stateParams: { name: any; };
-  singleJobsiteAdded:boolean = true;
-  displaySingleJobsiteAdded:boolean = true;
+  stateParams: { name: any };
+  singleJobsiteAdded: boolean = true;
+  displaySingleJobsiteAdded: boolean = true;
   isEditMode;
+  arrayBuffer: any = [];
+  sheetNameArray = ["PaymentMileStone", "LineItem", "JobSite", "ProjectDetail"];
+  projectDetailHeader = [
+    "project_uid",
+    "project_title",
+    "region",
+    "state",
+    "bid_due_date",
+    "start_date",
+    "completion_date",
+    "market_type",
+    "is_negotiable",
+    "industry",
+    "company",
+  ];
+  jobSiteHeader = [
+    "project_uid",
+    "jobsite_uid",
+    "title",
+    "description",
+    "state",
+    "city",
+    "location",
+    "zipcode",
+    "jobcode",
+  ];
 
-  constructor(private datePipe: DatePipe,
+  lineItemHeader = [
+    "jobsite_uid",
+    "line_item_uid",
+    "line_item_id",
+    "payment_milestone_id",
+    "work_type",
+    "name",
+    "qty",
+    "uom(unit of measure)",
+    "cost",
+    "description",
+    "inclusion",
+    "exclusion",
+    "dynamic_label1",
+    "dynamic_label_2",
+    "dynamic_label_3",
+  ];
+
+  paymentMilestoneHeader = [
+    "jobsite_uid",
+    "payment_milestone_id",
+    "name",
+    "percentage",
+    "has_advance_payment",
+  ];
+  isAllPage = false;
+  sheetHeaderList1: any = [];
+  sheetHeaderList2: any = [];
+  sheetHeaderList3: any = [];
+  sheetHeaderList4: any = [];
+  uploadErrorMessage = "";
+  constructor(
+    private datePipe: DatePipe,
     private _formBuilder: FormBuilder,
     private companyService: CompanyService,
     private regionService: RegionService,
@@ -136,26 +193,29 @@ export class AddNewProjectComponent implements OnInit {
     this.dateTime.setDate(this.dateTime.getDate());
 
     this.projectJobSelectionService.hideJobsiteListBehaviourSubject.next(true);
-
   }
 
   ngOnInit(): void {
     this.isProjectPosted = false;
     this.onSetValueOfForm();
     this.subscription1 = this.postProjectService.editProject.subscribe(
-      data => {
-        const projectDetail = this._localStorageService.getItem('addProjectDetail');
-        const isInEditMode = this._localStorageService.getItem('isEditMode');
+      (data) => {
+        const projectDetail =
+          this._localStorageService.getItem("addProjectDetail");
+        const isInEditMode = this._localStorageService.getItem("isEditMode");
         // Added isEditMode flag to show/hide delete button
         this.isEditMode = isInEditMode;
-        if(isInEditMode) {
+        if (isInEditMode) {
           this.displaySingleJobsiteAdded = false;
         } else {
           this.displaySingleJobsiteAdded = true;
         }
-        if (this._localStorageService.getItem('isEditMode') && data?.status === 'POSTED') {
+        if (
+          this._localStorageService.getItem("isEditMode") &&
+          data?.status === "POSTED"
+        ) {
           this.isProjectPosted = true;
-        } else if (isInEditMode && projectDetail?.status === 'POSTED') {
+        } else if (isInEditMode && projectDetail?.status === "POSTED") {
           this.isProjectPosted = true;
         } else {
           this.isProjectPosted = false;
@@ -170,16 +230,17 @@ export class AddNewProjectComponent implements OnInit {
   ngOnChanges() {
     if (this.reviewFormGroup) {
       this.onSetValueOfForm();
-      this.uploadedFile = this._localStorageService.getItem('addProjectDetail').attachment;
+      this.uploadedFile =
+        this._localStorageService.getItem("addProjectDetail").attachment;
     }
   }
-  changeValue(event){
-    if(event.target.value == 'yes') {
+  changeValue(event) {
+    if (event.target.value == "yes") {
       this.singleJobsiteToBeAdded = true;
-      this._localStorageService.setItem('singleJobsiteToBeAdded', true);
+      this._localStorageService.setItem("singleJobsiteToBeAdded", true);
     } else {
       this.singleJobsiteToBeAdded = false;
-      this._localStorageService.setItem('singleJobsiteToBeAdded', false);
+      this._localStorageService.setItem("singleJobsiteToBeAdded", false);
     }
   }
 
@@ -187,7 +248,7 @@ export class AddNewProjectComponent implements OnInit {
     if (this.reviewFormGroup) {
       this.reviewFormGroup = null;
     }
-    console.log('in destroy');
+    console.log("in destroy");
     if (this.subscription) {
       //this.subscription.unsubscribe();
     }
@@ -217,19 +278,20 @@ export class AddNewProjectComponent implements OnInit {
 
   openDeleteDialogForTemp(index, title): void {
     let options = null;
-    const message = this.translator.instant('dialog.message.delete');
+    const message = this.translator.instant("dialog.message.delete");
     options = {
-      title: this.translator.instant('warning'),
+      title: this.translator.instant("warning"),
       message: this.translator.instant(`${message}?`),
-      cancelText: this.translator.instant('dialog.cancel.text'),
-      confirmText: this.translator.instant('dialog.confirm.text')
+      cancelText: this.translator.instant("dialog.cancel.text"),
+      confirmText: this.translator.instant("dialog.confirm.text"),
     };
     this.confirmDialogService.open(options);
-    this.confirmDialogService.confirmed().subscribe(confirmed => {
+    this.confirmDialogService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
         this.onRemoveFromList(index);
       }
     });
+   
   }
 
   onRemoveFromList(id): void {
@@ -241,11 +303,141 @@ export class AddNewProjectComponent implements OnInit {
     });
     this.excelFiles.length = 0;
     this.excelFiles = fileTemp;
-    this.notificationService.success(this.translator.instant('document.deleted'), '');
+    this.notificationService.success(
+      this.translator.instant("document.deleted"),
+      ""
+    );
+    this.importFromExcelProjectValidationMessage=''
   }
 
   onSelectExcelFile(event): void {
-    this.excelFiles.splice(2, 0, ...event.addedFiles);
+    if (event.addedFiles.length == 1 ) {
+       if(this.excelFiles.length == 0){
+        this.readFile(event);
+        this.importFromExcelProjectValidationMessage = "";
+       }else{
+        this.importFromExcelProjectValidationMessage =
+        "Only single file you can upload";
+       }
+    }else if(event.addedFiles.length == 0 && event.rejectedFiles.length > 1){
+      this.importFromExcelProjectValidationMessage =
+      "Only single file you can upload";
+    }else{
+      this.importFromExcelProjectValidationMessage =
+          "Please upload Excel(.xls, .xlsx) files only.";
+    }
+    
+    
+   
+
+    // this.excelFiles.splice(2, 0, ...event.addedFiles);
+  }
+
+  readFile(file: any) {
+    let fileReader = new FileReader();
+    let fileHeader1: any = [];
+    let fileHeader2: any = [];
+    let fileHeader3: any = [];
+    let fileHeader4: any = [];
+    fileReader.readAsArrayBuffer(file.addedFiles[0]);
+    fileReader.onload = (e) => {
+      this.arrayBuffer = fileReader.result;
+      var data = new Uint8Array(this.arrayBuffer);
+      var arr = new Array();
+      for (var i = 0; i != data.length; i++)
+        arr[i] = String.fromCharCode(data[i]);
+      var bstr = arr.join("");
+      let workbook: any = XLSX.read(bstr, { type: "binary" });
+      workbook.SheetNames.forEach((element) => {
+        if (this.sheetNameArray.includes(element)) {
+          this.isAllPage = true;
+          this.importFromExcelProjectValidationMessage = "";
+        } else {
+          this.isAllPage = false;
+          this.importFromExcelProjectValidationMessage =
+            "Please check all the pages in uploaded sheet";
+        }
+      });
+
+      if (this.isAllPage) {
+        this.sheetHeaderList1 = workbook.Sheets["JobSite"];
+        for (const key in this.sheetHeaderList1) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.sheetHeaderList1, key)
+          ) {
+            if (key !== "!ref" && key !== "margins") {
+              if (key.split("")[1] === "1" && key.length === 2) {
+                const element = this.sheetHeaderList1[key];
+                let check = element.h ? element.h.toLowerCase() : element.v.toLowerCase()
+                if (this.jobSiteHeader.includes(check)) {
+                  fileHeader1.push(element.h);
+                }
+              }
+            }
+          }
+        }
+
+        this.sheetHeaderList2 = workbook.Sheets["LineItem"];
+        for (const key in this.sheetHeaderList2) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.sheetHeaderList2, key)
+          ) {
+            if (key !== "!ref" && key !== "margins") {
+              if (key.split("")[1] === "1" && key.length === 2) {
+                const element = this.sheetHeaderList2[key];
+                let check = element.h ? element.h.toLowerCase() : element.v.toLowerCase()
+                if (this.lineItemHeader.includes(check)) {
+                  fileHeader2.push(element.h);
+                }
+              }
+            }
+          }
+        }
+
+        this.sheetHeaderList3 = workbook.Sheets["PaymentMileStone"];
+        for (const key in this.sheetHeaderList3) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.sheetHeaderList3, key)
+          ) {
+            if (key !== "!ref" && key !== "margins") {
+              if (key.split("")[1] === "1" && key.length === 2) {
+                const element = this.sheetHeaderList3[key];
+                let check = element.h ? element.h.toLowerCase() : element.v.toLowerCase()
+                if (this.paymentMilestoneHeader.includes(check)) {
+                  fileHeader3.push(element.h);
+                }
+              }
+            }
+          }
+        }
+
+        this.sheetHeaderList4 = workbook.Sheets["ProjectDetail"];
+        for (const key in this.sheetHeaderList4) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.sheetHeaderList4, key)
+          ) {
+            if (key !== "!ref" && key !== "margins") {
+              if (key.split("")[1] === "1" && key.length === 2) {
+                const element = this.sheetHeaderList4[key];
+                 let check = element.h ? element.h.toLowerCase() : element.v.toLowerCase()
+                if (this.projectDetailHeader.includes(check)) {
+                  fileHeader4.push(element.h);
+                }
+              }
+            }
+          }
+        }
+
+        if(this.jobSiteHeader.length === fileHeader1.length && this.lineItemHeader.length === fileHeader2.length 
+          && this.paymentMilestoneHeader.length === fileHeader3.length && this.projectDetailHeader.length === fileHeader4.length){
+
+          this.excelFiles.splice(2, 0, ...file.addedFiles);
+          }else{
+            this.importFromExcelProjectValidationMessage ="Please check all headers of all the pages in uploaded sheet";
+          }
+
+      }
+    };
   }
 
   uploadExcelData() {
@@ -254,45 +446,53 @@ export class AddNewProjectComponent implements OnInit {
     if (this.excelFiles.length < 2 && this.excelFiles.length > 0) {
       if (this.selectedExcel) {
         const uploadImageData = new FormData();
-        uploadImageData.append('file', this.selectedExcel);
-        this.postProjectService.uploadExcel(uploadImageData, this.loginUserId).subscribe(
-          data => {
-            console.log(data);
+        uploadImageData.append("file", this.selectedExcel);
+        this.postProjectService
+          .uploadExcel(uploadImageData, this.loginUserId)
+          .subscribe((data) => {
+            console.log('response file data',data);
             if (data instanceof HttpResponse) {
               console.log(data.body);
               const response: any = data.body;
-              if (response.statusCode === '200' && response.data) {
-                this.notificationService.success('Excel file uploaded successfully', '');
+              if (response.statusCode === "200" && response.data) {
+                this.notificationService.success(
+                  "Excel file uploaded successfully",
+                  ""
+                );
                 this.selectedExcel = null;
                 this.hideDialogOfUploadExcel();
-                this.projectJobSelectionService.addProjectSubject.next(this._localStorageService.getSelectedProjectObject());
+                this.projectJobSelectionService.addProjectSubject.next(
+                  this._localStorageService.getSelectedProjectObject()
+                );
               } else {
-                if (response.errorCode === 'E5003') {
-                  this.importFromExcelProjectValidationMessage = 'No data found';
+                if (response.errorCode === "E5003") {
+                  this.importFromExcelProjectValidationMessage =
+                    "No data found";
                 } else {
                   if (response.errorCode.length > 6) {
-                    this.importFromExcelProjectValidationMessage = response.errorCode;
+                    this.importFromExcelProjectValidationMessage =
+                      response.errorCode;
                   } else {
-                    this.importFromExcelProjectValidationMessage = response.message;
+                    this.importFromExcelProjectValidationMessage =
+                      response.message;
                   }
                   // this.notificationService.error(response.errorCode, '');
                 }
               }
             }
-          }
-        );
-      }
-      else {
-        this.notificationService.error('Please select excel file', '');
+          });
+      } else {
+        this.notificationService.error("Please select excel file", "");
       }
     } else {
-      this.notificationService.error('Please upload 1 file', '');
+      this.notificationService.error("Please upload 1 file", "");
     }
   }
 
   onSetValueOfForm() {
-    if (this._localStorageService.getItem('selectedProject')) {
-      this.checkProjectIsPosted = this._localStorageService.getItem('selectedProject');
+    if (this._localStorageService.getItem("selectedProject")) {
+      this.checkProjectIsPosted =
+        this._localStorageService.getItem("selectedProject");
     }
     this.loginUserId = this._localStorageService.getLoginUserId();
     this.getRegionList();
@@ -301,35 +501,72 @@ export class AddNewProjectComponent implements OnInit {
     this.getIndustryTypeList();
     this.initializeCompanyForm();
     this.initializeAddNewProjectForm();
-    if (this._localStorageService.getItem('addNewProjectFormValue')) {
+    if (this._localStorageService.getItem("addNewProjectFormValue")) {
       this.singleJobsiteAdded = false;
       this.subscription = this.postProjectService.addNewProject.subscribe(
-        data => {
+        (data) => {
           this.initializeAddNewProjectForm();
-          this.addNewProjectForm.setValue(this._localStorageService.getItem('addNewProjectFormValue'));
-          let project = this._localStorageService.getItem('addProjectDetail');
+          this.addNewProjectForm.setValue(
+            this._localStorageService.getItem("addNewProjectFormValue")
+          );
+          let project = this._localStorageService.getItem("addProjectDetail");
           // this.uploadedFile.length = 0;
           this.uploadedFile = project.attachment;
-          if (this._localStorageService.getItem('addNewProjectFormValue').bidDueDate) {
-            this.addNewProjectForm.controls.bidDueDate.setValue(new Date(this._localStorageService.getItem('addNewProjectFormValue').bidDueDate));
+          if (
+            this._localStorageService.getItem("addNewProjectFormValue")
+              .bidDueDate
+          ) {
+            this.addNewProjectForm.controls.bidDueDate.setValue(
+              new Date(
+                this._localStorageService.getItem(
+                  "addNewProjectFormValue"
+                ).bidDueDate
+              )
+            );
           }
-          if (this._localStorageService.getItem('addNewProjectFormValue').startDate) {
-            this.addNewProjectForm.controls.startDate.setValue(new Date(this._localStorageService.getItem('addNewProjectFormValue').startDate));
+          if (
+            this._localStorageService.getItem("addNewProjectFormValue")
+              .startDate
+          ) {
+            this.addNewProjectForm.controls.startDate.setValue(
+              new Date(
+                this._localStorageService.getItem(
+                  "addNewProjectFormValue"
+                ).startDate
+              )
+            );
           }
-          if (this._localStorageService.getItem('addNewProjectFormValue').completionDate) {
-            this.addNewProjectForm.controls.completionDate.setValue(new Date(this._localStorageService.getItem('addNewProjectFormValue').completionDate));
+          if (
+            this._localStorageService.getItem("addNewProjectFormValue")
+              .completionDate
+          ) {
+            this.addNewProjectForm.controls.completionDate.setValue(
+              new Date(
+                this._localStorageService.getItem(
+                  "addNewProjectFormValue"
+                ).completionDate
+              )
+            );
           }
-          if (!this._localStorageService.getItem('addNewProjectFormValue').region?.id) {
+          if (
+            !this._localStorageService.getItem("addNewProjectFormValue").region
+              ?.id
+          ) {
             let region = {
-              'id': 'static',
-              'name': this._localStorageService.getItem('addNewProjectFormValue').region
+              id: "static",
+              name: this._localStorageService.getItem("addNewProjectFormValue")
+                .region,
             };
             this.addNewProjectForm.controls.region.setValue(region);
           }
-          if (!this._localStorageService.getItem('addNewProjectFormValue').state?.id) {
+          if (
+            !this._localStorageService.getItem("addNewProjectFormValue").state
+              ?.id
+          ) {
             let state = {
-              'id': 'static',
-              'name': this._localStorageService.getItem('addNewProjectFormValue').state
+              id: "static",
+              name: this._localStorageService.getItem("addNewProjectFormValue")
+                .state,
             };
             this.addNewProjectForm.controls.state.setValue(state);
           }
@@ -362,40 +599,46 @@ export class AddNewProjectComponent implements OnInit {
       return false;
     }
     if (this.myCompanyForm.valid) {
-      this._companyService.addCompany(JSON.stringify(this.myCompanyForm.value)).subscribe(
-        data => {
-          if (data.statusCode === '200' && data.message === 'OK') {
-            this.notificationService.success(this.translator.instant('create.company.successMessage'), '');
+      this._companyService
+        .addCompany(JSON.stringify(this.myCompanyForm.value))
+        .subscribe(
+          (data) => {
+            if (data.statusCode === "200" && data.message === "OK") {
+              this.notificationService.success(
+                this.translator.instant("create.company.successMessage"),
+                ""
+              );
+              this.companyDialog = false;
+              this.submittedCompany = false;
+              this.getClientList();
+              this.addNewProjectForm.controls.company.patchValue(data.data);
+            } else {
+              this.notificationService.error(data.message, "");
+              this.companyDialog = false;
+              this.submittedCompany = false;
+            }
+          },
+          (error) => {
+            this.notificationService.error(
+              this.translator.instant("common.error"),
+              ""
+            );
             this.companyDialog = false;
             this.submittedCompany = false;
-            this.getClientList();
-            this.addNewProjectForm.controls.company.patchValue(data.data);
           }
-          else {
-            this.notificationService.error(data.message, '');
-            this.companyDialog = false;
-            this.submittedCompany = false;
-          }
-        },
-        error => {
-          this.notificationService.error(this.translator.instant('common.error'), '');
-          this.companyDialog = false;
-          this.submittedCompany = false;
-        }
-      );
+        );
     }
   }
 
   initializeCompanyForm(): void {
     this.myCompanyForm = this._formBuilder.group({
       id: [],
-      name: ['', [CustomValidator.required, Validators.maxLength(50)]],
+      name: ["", [CustomValidator.required, Validators.maxLength(50)]],
       createdBy: this.loginUserId,
       updatedBy: this.loginUserId,
-      isEnable: 1
+      isEnable: 1,
     });
   }
-
 
   filterClient(event) {
     let filtered: any[] = [];
@@ -407,14 +650,13 @@ export class AddNewProjectComponent implements OnInit {
       }
     }
     this.filteredClients = filtered;
-    let client = { 'id': 'buttonId' };
+    let client = { id: "buttonId" };
     this.filteredClients.push(client);
     this.filteredClientLength = this.filteredClients.length;
-
   }
 
   onSelectCompany(event) {
-    if (event.id === 'buttonId') {
+    if (event.id === "buttonId") {
       this.addNewProjectForm.controls.company.setValue(null);
       this.companyDialog = true;
     }
@@ -469,7 +711,7 @@ export class AddNewProjectComponent implements OnInit {
     this.isInvalidBidDueDate = false;
     this.isInvalidStartDate = false;
     this.isInvalidCompletionDate = false;
-    let bidDueDate = addNewProjectForm.value.bidDueDate;;
+    let bidDueDate = addNewProjectForm.value.bidDueDate;
     let startDate = addNewProjectForm.value.startDate;
     let completionDate = addNewProjectForm.value.completionDate;
     if (bidDueDate !== null && startDate !== null && completionDate !== null) {
@@ -486,7 +728,7 @@ export class AddNewProjectComponent implements OnInit {
   }
 
   private prepareQueryParam(paramObject) {
-    const params = new URLSearchParams;
+    const params = new URLSearchParams();
     for (const key in paramObject) {
       params.set(key, paramObject[key]);
     }
@@ -497,25 +739,23 @@ export class AddNewProjectComponent implements OnInit {
     let datatableParam: DataTableParam = {
       offset: 0,
       size: 1000000,
-      sortField: '',
+      sortField: "",
       sortOrder: 1,
-      searchText: '{"IS_ENABLE" : true}'
-    }
+      searchText: '{"IS_ENABLE" : true}',
+    };
     console.log(datatableParam);
     this.queryParam = this.prepareQueryParam(datatableParam);
     this.companyService.getCompanyList(this.queryParam).subscribe(
-      data => {
-
+      (data) => {
         console.log(data);
-        if (data.statusCode === '200') {
-          if (data.message == 'OK') {
+        if (data.statusCode === "200") {
+          if (data.message == "OK") {
             this.clients = data.data.result;
           }
         } else {
         }
       },
-      error => {
-      }
+      (error) => {}
     );
   }
 
@@ -523,22 +763,21 @@ export class AddNewProjectComponent implements OnInit {
     let datatableParam: DataTableParam = {
       offset: 0,
       size: 1000000,
-      sortField: '',
+      sortField: "",
       sortOrder: 1,
-      searchText: '{"IS_ENABLE" : true}'
-    }
+      searchText: '{"IS_ENABLE" : true}',
+    };
     this.queryParam = this.prepareQueryParam(datatableParam);
     this.regionService.getRegionList(this.queryParam).subscribe(
-      data => {
-        if (data.statusCode === '200') {
-          if (data.message == 'OK') {
+      (data) => {
+        if (data.statusCode === "200") {
+          if (data.message == "OK") {
             this.region = data.data.result;
           }
         } else {
         }
       },
-      error => {
-      }
+      (error) => {}
     );
   }
 
@@ -567,35 +806,36 @@ export class AddNewProjectComponent implements OnInit {
 
   filterState(event): void {
     this.stateParams = {
-      name: event.query
+      name: event.query,
     };
     this.queryParam = this.prepareQueryParam(this.stateParams);
-    this.filterLeftPanelService.getStateForPostProject(this.queryParam).subscribe(data => {
-      console.log(data);
-      this.filteredState = data.data;
-    });
+    this.filterLeftPanelService
+      .getStateForPostProject(this.queryParam)
+      .subscribe((data) => {
+        console.log(data);
+        this.filteredState = data.data;
+      });
   }
 
   private getIndustryTypeList() {
     let datatableParam: DataTableParam = {
       offset: 0,
       size: 100000,
-      sortField: '',
+      sortField: "",
       sortOrder: 1,
-      searchText: '{"IS_ENABLE" : true}'
+      searchText: '{"IS_ENABLE" : true}',
     };
     this.queryParam = this.prepareQueryParam(datatableParam);
     this.industryTypeService.getIndustryTypeList(this.queryParam).subscribe(
-      data => {
-        if (data.statusCode === '200') {
-          if (data.message == 'OK') {
+      (data) => {
+        if (data.statusCode === "200") {
+          if (data.message == "OK") {
             this.industryType = data.data.result;
           }
         } else {
         }
       },
-      error => {
-      }
+      (error) => {}
     );
   }
 
@@ -604,42 +844,53 @@ export class AddNewProjectComponent implements OnInit {
       id: [],
       createdBy: this.loginUserId,
       updatedBy: this.loginUserId,
-      title: ['', [Validators.required, Validators.maxLength(50)]],
+      title: ["", [Validators.required, Validators.maxLength(50)]],
       company: [null],
       region: [null, Validators.required],
       state: [null, Validators.required],
       industry: [null, Validators.required],
-      attachmentLink: ['', Validators.pattern(COMMON_CONSTANTS.ATTECHMENT_LINK)],
+      attachmentLink: [
+        "",
+        Validators.pattern(COMMON_CONSTANTS.ATTECHMENT_LINK),
+      ],
       bidDueDate: [null, Validators.required],
       completionDate: [null, Validators.required],
       startDate: [null, Validators.required],
       isNegotiable: [true, Validators.required],
-      type: ['OPEN_MARKET_REQUEST', Validators.required]
+      type: ["OPEN_MARKET_REQUEST", Validators.required],
     });
   }
 
   onSaveAddNewProjectForm() {
-    if (!this.addNewProjectForm.get('title').valid) {
-      this.addNewProjectForm.get('title').markAsTouched();
-      this.addNewProjectForm.get('title').markAsDirty();
+    if (!this.addNewProjectForm.get("title").valid) {
+      this.addNewProjectForm.get("title").markAsTouched();
+      this.addNewProjectForm.get("title").markAsDirty();
       return false;
-    }
-    else {
+    } else {
       if (this.setAddNewProjectObject()) {
-        this.addProjectDetail.status = 'DRAFT';
+        this.addProjectDetail.status = "DRAFT";
         this.addProjectDetail.isSaveAsDraft = true;
-        this._localStorageService.setItem('addNewProjectFormValue', this.addNewProjectForm.value, false);
-        this._localStorageService.setItem('addProjectDetail', this.addProjectDetail, false);
+        this._localStorageService.setItem(
+          "addNewProjectFormValue",
+          this.addNewProjectForm.value,
+          false
+        );
+        this._localStorageService.setItem(
+          "addProjectDetail",
+          this.addProjectDetail,
+          false
+        );
 
         if (this.selectedFile.length !== 0) {
           if (this.checkFileName()) {
-            this.uploadFile('onSaveAsDraft', '');
+            this.uploadFile("onSaveAsDraft", "");
+          } else {
+            this.notificationService.error(
+              "You have selected same name files",
+              ""
+            );
           }
-          else {
-            this.notificationService.error('You have selected same name files', '');
-          }
-        }
-        else {
+        } else {
           this.onSaveAsDraft();
         }
       }
@@ -652,43 +903,55 @@ export class AddNewProjectComponent implements OnInit {
       CustomValidator.markFormGroupTouched(this.addNewProjectForm);
       this.submitted = false;
       return false;
-    }
-    else {
+    } else {
       if (this.setAddNewProjectObject()) {
-        let message = '';
-        if (this.reviewFormGroup && this.checkProjectIsValidForPost() && this.checkAllLineItemAssigned()) {
-          this.addProjectDetail.status = 'POSTED';
+        let message = "";
+        if (
+          this.reviewFormGroup &&
+          this.checkProjectIsValidForPost() &&
+          this.checkAllLineItemAssigned()
+        ) {
+          this.addProjectDetail.status = "POSTED";
           this.addProjectDetail.isSaveAsDraft = false;
-          message = this.translator.instant('project.posted');
+          message = this.translator.instant("project.posted");
           if (this.selectedFile.length !== 0) {
             if (this.checkFileName()) {
-              this.uploadFile('onNext', message);
+              this.uploadFile("onNext", message);
+            } else {
+              this.notificationService.error(
+                "You have selected same name files",
+                ""
+              );
             }
-            else {
-              this.notificationService.error('You have selected same name files', '');
-            }
-          }
-          else {
+          } else {
             this.onNext(message);
           }
-        }
-        else {
-          message = '';
-          this.addProjectDetail.status = 'DRAFT';
+        } else {
+          message = "";
+          this.addProjectDetail.status = "DRAFT";
           this.addProjectDetail.isSaveAsDraft = true;
-          this._localStorageService.setItem('addNewProjectFormValue', this.addNewProjectForm.value, false);
-          this._localStorageService.setItem('addProjectDetail', this.addProjectDetail, false);
+          this._localStorageService.setItem(
+            "addNewProjectFormValue",
+            this.addNewProjectForm.value,
+            false
+          );
+          this._localStorageService.setItem(
+            "addProjectDetail",
+            this.addProjectDetail,
+            false
+          );
 
-          message = this.translator.instant('project.saved.as.draft');
+          message = this.translator.instant("project.saved.as.draft");
           if (this.selectedFile.length !== 0) {
             if (this.checkFileName()) {
-              this.uploadFile('onNext', message);
+              this.uploadFile("onNext", message);
+            } else {
+              this.notificationService.error(
+                "You have selected same name files",
+                ""
+              );
             }
-            else {
-              this.notificationService.error('You have selected same name files', '');
-            }
-          }
-          else {
+          } else {
             this.onNext(message);
           }
         }
@@ -696,7 +959,7 @@ export class AddNewProjectComponent implements OnInit {
     }
   }
 
-  onSaveAsDraft() {    
+  onSaveAsDraft() {
     if (this.uploadableFile.length !== 0) {
       console.log(this.uploadedFile);
       this.addProjectDetail.attachment = this.uploadedFile;
@@ -705,17 +968,27 @@ export class AddNewProjectComponent implements OnInit {
         this.addProjectDetail.attachment.push(file);
       });
       console.log(this.addProjectDetail.attachment);
-    }
-    else {
+    } else {
       this.addProjectDetail.attachment = this.uploadedFile;
     }
     if (!this.addProjectDetail.id) {
       console.log(this.addProjectDetail);
-      this.postProjectService.addNewProjectDetail(this.addProjectDetail,
-        this.translator.instant('project.saved.as.draft')).subscribe(data => {
-          if (data.statusCode === '200' && data.message === 'OK') {
-            this.notificationService.success(this.translator.instant('project.saved.as.draft'), '');
-            this._localStorageService.setItem('addProjectDetail', data.data, false);
+      this.postProjectService
+        .addNewProjectDetail(
+          this.addProjectDetail,
+          this.translator.instant("project.saved.as.draft")
+        )
+        .subscribe((data) => {
+          if (data.statusCode === "200" && data.message === "OK") {
+            this.notificationService.success(
+              this.translator.instant("project.saved.as.draft"),
+              ""
+            );
+            this._localStorageService.setItem(
+              "addProjectDetail",
+              data.data,
+              false
+            );
             this.selectedFile.length = 0;
             this.uploadableFile.length = 0;
             this.uploadedFile = data.data.attachment;
@@ -724,25 +997,34 @@ export class AddNewProjectComponent implements OnInit {
             this.projectJobSelectionService.addProjectSubject.next(data.data);
 
             if (this.reviewFormGroup) {
-              this._localStorageService.setItem('currentProjectStep', 3, false);
+              this._localStorageService.setItem("currentProjectStep", 3, false);
               this.postProjectService.currentPostProjectStep.next(3);
-            }
-            else {
-              this._localStorageService.setItem('currentProjectStep', 1, false);
+            } else {
+              this._localStorageService.setItem("currentProjectStep", 1, false);
               this.postProjectService.currentPostProjectStep.next(1);
             }
           }
         });
-    }
-    else {
-      console.log(this.addProjectDetail)
-      this.postProjectService.updateProjectDetail(this.addProjectDetail,
-        this.translator.instant('project.saved.as.draft')).subscribe(data => {
+    } else {
+      console.log(this.addProjectDetail);
+      this.postProjectService
+        .updateProjectDetail(
+          this.addProjectDetail,
+          this.translator.instant("project.saved.as.draft")
+        )
+        .subscribe((data) => {
           console.log(data);
-          if (data.statusCode === '200' && data.message === 'OK') {
-            this.notificationService.success(this.translator.instant('project.saved.as.draft'), '');
-            console.log(this.addProjectDetail)
-            this._localStorageService.setItem('addProjectDetail', data.data, false);
+          if (data.statusCode === "200" && data.message === "OK") {
+            this.notificationService.success(
+              this.translator.instant("project.saved.as.draft"),
+              ""
+            );
+            console.log(this.addProjectDetail);
+            this._localStorageService.setItem(
+              "addProjectDetail",
+              data.data,
+              false
+            );
             this.selectedFile.length = 0;
             this.uploadableFile.length = 0;
             this.uploadedFile = data.data.attachment;
@@ -751,15 +1033,14 @@ export class AddNewProjectComponent implements OnInit {
             this.projectJobSelectionService.addProjectSubject.next(data.data);
 
             if (this.reviewFormGroup) {
-              this._localStorageService.setItem('currentProjectStep', 3, false);
+              this._localStorageService.setItem("currentProjectStep", 3, false);
               this.postProjectService.currentPostProjectStep.next(3);
-            }
-            else {
-              this._localStorageService.setItem('currentProjectStep', 1, false);
+            } else {
+              this._localStorageService.setItem("currentProjectStep", 1, false);
               this.postProjectService.currentPostProjectStep.next(1);
             }
           } else {
-            this.notificationService.error(data.message, '')
+            this.notificationService.error(data.message, "");
           }
         });
     }
@@ -771,168 +1052,198 @@ export class AddNewProjectComponent implements OnInit {
       this.uploadableFile.forEach((file) => {
         this.addProjectDetail.attachment.push(file);
       });
-    }
-    else {
+    } else {
       this.addProjectDetail.attachment = this.uploadedFile;
     }
     if (!this.addProjectDetail.id) {
-      this.postProjectService.addNewProjectDetail(this.addProjectDetail, message).subscribe(data => {
-        if (data) {
-          if (data.statusCode === '200' && data.message === 'OK') {
-            if (message !== '') {
-              this.notificationService.success(message, '');
-            }
-
-            this._localStorageService.setItem('addProjectDetail', data.data, false);
-            this.selectedFile.length = 0;
-            this.uploadableFile.length = 0;
-            this.uploadedFile = data.data.attachment;
-            this.postProjectService.addNewProject.next(data.data);
-
-            this.projectJobSelectionService.addProjectSubject.next(data.data);
-
-            if (this.reviewFormGroup) {
-              this._localStorageService.setItem('currentProjectStep', 4, false);
-              this.postProjectService.currentPostProjectStep.next(4);
-              this.postProjectService.getSubcontractorSelectionList.next(1);
-              this._localStorageService.removeItem('jobsiteDetail');
-            }
-            else {
-              this._localStorageService.setItem('currentProjectStep', 2, false);
-              this.postProjectService.currentPostProjectStep.next(2);
-              if (data.data.status !== 'POSTED') {
-                this.changeStatusOfJobsiteCopiedToDraft();
+      this.postProjectService
+        .addNewProjectDetail(this.addProjectDetail, message)
+        .subscribe((data) => {
+          if (data) {
+            if (data.statusCode === "200" && data.message === "OK") {
+              if (message !== "") {
+                this.notificationService.success(message, "");
               }
-            }
-          }
-          else {
-            this.notificationService.error(data.message, '');
-          }
-        }
-      });
-    }
-    else {
-      this.postProjectService.updateProjectDetail(this.addProjectDetail, message).subscribe(data => {
-        if (data) {
-          if (data.statusCode === '200' && data.message === 'OK') {
-            if (message !== '') {
-              this.notificationService.success(message, '');
-            }
 
-            this._localStorageService.setItem('addProjectDetail', data.data, false);
-            this.selectedFile.length = 0;
-            this.uploadableFile.length = 0;
-            this.uploadedFile = data.data.attachment;
-            this.postProjectService.addNewProject.next(data.data);
+              this._localStorageService.setItem(
+                "addProjectDetail",
+                data.data,
+                false
+              );
+              this.selectedFile.length = 0;
+              this.uploadableFile.length = 0;
+              this.uploadedFile = data.data.attachment;
+              this.postProjectService.addNewProject.next(data.data);
 
-            this.projectJobSelectionService.addProjectSubject.next(data.data);
+              this.projectJobSelectionService.addProjectSubject.next(data.data);
 
-            if (this.reviewFormGroup) {
-              this._localStorageService.setItem('currentProjectStep', 4, false);
-              this.postProjectService.currentPostProjectStep.next(4);
-              this.postProjectService.getSubcontractorSelectionList.next(1);
-              this._localStorageService.removeItem('jobsiteDetail');
-            }
-            else {
-              this._localStorageService.setItem('currentProjectStep', 2, false);
-              this.postProjectService.currentPostProjectStep.next(2);
-              if (data.data.status !== 'POSTED') {
-                this.changeStatusOfJobsiteCopiedToDraft();
+              if (this.reviewFormGroup) {
+                this._localStorageService.setItem(
+                  "currentProjectStep",
+                  4,
+                  false
+                );
+                this.postProjectService.currentPostProjectStep.next(4);
+                this.postProjectService.getSubcontractorSelectionList.next(1);
+                this._localStorageService.removeItem("jobsiteDetail");
+              } else {
+                this._localStorageService.setItem(
+                  "currentProjectStep",
+                  2,
+                  false
+                );
+                this.postProjectService.currentPostProjectStep.next(2);
+                if (data.data.status !== "POSTED") {
+                  this.changeStatusOfJobsiteCopiedToDraft();
+                }
               }
+            } else {
+              this.notificationService.error(data.message, "");
             }
           }
-          else {
-            // if (this._localStorageService.getItem('currentProjectStep') !== 3) {
-            this.notificationService.error(data.message, '');
-            // }
+        });
+    } else {
+      this.postProjectService
+        .updateProjectDetail(this.addProjectDetail, message)
+        .subscribe((data) => {
+          if (data) {
+            if (data.statusCode === "200" && data.message === "OK") {
+              if (message !== "") {
+                this.notificationService.success(message, "");
+              }
+
+              this._localStorageService.setItem(
+                "addProjectDetail",
+                data.data,
+                false
+              );
+              this.selectedFile.length = 0;
+              this.uploadableFile.length = 0;
+              this.uploadedFile = data.data.attachment;
+              this.postProjectService.addNewProject.next(data.data);
+
+              this.projectJobSelectionService.addProjectSubject.next(data.data);
+
+              if (this.reviewFormGroup) {
+                this._localStorageService.setItem(
+                  "currentProjectStep",
+                  4,
+                  false
+                );
+                this.postProjectService.currentPostProjectStep.next(4);
+                this.postProjectService.getSubcontractorSelectionList.next(1);
+                this._localStorageService.removeItem("jobsiteDetail");
+              } else {
+                this._localStorageService.setItem(
+                  "currentProjectStep",
+                  2,
+                  false
+                );
+                this.postProjectService.currentPostProjectStep.next(2);
+                if (data.data.status !== "POSTED") {
+                  this.changeStatusOfJobsiteCopiedToDraft();
+                }
+              }
+            } else {
+              // if (this._localStorageService.getItem('currentProjectStep') !== 3) {
+              this.notificationService.error(data.message, "");
+              // }
+            }
           }
-        }
-      });
+        });
     }
 
-    console.log('this.singleJobsiteToBeAdded =>', this.singleJobsiteToBeAdded);
-    
-    if(!this._localStorageService.getItem('isEditMode') && this.singleJobsiteToBeAdded ) {
+    console.log("this.singleJobsiteToBeAdded =>", this.singleJobsiteToBeAdded);
+
+    if (
+      !this._localStorageService.getItem("isEditMode") &&
+      this.singleJobsiteToBeAdded
+    ) {
       this.onAddNewJobsite();
     }
-
   }
 
   onAddNewJobsite(): void {
-    if (this._localStorageService.getItem('milestoneScreen')) {
-      this._localStorageService.removeItem('milestoneScreen');
+    if (this._localStorageService.getItem("milestoneScreen")) {
+      this._localStorageService.removeItem("milestoneScreen");
     }
-    this._localStorageService.removeItem('addLineItemScreen');
-    this._localStorageService.setItem('addJobsiteScreen', 'addJobsite', false);
-    this.postProjectService.jobsiteScreenChange.next('addJobsite');
+    this._localStorageService.removeItem("addLineItemScreen");
+    this._localStorageService.setItem("addJobsiteScreen", "addJobsite", false);
+    this.postProjectService.jobsiteScreenChange.next("addJobsite");
   }
 
   setAddNewProjectObject() {
-    let selectedClient = this.addNewProjectForm.get('company').value;
-    let selectedIndustry = this.addNewProjectForm.get('industry').value;
-    let selectedRegion = this.addNewProjectForm.get('region').value;
-    let selectedState = this.addNewProjectForm.get('state').value;
+    let selectedClient = this.addNewProjectForm.get("company").value;
+    let selectedIndustry = this.addNewProjectForm.get("industry").value;
+    let selectedRegion = this.addNewProjectForm.get("region").value;
+    let selectedState = this.addNewProjectForm.get("state").value;
 
-    if (!this.isInvalidBidDueDate && !this.isInvalidStartDate && !this.isInvalidCompletionDate) {
-
-      if (this._localStorageService.getItem('addProjectDetail')) {
-        this.addProjectDetail = this._localStorageService.getItem('addProjectDetail');
+    if (
+      !this.isInvalidBidDueDate &&
+      !this.isInvalidStartDate &&
+      !this.isInvalidCompletionDate
+    ) {
+      if (this._localStorageService.getItem("addProjectDetail")) {
+        this.addProjectDetail =
+          this._localStorageService.getItem("addProjectDetail");
         this.addProjectDetail.updatedBy = this.loginUserId;
-      }
-      else {
-        this.addProjectDetail.id = this.addNewProjectForm.get('id').value;
+      } else {
+        this.addProjectDetail.id = this.addNewProjectForm.get("id").value;
         this.addProjectDetail.jobsite = [];
-        this.addProjectDetail.createdBy = this.addNewProjectForm.get('createdBy').value;
-        this.addProjectDetail.updatedBy = this.addNewProjectForm.get('updatedBy').value;
+        this.addProjectDetail.createdBy =
+          this.addNewProjectForm.get("createdBy").value;
+        this.addProjectDetail.updatedBy =
+          this.addNewProjectForm.get("updatedBy").value;
       }
 
       if (selectedIndustry) {
         this.addProjectDetail.industry = selectedIndustry;
-      }
-      else {
+      } else {
         this.addProjectDetail.industry = null;
       }
 
       if (selectedRegion) {
         this.addProjectDetail.region = selectedRegion.name;
-      }
-      else {
+      } else {
         this.addProjectDetail.region = null;
       }
 
       if (selectedState) {
         this.addProjectDetail.state = selectedState.name;
-      }
-      else {
+      } else {
         this.addProjectDetail.state = null;
       }
 
-      this.addProjectDetail.title = this.addNewProjectForm.get('title').value;
+      this.addProjectDetail.title = this.addNewProjectForm.get("title").value;
       this.addProjectDetail.company = selectedClient;
-      this.bidDueDate = this.addNewProjectForm.get('bidDueDate').value;
+      this.bidDueDate = this.addNewProjectForm.get("bidDueDate").value;
       this.addProjectDetail.bidDueDate = this.bidDueDate;
-      this.startDate = this.addNewProjectForm.get('startDate').value;
+      this.startDate = this.addNewProjectForm.get("startDate").value;
       this.addProjectDetail.startDate = this.startDate;
-      this.completionDate = this.addNewProjectForm.get('completionDate').value;
+      this.completionDate = this.addNewProjectForm.get("completionDate").value;
       this.addProjectDetail.completionDate = this.completionDate;
-      this.addProjectDetail.isNegotiable = this.addNewProjectForm.get('isNegotiable').value;
-      this.addProjectDetail.type = this.addNewProjectForm.get('type').value;
-      this.addProjectDetail.attachmentLink = this.addNewProjectForm.get('attachmentLink').value;
+      this.addProjectDetail.isNegotiable =
+        this.addNewProjectForm.get("isNegotiable").value;
+      this.addProjectDetail.type = this.addNewProjectForm.get("type").value;
+      this.addProjectDetail.attachmentLink =
+        this.addNewProjectForm.get("attachmentLink").value;
       this.addProjectDetail.isSaveAsDraft = true;
 
       let loggedInUserObject = this._localStorageService.getLoginUserObject();
 
-      if (loggedInUserObject.roles[0].roleName === 'SUPERVISOR') {
-        this.addProjectDetail.supervisor = this._localStorageService.getLoginUserObject();
-        this.addProjectDetail.user = this._localStorageService.getItem('clientOfLoggedInSupervisor');
-      }
-      else {
-        this.addProjectDetail.user = this._localStorageService.getLoginUserObject();
+      if (loggedInUserObject.roles[0].roleName === "SUPERVISOR") {
+        this.addProjectDetail.supervisor =
+          this._localStorageService.getLoginUserObject();
+        this.addProjectDetail.user = this._localStorageService.getItem(
+          "clientOfLoggedInSupervisor"
+        );
+      } else {
+        this.addProjectDetail.user =
+          this._localStorageService.getLoginUserObject();
       }
 
       return true;
-    }
-    else {
+    } else {
       this.dateErrorMessage();
       return false;
     }
@@ -944,38 +1255,38 @@ export class AddNewProjectComponent implements OnInit {
   }
 
   onRemoveLocalStorage() {
-    this._localStorageService.removeItem('addNewProjectFormValue');
-    this._localStorageService.removeItem('selectedJobsiteOfDropdown');
-    this._localStorageService.removeItem('Data0');
-    this._localStorageService.removeItem('addProjectDetail');
-    this._localStorageService.removeItem('jobsiteScreen');
-    this._localStorageService.removeItem('currentProjectStep');
-    this._localStorageService.removeItem('unselectedLineItem');
-    this._localStorageService.removeItem('isEditMode');
+    this._localStorageService.removeItem("addNewProjectFormValue");
+    this._localStorageService.removeItem("selectedJobsiteOfDropdown");
+    this._localStorageService.removeItem("Data0");
+    this._localStorageService.removeItem("addProjectDetail");
+    this._localStorageService.removeItem("jobsiteScreen");
+    this._localStorageService.removeItem("currentProjectStep");
+    this._localStorageService.removeItem("unselectedLineItem");
+    this._localStorageService.removeItem("isEditMode");
   }
 
   dateErrorMessage() {
     if (this.isInvalidBidDueDate) {
-      this.notificationService.error('Invalid bid due date', '');
+      this.notificationService.error("Invalid bid due date", "");
     }
     if (this.isInvalidStartDate) {
-      this.notificationService.error('Invalid start date', '');
+      this.notificationService.error("Invalid start date", "");
     }
     if (this.isInvalidCompletionDate) {
-      this.notificationService.error('Invalid completion date', '');
+      this.notificationService.error("Invalid completion date", "");
     }
   }
 
   openWarningDialog() {
     let options = null;
     options = {
-      title: 'Warning',
-      message: 'Do you want to cancel the post project process?',
-      cancelText: this.translator.instant('dialog.cancel.text'),
-      confirmText: this.translator.instant('dialog.confirm.text')
-    }
+      title: "Warning",
+      message: "Do you want to cancel the post project process?",
+      cancelText: this.translator.instant("dialog.cancel.text"),
+      confirmText: this.translator.instant("dialog.confirm.text"),
+    };
     this.confirmDialogService.open(options);
-    this.confirmDialogService.confirmed().subscribe(confirmed => {
+    this.confirmDialogService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
         this.onCancel();
       }
@@ -994,23 +1305,22 @@ export class AddNewProjectComponent implements OnInit {
         null,
         () => new ReplaySubject()
       ),
-      concatMap(
-        object => object.pipe(
+      concatMap((object) =>
+        object.pipe(
           toArray(),
-          map(obj =>
-            ({ key: object.key, value: obj })
-          ))
+          map((obj) => ({ key: object.key, value: obj }))
+        )
       )
     );
 
-    result.subscribe(x => {
+    result.subscribe((x) => {
       groupByStatusProject.push(x);
     });
 
-    records.forEach(x => pipedRecords.next(x));
+    records.forEach((x) => pipedRecords.next(x));
     pipedRecords.complete();
 
-    groupByStatusProject.forEach(element => {
+    groupByStatusProject.forEach((element) => {
       if (element.value.length > 1) {
         count++;
       }
@@ -1018,80 +1328,86 @@ export class AddNewProjectComponent implements OnInit {
 
     if (count > 0) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   }
 
   onFileSelect(event) {
-
     if (event.rejectedFiles.length > 0) {
-      if (event.rejectedFiles[0].reason === 'size') {
-        this.notificationService.error(this.translator.instant('Max file size is 100 MB'), '');
+      if (event.rejectedFiles[0].reason === "size") {
+        this.notificationService.error(
+          this.translator.instant("Max file size is 100 MB"),
+          ""
+        );
       } else {
-        this.notificationService.error(this.translator.instant('image.pdf.doc.upload'), '');
+        this.notificationService.error(
+          this.translator.instant("image.pdf.doc.upload"),
+          ""
+        );
       }
       event.rejectedFiles = [];
     }
 
     let validFiles: File[] = [];
     this.files.push(...event.addedFiles);
-    let chekcLength = this.uploadedFile.length + this.files.length + this.selectedFile.length;
+    let chekcLength =
+      this.uploadedFile.length + this.files.length + this.selectedFile.length;
     if (chekcLength <= 10) {
       this.files.forEach((file, index) => {
         if (file.size > 100000000) {
-          if (event.rejectedFiles[0].reason === 'size') {
-            this.notificationService.error(this.translator.instant('max.file.size.10.mb'), '');
+          if (event.rejectedFiles[0].reason === "size") {
+            this.notificationService.error(
+              this.translator.instant("max.file.size.10.mb"),
+              ""
+            );
           } else {
-            this.notificationService.error(this.translator.instant('image.pdf.upload'), '');
+            this.notificationService.error(
+              this.translator.instant("image.pdf.upload"),
+              ""
+            );
           }
-
-        }
-        else {
+        } else {
           validFiles.push(file);
         }
       });
       this.files = [];
       if (this.selectedFile.length === 0) {
         this.selectedFile = validFiles;
-      }
-      else {
-        validFiles.forEach(file => {
+      } else {
+        validFiles.forEach((file) => {
           this.selectedFile.push(file);
         });
       }
 
       let fileNameChecking = [];
       if (this.uploadedFile.length > 0) {
-        this.selectedFile.forEach(element1 => {
+        this.selectedFile.forEach((element1) => {
           fileNameChecking.push(element1);
         });
-        this.uploadedFile.forEach(element => {
+        this.uploadedFile.forEach((element) => {
           let file = {
-            'createdBy': element.createdBy,
-            'createdDate': element.createdDate,
-            'name': element.filename,
-            'id': element.id,
-            'path': element.path,
-            'updatedBy': element.updatedBy,
-            'updatedDate': element.updatedDate,
-          }
+            createdBy: element.createdBy,
+            createdDate: element.createdDate,
+            name: element.filename,
+            id: element.id,
+            path: element.path,
+            updatedBy: element.updatedBy,
+            updatedDate: element.updatedDate,
+          };
           fileNameChecking.push(file);
         });
-      }
-      else {
-        this.selectedFile.forEach(element1 => {
+      } else {
+        this.selectedFile.forEach((element1) => {
           fileNameChecking.push(element1);
         });
       }
       console.log(fileNameChecking);
       if (!this.groupByFileName(fileNameChecking)) {
-        this.notificationService.error('You have selected same name files', '');
+        this.notificationService.error("You have selected same name files", "");
       }
-    }
-    else {
-      this.notificationService.error('Maximum number of file should be 10', '');
+    } else {
+      this.notificationService.error("Maximum number of file should be 10", "");
       this.files.splice(0, this.files.length);
     }
     console.log(this.selectedFile);
@@ -1100,24 +1416,23 @@ export class AddNewProjectComponent implements OnInit {
   checkFileName() {
     let fileNameChecking = [];
     if (this.uploadedFile.length > 0) {
-      this.selectedFile.forEach(element1 => {
+      this.selectedFile.forEach((element1) => {
         fileNameChecking.push(element1);
       });
-      this.uploadedFile.forEach(element => {
+      this.uploadedFile.forEach((element) => {
         let file = {
-          'createdBy': element.createdBy,
-          'createdDate': element.createdDate,
-          'name': element.filename,
-          'id': element.id,
-          'path': element.path,
-          'updatedBy': element.updatedBy,
-          'updatedDate': element.updatedDate,
-        }
+          createdBy: element.createdBy,
+          createdDate: element.createdDate,
+          name: element.filename,
+          id: element.id,
+          path: element.path,
+          updatedBy: element.updatedBy,
+          updatedDate: element.updatedDate,
+        };
         fileNameChecking.push(file);
       });
-    }
-    else {
-      this.selectedFile.forEach(element1 => {
+    } else {
+      this.selectedFile.forEach((element1) => {
         fileNameChecking.push(element1);
       });
     }
@@ -1136,50 +1451,54 @@ export class AddNewProjectComponent implements OnInit {
     console.log(this.selectedFile);
     const uploadFileData = new FormData();
     this.selectedFile.forEach((file) => {
-      uploadFileData.append('file', file);
+      uploadFileData.append("file", file);
     });
 
     this._fileService.uploadMultipleFile(uploadFileData).subscribe(
-      event => {
+      (event) => {
         if (event instanceof HttpResponse) {
           this.logoBody = event.body;
           this.logoData = this.logoBody.data;
           if (this.logoData.length === this.selectedFile.length) {
             this.selectedFile.forEach((element, i) => {
               let myFile = {
-                'id': '',
-                'createdBy': this.loginUserId,
-                'updatedBy': this.loginUserId,
-                'filename': element.name,
-                'path': this.logoData[i]
-              }
+                id: "",
+                createdBy: this.loginUserId,
+                updatedBy: this.loginUserId,
+                filename: element.name,
+                path: this.logoData[i],
+              };
               this.uploadableFile.push(myFile);
             });
           }
-          if ('onSaveAsDraft' === methodName) {
+          if ("onSaveAsDraft" === methodName) {
             this.onSaveAsDraft();
           }
-          if ('onNext' === methodName) {
+          if ("onNext" === methodName) {
             this.onNext(message);
           }
         }
       },
       (error) => {
-        this.notificationService.error(this.translator.instant('common.error'), '');
+        this.notificationService.error(
+          this.translator.instant("common.error"),
+          ""
+        );
         console.log(error);
-      });
+      }
+    );
   }
 
   openWarnigDialog(name, index1, file) {
     let options = null;
     options = {
-      title: 'Warning',
-      message: 'Are you sure you want to delete?',
-      cancelText: this.translator.instant('dialog.cancel.text'),
-      confirmText: this.translator.instant('dialog.confirm.text')
-    }
+      title: "Warning",
+      message: "Are you sure you want to delete?",
+      cancelText: this.translator.instant("dialog.cancel.text"),
+      confirmText: this.translator.instant("dialog.confirm.text"),
+    };
     this.confirmDialogService.open(options);
-    this.confirmDialogService.confirmed().subscribe(confirmed => {
+    this.confirmDialogService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
         let remainingFile: File[] = [];
         this.selectedFile.forEach((file, index) => {
@@ -1196,13 +1515,13 @@ export class AddNewProjectComponent implements OnInit {
   openWarnigDialogForUploaded(name, id) {
     let options = null;
     options = {
-      title: 'Warning',
-      message: 'Are you sure you want to delete ' + name + '?',
-      cancelText: this.translator.instant('dialog.cancel.text'),
-      confirmText: this.translator.instant('dialog.confirm.text')
-    }
+      title: "Warning",
+      message: "Are you sure you want to delete " + name + "?",
+      cancelText: this.translator.instant("dialog.cancel.text"),
+      confirmText: this.translator.instant("dialog.confirm.text"),
+    };
     this.confirmDialogService.open(options);
-    this.confirmDialogService.confirmed().subscribe(confirmed => {
+    this.confirmDialogService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
         this.deleteAttachment(id);
       }
@@ -1210,7 +1529,7 @@ export class AddNewProjectComponent implements OnInit {
   }
 
   deleteAttachment(id) {
-    let project = this._localStorageService.getItem('addProjectDetail');
+    let project = this._localStorageService.getItem("addProjectDetail");
     this.tempAttachment = project.attachment;
     let remainingAttachment: ProjectAttachmentDTO[] = [];
     this.tempAttachment.forEach((attachment, index) => {
@@ -1228,33 +1547,31 @@ export class AddNewProjectComponent implements OnInit {
     project.attachment = this.uploadedFile;
     console.log(this.tempSelectedFile);
 
-    this.postProjectService.deleteAttachment(id).subscribe(
-      data1 => {
-        if (data1) {
-          console.log(project);
-          this._localStorageService.setItem('addProjectDetail', project);
-          //Line commented during UI.
-          // this.postProjectService.addNewProject.next(project);
-          if (!this.reviewFormGroup) {
-            this._localStorageService.setItem('currentProjectStep', 1, false);
-            this.postProjectService.currentPostProjectStep.next(1);
-          }
-          else {
-            this._localStorageService.setItem('currentProjectStep', 3, false);
-            this.postProjectService.currentPostProjectStep.next(3);
-          }
-          this.projectJobSelectionService.addProjectSubject.next(project);
-          this.uploadedFile = remainingAttachment;
-          this.selectedFile = [];
-          this.tempSelectedFile.forEach((file) => {
-            this.selectedFile.push(file);
-          });
+    this.postProjectService.deleteAttachment(id).subscribe((data1) => {
+      if (data1) {
+        console.log(project);
+        this._localStorageService.setItem("addProjectDetail", project);
+        //Line commented during UI.
+        // this.postProjectService.addNewProject.next(project);
+        if (!this.reviewFormGroup) {
+          this._localStorageService.setItem("currentProjectStep", 1, false);
+          this.postProjectService.currentPostProjectStep.next(1);
+        } else {
+          this._localStorageService.setItem("currentProjectStep", 3, false);
+          this.postProjectService.currentPostProjectStep.next(3);
         }
-      });
+        this.projectJobSelectionService.addProjectSubject.next(project);
+        this.uploadedFile = remainingAttachment;
+        this.selectedFile = [];
+        this.tempSelectedFile.forEach((file) => {
+          this.selectedFile.push(file);
+        });
+      }
+    });
   }
 
   checkProjectIsValidForPost() {
-    let jobsites = this._localStorageService.getItem('jobsiteDetail');
+    let jobsites = this._localStorageService.getItem("jobsiteDetail");
     if (jobsites) {
       if (jobsites.length !== 0) {
         let hasCost = true;
@@ -1265,29 +1582,25 @@ export class AddNewProjectComponent implements OnInit {
         });
         if (hasCost) {
           return true;
-        }
-        else {
+        } else {
           return false;
         }
-      }
-      else {
+      } else {
         return false;
       }
-    }
-    else {
+    } else {
       return false;
     }
   }
 
-
   checkAllLineItemAssigned() {
-    let jobsites = this._localStorageService.getItem('jobsiteDetail');
+    let jobsites = this._localStorageService.getItem("jobsiteDetail");
     let count = 0;
     let countLineItem = 0;
-    jobsites.forEach(jobsite => {
+    jobsites.forEach((jobsite) => {
       countLineItem += jobsite.lineItem.length;
       if (jobsite.paymentMileStone.length !== 0) {
-        jobsite.paymentMileStone.forEach(element => {
+        jobsite.paymentMileStone.forEach((element) => {
           count += element.lineItem.length;
         });
       }
@@ -1295,20 +1608,18 @@ export class AddNewProjectComponent implements OnInit {
 
     if (countLineItem === count) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
   changeStatusOfJobsiteCopiedToDraft() {
-    let project = this._localStorageService.getItem('addProjectDetail');
-    project.jobsite.forEach(element => {
+    let project = this._localStorageService.getItem("addProjectDetail");
+    project.jobsite.forEach((element) => {
       element.status = JobsiteStatus.DRAFT;
       console.log(element);
-      this.jobsiteService.editJobsiteDetail(element, '').subscribe(data => {
+      this.jobsiteService.editJobsiteDetail(element, "").subscribe((data) => {
         // if (data.statusCode === '200' && data.message === 'OK') {
-
         // }
         // else {
         //   this.notificationService.error(data.message, '');
@@ -1318,51 +1629,62 @@ export class AddNewProjectComponent implements OnInit {
   }
 
   download(fileName): void {
-    this._fileService
-      .downloadFile(fileName)
-      .subscribe(blob => {
-        const a = document.createElement('a');
-        const objectUrl = URL.createObjectURL(blob);
-        a.href = objectUrl;
-        a.download = this.fileName;
-        a.click();
-        URL.revokeObjectURL(objectUrl);
-      });
+    this._fileService.downloadFile(fileName).subscribe((blob) => {
+      const a = document.createElement("a");
+      const objectUrl = URL.createObjectURL(blob);
+      a.href = objectUrl;
+      a.download = this.fileName;
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    });
   }
 
   deleteProject() {
-    if(this.addNewProjectForm.value.id) {
+    if (this.addNewProjectForm.value.id) {
       const projectId = this.addNewProjectForm.value.id;
-      this.projectService.deleteProject(projectId).subscribe(async response => {
-        if(response.data) {
-          this.notificationService.success('Project deleted successfully.', '');
-          await this.filterLeftPanelService.updateDeleteSatus('PROJECT_DELETE');
-          this.onCancel();
-        } else {
-          this.notificationService.error(response.message ? response.message : 'Somthing went wrong!', '');
+      this.projectService.deleteProject(projectId).subscribe(
+        async (response) => {
+          if (response.data) {
+            this.notificationService.success(
+              "Project deleted successfully.",
+              ""
+            );
+            await this.filterLeftPanelService.updateDeleteSatus(
+              "PROJECT_DELETE"
+            );
+            this.onCancel();
+          } else {
+            this.notificationService.error(
+              response.message ? response.message : "Somthing went wrong!",
+              ""
+            );
+          }
+        },
+        (err) => {
+          this.notificationService.error(
+            err.message ? err.message : "Error while deleting project",
+            ""
+          );
         }
-      }, err => {
-          this.notificationService.error(err.message ? err.message : 'Error while deleting project', '');
-      });
+      );
     } else {
-      this.notificationService.error('Somthing went wrong!', '');
+      this.notificationService.error("Somthing went wrong!", "");
     }
   }
 
   openWarningDialogForDeleteProject() {
     let options = null;
     options = {
-      title: 'Warning',
-      message: 'Do you want to delete current project?',
-      cancelText: this.translator.instant('dialog.cancel.text'),
-      confirmText: this.translator.instant('dialog.confirm.text')
-    }
+      title: "Warning",
+      message: "Do you want to delete current project?",
+      cancelText: this.translator.instant("dialog.cancel.text"),
+      confirmText: this.translator.instant("dialog.confirm.text"),
+    };
     this.confirmDialogService.open(options);
-    this.confirmDialogService.confirmed().subscribe(confirmed => {
+    this.confirmDialogService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
         this.deleteProject();
       }
     });
   }
-
 }
