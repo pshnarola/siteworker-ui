@@ -1,12 +1,12 @@
 <form [formGroup]="jobDetailsForm" (ngSubmit)="submitJobDetails()">
     <div class="row">
         <div class="col-6 form-group">
-
+            <!-- [pKeyFilter]="blockSomeSpecial" -->
             <label for="job-name">{{'job.name' |translate}}* &nbsp; <a (click)="onEditName()" *ngIf="this.reviewForm"><i
                         class="fa fa-pencil"></i></a> </label>
             <input type="text" placeholder="{{'enter.job.name' | translate}}" class="form-control"
                 formControlName="title" [readonly]="!this.editableName && this.reviewForm" pInputText maxLength="50"
-                [pKeyFilter]="blockSomeSpecial">
+               >
             <div class="p-invalid" *ngIf="jobDetailsForm.controls['title'].touched && 
             (jobDetailsForm.controls['title'].hasError('required') &&
              !jobDetailsForm.controls['title'].valid)
