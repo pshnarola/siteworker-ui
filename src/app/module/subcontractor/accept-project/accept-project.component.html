@@ -30,9 +30,9 @@
         <div class="col-lg-3 align-self-center my-2">
             <div class="float-right" *ngIf="!hideAcceptRejectButton">
                 <button pButton type="button" label="{{'accept' | translate}}" class="p-button-success"
-                    (click)="addEstimatedStartDate()"></button>
+                    (click)="addEstimatedStartDate()" [disabled]="isAccept"></button>
                 <button pButton type="button" label="{{'reject' | translate}}" class="ml-1
-                p-button-danger" (click)="openRejectDialog(projectDetail.id)"></button>
+                p-button-danger" [disabled]="isAccept"  (click)="openRejectDialog(projectDetail.id)"></button>
             </div>
         </div>
     </div>
