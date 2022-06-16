@@ -64,6 +64,7 @@ export class ProjectBidingComparisonComponent implements OnInit {
     { label: this.translator.instant('sortlist'), value: 'sortlist', sortable: false },
     { label: this.translator.instant('subcontractor'), value: 'SUB_CONTRACTOR_NAME', sortable: true },
     { label: this.translator.instant('bid.amount'), value: 'SUBCONTRACTOR_COST', sortable: true },
+    { label: this.translator.instant('bid.action'), value: 'accept', sortable: false },
     { label: this.translator.instant('total.experience'), value: 'TOTAL_EXPERIENCE', sortable: false },
     { label: this.translator.instant('average.rating'), value: 'workerAvgRating', sortable: false },
     { label: this.translator.instant('success.ratio'), value: 'successRatio', sortable: false }
