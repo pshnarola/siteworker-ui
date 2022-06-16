@@ -797,6 +797,7 @@
     "delete": "Delete",
     "view.info": "View Info",
     "bid.amount": "Bid Amount",
+    "bid.action":"Bid Action",
     "total.bid.amount": " Total Bid Amount",
     "total.bid.cost": " Total Bid Cost",
     "jobsite.details": "Jobsite Details",

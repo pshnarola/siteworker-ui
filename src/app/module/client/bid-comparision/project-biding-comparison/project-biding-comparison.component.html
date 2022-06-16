@@ -122,6 +122,15 @@
 
                         </td>
                         <td class="text-wrap">{{subcontractor.projectBidDetailDTO.subContractorCost | currency}}</td>
+                        <td class="BtnPadd">
+                            <a class="btn" >
+                                <i class="fa fa-check"></i>
+                            </a>
+
+                            <a style="color:red;" class="btn" >
+                                <i class="fa fa-remove"></i>
+                            </a>
+                        </td>
                         <td *ngIf="subcontractor.subContractorTotalExperience" class="text-wrap">{{subcontractor.subContractorTotalExperience}}</td>
                         <td *ngIf="!subcontractor.subContractorTotalExperience" class="text-wrap">New Subcontractor</td>
                         <td *ngIf="subcontractor.subContractorAvgRating" class="text-wrap">{{subcontractor.subContractorAvgRating}}</td>
