@@ -60,7 +60,8 @@ export class AcceptProjectComponent implements OnInit {
   projectStartDate: Date;
   projectCompletionDate: Date;
   projectBidDueDate: Date;
-
+  projectFullData:any=[];
+  isAccept=false;
   constructor(
     private captionChangeService: HeaderManagementService,
     private translator: TranslateService,
@@ -71,14 +72,22 @@ export class AcceptProjectComponent implements OnInit {
     private projectBidService: ProjectBidService,
     private notificationService: UINotificationService,
   ) {
+    setTimeout(() => {
+      this.projectFullData = JSON.parse(sessionStorage.getItem('selectedFullProjectDetail'))
+      console.log('this.projectFullData =>',this.projectFullData);
+    }, 2000);
+   
+    
     this.loggedInUserId = this.localStorageService.getLoginUserId();
-
-    this.captionChangeService.hideHeaderSubject.next(true);
+      this.captionChangeService.hideHeaderSubject.next(true);
   }
 
   ngOnInit(): void {
-    this.getSelectedProjectDetails();
     this.captionChangeService.hideHeaderSubject.next(true);
+    setTimeout(() => {
+      this.getSelectedProjectDetails();
+    }, 2000);
+    
   }
 
   ngOnDestroy(): void {
@@ -89,7 +98,7 @@ export class AcceptProjectComponent implements OnInit {
     this.subscription.add(this.projectJobSelectionService.selectedProjectSubject.subscribe(data => {
       this.estimatedStartDate = new Date();
       const project = this.localStorageService.getItem('selectedProject');
-      const projectFullData = this.localStorageService.getItem('selectedFullProjectDetail');
+      
       if (project) {
         if (project.id === 'pid') {
           this.isSelectedProject = false;
@@ -97,11 +106,17 @@ export class AcceptProjectComponent implements OnInit {
         }
         else {
           this.projectDetail = project;
+          console.log(' this.projectDetail =>', this.projectDetail);
+          if(this.projectDetail.status == 'ACCEPTED'){
+            this.isAccept=true;
+          }else{
+            this.isAccept=false
+          }
           this.setBidDetailOfJobsite();
           if (this.projectDetail !== null) {
             this.isSelectedProject = true;
-            if (projectFullData) {
-              if (projectFullData.biddingType === 'BY_JOBSITE') {
+            if (this.projectFullData) {
+              if (this.projectFullData.biddingType === 'BY_JOBSITE') {
                 this.isByJobsite = true;
               }
               else {
@@ -146,6 +161,8 @@ export class AcceptProjectComponent implements OnInit {
   setBidDetailOfJobsite() {
     let jobsiteFullDetail = this.localStorageService.getItem('selectedFullProjectDetail');
     if (jobsiteFullDetail.jobsites) {
+      console.log(' this.projectDetail =>', this.projectDetail);
+      
       jobsiteFullDetail.jobsites.forEach(element => {
         this.projectDetail.jobsite.forEach(element1 => {
           if (element1.id === element.jobSiteDetail.id) {
@@ -189,6 +206,7 @@ export class AcceptProjectComponent implements OnInit {
         this.localStorageService.removeItem('selectedFullProjectDetail');
         this.localStorageService.removeItem('selectedJobsite');
         this.projectJobSelectionService.refreshSidebarAfterAcceptRejectProject.next('');
+        this.isAccept=true;
         this.hideDialog();
       } else {
         this.notificationService.error(data.errorCode, '');
@@ -220,7 +238,8 @@ export class AcceptProjectComponent implements OnInit {
       jobSiteId,
       subContractorId: this.loggedInUserId,
       estimatedStartDate
-    };
+    }
+    
     this.queryParam = this.prepareQueryParam(this.jobsiteParams);
     this.projectBidService.acceptJobsite(this.queryParam).subscribe(data => {
       if (data.statusCode === '200' && data.message === 'OK') {
@@ -229,6 +248,7 @@ export class AcceptProjectComponent implements OnInit {
         this.localStorageService.removeItem('selectedFullProjectDetail');
         this.localStorageService.removeItem('selectedJobsite');
         this.projectJobSelectionService.refreshSidebarAfterAcceptRejectProject.next('');
+        this.isAccept=true;
         this.hideDialog();
       } else {
         this.notificationService.error(data.errorCode, '');
@@ -268,7 +288,6 @@ export class AcceptProjectComponent implements OnInit {
       };
       this.confirmDialogService.open(options);
       this.confirmDialogService.confirmed().subscribe(confirmed => {
-        console.log('confirmed =>',confirmed);
         
         if (confirmed) {
           if (this.jobsiteDetail !== null && this.isByJobsite) {
