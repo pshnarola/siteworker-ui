@@ -96,8 +96,8 @@
 
                 <ng-template pTemplate="header" let-columns>
                     <tr>
-                        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null">
-                            {{col.label}}
+                        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.sortable?col.value:null" >
+                                {{col.label}}
                             <p-sortIcon *ngIf="col.sortable" field="{{col.value}}"></p-sortIcon>
                         </th>
                     </tr>
@@ -122,12 +122,13 @@
 
                         </td>
                         <td class="text-wrap">{{subcontractor.projectBidDetailDTO.subContractorCost | currency}}</td>
-                        <td class="BtnPadd">
-                            <a class="btn" >
+                        <!-- *ngIf="!subcontractor.projectBidDetailDTO.bidAction" -->
+                        <td class="BtnPadd" *ngIf="!subcontractor.projectBidDetailDTO.bidAction">
+                            <a class="btn" (click)="bidAction(subcontractor.projectBidDetailDTO,true)">
                                 <i class="fa fa-check"></i>
                             </a>
 
-                            <a style="color:red;" class="btn" >
+                            <a style="color:red;" class="btn" (click)="bidAction(subcontractor.projectBidDetailDTO,false)">
                                 <i class="fa fa-remove"></i>
                             </a>
                         </td>

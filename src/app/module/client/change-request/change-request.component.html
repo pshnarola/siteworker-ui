@@ -284,7 +284,9 @@
                             <td>{{ changeRequest.changeRequest.status == 'PENDING' ? 'Pending' : changeRequest.changeRequest.status == 'APPROVED' ? 'Approved' : 'Rejected' }}
                             </td>
                             <td *ngIf="!isSelectedProject">{{changeRequest.changeRequest.project.title}}</td>
-                            <td *ngIf="!isSelectedJobsite">{{changeRequest.changeRequest.jobSite.title}}</td>
+<!-- //nip -->
+                            <td *ngIf="!isSelectedJobsite"  class="link-button" (click)="openLineitem(changeRequest)">{{changeRequest.changeRequest.jobSite.title}}</td>
+
                             <td><a (click)="redirectTo(changeRequest.changeRequest.jobSite.assignedTo.id)">
                                     {{changeRequest.changeRequest.jobSite.assignedTo.firstName}}
                                     {{changeRequest.changeRequest.jobSite.assignedTo.lastName}}
@@ -333,3 +335,61 @@
 
     </div>
 </div>
+
+
+<p-dialog [(visible)]="lineItemDialog" (onHide)="onCloseDialogEvent($event)" [style]="{width: '60%'}"
+    header='{{"line.item" | translate}}' [modal]="true" styleClass="p-fluid">
+
+
+
+  <div class="card datatable-card">
+
+    <!-- tbl2 -->
+    
+    <table class="table">
+        <thead class="bg-info text-white">
+          <tr>
+            <th>Lineitem</th>
+            <th>Unit of Measures</th>
+            <th>Quantity</th>
+            <th>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+       
+            <tr *ngFor="let line of popupDetails; let i = index">
+              
+                <td *ngIf="line.changeRequestStatus">
+                    {{line.lineItem.lineItemName}}
+                </td>
+
+                <td *ngIf="line.changeRequestStatus">
+                    {{line.unit.name}}
+                </td>
+
+                <td *ngIf="line.changeRequestStatus">
+                    {{line.quantity}}
+                </td>
+
+                <td *ngIf="line.changeRequestStatus">
+                    {{line.lineItem.cost}}
+                </td>
+             
+            </tr>
+         
+        </tbody>
+      </table>
+    
+    <!-- tbl2 -->
+     
+    </div> 
+
+
+    <br>
+    <div  class="mt-3 text-center">
+        <button type="button" (click)="hideLineItemDialog()" class=" btn btn-outline-danger space">
+            <i class="fa fa-times-circle"></i>
+            {{'close' | translate}}</button>
+      
+    </div>
+</p-dialog>

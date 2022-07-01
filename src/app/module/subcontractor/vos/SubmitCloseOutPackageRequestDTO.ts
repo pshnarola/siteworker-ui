@@ -4,5 +4,6 @@ import { CloseoutPackageRequestDTO } from './CloseOutPackageRequestDTO';
 export class SubmitCloseOutPackageRequestDTO{
     closeOutPackageRequest: CloseoutPackageRequestDTO;
     attachments: SubmitCloseOutAttachment[];
+   
 
 }

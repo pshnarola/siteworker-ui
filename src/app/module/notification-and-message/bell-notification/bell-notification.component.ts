@@ -418,9 +418,12 @@ export class BellNotificationComponent implements OnInit, OnDestroy {
         if (data.name === "Invitation For New Project") {
           this.localStorageService.setItem("selectedProject", data.project);
           this.router.navigate([PATH_CONSTANTS.SELECT_JOBSITE]);
-        } else if (data.name === "Project Offered" || data.name === "Jobsite Offered") {
+        } else if (data.name === "Project Offered" || data.name === "Jobsite Offered" ) {
           this.localStorageService.setItem("selectedProject", data.project);
           this.router.navigate([PATH_CONSTANTS.ACCEPT_REJECT_PROJECT]);
+        }else if(data.name === "Bid Rejected, Please apply again"){
+          this.localStorageService.setItem("selectedProject", data.project);
+          this.router.navigate([PATH_CONSTANTS.SELECT_JOBSITE]);
         } else {
           console.log(' notification unknown =>', data.name);
         }

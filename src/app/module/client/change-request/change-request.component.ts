@@ -110,12 +110,12 @@ export class ChangeRequestComponent implements OnInit {
   reasonToRejectForm: FormGroup;
   statusChangeToApproveList;
   statusChangeToRejectList;
-
-
+  lineItemDialog=false;
+  popupDetails:any=[]
   @ViewChild('dt') table: Table;
   columns = [];
 
-  ChangeRequestList = [];
+  ChangeRequestList:any = [];
   spinner: boolean;
   loginUser: any;
   assignedToObject;
@@ -738,6 +738,37 @@ export class ChangeRequestComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+
+  openLineitem(details){
+    console.log('details =>',details);
+    
+    this.popupDetails = details.lineItems;
+    console.log('popupDetails =>',this.popupDetails);
+    
+    this.lineItemDialog = true;
+  }
+
+  hideLineItemDialog(): void {
+    this.lineItemDialog = false;
+  }
+
+  onSaveLineItem() {
+    // this.savedLineItem = true;
+    this.lineItemDialog = false;
+  }
+  onCloseDialogEvent(event) {
+    // if (this.savedLineItem) {
+    //   let row = (<FormArray>this.paymentMileStoneForm.get('paymentMileStoneList')).controls[this.currentRowIndex].get('lineItem');
+    //   row.patchValue(this.targetProducts);
+    //   this._localStorageService.setItem('unselectedLineItem', this.sourceProducts);
+    //   this._localStorageService.setItem('Data' + this.currentRowIndex, this.targetProducts);
+    //   this.savedLineItem = false;
+    // }
+    // else {
+    //   this._localStorageService.setItem('unselectedLineItem', this.remainingLineItem);
+    // }
   }
 
   public initializeFilterFormGroup(): void {

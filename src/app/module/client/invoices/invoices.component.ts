@@ -315,6 +315,8 @@ export class InvoicesComponent implements OnInit {
   getInvoiceList(): void {
     this.queryParam = this.prepareQueryParam(this.dataTableParam);
     this.invoiceService.getAllInvoices(this.queryParam).subscribe(data => {
+      console.log('invoice data =>',data);
+      
       if (data.data?.result) {
         this.invoicesList = data.data.result;
         this.totalRecords = data.data.totalRecords;

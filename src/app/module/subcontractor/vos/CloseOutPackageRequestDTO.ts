@@ -20,4 +20,5 @@ export class  CloseoutPackageRequestDTO extends BaseModel{
  approvedDate;
 
  cost;
+ lineItemDTOList:any=[];
 }

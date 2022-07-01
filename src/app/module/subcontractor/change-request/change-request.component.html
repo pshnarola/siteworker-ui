@@ -67,13 +67,17 @@
                                         <div class="p-field Cha_DatePicker form-group">
                                             <p-calendar formControlName="dateRangeFrom" [maxDate]="createdToDate"
                                                 [(ngModel)]="createdFromDate" appendTo="body" [readonlyInput]="true"
-                                                [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
+                                                [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"
+                                                [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
+                                            </p-calendar>
                                         </div>
                                     </div>
                                     <div class="col-xl-6">
                                         <p-calendar formControlName="dateRangeTo" [minDate]="createdFromDate"
                                             [(ngModel)]="createdToDate" appendTo="body" [readonlyInput]="true"
-                                            [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050"></p-calendar>
+                                            [showIcon]="true" inputId="icon" placeholder="MM/DD/YYYY"
+                                            [monthNavigator]="true" [yearNavigator]="true" yearRange="1975:2050">
+                                        </p-calendar>
                                     </div>
                                 </div>
                             </div>
@@ -195,6 +199,65 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <label for="title" *ngIf="isLineItem">{{ "line.item" | translate }}*</label>
+                    <div formArrayName="lineitem">
+                        <div *ngFor="let line of lineItems.controls; let i = index">
+                            <div [formGroup]="line">
+                                <div class="p-field">
+            
+                                    <div class="d-flex gap-10 flex-wrap">
+                                        <div class="inline-redio">
+                                         
+                                            <p-checkbox 
+                                                 binary="true"  formControlName="changeRequestStatus" [name]="i" 
+                                                  [inputId]="i">
+                                            </p-checkbox>
+                                            <label class="mb-0 mr-2" [for]="i">{{line.value.lineItem.lineItemName}}</label>
+                                        </div>
+            
+                                    </div>
+                                </div>
+                                <div class="p-fluid p-formgrid p-grid" *ngIf="line.value.changeRequestStatus">
+                                    <div class="p-field p-col">
+                                        <label>{{ "unit.of.measure" | translate }}*</label>
+                                        <p-autoComplete
+                                        formControlName="unit" 
+                                        [suggestions]="filteredUom"
+                                        forceSelection="true"
+                                        (completeMethod)="filterUom($event)"
+                                        field="name"
+                                        [dropdown]="true"
+                                        placeholder="{{ 'unit.placeholder' | translate }}"
+                                        [style]="{ width: '100%', height: '35px' }"
+                                        [inputStyle]="{ width: '100%' }"
+                                      >
+                                        <ng-template let-unit pTemplate="item">
+                                          <div>
+                                            <div>{{ unit.name }}</div>
+                                          </div>
+                                        </ng-template>
+                                      </p-autoComplete>
+            
+            
+                                    </div>
+                                    <div class="p-field p-col">
+            
+                                        <label>{{ "quantity" | translate }}</label>
+            
+                                       
+                                        <p-inputNumber formControlName="quantity"  
+                                        locale="en-US"></p-inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+
+
                 </form>
                 <div *ngIf="files">
                     <div class="card upload-attachment-div uploaded-files p-chip"
