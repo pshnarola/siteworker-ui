@@ -142,26 +142,19 @@ initializeJobDetailsForm(): void{
 
 saveJobDetailsAsDraft(jobDetails: any): void{
   this.postJobDetails.jobDetails = jobDetails;
-  console.log('Job saved as draft with details:');
-  console.log(this.postJobDetails);
 }
 
 saveTillPayDetailsAsDraft(payDetails: any): void{
   this.postJobDetails.payDetails = payDetails;
 
-  console.log('Job saved as draft with details:');
-  console.log(this.postJobDetails);
 }
 
 saveTillWorkerSelectionAsDraft(workerSelection: any): void{
   this.postJobDetails.workerSelection = workerSelection;
-  console.log('Job saved as draft with details:');
-  console.log(this.postJobDetails);
 }
 
 saveJobAsDraft(reviewedPostJobDetails: {jobDetails: any, payDetails: any, workerSelection: any }): void{
-  console.log('Job saved as draft with details:');
-  console.log(reviewedPostJobDetails);
+
 }
 
 // tslint:disable-next-line: typedef

@@ -13,6 +13,7 @@ export const environment = {
   // Local Host URL
   apiEndPoint: 'https://marketplace.siteworker.com/iconicworker-soa/',
   // apiEndPoint: 'http://192.168.100.43:80/',
+  
   baseURL: 'https://marketplace.siteworker.com/iconicworker-soa',
 
   // apiEndPoint: 'http://localhost:8080/',

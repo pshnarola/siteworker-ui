@@ -248,7 +248,7 @@ export class AddNewProjectComponent implements OnInit {
     if (this.reviewFormGroup) {
       this.reviewFormGroup = null;
     }
-    console.log("in destroy");
+  
     if (this.subscription) {
       //this.subscription.unsubscribe();
     }
@@ -1153,7 +1153,7 @@ export class AddNewProjectComponent implements OnInit {
         });
     }
 
-    console.log("this.singleJobsiteToBeAdded =>", this.singleJobsiteToBeAdded);
+ 
 
     if (
       !this._localStorageService.getItem("isEditMode") &&

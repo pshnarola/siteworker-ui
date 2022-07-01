@@ -1,9 +1,34 @@
-h4 {
-    padding: 0px;
-    margin: 0px;
+.link-button{
+    text-decoration: underline !important;
+    color: #3a7cec !important;
+    cursor: pointer;
 }
 
-ngx-dropzone {
-    height: 50px;
-    width: 400px;
+.p-disabled {
+    opacity: 0.6;
 }
+
+.space{
+    margin-right: 5px;
+}
+
+.form-control{
+    width: 100%;
+    padding: 0.3rem 0.3rem;
+    border-radius: 10px;
+    opacity: 0.4;
+}
+
+.lineitem{
+    margin-top: 5px;
+}
+
+.bg-info{
+    background-color: #122035 !important;
+}
+
+.checkbox-header{
+text-align: center;
+}
+
+

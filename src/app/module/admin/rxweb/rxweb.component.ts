@@ -26,7 +26,6 @@ export class RxwebComponent implements OnInit {
 
   // tslint:disable-next-line: typedef
   public login(){
-    console.log("hello");
   }
 
 }

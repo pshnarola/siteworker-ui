@@ -238,12 +238,10 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
       sortOrder: 1,
       searchText: '{"IS_ENABLE" : true}'
     }
-    console.log(datatableParam);
     this.queryParam = this.prepareQueryParam(datatableParam);
     this.companyService.getCompanyList(this.queryParam).subscribe(
       data => {
 
-        console.log(data);
         if (data.statusCode === '200') {
           if (data.message == 'OK') {
             this.clients = data.data.result;
@@ -361,8 +359,6 @@ export class AddSubcontractorComponent implements OnInit, OnDestroy {
     }
     this.companyService.assignCompany(obj).subscribe(
       data => {
-        console.log('data =>', data);
-        
         if (data.statusCode === '200' && data.message === 'OK') {
           this.notificationService.success(this.translator.instant('subcontractor.ownership.added'), '');
           this.selectedSubcontractors = [];

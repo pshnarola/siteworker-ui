@@ -157,7 +157,6 @@ export class AddJobsiteComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    console.log("in jobsite destroy");
     if (
       !this._localStorageService.getItem("milestoneScreen") &&
       !this._localStorageService.getItem("addJobsiteScreen") &&
@@ -525,7 +524,6 @@ export class AddJobsiteComponent implements OnInit {
     this.jobsiteData.longitude = this.addJobsiteForm.value.longitude;
     this.jobsiteData.attachmentLink = this.addJobsiteForm.value.attachmentLink;
     this.jobsiteData.status = JobsiteStatus.DRAFT;
-    console.log("this.project =>", this.project);
 
     if (this.project.id !== "pid") {
       this.project.attachment = [];

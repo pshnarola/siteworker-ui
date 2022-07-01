@@ -553,6 +553,7 @@ export const API_CONSTANTS = {
   REJECT_PROJECT: CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/rejectProject',
   ACCEPT_JOBSITE: CommonUtil.getApiEndPointPath() + 'jobSiteBidDetail/acceptJobSite',
   REJECT_JOBSITE: CommonUtil.getApiEndPointPath() + 'jobSiteBidDetail/rejectJobSite',
+  POST_BID_ACTION:CommonUtil.getApiEndPointPath() + 'ProjectBidDetail/bidAction',
 
   // closeout package Request
   GET_CLOSEOUT: CommonUtil.getApiEndPointPath() + 'closeOutPackageRequest',
