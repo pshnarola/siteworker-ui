@@ -142,6 +142,7 @@ export class ChangeRequestComponent implements OnInit {
   details: any = [];
   uom: any = [];
   filteredUom: any[];
+  errorLineitem = false;
   constructor(
     private captionChangeService: HeaderManagementService,
     private _localStorageService: LocalStorageService,
@@ -180,7 +181,6 @@ export class ChangeRequestComponent implements OnInit {
     this.reasonToRejectForm = this._formBuilder.group({
       reason: ["", Validators.required],
     });
-
   }
 
   ngOnDestroy(): void {
@@ -289,27 +289,62 @@ export class ChangeRequestComponent implements OnInit {
       )
     );
   }
-  //nip
 
   lineItemDetails(details) {
-
     // this.changeRequestForm.setControl( 'lineitem' ,this._formBuilder.array([]))
 
     this.lineItemsList = this.changeRequestForm.get("lineitem") as FormArray;
-    this.isLineItem =  details &&  details.lineItem &&  details.lineItem.length ? true : false
+    this.isLineItem =
+      details && details.lineItem && details.lineItem.length ? true : false;
     details &&
       details.lineItem.forEach((element: any, index) => {
-        //nip
-
         this.lineItemsList.push(
           this._formBuilder.group({
             unit: [""],
             quantity: [""],
             lineItem: [element],
             changeRequestStatus: [false],
+            cost: [],
           })
         );
       });
+  }
+
+  setValidations(event, index,details) {
+    if (this.changeRequestForm.value.lineitem.length == 0 && !event.checked) {
+      this.errorLineitem = true;
+    } else {
+      this.errorLineitem = false;
+    }
+    if (event.checked) {
+      let groupItems = this.changeRequestForm.get("lineitem") as FormArray;
+      
+      groupItems;
+      for (let index = 0; index < groupItems.length; index++) {
+       if(details.id == groupItems.value[index].lineItem.id) {
+        groupItems.at(index).get("unit").setValidators(Validators.required);
+        groupItems.at(index).get("cost").setValidators(Validators.required);
+        groupItems.at(index).get("quantity").setValidators(Validators.required);
+
+        groupItems.at(index).get("unit").updateValueAndValidity();
+        groupItems.at(index).get("cost").updateValueAndValidity();
+        groupItems.at(index).get("quantity").updateValueAndValidity();
+       }
+      
+      }
+    } else {
+      let groupItems = this.changeRequestForm.get("lineitem") as FormArray;
+      groupItems;
+      for (let index = 0; index < groupItems.length; index++) {
+        groupItems.at(index).get("unit").clearValidators();
+        groupItems.at(index).get("cost").clearValidators();
+        groupItems.at(index).get("quantity").clearValidators();
+
+        groupItems.at(index).get("unit").updateValueAndValidity();
+        groupItems.at(index).get("cost").updateValueAndValidity();
+        groupItems.at(index).get("quantity").updateValueAndValidity();
+      }
+    }
   }
 
   private setJobsite() {
@@ -450,10 +485,28 @@ export class ChangeRequestComponent implements OnInit {
   }
 
   uploadFile(next?: string) {
+   console.log('this.changeRequestDto =>',this.changeRequestDto);
+   
+    
+    this.changeRequestDto.lineItems = [];
+      this.changeRequestForm.value.lineitem.forEach((element) => {
+        if (element.changeRequestStatus) {
+          this.changeRequestDto.lineItems.push(element);
+        }
+      })
+
+      if(  this.changeRequestDto.lineItems.length == 0){
+        this.errorLineitem = true;
+      }else{
+        this.errorLineitem = false;
+      }
+  
+
     if (!this.changeRequestForm.valid) {
       CustomValidator.markFormGroupTouched(this.changeRequestForm);
       this.submitted = true;
       this.spinner = false;
+     
       return false;
     }
 
@@ -566,6 +619,7 @@ export class ChangeRequestComponent implements OnInit {
       this.isSelectedJobsite = true;
       this.changeRequestForm.controls.jobSite.patchValue(this.selectedJobsite);
     }
+    
     this.lineItemDetails(this.details);
 
     this.changeRequestDialog = true;
@@ -629,7 +683,7 @@ export class ChangeRequestComponent implements OnInit {
       jobSite: this.selectedJobsite,
       title: ["", [Validators.required, Validators.maxLength(100)]],
       description: ["", [Validators.required, Validators.maxLength(500)]],
-      cost: [null, [Validators.required, Validators.min(0.01)]],
+      // cost: [null, [Validators.required, Validators.min(0.01)]],
       status: ["PENDING", Validators.required],
       lineitem: this._formBuilder.array([]),
     });
@@ -680,9 +734,15 @@ export class ChangeRequestComponent implements OnInit {
 
   onSubmitChangeRequestForm() {
     this.submitted = true;
-    
-    //nip
+
+    if(  this.changeRequestDto.lineItems.length == 0){
+      this.errorLineitem = true;
+    }else{
+   this.errorLineitem = false;
+    }
+
     if (!this.changeRequestForm.valid) {
+      this.errorLineitem = true;
       CustomValidator.markFormGroupTouched(this.changeRequestForm);
       this.submitted = true;
       this.spinner = false;
@@ -690,117 +750,69 @@ export class ChangeRequestComponent implements OnInit {
     }
 
     if (this.changeRequestForm.valid) {
-      // if (this.changeRequestForm.controls.id.value !== null) {
-        this.changeRequestDto.lineItems=[]
-      // }
+      this.changeRequestDto.lineItems = [];
       this.changeRequestForm.value.lineitem.forEach((element) => {
-        if (element.unit != '' && element.quantity != '' && element.changeRequestStatus) {
-          this.changeRequestDto.lineItems.push(element)
+        if (element.changeRequestStatus) {
+          this.changeRequestDto.lineItems.push(element);
         }
       });
-      console.log(' this.changeRequestDto.lineItems =>', this.changeRequestDto.lineItems);
+
       
-      if (this.changeRequestForm.controls.id.value !== null) {
-        this.changeRequestDto.changeRequest = new ChangeRequest();
-        
-        this.changeRequestDto.attachments = this.attachmentList;
-        this.changeRequestDto.changeRequest.id =
-          this.changeRequestForm.value.id;
-        this.changeRequestDto.changeRequest.title =
-          this.changeRequestForm.value.title;
-        this.changeRequestDto.changeRequest.raisedTo =
-          this.changeRequestForm.value.raisedToId;
-        this.changeRequestDto.changeRequest.project =
-          this.changeRequestForm.value.project;
-        this.changeRequestDto.changeRequest.jobSite =
-          this.changeRequestForm.value.jobSite;
-        this.changeRequestDto.changeRequest.raisedBy = this.loginUser;
-        this.changeRequestDto.changeRequest.description =
-          this.changeRequestForm.value.description;
-        this.changeRequestDto.changeRequest.cost =
-          this.changeRequestForm.value.cost;
-        this.changeRequestDto.changeRequest.status =
-          this.changeRequestForm.value.status;
-        this.changeRequestDto.changeRequest.updatedBy =
-          this.changeRequestForm.value.updatedBy;
-         
-       
+     
+        if (this.changeRequestForm.controls.id.value !== null) {
+          this.changeRequestDto.changeRequest = new ChangeRequest();
 
-        this.changeRequestService
-          .updateChangeRequest(this.changeRequestDto)
-          .subscribe(
-            (data) => {
-              if (data.statusCode === "200" && data.message === "OK") {
-                this._notificationService.success(
-                  this.translator.instant("change.request.added"),
-                  ""
-                );
-                this.changeRequestDialog = false;
-                this.submitted = false;
-                this.files = [];
-                this.attachmentList = [];
-                this.fatchedAttachmentList.length = 0;
-                this.spinner = false;
-                this.isInEditMode = false;
-                this.loadChangeRequestList();
-              } else {
-                this._notificationService.error(data.message, "");
-                this.submitted = false;
-                this.attachmentList = [];
-                this.fatchedAttachmentList.length = 0;
-                this.spinner = false;
-                this.isInEditMode = false;
-                this.loadChangeRequestList();
-              }
-            },
-            (error) => {
-              this._notificationService.error(
-                this.translator.instant("common.error"),
-                ""
-              );
-              this.changeRequestDialog = false;
-              this.submitted = false;
-              this.files = [];
-              this.attachmentList = [];
-              this.isInEditMode = false;
-              this.fatchedAttachmentList.length = 0;
-              this.spinner = false;
-              this.loadChangeRequestList();
-            }
-          );
-      } else {
-        
-        this.changeRequestDto.changeRequest = new ChangeRequest();
+          this.changeRequestDto.attachments = this.attachmentList;
+          this.changeRequestDto.changeRequest.id =
+            this.changeRequestForm.value.id;
+          this.changeRequestDto.changeRequest.title =
+            this.changeRequestForm.value.title;
+          this.changeRequestDto.changeRequest.raisedTo =
+            this.changeRequestForm.value.raisedToId;
+          this.changeRequestDto.changeRequest.project =
+            this.changeRequestForm.value.project;
+          this.changeRequestDto.changeRequest.jobSite =
+            this.changeRequestForm.value.jobSite;
+          this.changeRequestDto.changeRequest.raisedBy = this.loginUser;
+          this.changeRequestDto.changeRequest.description =
+            this.changeRequestForm.value.description;
+          // this.changeRequestDto.changeRequest.cost =
+          //   this.changeRequestForm.value.cost;
+          this.changeRequestDto.changeRequest.status =
+            this.changeRequestForm.value.status;
+          this.changeRequestDto.changeRequest.updatedBy =
+            this.changeRequestForm.value.updatedBy;
 
-        
-        this.changeRequestDto.attachments = this.attachmentList;
-
-        this.changeRequestDto.changeRequest.raisedBy = this.loginUser;
-        this.changeRequestDto.changeRequest.raisedTo =
-          this.changeRequestForm.value.project.user;
-        this.changeRequestDto.changeRequest.jobSite =
-          this.changeRequestForm.value.jobSite;
-        this.changeRequestDto.changeRequest.project =
-          this.changeRequestForm.value.project;
-        this.changeRequestDto.changeRequest.title =
-          this.changeRequestForm.value.title;
-        this.changeRequestDto.changeRequest.description =
-          this.changeRequestForm.value.description;
-        this.changeRequestDto.changeRequest.cost =
-          this.changeRequestForm.value.cost;
-        this.changeRequestDto.changeRequest.status =
-          this.changeRequestForm.value.status;
-        this.changeRequestDto.changeRequest.createdBy =
-          this.changeRequestForm.value.createdBy;
-        this.changeRequestDto.changeRequest.updatedBy =
-          this.changeRequestForm.value.updatedBy;
-       
-    
-
-  this.changeRequestService.addChangeRequest(this.changeRequestDto).subscribe((data) => {
-              if (data.statusCode === "200" && data.message === "OK") {
-                this._notificationService.success(
-                  this.translator.instant("change.request.added"),
+          this.changeRequestService
+            .updateChangeRequest(this.changeRequestDto)
+            .subscribe(
+              (data) => {
+                if (data.statusCode === "200" && data.message === "OK") {
+                  this._notificationService.success(
+                    this.translator.instant("change.request.added"),
+                    ""
+                  );
+                  this.changeRequestDialog = false;
+                  this.submitted = false;
+                  this.files = [];
+                  this.attachmentList = [];
+                  this.fatchedAttachmentList.length = 0;
+                  this.spinner = false;
+                  this.isInEditMode = false;
+                  this.loadChangeRequestList();
+                } else {
+                  this._notificationService.error(data.message, "");
+                  this.submitted = false;
+                  this.attachmentList = [];
+                  this.fatchedAttachmentList.length = 0;
+                  this.spinner = false;
+                  this.isInEditMode = false;
+                  this.loadChangeRequestList();
+                }
+              },
+              (error) => {
+                this._notificationService.error(
+                  this.translator.instant("common.error"),
                   ""
                 );
                 this.changeRequestDialog = false;
@@ -808,35 +820,77 @@ export class ChangeRequestComponent implements OnInit {
                 this.files = [];
                 this.attachmentList = [];
                 this.isInEditMode = false;
+                this.fatchedAttachmentList.length = 0;
                 this.spinner = false;
-                this.loadChangeRequestList();
-              } else {
-                this._notificationService.error(data.message, "");
-                this.submitted = false;
-                this.attachmentList = [];
-                this.spinner = false;
-                this.isInEditMode = false;
                 this.loadChangeRequestList();
               }
-            },
-            (error) => {
-              this._notificationService.error(
-                this.translator.instant("common.error"),
-                ""
-              );
-              this.changeRequestDialog = false;
-              this.submitted = false;
-              this.files = [];
-              this.attachmentList = [];
-              this.isInEditMode = false;
-              this.spinner = false;
-              this.loadChangeRequestList();
-            }
-          );
+            );
+        } else {
+          this.changeRequestDto.changeRequest = new ChangeRequest();
 
+          this.changeRequestDto.attachments = this.attachmentList;
 
+          this.changeRequestDto.changeRequest.raisedBy = this.loginUser;
+          this.changeRequestDto.changeRequest.raisedTo =
+            this.changeRequestForm.value.project.user;
+          this.changeRequestDto.changeRequest.jobSite =
+            this.changeRequestForm.value.jobSite;
+          this.changeRequestDto.changeRequest.project =
+            this.changeRequestForm.value.project;
+          this.changeRequestDto.changeRequest.title =
+            this.changeRequestForm.value.title;
+          this.changeRequestDto.changeRequest.description =
+            this.changeRequestForm.value.description;
+          // this.changeRequestDto.changeRequest.cost =
+          //   this.changeRequestForm.value.cost;
+          this.changeRequestDto.changeRequest.status =
+            this.changeRequestForm.value.status;
+          this.changeRequestDto.changeRequest.createdBy =
+            this.changeRequestForm.value.createdBy;
+          this.changeRequestDto.changeRequest.updatedBy =
+            this.changeRequestForm.value.updatedBy;
+
+          this.changeRequestService
+            .addChangeRequest(this.changeRequestDto)
+            .subscribe(
+              (data) => {
+                if (data.statusCode === "200" && data.message === "OK") {
+                  this._notificationService.success(
+                    this.translator.instant("change.request.added"),
+                    ""
+                  );
+                  this.changeRequestDialog = false;
+                  this.submitted = false;
+                  this.files = [];
+                  this.attachmentList = [];
+                  this.isInEditMode = false;
+                  this.spinner = false;
+                  this.loadChangeRequestList();
+                } else {
+                  this._notificationService.error(data.message, "");
+                  this.submitted = false;
+                  this.attachmentList = [];
+                  this.spinner = false;
+                  this.isInEditMode = false;
+                  this.loadChangeRequestList();
+                }
+              },
+              (error) => {
+                this._notificationService.error(
+                  this.translator.instant("common.error"),
+                  ""
+                );
+                this.changeRequestDialog = false;
+                this.submitted = false;
+                this.files = [];
+                this.attachmentList = [];
+                this.isInEditMode = false;
+                this.spinner = false;
+                this.loadChangeRequestList();
+              }
+            );
+        }
       
-      }
     } else {
       this._notificationService.error("Assign project ", "");
     }
@@ -865,13 +919,11 @@ export class ChangeRequestComponent implements OnInit {
   }
 
   loadChangeRequestList() {
-    console.log('in this fn? =>');
     this.loading = true;
     this.queryParam = this.prepareQueryParam(this.datatableParam);
     this.changeRequestService.getChangeRequestList(this.queryParam).subscribe(
       (data) => {
-        console.log('data for edit =>',data);
-        
+
         if (data.statusCode === "200") {
           if (data.message === "OK") {
             this.totalStatusCount = 0;
@@ -952,7 +1004,6 @@ export class ChangeRequestComponent implements OnInit {
     this.filteredUom = this.filteredUom.sort();
   }
 
- 
   clear() {
     this.FilterFormGroup.reset();
     this.FilterFormGroup.get("changeRequestTitle").patchValue(this.emptyArray);
@@ -1069,16 +1120,13 @@ export class ChangeRequestComponent implements OnInit {
     }
   }
 
-
   // edit request
   editChangeRequest(changeRequestDetails: any) {
-    console.log('changeRequestDetails =>',changeRequestDetails);
-    
+
     this.dialogHeader = this.translator.instant("edit.change.request");
     this.isInEditMode = true;
     this.changeRequestDto = { ...changeRequestDetails };
-    console.log(' this.changeRequestDto =>', this.changeRequestDto);
-    
+
     this.fatchedAttachmentList = this.changeRequestDto.attachments;
     this.changeRequestId = this.changeRequestDto.changeRequest.id;
     this.changeRequestForm.controls.id.patchValue(
@@ -1102,34 +1150,72 @@ export class ChangeRequestComponent implements OnInit {
     this.changeRequestForm.controls.description.patchValue(
       this.changeRequestDto.changeRequest.description
     );
-    this.changeRequestForm.controls.cost.patchValue(
-      this.changeRequestDto.changeRequest.cost
-    );
+    // this.changeRequestForm.controls.cost.patchValue(
+    //   this.changeRequestDto.changeRequest.cost
+    // );
     this.changeRequestForm.controls.updatedBy.patchValue(this.loggedInUserId);
     this.changeRequestForm.controls.createdBy.patchValue(
       this.changeRequestDto.changeRequest.createdBy
     );
-//snip
+    //snip
     // this.changeRequestForm.controls.lineitem.patchValue(this.changeRequestDto.lineItems)
-    if(this.changeRequestForm.value.lineitem && this.changeRequestForm.value.lineitem.length > 0){
+    if (
+      this.changeRequestForm.value.lineitem &&
+      this.changeRequestForm.value.lineitem.length > 0
+    ) {
       while (this.lineItems.length !== 0) {
-        this.lineItems.removeAt(0)
+        this.lineItems.removeAt(0);
       }
     }
     this.lineItemsList = this.changeRequestForm.get("lineitem") as FormArray;
-    this.changeRequestDto.lineItems.forEach((element: any, index) => {
-      //nip
-      this.lineItemsList.push(
-        this._formBuilder.group({
-          unit: [element.unit],
-          quantity: [element.quantity],
-          lineItem: [element.lineItem],
-          changeRequestStatus: [element.changeRequestStatus],
+    this.changeRequestDto.changeRequest.jobSite.lineItem.forEach(
+      (e: any, index) => {
+        this.lineItemsList.push(
+          this._formBuilder.group({
+            unit: [],
+            quantity: [],
+            lineItem: [e],
+            changeRequestStatus: [],
+            cost: [],
+          })
+        );
+      }
+    );
+
+    this.changeRequestDto.lineItems.forEach((e: any, indexs) => {
+      let groupItems = this.changeRequestForm.get("lineitem") as FormArray;
+      groupItems;
+      for (let index = 0; index < groupItems.length; index++) {
       
-        })
-      );
+        if(e.lineItem.id === groupItems.at(index).get("lineItem").value.id ){
+
+     
+        groupItems.at(index).get("unit").patchValue(e.unit);
+        groupItems.at(index).get("cost").patchValue(e.cost);
+        groupItems.at(index).get("quantity").patchValue(e.quantity);
+        groupItems
+          .at(index)
+          .get("changeRequestStatus")
+          .patchValue(e.changeRequestStatus);
+        groupItems.at(index).get("lineItem").patchValue(e.lineItem);
+
+        groupItems.at(index).get("unit").updateValueAndValidity();
+        groupItems.at(index).get("cost").updateValueAndValidity();
+        groupItems.at(index).get("quantity").updateValueAndValidity();
+        groupItems
+          .at(index)
+          .get("changeRequestStatus")
+          .updateValueAndValidity();
+        groupItems.at(index).get("lineItem").updateValueAndValidity();
+      }
+    }
     });
-this.isLineItem =  this.changeRequestDto.lineItems && this.changeRequestDto.lineItems.length ? true : false
+
+    this.isLineItem =
+      this.changeRequestDto.changeRequest.jobSite.lineItem &&
+      this.changeRequestDto.changeRequest.jobSite.lineItem.length
+        ? true
+        : false;
     this.changeRequestDialog = true;
   }
 

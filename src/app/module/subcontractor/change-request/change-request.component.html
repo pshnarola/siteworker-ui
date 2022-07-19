@@ -169,7 +169,7 @@
                         </div>
                     </div>
                     <div class="p-fluid p-formgrid p-grid">
-                        <div class="p-field p-col">
+                        <!-- <div class="p-field p-col">
                             <label for="locale-us">{{ "cost" | translate }}*</label>
                             <p-inputNumber prefix="$" currency="USD" formControlName="cost" maxlength="14"
                                 locale="en-US"></p-inputNumber>
@@ -183,7 +183,7 @@
                         && !changeRequestForm.controls['cost'].valid)">
                                 {{'cost.minValue' | translate}}
                             </div>
-                        </div>
+                        </div> -->
                         <div class="p-field p-col">
                             <div>
                                 <label for="document">{{ "upload.documents" | translate }}</label>
@@ -201,62 +201,70 @@
                     </div>
 
 
-                    <label for="title" *ngIf="isLineItem">{{ "line.item" | translate }}*</label>
+                    <p *ngIf="isLineItem" class="mt-5"><b>{{ "line.item" | translate }}*</b></p>
                     <div formArrayName="lineitem">
                         <div *ngFor="let line of lineItems.controls; let i = index">
                             <div [formGroup]="line">
                                 <div class="p-field">
-            
+
                                     <div class="d-flex gap-10 flex-wrap">
                                         <div class="inline-redio">
-                                         
-                                            <p-checkbox 
-                                                 binary="true"  formControlName="changeRequestStatus" [name]="i" 
-                                                  [inputId]="i">
+                                            <p-checkbox binary="true" formControlName="changeRequestStatus" [name]="i"
+                                                [inputId]="i" (onChange)="setValidations($event, i,line.value.lineItem)">
                                             </p-checkbox>
-                                            <label class="mb-0 mr-2" [for]="i">{{line.value.lineItem.lineItemName}}</label>
+                                            <label class="mb-0 mr-2"
+                                                [for]="i">{{line.value.lineItem.lineItemName}}</label>
                                         </div>
-            
                                     </div>
                                 </div>
+
                                 <div class="p-fluid p-formgrid p-grid" *ngIf="line.value.changeRequestStatus">
+
                                     <div class="p-field p-col">
                                         <label>{{ "unit.of.measure" | translate }}*</label>
-                                        <p-autoComplete
-                                        formControlName="unit" 
-                                        [suggestions]="filteredUom"
-                                        forceSelection="true"
-                                        (completeMethod)="filterUom($event)"
-                                        field="name"
-                                        [dropdown]="true"
-                                        placeholder="{{ 'unit.placeholder' | translate }}"
-                                        [style]="{ width: '100%', height: '35px' }"
-                                        [inputStyle]="{ width: '100%' }"
-                                      >
-                                        <ng-template let-unit pTemplate="item">
-                                          <div>
-                                            <div>{{ unit.name }}</div>
-                                          </div>
-                                        </ng-template>
-                                      </p-autoComplete>
-            
-            
+                                        <p-autoComplete formControlName="unit" [suggestions]="filteredUom"
+                                            forceSelection="true" (completeMethod)="filterUom($event)" field="name"
+                                            [dropdown]="true" placeholder="{{ 'unit.placeholder' | translate }}"
+                                            [style]="{ width: '100%', height: '35px' }"
+                                            [inputStyle]="{ width: '100%' }">
+                                            <ng-template let-unit pTemplate="item">
+                                                <div>
+                                                    <div>{{ unit.name }}</div>
+                                                </div>
+                                            </ng-template>
+                                        </p-autoComplete>
+                                        <div class="p-invalid"
+                                            *ngIf="submitted && line.get('unit').errors && line.get('unit').hasError('required')">
+                                            {{'required' | translate}}
+                                        </div>
                                     </div>
+
                                     <div class="p-field p-col">
-            
-                                        <label>{{ "quantity" | translate }}</label>
-            
-                                       
-                                        <p-inputNumber formControlName="quantity"  
-                                        locale="en-US"></p-inputNumber>
+                                        <label>{{ "quantity" | translate }}*</label>
+                                        <p-inputNumber formControlName="quantity" locale="en-US"></p-inputNumber>
+                                        <div class="p-invalid"
+                                            *ngIf="submitted && line.get('quantity').errors && line.get('quantity').hasError('required')">
+                                            {{'required' | translate}}
+                                        </div>
+                                    </div>
+
+                                    <div class="p-field p-col">
+                                        <label for="locale-us">{{ "cost" | translate }}*</label>
+                                        <p-inputNumber prefix="$" currency="USD" formControlName="cost" maxlength="14"
+                                            locale="en-US"></p-inputNumber>
+                                        <div class="p-invalid"
+                                            *ngIf="submitted && line.get('cost').errors && line.get('cost').hasError('required')">
+                                            {{'required' | translate}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="p-invalid" *ngIf="errorLineitem">
+                            Please select atleast one lineitem!
+                        </div>
                     </div>
-
-                   
-
 
                 </form>
                 <div *ngIf="files">
@@ -282,12 +290,15 @@
 
 
             </ng-template>
+
             <ng-template pTemplate="footer">
                 <button pButton pRipple type="button" icon="pi pi-times-circle" label="{{'cancel' | translate}}"
                     class="p-button-outlined p-button-danger" (click)="hideChangeRequestDialog()"></button>
+                    
                 <button pButton pRipple label="{{ 'submit' | translate }}" *ngIf="!isInEditMode" type="button"
                     (click)="uploadFile()" icon="pi pi-check-circle" class="ml-2"></button>
-                <button pButton pRipple *ngIf="isInEditMode" (click)="uploadFile('editMode')"
+                   
+                <button pButton pRipple *ngIf="isInEditMode" (click)="uploadFile('editMode')" 
                     label="{{ 'submit' | translate }}" type="button" icon="pi pi-check-circle" class="ml-2"></button>
 
             </ng-template>

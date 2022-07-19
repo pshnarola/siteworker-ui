@@ -78,9 +78,9 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
   selectedProject: any;
   isSelectedProject = false;
   isSelectedJobsite = false;
-
+  errorMessage: any;
   _selectedColumns: any[];
-  lineitemColumn = ["","Lineitem", "Unit of Measures", "Quantity", "Cost"];
+  lineitemColumn = ["", "Lineitem", "Unit of Measures", "Quantity", "Cost"];
 
   downloadAttachmentParams: { subContractorId: any; closeOutPackageId: any };
   emptyFileFlag;
@@ -92,6 +92,7 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
   offset = 0;
   sortOrder = 0;
   lineItemDialog = false;
+  isShowCheck = false;
   sourceProducts: any[];
   targetProducts: any[];
   lineItemsList: FormArray;
@@ -190,13 +191,18 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
   }
 
   openLineItem(milestone: any) {
+    if (milestone.status == "NOT_SUBMITTED") {
+      this.isShowCheck = true;
+    } else {
+      this.isShowCheck = false;
+    }
+
     let data: any;
     this.closeoutList.forEach((element) => {
-      if (element.paymentMileStone.name === milestone) {
+      if (element.paymentMileStone.name === milestone.paymentMileStone.name) {
         data = element.paymentMileStone.lineItem;
       }
     });
-    //snip
     this.setLineitem(data);
     this.lineItemDialog = true;
   }
@@ -511,26 +517,23 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
       status: [],
     });
   }
-  checkAllFn(event){
-    console.log('event =>',event);
-    this.lineitemForm.value.lineitem.forEach((element,index) => {
-    if(event.checked){
-        console.log('element =>',element);
-    
-       (<FormArray>this.lineitemForm.get('lineitem')).controls[index].get('closeOutStatus').patchValue(true);
-      }else{
-        (<FormArray>this.lineitemForm.get('lineitem')).controls[index].get('closeOutStatus').patchValue(false);
+  checkAllFn(event) {
+    this.lineitemForm.value.lineitem.forEach((element, index) => {
+      if (event.checked) {
+        (<FormArray>this.lineitemForm.get("lineitem")).controls[index]
+          .get("closeOutStatus")
+          .patchValue(true);
+      } else {
+        (<FormArray>this.lineitemForm.get("lineitem")).controls[index]
+          .get("closeOutStatus")
+          .patchValue(false);
       }
     });
-   console.log('this.lineitemForm =>',this.lineitemForm);
-   
-    
   }
-
 
   initializeLineItemForm(): void {
     this.lineitemForm = this.formBuilder.group({
-      checkAll:[false],
+      checkAll: [false],
       lineitem: this.formBuilder.array([]),
     });
   }
@@ -608,10 +611,27 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
 
   hideLineItemDialog(): void {
     this.lineItemPopup = false;
+    this.lineItemDialog = false;
   }
   openSubmitRequestDialog(id): void {
-    this.submitRequestDialog = true;
-    this.closeoutId = id;
+    this.lineitemForm.value.lineitem.forEach((element) => {
+      if (element.details.projectID == id) {
+        this.submitRequestDialog = true;
+        this.closeoutId = id;
+      } else {
+        let options = null;
+        const message = this.translator.instant(
+          "Please select atleast one lineitem for invoice"
+        );
+        options = {
+          title: this.translator.instant("error"),
+          message: this.translator.instant(`${message} ?`),
+          cancelText: this.translator.instant("dialog.cancel.text"),
+          confirmText: this.translator.instant("dialog.confirm.text"),
+        };
+        this.confirmDialogService.open(options);
+      }
+    });
   }
   hideSubmitRequestDialog(): void {
     this.submitRequestDialog = false;
@@ -679,12 +699,29 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
     this.getCloseOutList();
   }
 
+  checkDetails() {
+    this.errorMessage = "";
+  }
+
   getCloseOutList(): void {
     this.initializeLineItemForm();
     this.queryParam = this.prepareQueryParam(this.dataTableParam);
     this.projectBidService.getCloseout(this.queryParam).subscribe((data) => {
       if (data.data?.result) {
         this.closeoutList = data.data.result;
+        this.closeoutList.forEach((element) => {
+          if (
+            element.paymentMileStone &&
+            element.paymentMileStone.lineItem &&
+            element.paymentMileStone.lineItem.length > 0
+          ) {
+            element.paymentMileStone.lineItem.forEach((e) => {
+              e.projectID = element.id;
+              e.status = element.status;
+            });
+          }
+        });
+
         this.totalRecords = data.data.totalRecords;
         this.sourceProducts = this.closeoutList[0].jobSiteDetail.lineItem;
         this.targetProducts = [];
@@ -693,20 +730,23 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
   }
 
   setLineitem(details) {
-      if(this.lineitemForm.value.lineitem && this.lineitemForm.value.lineitem.length > 0){
-        while (this.lineItems.length !== 0) {
-          this.lineItems.removeAt(0)
-        }
+    if (
+      this.lineitemForm.value.lineitem &&
+      this.lineitemForm.value.lineitem.length > 0
+    ) {
+      while (this.lineItems.length !== 0) {
+        this.lineItems.removeAt(0);
       }
+    }
     this.lineItemsList = this.lineitemForm.get("lineitem") as FormArray;
     details &&
       details.forEach((element: any, index) => {
         //nip
-      
+
         this.lineItemsList.push(
           this.formBuilder.group({
             closeOutStatus: [false],
-            unit: [element.unit.name],
+            unit: [element.unit && element.unit.name ? element.unit.name : "-"],
             quantity: [element.quantity],
             amount: [element.cost],
             lineItemName: [element.lineItemName],
@@ -714,10 +754,7 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
             details: [element],
           })
         );
-      
       });
-      console.log('this.lineitemForm =>',this.lineitemForm);
-      
   }
 
   filterUom(event) {
@@ -805,7 +842,14 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
 
   onSaveLineItem() {
     // this.savedLineItem = true;
-    this.lineItemDialog = false;
+
+    this.lineitemForm.value.lineitem.forEach((element) => {
+      if (element.closeOutStatus) {
+        this.lineItemDialog = false;
+      } else {
+        this.errorMessage = "Please select atleast one lineitem for invoice";
+      }
+    });
   }
 
   onCloseDialogEvent(event) {
@@ -978,39 +1022,54 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
   }
 
   onSubmitCloseOutRequest(): void {
-    const closeOutPackageRequest = new CloseoutPackageRequestDTO();
-    closeOutPackageRequest.id = this.closeoutId;
-    this.submitCloseOutRequest.attachments = this.attachmentList;
-    this.submitCloseOutRequest.closeOutPackageRequest = closeOutPackageRequest;
+    if (this.lineitemForm.value.lineitem.length > 0) {
+      const closeOutPackageRequest = new CloseoutPackageRequestDTO();
+      closeOutPackageRequest.id = this.closeoutId;
+      this.submitCloseOutRequest.attachments = this.attachmentList;
+      this.submitCloseOutRequest.closeOutPackageRequest =
+        closeOutPackageRequest;
 
-    this.lineitemForm.value.lineitem.forEach((element) => {
-      if (element.closeOutStatus) {
-        // element.unit = element.details.unit;
-        this.submitCloseOutRequest.closeOutPackageRequest.lineItemDTOList.push(
-          element
-        );
-      }
-    });
-
-    this.projectBidService
-      .addSubmitCloseoutRequest(this.submitCloseOutRequest)
-      .subscribe((data) => {
-        if (data.statusCode === "200" && data.message === "OK") {
-          this.notificationService.success(
-            this.translator.instant("submitted.request"),
-            ""
+      this.lineitemForm.value.lineitem.forEach((element) => {
+        if (element.closeOutStatus) {
+          // element.unit = element.details.unit;
+          this.submitCloseOutRequest.closeOutPackageRequest.lineItemDTOList.push(
+            element
           );
-          if (this.rejectedCloseoutFlag) {
-            this.hideDocumentDialog();
-          } else {
-            this.hideSubmitRequestDialog();
-          }
-          this.setDefaultCriteria();
-        } else {
-          this.notificationService.error(data.message, "");
-          this.attachmentList = [];
         }
       });
+
+      this.projectBidService
+        .addSubmitCloseoutRequest(this.submitCloseOutRequest)
+        .subscribe((data) => {
+          if (data.statusCode === "200" && data.message === "OK") {
+            this.notificationService.success(
+              this.translator.instant("submitted.request"),
+              ""
+            );
+            if (this.rejectedCloseoutFlag) {
+              this.hideDocumentDialog();
+            } else {
+              this.hideSubmitRequestDialog();
+            }
+            this.setDefaultCriteria();
+          } else {
+            this.notificationService.error(data.message, "");
+            this.attachmentList = [];
+          }
+        });
+    } else {
+      let options = null;
+      const message = this.translator.instant(
+        "Please select atleast one lineitem for invoice"
+      );
+      options = {
+        title: this.translator.instant("error"),
+        message: this.translator.instant(`${message} ?`),
+        cancelText: this.translator.instant("dialog.cancel.text"),
+        confirmText: this.translator.instant("dialog.confirm.text"),
+      };
+      this.confirmDialogService.open(options);
+    }
   }
   downloadDocuments(): void {
     this.projectBidService
