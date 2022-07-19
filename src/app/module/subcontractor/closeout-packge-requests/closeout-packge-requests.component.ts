@@ -203,6 +203,7 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
         data = element.paymentMileStone.lineItem;
       }
     });
+
     this.setLineitem(data);
     this.lineItemDialog = true;
   }
@@ -614,8 +615,9 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
     this.lineItemDialog = false;
   }
   openSubmitRequestDialog(id): void {
+  
     this.lineitemForm.value.lineitem.forEach((element) => {
-      if (element.details.projectID == id) {
+      if (element.details.projectID == id && element.closeOutStatus) {
         this.submitRequestDialog = true;
         this.closeoutId = id;
       } else {
@@ -1028,7 +1030,6 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
       this.submitCloseOutRequest.attachments = this.attachmentList;
       this.submitCloseOutRequest.closeOutPackageRequest =
         closeOutPackageRequest;
-
       this.lineitemForm.value.lineitem.forEach((element) => {
         if (element.closeOutStatus) {
           // element.unit = element.details.unit;
@@ -1037,7 +1038,7 @@ export class CloseoutPackgeRequestsComponent implements OnInit {
           );
         }
       });
-
+    
       this.projectBidService
         .addSubmitCloseoutRequest(this.submitCloseOutRequest)
         .subscribe((data) => {
