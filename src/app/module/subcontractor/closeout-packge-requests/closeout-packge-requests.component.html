@@ -93,7 +93,13 @@
                                 </div>
 
                                 <div *ngSwitchCase="'jobsiteTitle'">
-                                    <span class="text-wrap link-button" (click)="openLineItem(data.paymentMileStone.name)">
+
+                                    <span *ngIf="data.paymentMileStone.lineItem.length > 0"
+                                        class="text-wrap link-button" (click)="openLineItem(data)">
+                                        {{data.jobSiteDetail.title}}
+                                    </span>
+
+                                    <span *ngIf="data.paymentMileStone.lineItem.length ==  0" class="text-wrap">
                                         {{data.jobSiteDetail.title}}
                                     </span>
                                 </div>
@@ -148,7 +154,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div>
+                                <div *ngIf="data.paymentMileStone.lineItem.length > 0">
                                     <p-button styleClass="p-button-sm" tooltipPosition="bottom"
                                         class="ml-1 CloseOut_grid_btn" icon="pi pi-download"
                                         (click)="openDocumentDialog(data)" pTooltip="{{'download.documents'|translate}}"
@@ -175,6 +181,13 @@
                                         (click)="openRejectionReasonDialog(data.id)" *ngIf="data.status ==='REJECTED'"
                                         pTooltip="{{'view.reject.reason'|translate}}"></p-button>
 
+                                </div>
+
+                                <div *ngIf="data.paymentMileStone.lineItem.length == 0">
+                                    <p-button styleClass="p-button-sm" tooltipPosition="bottom"
+                                        class="ml-1 CloseOut_grid_btn_red" icon="pi pi-times"
+                                         pTooltip="{{'no.lineitem'|translate}}"
+                                        ></p-button>
                                 </div>
                             </td>
                         </tr>
@@ -425,108 +438,69 @@
 <p-dialog [(visible)]="lineItemDialog" (onHide)="onCloseDialogEvent($event)" [style]="{width: '60%'}"
     header='{{"line.item" | translate}}' [modal]="true" styleClass="p-fluid">
 
-   <!-- <form [formGroup]="lineitemForm">
-        <div formArrayName="lineitem" >
-            <div *ngFor="let line of lineItems.controls; let i = index" class="lineitem">
-                <div [formGroup]="line">
-                    <div class="p-field">
+    <div class="card datatable-card">
 
-                        <div class="d-flex gap-10 flex-wrap">
-                            <div class="inline-redio">
-                                <p-checkbox class="p-disabled" binary="true" formControlName="closeOutStatus" [name]="i"
-                                    [inputId]="i" class="space">
-                                </p-checkbox>
-                                <label class="mb-0 mr-2" [for]="i">{{line.value.details.lineItemName}}</label>
-                            </div>
+        <!-- tbl2 -->
+        <form [formGroup]="lineitemForm">
+            <table class="table">
+                <thead class="bg-info text-white">
+                    <tr>
+                        <th class="checkbox-header" *ngIf="isShowCheck">
+                            <p-checkbox class="p-disabled" binary="true" (onChange)="checkAllFn($event)"
+                                formControlName="checkAll" class="space">
+                            </p-checkbox>
+                        </th>
+                        <th>Lineitem</th>
+                        <th>Unit of Measures</th>
+                        <th>Quantity</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container formArrayName="lineitem">
+                        <tr *ngFor="let line of lineItems.controls; let i = index">
+                            <ng-container [formGroup]="line">
 
-                        </div>
-                    </div>
+                                <td class="text-center" *ngIf="line.value.details.status == 'NOT_SUBMITTED' ">
+                                    <p-checkbox class="p-disabled" binary="true" formControlName="closeOutStatus"
+                                        [name]="i" [inputId]="i" class="space" (onChange)="checkDetails()">
+                                    </p-checkbox>
+                                </td>
 
-                    <div class="p-fluid p-formgrid p-grid">
-                        <div class="p-field p-col">
-                            <label>{{ "unit.of.measure" | translate }}*</label>
-                            <input formControlName="unit" class="form-control p-disabled" />
-                        </div>
+                                <td>
+                                    {{line.value.details.lineItemName}}
+                                </td>
 
-                        <div class="p-field p-col">
-                            <label>{{ "quantity" | translate }}</label>
-                            <p-inputNumber formControlName="quantity" locale="en-US"></p-inputNumber>
-                        </div>
-                    </div>
+                                <td>
+                                    {{line.value.unit}}
+                                </td>
 
-                    <div class="p-fluid p-formgrid p-grid">
+                                <td *ngIf="line.value.details.status == 'NOT_SUBMITTED' ">
+                                    <div class="p-field p-col">
+                                        <p-inputNumber formControlName="quantity" locale="en-US"></p-inputNumber>
+                                    </div>
+                                </td>
 
-                        <div class="p-field p-col">
-                            <label>{{ "cost" | translate }}</label>
-                            <p-inputNumber formControlName="amount" class="p-disabled" locale="en-US"></p-inputNumber>
-                        </div>
+                                <td *ngIf="line.value.details.status !== 'NOT_SUBMITTED' ">
+                                    {{line.value.quantity}}
+                                </td>
 
-                       
+                                <td>
+                                    {{line.value.amount}}
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </form>
+        <!-- tbl2 -->
 
-                    </div>
-                </div>
-            </div>
-            <br>
-        </div>
-    </form>  -->
-
-
-  <div class="card datatable-card">
-
-    <!-- tbl2 -->
-    <form [formGroup]="lineitemForm">
-    <table class="table">
-        <thead class="bg-info text-white">
-          <tr>
-            <th class="checkbox-header">  <p-checkbox class="p-disabled" binary="true" (onChange)="checkAllFn($event)" formControlName="checkAll"  class="space">
-            </p-checkbox></th>
-            <th>Lineitem</th>
-            <th>Unit of Measures</th>
-            <th>Quantity</th>
-            <th>Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container formArrayName="lineitem">
-            <tr *ngFor="let line of lineItems.controls; let i = index">
-              <ng-container [formGroup]="line">
-
-                <td class="text-center">
-                    <p-checkbox class="p-disabled" binary="true"
-                    formControlName="closeOutStatus" [name]="i" [inputId]="i" class="space">
-                </p-checkbox>
-                </td>
-
-                <td>
-                    {{line.value.details.lineItemName}}
-                </td>
-
-                <td>
-                    {{line.value.unit}}
-                </td>
-
-                <td>
-                    <div class="p-field p-col">
-                        <p-inputNumber formControlName="quantity" locale="en-US"></p-inputNumber>
-                    </div>
-                </td>
-
-                <td>
-                    {{line.value.amount}}
-                </td>
-              </ng-container>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
-    </form>
-    <!-- tbl2 -->
-     
-    </div> 
-
-
+    </div>
     <br>
-    <div  class="mt-3 text-center">
+
+    <p class="error">{{errorMessage}}</p>
+    <div class="mt-3 text-center">
         <button type="button" (click)="hideLineItemDialog()" class=" btn btn-outline-danger space">
             <i class="fa fa-times-circle"></i>
             {{'close' | translate}}</button>

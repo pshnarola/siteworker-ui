@@ -353,6 +353,7 @@
             <th>Unit of Measures</th>
             <th>Quantity</th>
             <th>Cost</th>
+            <th>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -372,9 +373,12 @@
                 </td>
 
                 <td *ngIf="line.changeRequestStatus">
-                    {{line.lineItem.cost}}
+                    {{line.cost}}
                 </td>
              
+                <td *ngIf="line.changeRequestStatus">
+                    {{line.amount}}
+                </td>
             </tr>
          
         </tbody>

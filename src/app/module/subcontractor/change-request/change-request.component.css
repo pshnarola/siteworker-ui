@@ -5,7 +5,7 @@ h4 {
 
 ngx-dropzone {
     height: 50px;
-    width: 400px;
+    /* width: 400px; */
 }
 
 .d-flex{
